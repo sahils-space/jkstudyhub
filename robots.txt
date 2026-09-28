@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jkstudyhub.vercel.app/sitemap.xml
+Sitemap: https://sahils-space.github.io/jkstudyhub/sitemap.xml
