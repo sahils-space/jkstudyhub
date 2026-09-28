@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JK STUDY HUB - Empowering Class 10th & 11th Students</title>
+  <meta name="description" content="JK STUDY HUB - Comprehensive educational resources, notes, and study materials for Class 10th and 11th students by Sahil Zahoor in Jammu and Kashmir.">
+  <meta name="keywords" content="JK Study Hub, JKBOSE Class 10th notes, JKBOSE Class 11th streams, Kashmir students, Sahil Zahoor, study material, board exam preparation">
+  <meta name="author" content="Sahil Zahoor">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JK STUDY HUB - Class 10th & 11th Study Portal">
+  <meta property="og:description" content="Empowering Class 10th and 11th students with curated notes, core subjects, stream guides, and JKBOSE exam resources.">
+  <meta property="og:image" content="ceo.jpg">
+
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Centered Branding Header -->
+  <header class="main-header">
+    <div class="top-brand-wrapper">
+      <div class="brand-logo-container">
+        <div class="brand-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <h1 class="hub-title">JK STUDY HUB</h1>
+        <p class="hub-tagline">Excellence in Learning for Class 10th &amp; 11th</p>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home" class="nav-item active">Home</a></li>
+          <li><a href="#syllabus" class="nav-item">Digital Syllabus</a></li>
+          <li><a href="#subjects" class="nav-item">Subject Portals</a></li>
+          <li><a href="#ceo" class="nav-item">Founder's Desk</a></li>
+          <li><a href="#contact" class="nav-item">Contact Us</a></li>
+          <li><a href="https://jkbose.jk.gov.in" target="_blank" rel="noopener" class="nav-item jkbose-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> JKBOSE Official</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="container hero-content">
+      <span class="badge">Your Dedicated Learning Partner</span>
+      <h2 class="hero-heading">Welcome to <span class="text-highlight">JK STUDY HUB</span></h2>
+      <p class="hero-description">
+        A structured academic portal crafted to support <strong>Class 10th</strong> and <strong>Class 11th</strong> students with official digital syllabi, curated notes, solved examples, and exam preparation resources.
+      </p>
+      <div class="hero-actions">
+        <a href="#syllabus" class="btn btn-primary"><i class="fa-solid fa-book-bookmark"></i> Explore Digital Syllabus</a>
+        <a href="#subjects" class="btn btn-secondary"><i class="fa-solid fa-layer-group"></i> View Subject Portals</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. PREMIER SECTION: UNIFIED DIGITAL SYLLABUS HUB (FOR BOTH CLASSES) -->
+  <section class="section syllabus-master-section bg-light" id="syllabus">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Official JKBOSE Curriculum</span>
+        <h2 class="section-title">Official Digital Syllabus</h2>
+        <div class="title-underline"></div>
+        <p class="section-subtitle">
+          Select your class below to instantly view unit-wise digital syllabus, marks weightage, laboratory practicals, and prescribed textbooks.
+        </p>
+      </div>
+
+      <!-- Class Switcher Tabs -->
+      <div class="class-toggle-wrapper">
+        <div class="class-toggle-bar">
+          <button class="class-toggle-btn active" id="btnClass10" onclick="switchClassView('10')">
+            <i class="fa-solid fa-book-bookmark"></i>
+            <span>Class 10th Syllabus</span>
+          </button>
+          <button class="class-toggle-btn" id="btnClass11" onclick="switchClassView('11')">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Class 11th Syllabus</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Class 10th Syllabus Panel -->
+      <div id="viewClass10" class="class-syllabus-panel active">
+        <!-- Assessment & Scheme Highlights Bar -->
+        <div class="syllabus-info-bar">
+          <div class="info-pill"><i class="fa-solid fa-file-signature"></i> <strong>Theory Paper:</strong> 80 Marks</div>
+          <div class="info-pill"><i class="fa-solid fa-list-check"></i> <strong>Internal Assessment:</strong> 20 Marks (Tests 10m + Portfolio 5m + Activities 5m)</div>
+          <div class="info-pill"><i class="fa-solid fa-award"></i> <strong>Passing Standard:</strong> Minimum 33% (28% for CWSN)</div>
+        </div>
+
+        <!-- Search & Controls for Class 10th -->
+        <div class="syllabus-controls">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="syllabus10Search" placeholder="Search Class 10th subjects or topics (e.g. Light, Electricity, Triangles, Nationalism, Carbon)..." aria-label="Search Class 10th syllabus">
+          </div>
+        </div>
+
+        <!-- Dynamic Digital Syllabus Container for Class 10th -->
+        <div id="syllabus10Container" class="syllabus-accordion-container">
+          <!-- Rendered by JavaScript dynamically -->
+        </div>
+      </div>
+
+      <!-- Class 11th Syllabus Panel -->
+      <div id="viewClass11" class="class-syllabus-panel" style="display: none;">
+        <!-- Assessment & Scheme Highlights Bar -->
+        <div class="syllabus-info-bar">
+          <div class="info-pill"><i class="fa-solid fa-graduation-cap"></i> <strong>Passing Marks:</strong> 36% overall (33% in General English)</div>
+          <div class="info-pill"><i class="fa-solid fa-file-invoice"></i> <strong>Theory Pass Min:</strong> 25/70 Marks or 29/80 Marks</div>
+          <div class="info-pill"><i class="fa-solid fa-wheelchair"></i> <strong>CWSN:</strong> 31% qualifying criteria + full exam fee concession</div>
+        </div>
+
+        <!-- Stream Selector Tabs (Strict Stream Segregation) -->
+        <div class="stream-tabs-wrapper">
+          <div class="stream-tabs" id="streamTabs">
+            <button class="stream-tab-btn active" data-stream="medical">
+              <i class="fa-solid fa-dna"></i>
+              <span>Medical Science</span>
+            </button>
+            <button class="stream-tab-btn" data-stream="nonmedical">
+              <i class="fa-solid fa-compass-drafting"></i>
+              <span>Non-Medical Science</span>
+            </button>
+            <button class="stream-tab-btn" data-stream="commerce">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Commerce</span>
+            </button>
+            <button class="stream-tab-btn" data-stream="humanities">
+              <i class="fa-solid fa-landmark"></i>
+              <span>Arts &amp; Humanities</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="syllabus-controls">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="syllabusSearch" placeholder="Search subjects or topics in this stream (e.g. Physics, Botany, Calculus, Python)..." aria-label="Search syllabus topics">
+          </div>
+          <div class="stream-meta" id="streamMeta">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- Dynamic Digital Syllabus Container for Class 11th -->
+        <div id="syllabusContainer" class="syllabus-accordion-container">
+          <!-- Rendered by JavaScript based on active stream -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. SUBJECT STUDY CENTERS & LEARNING RESOURCES -->
+  <section class="section subject-portals-section" id="subjects">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Learning Portals</span>
+        <h2 class="section-title">Subject Study Centers</h2>
+        <div class="title-underline"></div>
+        <p class="section-subtitle">
+          Targeted study centers for Class 10th and Class 11th with curated revision notes, solved examples, formula sheets, and exam guidance.
+        </p>
+      </div>
+
+      <!-- Class 10th Subject Portals -->
+      <div class="portal-group">
+        <div class="portal-group-header">
+          <div class="group-badge">Class 10th Board Hub</div>
+          <h3 class="group-title">Core Academic Subjects</h3>
+        </div>
+
+        <div class="cards-grid">
+          <div class="study-card">
+            <div class="card-icon science-color"><i class="fa-solid fa-atom"></i></div>
+            <h3 class="card-title">Science</h3>
+            <p class="card-desc">Physics, Chemistry, and Biology modules with NCERT question walkthroughs, chemical formulas, and diagram practice.</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Light, Electricity &amp; Magnetism</li>
+              <li><i class="fa-regular fa-circle-check"></i> Reactions, Carbon Compounds</li>
+              <li><i class="fa-regular fa-circle-check"></i> Life Processes &amp; Reproduction</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="study-card">
+            <div class="card-icon math-color"><i class="fa-solid fa-calculator"></i></div>
+            <h3 class="card-title">Mathematics</h3>
+            <p class="card-desc">Step-by-step theorem proofs (BPT), quadratic formula applications, trigonometry tables, and statistics calculators.</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Real Numbers &amp; Algebra (20m)</li>
+              <li><i class="fa-regular fa-circle-check"></i> Geometry &amp; Trigonometry (27m)</li>
+              <li><i class="fa-regular fa-circle-check"></i> Mensuration &amp; Statistics (21m)</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="study-card">
+            <div class="card-icon sst-color"><i class="fa-solid fa-earth-americas"></i></div>
+            <h3 class="card-title">Social Science</h3>
+            <p class="card-desc">History, Geography, Political Science, Economics, J&amp;K Modernisation (1947-82), and Disaster Management modules.</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Nationalism in Europe &amp; India</li>
+              <li><i class="fa-regular fa-circle-check"></i> J&amp;K Economy &amp; Reorganization Act</li>
+              <li><i class="fa-regular fa-circle-check"></i> Disaster Survival &amp; Map Practice</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="study-card">
+            <div class="card-icon lang-color"><i class="fa-solid fa-book-open"></i></div>
+            <h3 class="card-title">English &amp; Urdu</h3>
+            <p class="card-desc">Tulip Series Book X prose, poetry, and play 'The Proposal' alongside Baharistan-e-Urdu literature and grammar.</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Reading &amp; Dialogue Writing</li>
+              <li><i class="fa-regular fa-circle-check"></i> Formal Letters &amp; Creative Stories</li>
+              <li><i class="fa-regular fa-circle-check"></i> Urdu Ghazals &amp; Takhleeqi Mazmoon</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class 11th Stream Portals -->
+      <div class="portal-group" style="margin-top: 50px;">
+        <div class="portal-group-header">
+          <div class="group-badge">Class 11th Streams Hub</div>
+          <h3 class="group-title">Senior Secondary Disciplines</h3>
+        </div>
+
+        <div class="cards-grid">
+          <div class="study-card stream-card">
+            <div class="card-badge">Medical</div>
+            <div class="card-icon med-color"><i class="fa-solid fa-dna"></i></div>
+            <h3 class="card-title">Medical Science</h3>
+            <p class="card-desc">Botany (35m), Zoology (35m), Physics (70m), Chemistry (70m), and General English (80m) comprehensive modules.</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Plant &amp; Human Physiology</li>
+              <li><i class="fa-regular fa-circle-check"></i> Cell Biology, Genetics &amp; Ecology</li>
+              <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="study-card stream-card">
+            <div class="card-badge">Engineering</div>
+            <div class="card-icon nonmed-color"><i class="fa-solid fa-compass-drafting"></i></div>
+            <h3 class="card-title">Non-Medical Science</h3>
+            <p class="card-desc">Mathematics (80m), Physics (70m), Chemistry (70m), and Computer Science Python (70m) structured curriculum.</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Calculus, Algebra &amp; Coordinate Geometry</li>
+              <li><i class="fa-regular fa-circle-check"></i> Mechanics, Waves &amp; Thermodynamics</li>
+              <li><i class="fa-regular fa-circle-check"></i> Python Programming &amp; Logic Design</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="study-card stream-card">
+            <div class="card-badge">Business &amp; Finance</div>
+            <div class="card-icon comm-color"><i class="fa-solid fa-chart-line"></i></div>
+            <h3 class="card-title">Commerce</h3>
+            <p class="card-desc">Accountancy (80m), Business Studies (80m), Economics (80m), Entrepreneurship (80m), and Business Math (80m).</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Financial Statements of Sole Proprietorship</li>
+              <li><i class="fa-regular fa-circle-check"></i> Business Finance &amp; E-Commerce</li>
+              <li><i class="fa-regular fa-circle-check"></i> Statistical Tools &amp; Indian Economic Development</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="study-card stream-card">
+            <div class="card-badge">Humanities</div>
+            <div class="card-icon arts-color"><i class="fa-solid fa-landmark"></i></div>
+            <h3 class="card-title">Arts &amp; Humanities</h3>
+            <p class="card-desc">Political Science (80m), History (80m), Sociology (80m), Psychology (70m), Geography (70m), and Education (80m).</p>
+            <ul class="resource-list">
+              <li><i class="fa-regular fa-circle-check"></i> Indian Constitution &amp; Political Theory</li>
+              <li><i class="fa-regular fa-circle-check"></i> World History (Mesopotamia, Rome, Mongols)</li>
+              <li><i class="fa-regular fa-circle-check"></i> Classical Sociological &amp; Psychological Thought</li>
+            </ul>
+            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder & CEO Message Section -->
+  <section class="section ceo-section" id="ceo">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Leadership &amp; Vision</span>
+        <h2 class="section-title">Message from Founder &amp; CEO</h2>
+        <div class="title-underline"></div>
+      </div>
+
+      <div class="ceo-card">
+        <!-- Dedicated Photo Space -->
+        <div class="ceo-photo-container">
+          <div class="photo-frame">
+            <!-- Image placeholder: shows ceo.jpg if present, or ceo-placeholder.svg automatically -->
+            <img src="ceo.jpg" alt="Founder &amp; CEO Photo" class="ceo-img" onerror="this.onerror=null; this.src='ceo-placeholder.svg';">
+          </div>
+          <div class="photo-badge">
+            <i class="fa-solid fa-shield-halved"></i> Founder &amp; CEO
+          </div>
+        </div>
+
+        <!-- CEO Message Content -->
+        <div class="ceo-message-content">
+          <div class="quote-icon">
+            <i class="fa-solid fa-quote-left"></i>
+          </div>
+          <h3 class="ceo-greeting">"Empowering Every Student to Unlock Their Full Potential"</h3>
+          <p class="ceo-text">
+            Welcome to <strong>JK STUDY HUB</strong>! Education is not just about memorizing facts; it is about building curiosity, clarity, and unwavering confidence. When students transition through Class 10th and Class 11th, they stand at the most decisive crossroads of their academic journey.
+          </p>
+          <p class="ceo-text">
+            Our vision with <strong>JK STUDY HUB</strong> is to create a seamless, accessible, and high-quality learning sanctuary where students receive crystal-clear direction, supportive study materials, and the motivation to achieve academic distinction.
+          </p>
+          <div class="ceo-signature-block">
+            <h4 class="ceo-name">Sahil Zahoor</h4>
+            <span class="ceo-role">Founder &amp; Chief Executive Officer</span>
+            <span class="ceo-hub">JK Study Hub</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section class="section contact-section bg-light" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Get in Touch</span>
+        <h2 class="section-title">Contact &amp; Student Support</h2>
+        <div class="title-underline"></div>
+        <p class="section-subtitle">Have questions or want to request specific notes? Reach out to us anytime.</p>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Contact Details -->
+        <div class="contact-info-panel">
+          <h3 class="panel-heading">Reach JK Study Hub</h3>
+          <p class="panel-description">We are here to assist Class 10th and 11th students with their academic inquiries, syllabus clarifications, and study material requests.</p>
+          
+          <div class="info-items">
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div>
+                <strong>Email Address</strong>
+                <p><a href="mailto:sahilsspace20@gmail.com">sahilsspace20@gmail.com</a></p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+              <div>
+                <strong>Phone / WhatsApp</strong>
+                <p>
+                  <a href="tel:+919622605714">+91 96226 05714</a> &nbsp;|&nbsp; 
+                  <a href="https://wa.me/919622605714" target="_blank" rel="noopener" class="wa-badge"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+              <div>
+                <strong>Address</strong>
+                <p>Khanday Mohalla, Pattan, Baramulla, Jammu &amp; Kashmir</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+              <div>
+                <strong>Support Timings</strong>
+                <p>Monday – Saturday: 9:00 AM – 7:00 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Query Form -->
+        <div class="contact-form-panel">
+          <h3 class="panel-heading">Send an Inquiry</h3>
+          <form id="contactForm" class="contact-form">
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="student@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="studentClass">Class</label>
+                <select id="studentClass" name="studentClass" required>
+                  <option value="" disabled selected>Select Class</option>
+                  <option value="10th">Class 10th</option>
+                  <option value="11th">Class 11th</option>
+                  <option value="General">General Query</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Your Message / Query</label>
+              <textarea id="message" name="message" rows="4" placeholder="Let us know what study material or guidance you need..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-btn">
+              <i class="fa-solid fa-paper-plane"></i> Send Message
+            </button>
+            <div id="formFeedback" class="form-feedback"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="brand-inline">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>JK STUDY HUB</span>
+        </div>
+        <p>Dedicated digital learning platform designed specifically for Class 10th and Class 11th students.</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Quick Navigation</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#class10">Class 10th Modules</a></li>
+          <li><a href="#class11">Class 11th Streams</a></li>
+          <li><a href="#ceo">Message from Founder &amp; CEO</a></li>
+          <li><a href="#contact">Contact Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-social">
+        <h4>Connect With Us</h4>
+        <div class="social-icons">
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://wa.me/919622605714" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 JK STUDY HUB. All Rights Reserved. Built with dedication for student success.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Syllabus Dataset & Main JavaScript File -->
+  <script src="syllabus-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
