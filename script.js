@@ -403,23 +403,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================================================
   // FALLING CHINAR LEAVES ANIMATION
   // =========================================================
+  const leafIcons = ['🍁', '🍂', '🍃', '🍁', '🍂'];
   function createFallingLeaf() {
     const wrapper = document.getElementById('autumnWrapper');
     if (!wrapper) return;
     
     const leaf = document.createElement('div');
-    leaf.innerHTML = '🍁';
+    const randomIcon = leafIcons[Math.floor(Math.random() * leafIcons.length)];
+    leaf.innerHTML = randomIcon;
     leaf.className = 'falling-leaf';
     
-    leaf.style.left = Math.random() * 100 + '%';
-    leaf.style.fontSize = (Math.random() * 12 + 16) + 'px'; 
-    leaf.style.animationDuration = (Math.random() * 3 + 3) + 's'; 
+    leaf.style.left = (Math.random() * 94 + 3) + '%';
+    leaf.style.fontSize = (Math.random() * 10 + 18) + 'px'; 
+    const dur = Math.random() * 2.5 + 3.5;
+    leaf.style.animationDuration = dur + 's'; 
     
     wrapper.appendChild(leaf);
     
     setTimeout(() => {
       leaf.remove();
-    }, 6000);
+    }, dur * 1000);
+  }
+
+  // Start falling leaves immediately & run continuously
+  setInterval(createFallingLeaf, 650);
+  for (let i = 0; i < 6; i++) {
+    setTimeout(createFallingLeaf, i * 200);
   }
   // =========================================================
   // MODEL PAPERS POPUP MODAL CONTROLLER
@@ -782,42 +791,56 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam Question Bank)',
       papers: [
         {
-          name: 'Class 11th Physics CYQs (Q1 to Q246)',
+          name: 'Class 11th Physics CYQs',
           marks: 'Complete Physics Theory & Numerical Bank • 12 Units',
           file: 'cyqs/class-11-physics-important-questions.pdf',
           icon: 'fa-bolt',
           badge: 'High Priority CYQ'
         },
         {
-          name: 'Class 11th Botany CYQs (Q1 to Q48)',
+          name: 'Class 11th Chemistry CYQs',
+          marks: 'Physical, Inorganic & Organic Chemistry • Core Board Bank',
+          file: 'cyqs/class-11-chemistry-important-questions.pdf',
+          icon: 'fa-flask',
+          badge: 'High Priority CYQ'
+        },
+        {
+          name: 'Class 11th Botany CYQs',
           marks: 'Section A: Botany • All Units & Crucial Topics',
           file: 'cyqs/class-11-botany-important-questions.pdf',
           icon: 'fa-seedling',
           badge: 'High Priority CYQ'
         },
         {
-          name: 'Class 11th Zoology CYQs (Q49 to Q146)',
+          name: 'Class 11th Zoology CYQs',
           marks: 'Section B: Zoology • All Units & Crucial Topics',
           file: 'cyqs/class-11-zoology-important-questions.pdf',
           icon: 'fa-dna',
           badge: 'High Priority CYQ'
         }
       ],
-      notice: 'Chemistry CYQ question bank is currently being prepared and will be added here shortly.'
+      notice: 'All core Medical Science (Physics, Chemistry, Botany, Zoology) CYQ question banks are now available.'
     },
     '11-nonmed': {
       title: 'Class 11th • Non-Medical Science CYQs',
       subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam Question Bank)',
       papers: [
         {
-          name: 'Class 11th Physics CYQs (Q1 to Q246)',
+          name: 'Class 11th Physics CYQs',
           marks: 'Complete Physics Theory & Numerical Bank • 12 Units',
           file: 'cyqs/class-11-physics-important-questions.pdf',
           icon: 'fa-bolt',
           badge: 'High Priority CYQ'
+        },
+        {
+          name: 'Class 11th Chemistry CYQs',
+          marks: 'Physical, Inorganic & Organic Chemistry • Core Board Bank',
+          file: 'cyqs/class-11-chemistry-important-questions.pdf',
+          icon: 'fa-flask',
+          badge: 'High Priority CYQ'
         }
       ],
-      notice: 'Class 11th Mathematics & Chemistry CYQs are currently being updated according to the 2025-26 board pattern.'
+      notice: 'Class 11th Mathematics CYQ question bank is currently being prepared and will be added here shortly.'
     },
     '11-comm': {
       title: 'Class 11th • Commerce Stream CYQs',

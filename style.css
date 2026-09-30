@@ -338,19 +338,21 @@ body {
 
 .falling-leaf {
   position: absolute;
-  top: -30px;
-  font-size: 20px;
+  top: -35px;
+  font-size: 22px;
   user-select: none;
   pointer-events: none;
   animation: fall linear forwards;
   z-index: 10;
-  opacity: 0.9;
+  opacity: 0.95;
+  filter: drop-shadow(0 2px 6px rgba(251, 191, 36, 0.45));
 }
 
 @keyframes fall {
   0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  100% { transform: translateY(200px) rotate(360deg) translateX(60px); opacity: 0; }
+  12% { opacity: 1; }
+  85% { opacity: 0.95; }
+  100% { transform: translateY(230px) rotate(360deg) translateX(55px); opacity: 0; }
 }
 
 .text-highlight {
