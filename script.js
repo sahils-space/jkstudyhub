@@ -956,70 +956,133 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
+          name: 'Class 11th Physics (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1208-C • 70 Marks',
+          file: 'pyqs/class-11-physics-pyq-paper.pdf',
+          icon: 'fa-atom',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
+          name: 'Class 11th Chemistry (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1209-C • 70 Marks',
+          file: 'pyqs/class-11-chemistry-pyq-paper.pdf',
+          icon: 'fa-flask',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
           name: 'Class 11th Botany (Annual Board Paper)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1210-A • 35 Marks',
           file: 'pyqs/class-11-botany-pyq-paper.pdf',
           icon: 'fa-seedling',
-          badge: 'Official JKBOSE Paper'
+          badge: 'Official JKBOSE Series A'
         },
         {
           name: 'Class 11th Zoology (Annual Board Paper)',
-          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1211-A • 35 Marks',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1211-A (Series A & B) • 35 Marks',
           file: 'pyqs/class-11-zoology-pyq-paper.pdf',
           icon: 'fa-dna',
-          badge: 'Official JKBOSE Paper'
+          badge: 'Official JKBOSE Series A/B'
+        },
+        {
+          name: 'Class 11th General English (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-paper.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official JKBOSE Series C'
         },
         {
           name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
           file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
           icon: 'fa-person-running',
           badge: 'All Streams Additional'
         }
       ],
-      notice: 'Physics and Chemistry board papers are currently being digitized.'
+      notice: 'All core medical stream papers (Physics, Chemistry, Botany, Zoology, General English, Physical Education) are verified and available.'
     },
     '11-nonmed': {
       title: 'Class 11th • Non-Medical Science PYQs',
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
+          name: 'Class 11th Mathematics (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1207-A • 100 Marks',
+          file: 'pyqs/class-11-mathematics-pyq-paper.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Official JKBOSE Series A'
+        },
+        {
+          name: 'Class 11th Physics (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1208-C • 70 Marks',
+          file: 'pyqs/class-11-physics-pyq-paper.pdf',
+          icon: 'fa-atom',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
+          name: 'Class 11th Chemistry (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1209-C • 70 Marks',
+          file: 'pyqs/class-11-chemistry-pyq-paper.pdf',
+          icon: 'fa-flask',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
+          name: 'Class 11th General English (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-paper.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
           name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
           file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
           icon: 'fa-person-running',
           badge: 'All Streams Additional'
         }
       ],
-      notice: 'Mathematics, Physics and Chemistry previous year papers are currently being digitized and will be added here shortly.'
+      notice: 'All core non-medical papers (Mathematics, Physics, Chemistry, General English, Physical Education) are verified and available.'
     },
     '11-comm': {
       title: 'Class 11th • Commerce Stream PYQs',
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
+          name: 'Class 11th General English (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-paper.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
           name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
           file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
           icon: 'fa-person-running',
           badge: 'All Streams Additional'
         }
       ],
-      notice: 'Accountancy, Business Studies and Economics previous year papers are being compiled.'
+      notice: 'Accountancy, Business Studies and Economics previous year board papers are currently being digitized.'
     },
     '11-arts': {
       title: 'Class 11th • Arts & Humanities PYQs',
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
+          name: 'Class 11th General English (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-paper.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official JKBOSE Series C'
+        },
+        {
           name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
           file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
           icon: 'fa-person-running',
           badge: 'All Streams Additional'
         }
       ],
-      notice: 'Political Science, History and Sociology previous year papers are being compiled.'
+      notice: 'Political Science, History, Sociology and Education previous year board papers are currently being digitized.'
     },
     'c10-sci': {
       title: 'Class 10th • Science PYQs',
