@@ -1774,7 +1774,46 @@ document.addEventListener('DOMContentLoaded', () => {
       closePyqModalDirect();
       closeLibraryModalDirect();
       window.toggleUserDropdown(false);
+      if (typeof closePromoModal === 'function') closePromoModal();
     }
   });
+
+  // =========================================================
+  // PROMO LOGIN MODAL LOGIC (30 Seconds)
+  // =========================================================
+  window.closePromoModal = function() {
+    const overlay = document.getElementById('promoLoginOverlay');
+    if (overlay) overlay.classList.remove('active');
+    // Remember choice for 7 days
+    localStorage.setItem('jk_promo_dismissed', Date.now());
+  };
+
+  window.handlePromoGoogleLogin = function() {
+    if (typeof handleGoogleSignIn === 'function') {
+      handleGoogleSignIn();
+      closePromoModal();
+    }
+  };
+
+  setTimeout(() => {
+    try {
+      // Check if user is already logged in
+      const currentUser = JSON.parse(localStorage.getItem('jk_study_user'));
+      if (currentUser) return; // Do not show if logged in
+
+      // Check if they dismissed it recently (within 7 days)
+      const dismissedAt = localStorage.getItem('jk_promo_dismissed');
+      if (dismissedAt) {
+        const daysSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+        if (daysSince < 7) return; // Do not show again for 7 days
+      }
+
+      // Show the modal
+      const overlay = document.getElementById('promoLoginOverlay');
+      if (overlay) overlay.classList.add('active');
+    } catch (e) {
+      console.warn("Error in promo timer:", e);
+    }
+  }, 30000); // 30 seconds
 
 });

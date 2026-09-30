@@ -2664,5 +2664,53 @@ body {
   }
 }
 
+/* Promo Login Modal */
+.promo-login-box {
+  text-align: center;
+  max-width: 420px;
+  padding: 40px 30px;
+}
+
+.promo-icon {
+  font-size: 3.5rem;
+  color: #3b82f6;
+  margin-bottom: 20px;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.promo-login-box h3 {
+  font-size: 1.6rem;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.promo-login-box p {
+  color: #64748b;
+  margin-bottom: 25px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.promo-dismiss-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-top: 20px;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all 0.2s;
+}
+
+.promo-dismiss-btn:hover {
+  color: #64748b;
+}
+
 
 

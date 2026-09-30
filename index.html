@@ -668,6 +668,23 @@
     </div>
   </footer>
 
+  <!-- Promo Login Modal (Triggers after 30s) -->
+  <div class="modal-overlay" id="promoLoginOverlay">
+    <div class="modal-content promo-login-box">
+      <button class="modal-close-btn" onclick="closePromoModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div class="promo-icon">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+      </div>
+      <h3>Never Lose Your Materials!</h3>
+      <p>Login with Google to securely save your bookmarks and study history across all your devices.</p>
+      <button class="google-auth-btn" onclick="handlePromoGoogleLogin()" style="width: 100%; margin-top: 10px; justify-content: center;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" class="google-logo">
+        Sign in with Google
+      </button>
+      <button class="promo-dismiss-btn" onclick="closePromoModal()">Not right now</button>
+    </div>
+  </div>
+
   <!-- Firebase SDK (Compat Libraries for Web) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
