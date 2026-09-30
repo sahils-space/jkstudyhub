@@ -941,11 +941,179 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // =========================================================
+  // PREVIOUS YEAR PAPERS (PYQS) MODAL CONTROLLER
+  // =========================================================
+
+  const pyqModalOverlay = document.getElementById('pyqModalOverlay');
+  const modalPyqTitle = document.getElementById('modalPyqTitle');
+  const modalPyqSubtitle = document.getElementById('modalPyqSubtitle');
+  const modalPyqList = document.getElementById('modalPyqList');
+
+  const PYQ_DATA = {
+    '11-med': {
+      title: 'Class 11th • Medical Science PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [
+        {
+          name: 'Class 11th Botany (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1210-A • 35 Marks',
+          file: 'pyqs/class-11-botany-pyq-paper.pdf',
+          icon: 'fa-seedling',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Class 11th Zoology (Annual Board Paper)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1211-A • 35 Marks',
+          file: 'pyqs/class-11-zoology-pyq-paper.pdf',
+          icon: 'fa-dna',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Class 11th Physical Education (Annual Board Paper)',
+          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'All Streams Additional'
+        }
+      ],
+      notice: 'Physics and Chemistry board papers are currently being digitized.'
+    },
+    '11-nonmed': {
+      title: 'Class 11th • Non-Medical Science PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [
+        {
+          name: 'Class 11th Physical Education (Annual Board Paper)',
+          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'All Streams Additional'
+        }
+      ],
+      notice: 'Mathematics, Physics and Chemistry previous year papers are currently being digitized and will be added here shortly.'
+    },
+    '11-comm': {
+      title: 'Class 11th • Commerce Stream PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [
+        {
+          name: 'Class 11th Physical Education (Annual Board Paper)',
+          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'All Streams Additional'
+        }
+      ],
+      notice: 'Accountancy, Business Studies and Economics previous year papers are being compiled.'
+    },
+    '11-arts': {
+      title: 'Class 11th • Arts & Humanities PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [
+        {
+          name: 'Class 11th Physical Education (Annual Board Paper)',
+          marks: 'Theory Paper • 70 Marks • Additional Subject',
+          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'All Streams Additional'
+        }
+      ],
+      notice: 'Political Science, History and Sociology previous year papers are being compiled.'
+    },
+    'c10-sci': {
+      title: 'Class 10th • Science PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [],
+      notice: 'Class 10th Science board question papers are being digitized for PDF release.'
+    },
+    'c10-math': {
+      title: 'Class 10th • Mathematics PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [],
+      notice: 'Class 10th Mathematics board papers are currently being scanned and formatted.'
+    },
+    'c10-sst': {
+      title: 'Class 10th • Social Science PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [],
+      notice: 'Class 10th Social Science previous year papers are being processed.'
+    },
+    'c10-eng': {
+      title: 'Class 10th • English & Urdu PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
+      papers: [],
+      notice: 'Class 10th English & Urdu previous year papers will be uploaded shortly.'
+    }
+  };
+
+  window.openPyqModal = function(contextKey) {
+    const data = PYQ_DATA[contextKey];
+    if (!data || !pyqModalOverlay) return;
+
+    if (modalPyqTitle) modalPyqTitle.textContent = data.title;
+    if (modalPyqSubtitle) modalPyqSubtitle.textContent = data.subtitle;
+
+    let html = '';
+    if (data.papers && data.papers.length > 0) {
+      data.papers.forEach(p => {
+        html += `
+          <div class="modal-paper-item">
+            <div class="item-info">
+              <div class="item-icon" style="background: #fff7ed; color: #ea580c;">
+                <i class="fa-solid ${p.icon}"></i>
+              </div>
+              <div class="item-text">
+                <h4>${p.name}</h4>
+                <p><i class="fa-regular fa-bookmark" style="color: #ea580c;"></i> ${p.marks}</p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <a href="${p.file}" target="_blank" class="item-btn-open" style="background: #ea580c;">
+                <i class="fa-solid fa-eye"></i> View
+              </a>
+              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    if (data.notice) {
+      html += `
+        <div class="item-notice-box" style="background: #fff7ed; border-color: #fed7aa; color: #9a3412;">
+          <i class="fa-solid fa-circle-info" style="font-size: 20px; color: #ea580c;"></i>
+          <div>${data.notice}</div>
+        </div>
+      `;
+    }
+
+    if (modalPyqList) modalPyqList.innerHTML = html;
+    pyqModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closePyqModalDirect = function() {
+    if (pyqModalOverlay) {
+      pyqModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.closePyqModal = function(e) {
+    if (e.target === pyqModalOverlay) {
+      closePyqModalDirect();
+    }
+  };
+
   // Close modals on Escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       closeModelModalDirect();
       closeCyqModalDirect();
+      closePyqModalDirect();
     }
   });
 
