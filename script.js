@@ -956,109 +956,186 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
-          name: 'Class 11th Physics (Annual Board Paper)',
+          name: 'Class 11th Physics (Series A)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1208-A • 70 Marks',
+          file: 'pyqs/class-11-physics-pyq-series-a.pdf',
+          icon: 'fa-atom',
+          badge: 'Official Series A'
+        },
+        {
+          name: 'Class 11th Physics (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1208-C • 70 Marks',
           file: 'pyqs/class-11-physics-pyq-paper.pdf',
           icon: 'fa-atom',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Chemistry (Annual Board Paper)',
+          name: 'Class 11th Chemistry (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1209-C • 70 Marks',
           file: 'pyqs/class-11-chemistry-pyq-paper.pdf',
           icon: 'fa-flask',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Botany (Annual Board Paper)',
+          name: 'Class 11th Botany (Series A)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1210-A • 35 Marks',
           file: 'pyqs/class-11-botany-pyq-paper.pdf',
           icon: 'fa-seedling',
-          badge: 'Official JKBOSE Series A'
+          badge: 'Official Series A'
         },
         {
-          name: 'Class 11th Zoology (Annual Board Paper)',
-          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1211-A (Series A & B) • 35 Marks',
+          name: 'Class 11th Zoology (Series A & B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1211-A • 35 Marks',
           file: 'pyqs/class-11-zoology-pyq-paper.pdf',
           icon: 'fa-dna',
-          badge: 'Official JKBOSE Series A/B'
+          badge: 'Official Series A/B'
         },
         {
-          name: 'Class 11th General English (Annual Board Paper)',
+          name: 'Class 11th General English (Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-B • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-series-b.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official Series B'
+        },
+        {
+          name: 'Class 11th General English (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
           file: 'pyqs/class-11-english-pyq-paper.pdf',
           icon: 'fa-book-open',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
-          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          name: 'Class 11th Physical Education (Series A)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1235-A • 70 Marks',
+          file: 'pyqs/class-11-physical-education-pyq-series-a.pdf',
           icon: 'fa-person-running',
-          badge: 'All Streams Additional'
+          badge: 'Official Series A'
+        },
+        {
+          name: 'Class 11th Information Practices (IP - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1215-B • 70 Marks',
+          file: 'pyqs/class-11-information-practices-pyq-series-b.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Additional Subject'
+        },
+        {
+          name: 'Class 11th Environmental Science (EVS - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1228-B • 70 Marks',
+          file: 'pyqs/class-11-environmental-science-pyq-series-b.pdf',
+          icon: 'fa-earth-americas',
+          badge: 'Additional Subject'
         }
       ],
-      notice: 'All core medical stream papers (Physics, Chemistry, Botany, Zoology, General English, Physical Education) are verified and available.'
+      notice: 'All core medical stream papers and additional subjects (IP, Physical Education, EVS) are verified and available.'
     },
     '11-nonmed': {
       title: 'Class 11th • Non-Medical Science PYQs',
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
-          name: 'Class 11th Mathematics (Annual Board Paper)',
+          name: 'Class 11th Mathematics (Series A)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1207-A • 100 Marks',
           file: 'pyqs/class-11-mathematics-pyq-paper.pdf',
           icon: 'fa-square-root-variable',
-          badge: 'Official JKBOSE Series A'
+          badge: 'Official Series A'
         },
         {
-          name: 'Class 11th Physics (Annual Board Paper)',
+          name: 'Class 11th Physics (Series A)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1208-A • 70 Marks',
+          file: 'pyqs/class-11-physics-pyq-series-a.pdf',
+          icon: 'fa-atom',
+          badge: 'Official Series A'
+        },
+        {
+          name: 'Class 11th Physics (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1208-C • 70 Marks',
           file: 'pyqs/class-11-physics-pyq-paper.pdf',
           icon: 'fa-atom',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Chemistry (Annual Board Paper)',
+          name: 'Class 11th Chemistry (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1209-C • 70 Marks',
           file: 'pyqs/class-11-chemistry-pyq-paper.pdf',
           icon: 'fa-flask',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th General English (Annual Board Paper)',
+          name: 'Class 11th General English (Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-B • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-series-b.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official Series B'
+        },
+        {
+          name: 'Class 11th General English (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
           file: 'pyqs/class-11-english-pyq-paper.pdf',
           icon: 'fa-book-open',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
-          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          name: 'Class 11th Physical Education (Series A)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1235-A • 70 Marks',
+          file: 'pyqs/class-11-physical-education-pyq-series-a.pdf',
           icon: 'fa-person-running',
-          badge: 'All Streams Additional'
+          badge: 'Official Series A'
+        },
+        {
+          name: 'Class 11th Information Practices (IP - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1215-B • 70 Marks',
+          file: 'pyqs/class-11-information-practices-pyq-series-b.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Additional Subject'
+        },
+        {
+          name: 'Class 11th Environmental Science (EVS - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1228-B • 70 Marks',
+          file: 'pyqs/class-11-environmental-science-pyq-series-b.pdf',
+          icon: 'fa-earth-americas',
+          badge: 'Additional Subject'
         }
       ],
-      notice: 'All core non-medical papers (Mathematics, Physics, Chemistry, General English, Physical Education) are verified and available.'
+      notice: 'All core non-medical stream papers and additional subjects (IP, Physical Education, EVS) are verified and available.'
     },
     '11-comm': {
       title: 'Class 11th • Commerce Stream PYQs',
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
-          name: 'Class 11th General English (Annual Board Paper)',
+          name: 'Class 11th General English (Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-B • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-series-b.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official Series B'
+        },
+        {
+          name: 'Class 11th General English (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
           file: 'pyqs/class-11-english-pyq-paper.pdf',
           icon: 'fa-book-open',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
-          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          name: 'Class 11th Physical Education (Series A)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1235-A • 70 Marks',
+          file: 'pyqs/class-11-physical-education-pyq-series-a.pdf',
           icon: 'fa-person-running',
-          badge: 'All Streams Additional'
+          badge: 'Official Series A'
+        },
+        {
+          name: 'Class 11th Information Practices (IP - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1215-B • 70 Marks',
+          file: 'pyqs/class-11-information-practices-pyq-series-b.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Additional Subject'
+        },
+        {
+          name: 'Class 11th Environmental Science (EVS - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1228-B • 70 Marks',
+          file: 'pyqs/class-11-environmental-science-pyq-series-b.pdf',
+          icon: 'fa-earth-americas',
+          badge: 'Additional Subject'
         }
       ],
       notice: 'Accountancy, Business Studies and Economics previous year board papers are currently being digitized.'
@@ -1068,18 +1145,39 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [
         {
-          name: 'Class 11th General English (Annual Board Paper)',
+          name: 'Class 11th General English (Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-B • 80 Marks',
+          file: 'pyqs/class-11-english-pyq-series-b.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official Series B'
+        },
+        {
+          name: 'Class 11th General English (Series C)',
           marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1200-C • 80 Marks',
           file: 'pyqs/class-11-english-pyq-paper.pdf',
           icon: 'fa-book-open',
-          badge: 'Official JKBOSE Series C'
+          badge: 'Official Series C'
         },
         {
-          name: 'Class 11th Physical Education (Annual Board Paper)',
-          marks: 'Theory Paper • 70 Marks • Common Additional Subject',
-          file: 'pyqs/class-11-physical-education-pyq-paper.pdf',
+          name: 'Class 11th Physical Education (Series A)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1235-A • 70 Marks',
+          file: 'pyqs/class-11-physical-education-pyq-series-a.pdf',
           icon: 'fa-person-running',
-          badge: 'All Streams Additional'
+          badge: 'Official Series A'
+        },
+        {
+          name: 'Class 11th Information Practices (IP - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1215-B • 70 Marks',
+          file: 'pyqs/class-11-information-practices-pyq-series-b.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Additional Subject'
+        },
+        {
+          name: 'Class 11th Environmental Science (EVS - Series B)',
+          marks: 'Series: 11thARNKD(W/Z) JKLUT-25-1228-B • 70 Marks',
+          file: 'pyqs/class-11-environmental-science-pyq-series-b.pdf',
+          icon: 'fa-earth-americas',
+          badge: 'Additional Subject'
         }
       ],
       notice: 'Political Science, History, Sociology and Education previous year board papers are currently being digitized.'
