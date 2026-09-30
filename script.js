@@ -1191,8 +1191,44 @@ document.addEventListener('DOMContentLoaded', () => {
     'c10-math': {
       title: 'Class 10th • Mathematics PYQs',
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
-      papers: [],
-      notice: 'Class 10th Mathematics board papers are currently being scanned and formatted.'
+      papers: [
+        {
+          name: 'Class 10th Mathematics (Series X - 2025)',
+          marks: 'Series: 10th ARF(SZ) 2024-25 • Code: 103-X • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-x-2025.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Series X (2025)'
+        },
+        {
+          name: 'Class 10th Mathematics (Series Y - 2025)',
+          marks: 'Series: 10th ARF(SZ) 2024-25 • Code: 103-Y • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-y-2025.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Series Y (2025)'
+        },
+        {
+          name: 'Class 10th Mathematics (Series Z - 2023)',
+          marks: 'Series: XARJKUT23 • Code: 9303-Z • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-z-2023.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Series Z (2023)'
+        },
+        {
+          name: 'Class 10th Mathematics (Hard Zone - Series X)',
+          marks: 'Series: 10th ARM(HZ) 2024-25 • Code: 403-X • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-x-hardzone-2025.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Hard Zone (403-X)'
+        },
+        {
+          name: 'Class 10th Mathematics (Annual - Series X 2024)',
+          marks: 'Series: 10th ARM(SZ) 2024 • Code: 1003-X • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-x-annual-2024.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Annual 2024 (1003-X)'
+        }
+      ],
+      notice: 'All Class 10th Mathematics multi-series official board papers (Series X, Series Y, Series Z, Hard Zone) are verified and available.'
     },
     'c10-sst': {
       title: 'Class 10th • Social Science PYQs',
