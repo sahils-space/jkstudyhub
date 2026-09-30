@@ -22,13 +22,13 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 
   <!-- Top Centered Branding Header -->
   <header class="main-header">
-    <div class="top-brand-wrapper">
+    <div class="top-brand-wrapper" id="autumnWrapper">
       <div class="brand-logo-container">
         <div class="brand-icon">
           <i class="fa-solid fa-graduation-cap"></i>
@@ -200,6 +200,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Life Processes &amp; Reproduction</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
 
           <div class="study-card">
@@ -212,6 +217,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Mensuration &amp; Statistics (21m)</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
 
           <div class="study-card">
@@ -224,6 +234,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Disaster Survival &amp; Map Practice</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
 
           <div class="study-card">
@@ -236,6 +251,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Urdu Ghazals &amp; Takhleeqi Mazmoon</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
         </div>
       </div>
@@ -259,6 +279,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
 
           <div class="study-card stream-card">
@@ -272,6 +297,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Python Programming &amp; Logic Design</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
 
           <div class="study-card stream-card">
@@ -285,6 +315,11 @@
               <li><i class="fa-regular fa-circle-check"></i> Statistical Tools &amp; Indian Economic Development</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
 
           <div class="study-card stream-card">
@@ -298,13 +333,56 @@
               <li><i class="fa-regular fa-circle-check"></i> Classical Sociological &amp; Psychological Thought</li>
             </ul>
             <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="card-action-grid">
+              <a href="#" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+              <a href="javascript:void(0)" onclick="openCyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+              <a href="javascript:void(0)" onclick="openModelModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Founder & CEO Message Section -->
+  <!-- Interactive Model Papers Popup Modal -->
+  <div class="modal-overlay" id="modelModalOverlay" onclick="closeModelModal(event)">
+    <div class="modal-card" id="modelModalCard">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h3 id="modalStreamTitle">Official Model Papers</h3>
+          <p id="modalStreamSubtitle">Select a subject to view or download</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModelModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalPapersList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-certificate" style="color: var(--primary-blue); margin-right: 6px;"></i> Official JKBOSE Board Papers</span>
+        <button type="button" onclick="closeModelModalDirect()" style="background: var(--primary-navy); color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive CYQs (Crucial Board Questions) Popup Modal -->
+  <div class="modal-overlay" id="cyqModalOverlay" onclick="closeCyqModal(event)">
+    <div class="modal-card" id="cyqModalCard">
+      <div class="modal-header" style="background: linear-gradient(135deg, #064e3b, #047857);">
+        <div class="modal-title-wrap">
+          <h3 id="modalCyqTitle">Crucial Year-End Questions (CYQs)</h3>
+          <p id="modalCyqSubtitle">Selected high-yield questions for JKBOSE examination</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeCyqModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalCyqList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-file-pen" style="color: #059669; margin-right: 6px;"></i> JKSTUDYHUB.ONLINE Question Bank</span>
+        <button type="button" onclick="closeCyqModalDirect()" style="background: #064e3b; color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
   <section class="section ceo-section" id="ceo">
     <div class="container">
       <div class="section-header">
@@ -481,7 +559,7 @@
   </footer>
 
   <!-- Syllabus Dataset & Main JavaScript File -->
-  <script src="syllabus-data.js"></script>
-  <script src="script.js"></script>
+  <script src="syllabus-data.js?v=2"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>

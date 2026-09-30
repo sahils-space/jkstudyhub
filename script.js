@@ -399,4 +399,531 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial render for Medical Stream
     renderStream('medical');
   }
+
+  // =========================================================
+  // FALLING CHINAR LEAVES ANIMATION
+  // =========================================================
+  function createFallingLeaf() {
+    const wrapper = document.getElementById('autumnWrapper');
+    if (!wrapper) return;
+    
+    const leaf = document.createElement('div');
+    leaf.innerHTML = '🍁';
+    leaf.className = 'falling-leaf';
+    
+    leaf.style.left = Math.random() * 100 + '%';
+    leaf.style.fontSize = (Math.random() * 12 + 16) + 'px'; 
+    leaf.style.animationDuration = (Math.random() * 3 + 3) + 's'; 
+    
+    wrapper.appendChild(leaf);
+    
+    setTimeout(() => {
+      leaf.remove();
+    }, 6000);
+  }
+  // =========================================================
+  // MODEL PAPERS POPUP MODAL CONTROLLER
+  // =========================================================
+
+  const modelModalOverlay = document.getElementById('modelModalOverlay');
+  const modalStreamTitle = document.getElementById('modalStreamTitle');
+  const modalStreamSubtitle = document.getElementById('modalStreamSubtitle');
+  const modalPapersList = document.getElementById('modalPapersList');
+
+  const MODEL_PAPERS_DATA = {
+    'c10-eng': {
+      title: 'Class 10th • English & Urdu',
+      subtitle: 'Official Model Question Papers for Board Examination',
+      papers: [
+        {
+          name: 'General English (Tulip Series Book X)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-10-general-english-model-paper.pdf',
+          icon: 'fa-book-open',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: 'Baharistan-e-Urdu model paper is being uploaded shortly.'
+    },
+    'c10-sci': {
+      title: 'Class 10th • Science',
+      subtitle: 'Official Model Question Paper for Board Examination',
+      papers: [
+        {
+          name: 'Science (Physics, Chemistry & Biology)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-10-science-model-paper.pdf',
+          icon: 'fa-atom',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: ''
+    },
+    'c10-math': {
+      title: 'Class 10th • Mathematics',
+      subtitle: 'Official Model Question Paper for Board Examination',
+      papers: [
+        {
+          name: 'Mathematics',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-10-mathematics-model-paper.pdf',
+          icon: 'fa-calculator',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: ''
+    },
+    'c10-sst': {
+      title: 'Class 10th • Social Science',
+      subtitle: 'Official Model Question Paper for Board Examination',
+      papers: [
+        {
+          name: 'Social Science (History, Civics, Geography, Economics)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-10-social-science-model-paper.pdf',
+          icon: 'fa-earth-americas',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: ''
+    },
+    '11-med': {
+      title: 'Class 11th • Medical Science',
+      subtitle: 'Faculty of Science (Medical Stream)',
+      papers: [
+        {
+          name: 'Physics',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-physics-model-paper.pdf',
+          icon: 'fa-bolt',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Chemistry (Core Science)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-chemistry-model-paper.pdf',
+          icon: 'fa-flask',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Botany (Section A of Biology)',
+          marks: '35 Marks (Theory) • 1½ Hours',
+          file: 'model-papers/class-11-botany-model-paper.pdf',
+          icon: 'fa-seedling',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Zoology (Section B of Biology)',
+          marks: '35 Marks (Theory) • 1½ Hours',
+          file: 'model-papers/class-11-zoology-model-paper.pdf',
+          icon: 'fa-paw',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'General English (Compulsory for All Streams)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-general-english-model-paper.pdf',
+          icon: 'fa-book-bookmark',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Information Practices (IP - Elective)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-information-practices-model-paper.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Elective / Additional'
+        },
+        {
+          name: 'Physical Education (Theory Paper)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-physical-education-model-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: ''
+    },
+    '11-nonmed': {
+      title: 'Class 11th • Non-Medical Science',
+      subtitle: 'Faculty of Science (Non-Medical Stream)',
+      papers: [
+        {
+          name: 'Mathematics (Core Subject)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-mathematics-model-paper.pdf',
+          icon: 'fa-calculator',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Physics',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-physics-model-paper.pdf',
+          icon: 'fa-bolt',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Chemistry (Core Science)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-chemistry-model-paper.pdf',
+          icon: 'fa-flask',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Statistics (Mathematical Sciences)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-statistics-model-paper.pdf',
+          icon: 'fa-chart-simple',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'General English (Compulsory for All Streams)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-general-english-model-paper.pdf',
+          icon: 'fa-book-bookmark',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Information Practices (IP - Elective)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-information-practices-model-paper.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Elective / Additional'
+        },
+        {
+          name: 'Physical Education (Theory Paper)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-physical-education-model-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: ''
+    },
+    '11-comm': {
+      title: 'Class 11th • Commerce Stream',
+      subtitle: 'Faculty of Commerce',
+      papers: [
+        {
+          name: 'Business Studies',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-business-studies-model-paper.pdf',
+          icon: 'fa-briefcase',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Economics (Part A: Statistics & Part B: IED)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-economics-model-paper.pdf',
+          icon: 'fa-chart-pie',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Statistics (Core Commerce Subject)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-statistics-model-paper.pdf',
+          icon: 'fa-chart-simple',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'General English (Compulsory for All Streams)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-general-english-model-paper.pdf',
+          icon: 'fa-book-bookmark',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Information Practices (IP - Elective)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-information-practices-model-paper.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Elective / Additional'
+        },
+        {
+          name: 'Physical Education (Theory Paper)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-physical-education-model-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: 'Accountancy (80m) model paper will be added as soon as released by JKBOSE.'
+    },
+    '11-arts': {
+      title: 'Class 11th • Arts & Humanities',
+      subtitle: 'Faculty of Humanities',
+      papers: [
+        {
+          name: 'Political Science',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-political-science-model-paper.pdf',
+          icon: 'fa-landmark',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'History (Themes in World History)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-history-model-paper.pdf',
+          icon: 'fa-scroll',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Economics (Elective / Core with Statistics)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-economics-model-paper.pdf',
+          icon: 'fa-chart-pie',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Statistics (Core / Elective Arts Subject)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-statistics-model-paper.pdf',
+          icon: 'fa-chart-simple',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'General English (Compulsory for All Streams)',
+          marks: '80 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-general-english-model-paper.pdf',
+          icon: 'fa-book-bookmark',
+          badge: 'Official JKBOSE Paper'
+        },
+        {
+          name: 'Information Practices (IP - Elective)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-information-practices-model-paper.pdf',
+          icon: 'fa-laptop-code',
+          badge: 'Elective / Additional'
+        },
+        {
+          name: 'Physical Education (Theory Paper)',
+          marks: '70 Marks (Theory) • 3 Hours',
+          file: 'model-papers/class-11-physical-education-model-paper.pdf',
+          icon: 'fa-person-running',
+          badge: 'Official JKBOSE Paper'
+        }
+      ],
+      pending: 'Sociology, Psychology, Education & Geography model papers are being processed.'
+    }
+  };
+
+  window.openModelModal = function(contextKey) {
+    const data = MODEL_PAPERS_DATA[contextKey];
+    if (!data || !modelModalOverlay) return;
+
+    modalStreamTitle.textContent = data.title;
+    modalStreamSubtitle.textContent = data.subtitle;
+
+    let html = '';
+    if (data.papers.length > 0) {
+      data.papers.forEach(p => {
+        html += `
+          <div class="modal-paper-item">
+            <div class="item-info">
+              <div class="item-icon">
+                <i class="fa-solid ${p.icon}"></i>
+              </div>
+              <div class="item-text">
+                <h4>${p.name}</h4>
+                <p><i class="fa-regular fa-clock"></i> ${p.marks}</p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <a href="${p.file}" target="_blank" class="item-btn-open">
+                <i class="fa-solid fa-eye"></i> View
+              </a>
+              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    if (data.pending) {
+      html += `
+        <div class="item-notice-box">
+          <i class="fa-solid fa-circle-info" style="font-size: 20px;"></i>
+          <div>${data.pending}</div>
+        </div>
+      `;
+    }
+
+    modalPapersList.innerHTML = html;
+    modelModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeModelModalDirect = function() {
+    if (modelModalOverlay) {
+      modelModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.closeModelModal = function(e) {
+    if (e.target === modelModalOverlay) {
+      closeModelModalDirect();
+    }
+  };
+
+  // =========================================================
+  // CRUCIAL YEAR-END QUESTIONS (CYQS) MODAL CONTROLLER
+  // =========================================================
+
+  const cyqModalOverlay = document.getElementById('cyqModalOverlay');
+  const modalCyqTitle = document.getElementById('modalCyqTitle');
+  const modalCyqSubtitle = document.getElementById('modalCyqSubtitle');
+  const modalCyqList = document.getElementById('modalCyqList');
+
+  const CYQ_DATA = {
+    '11-med': {
+      title: 'Class 11th • Medical Science CYQs',
+      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam Question Bank)',
+      papers: [
+        {
+          name: 'Class 11th Physics CYQs (Q1 to Q246)',
+          marks: 'Complete Physics Theory & Numerical Bank • 12 Units',
+          file: 'cyqs/class-11-physics-important-questions.pdf',
+          icon: 'fa-bolt',
+          badge: 'High Priority CYQ'
+        },
+        {
+          name: 'Class 11th Botany CYQs (Q1 to Q48)',
+          marks: 'Section A: Botany • All Units & Crucial Topics',
+          file: 'cyqs/class-11-botany-important-questions.pdf',
+          icon: 'fa-seedling',
+          badge: 'High Priority CYQ'
+        },
+        {
+          name: 'Class 11th Zoology CYQs (Q49 to Q146)',
+          marks: 'Section B: Zoology • All Units & Crucial Topics',
+          file: 'cyqs/class-11-zoology-important-questions.pdf',
+          icon: 'fa-dna',
+          badge: 'High Priority CYQ'
+        }
+      ],
+      notice: 'Chemistry CYQ question bank is currently being prepared and will be added here shortly.'
+    },
+    '11-nonmed': {
+      title: 'Class 11th • Non-Medical Science CYQs',
+      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam Question Bank)',
+      papers: [
+        {
+          name: 'Class 11th Physics CYQs (Q1 to Q246)',
+          marks: 'Complete Physics Theory & Numerical Bank • 12 Units',
+          file: 'cyqs/class-11-physics-important-questions.pdf',
+          icon: 'fa-bolt',
+          badge: 'High Priority CYQ'
+        }
+      ],
+      notice: 'Class 11th Mathematics & Chemistry CYQs are currently being updated according to the 2025-26 board pattern.'
+    },
+    '11-comm': {
+      title: 'Class 11th • Commerce Stream CYQs',
+      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam)',
+      papers: [],
+      notice: 'Class 11th Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
+    },
+    '11-arts': {
+      title: 'Class 11th • Arts & Humanities CYQs',
+      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam)',
+      papers: [],
+      notice: 'Class 11th Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
+    },
+    'c10-sci': {
+      title: 'Class 10th • Science CYQs',
+      subtitle: 'Crucial Year-End Questions (Physics, Chemistry, Life Processes)',
+      papers: [],
+      notice: 'Class 10th Science Crucial Questions bank is currently being formatted for PDF release.'
+    },
+    'c10-math': {
+      title: 'Class 10th • Mathematics CYQs',
+      subtitle: 'Crucial Theorem Proofs & High-Yield Numerical Questions',
+      papers: [],
+      notice: 'Class 10th Mathematics high-yield problem collection will be uploaded here soon.'
+    },
+    'c10-sst': {
+      title: 'Class 10th • Social Science CYQs',
+      subtitle: 'Crucial Board Questions (History, Civics, Geography, J&K)',
+      papers: [],
+      notice: 'Class 10th Social Science 2025-26 revision question bank will be live soon.'
+    },
+    'c10-eng': {
+      title: 'Class 10th • English & Urdu CYQs',
+      subtitle: 'Crucial Literature Questions & Writing Skills Formats',
+      papers: [],
+      notice: 'Class 10th English & Urdu question compilations are being prepared.'
+    }
+  };
+
+  window.openCyqModal = function(contextKey) {
+    const data = CYQ_DATA[contextKey];
+    if (!data || !cyqModalOverlay) return;
+
+    if (modalCyqTitle) modalCyqTitle.textContent = data.title;
+    if (modalCyqSubtitle) modalCyqSubtitle.textContent = data.subtitle;
+
+    let html = '';
+    if (data.papers && data.papers.length > 0) {
+      data.papers.forEach(p => {
+        html += `
+          <div class="modal-paper-item">
+            <div class="item-info">
+              <div class="item-icon" style="background: #ecfdf5; color: #059669;">
+                <i class="fa-solid ${p.icon}"></i>
+              </div>
+              <div class="item-text">
+                <h4>${p.name}</h4>
+                <p><i class="fa-regular fa-bookmark" style="color: #059669;"></i> ${p.marks}</p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <a href="${p.file}" target="_blank" class="item-btn-open" style="background: #059669;">
+                <i class="fa-solid fa-eye"></i> View
+              </a>
+              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    if (data.notice) {
+      html += `
+        <div class="item-notice-box" style="background: #f0fdf4; border-color: #bbf7d0; color: #166534;">
+          <i class="fa-solid fa-circle-info" style="font-size: 20px; color: #16a34a;"></i>
+          <div>${data.notice}</div>
+        </div>
+      `;
+    }
+
+    if (modalCyqList) modalCyqList.innerHTML = html;
+    cyqModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeCyqModalDirect = function() {
+    if (cyqModalOverlay) {
+      cyqModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.closeCyqModal = function(e) {
+    if (e.target === cyqModalOverlay) {
+      closeCyqModalDirect();
+    }
+  };
+
+  // Close modals on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModelModalDirect();
+      closeCyqModalDirect();
+    }
+  });
+
 });

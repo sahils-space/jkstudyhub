@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sahils-space.github.io/jkstudyhub/sitemap.xml
+Sitemap: https://jkstudyhub.online/sitemap.xml
