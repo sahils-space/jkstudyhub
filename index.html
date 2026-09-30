@@ -22,7 +22,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 
@@ -52,6 +52,49 @@
           <li><a href="#contact" class="nav-item">Contact Us</a></li>
           <li><a href="https://jkbose.jk.gov.in" target="_blank" rel="noopener" class="nav-item jkbose-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> JKBOSE Official</a></li>
         </ul>
+
+        <!-- Study Library & User Auth Cluster -->
+        <div class="nav-auth-cluster">
+          <button type="button" class="nav-library-btn" id="navLibraryBtn" onclick="openLibraryModal()" title="View your study history and bookmarked papers">
+            <i class="fa-solid fa-book-bookmark"></i>
+            <span>My Library</span>
+            <span class="library-badge" id="libraryBadge">0</span>
+          </button>
+
+          <!-- Google Sign In Button (Logged Out State) -->
+          <button type="button" class="btn-google-auth" id="btnGoogleLogin" onclick="handleGoogleSignIn()" title="Sign in with your Google Account">
+            <svg class="google-icon" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span class="auth-btn-text">Sign In</span>
+          </button>
+
+          <!-- User Profile Dropdown (Logged In State) -->
+          <div class="user-profile-menu" id="userProfileMenu" style="display: none;">
+            <button type="button" class="user-avatar-btn" id="userAvatarBtn" onclick="toggleUserDropdown()" aria-label="User Account Menu">
+              <img src="" alt="Student Avatar" id="userAvatarImg" class="user-avatar-img">
+              <span class="user-first-name" id="userFirstName">Student</span>
+              <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="user-dropdown-card" id="userDropdownCard">
+              <div class="dropdown-header">
+                <p class="dropdown-user-name" id="dropdownUserName">Student Name</p>
+                <p class="dropdown-user-email" id="dropdownUserEmail">student@email.com</p>
+                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Google Verified</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item" onclick="openLibraryModal(); toggleUserDropdown();">
+                <i class="fa-solid fa-bookmark" style="color: var(--primary-blue);"></i> My Saved Library
+              </button>
+              <button type="button" class="dropdown-item dropdown-logout" onclick="handleGoogleSignOut()">
+                <i class="fa-solid fa-arrow-right-from-bracket" style="color: #ef4444;"></i> Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
   </header>
@@ -403,6 +446,53 @@
       </div>
     </div>
   </div>
+
+  <!-- 4. MY STUDY LIBRARY MODAL (Bookmarked Papers & Download History) -->
+  <div class="modal-overlay" id="libraryModalOverlay" onclick="closeLibraryModal(event)">
+    <div class="modal-card library-modal-card" id="libraryModalCard">
+      <div class="modal-header library-header">
+        <div class="modal-title-wrap">
+          <div class="library-header-top">
+            <span class="library-tag"><i class="fa-solid fa-graduation-cap"></i> Student Study Desk</span>
+            <div class="sync-pill" id="librarySyncPill">
+              <i class="fa-solid fa-circle-dot"></i> <span id="syncPillText">Local Storage</span>
+            </div>
+          </div>
+          <h3 style="margin-top: 4px;">My Study Library</h3>
+          <p>Access your saved bookmarks, revision papers, and recently downloaded study files</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeLibraryModalDirect()">&times;</button>
+      </div>
+
+      <!-- Library Navigation Tabs -->
+      <div class="library-tabs-bar">
+        <button type="button" class="lib-tab-btn active" id="tabBookmarksBtn" onclick="switchLibraryTab('bookmarks')">
+          <i class="fa-solid fa-star"></i> Saved Papers (<span id="libBookmarksCount">0</span>)
+        </button>
+        <button type="button" class="lib-tab-btn" id="tabHistoryBtn" onclick="switchLibraryTab('history')">
+          <i class="fa-solid fa-clock-rotate-left"></i> Download History (<span id="libHistoryCount">0</span>)
+        </button>
+      </div>
+
+      <div class="modal-body library-body" id="libraryModalBody">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+
+      <div class="modal-footer library-footer">
+        <div class="lib-footer-info" id="libFooterInfo">
+          <i class="fa-solid fa-shield-halved" style="color: #059669;"></i>
+          <span>Auto-saved to your personal profile</span>
+        </div>
+        <div class="lib-footer-actions">
+          <button type="button" class="btn-lib-clear" onclick="confirmClearHistory()">
+            <i class="fa-regular fa-trash-can"></i> Clear History
+          </button>
+          <button type="button" class="btn-lib-close" onclick="closeLibraryModalDirect()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <section class="section ceo-section" id="ceo">
     <div class="container">
       <div class="section-header">
@@ -578,8 +668,13 @@
     </div>
   </footer>
 
+  <!-- Firebase SDK (Compat Libraries for Web) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
   <!-- Syllabus Dataset & Main JavaScript File -->
   <script src="syllabus-data.js?v=2"></script>
-  <script src="script.js?v=16"></script>
+  <script src="script.js?v=17"></script>
 </body>
 </html>

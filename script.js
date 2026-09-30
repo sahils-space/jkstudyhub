@@ -715,6 +715,157 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // =========================================================
+  // STUDENT STUDY LIBRARY (STORAGE & BOOKMARKS ENGINE)
+  // =========================================================
+  const StudyLibrary = {
+    BOOKMARKS_KEY: 'jk_study_bookmarks',
+    HISTORY_KEY: 'jk_study_history',
+
+    getBookmarks: function() {
+      try {
+        return JSON.parse(localStorage.getItem(this.BOOKMARKS_KEY)) || [];
+      } catch (e) {
+        return [];
+      }
+    },
+
+    isBookmarked: function(file) {
+      if (!file) return false;
+      const list = this.getBookmarks();
+      return list.some(item => item.file === file);
+    },
+
+    toggleBookmark: function(paper) {
+      if (!paper || !paper.file) return false;
+      let list = this.getBookmarks();
+      const idx = list.findIndex(item => item.file === paper.file);
+      let isSaved = false;
+
+      if (idx >= 0) {
+        list.splice(idx, 1);
+        isSaved = false;
+      } else {
+        list.unshift({
+          name: paper.name,
+          file: paper.file,
+          marks: paper.marks || '',
+          icon: paper.icon || 'fa-file-pdf',
+          type: paper.type || 'Study Material',
+          timestamp: Date.now()
+        });
+        isSaved = true;
+      }
+
+      localStorage.setItem(this.BOOKMARKS_KEY, JSON.stringify(list));
+      this.updateBadges();
+      this.syncToCloud();
+      return isSaved;
+    },
+
+    getHistory: function() {
+      try {
+        return JSON.parse(localStorage.getItem(this.HISTORY_KEY)) || [];
+      } catch (e) {
+        return [];
+      }
+    },
+
+    recordHistory: function(paper, action) {
+      if (!paper || !paper.file) return;
+      let list = this.getHistory();
+      list = list.filter(item => item.file !== paper.file);
+      list.unshift({
+        name: paper.name,
+        file: paper.file,
+        marks: paper.marks || '',
+        icon: paper.icon || 'fa-file-pdf',
+        action: action || 'Viewed',
+        timestamp: Date.now()
+      });
+
+      if (list.length > 40) list = list.slice(0, 40);
+      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(list));
+      this.updateBadges();
+      this.syncToCloud();
+    },
+
+    clearHistory: function() {
+      localStorage.removeItem(this.HISTORY_KEY);
+      this.updateBadges();
+      this.syncToCloud();
+    },
+
+    updateBadges: function() {
+      const badge = document.getElementById('libraryBadge');
+      const bCount = document.getElementById('libBookmarksCount');
+      const hCount = document.getElementById('libHistoryCount');
+      const bookmarks = this.getBookmarks();
+      const history = this.getHistory();
+
+      if (badge) {
+        badge.textContent = bookmarks.length;
+        badge.style.display = bookmarks.length > 0 ? 'inline-flex' : 'none';
+      }
+      if (bCount) bCount.textContent = bookmarks.length;
+      if (hCount) hCount.textContent = history.length;
+    },
+
+    syncToCloud: function() {
+      if (window.currentUser && window.db && window.currentUser.uid) {
+        const pillText = document.getElementById('syncPillText');
+        if (pillText) pillText.textContent = 'Syncing...';
+        window.db.collection('student_libraries').doc(window.currentUser.uid).set({
+          bookmarks: this.getBookmarks(),
+          history: this.getHistory(),
+          updatedAt: Date.now()
+        }, { merge: true }).then(() => {
+          if (pillText) pillText.textContent = 'Cloud Synced';
+        }).catch(err => {
+          console.warn('Sync notice:', err.message);
+        });
+      }
+    }
+  };
+
+  function generatePaperItemHtml(p, badgeColor, badgeBg, paperType) {
+    const isStarred = StudyLibrary.isBookmarked(p.file);
+    const starClass = isStarred ? 'bookmarked' : '';
+    const starIcon = isStarred ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    const safeData = encodeURIComponent(JSON.stringify({
+      name: p.name,
+      file: p.file,
+      marks: p.marks || '',
+      icon: p.icon || 'fa-file-pdf',
+      type: paperType || 'Board Paper'
+    }));
+
+    return `
+      <div class="modal-paper-item">
+        <div class="item-info">
+          <div class="item-icon" style="background: ${badgeBg}; color: ${badgeColor};">
+            <i class="fa-solid ${p.icon}"></i>
+          </div>
+          <div class="item-text">
+            <h4>${p.name}</h4>
+            <p><i class="fa-regular fa-bookmark" style="color: ${badgeColor};"></i> ${p.marks}</p>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button type="button" class="item-btn-star ${starClass}" onclick="handlePaperStarToggle(this, '${safeData}')" title="${isStarred ? 'Remove from Saved' : 'Save / Bookmark paper'}">
+            <i class="${starIcon}"></i>
+          </button>
+          <a href="${p.file}" target="_blank" class="item-btn-open" style="background: ${badgeColor};" onclick="handlePaperAccess('${safeData}', 'Viewed')">
+            <i class="fa-solid fa-eye"></i> View
+          </a>
+          <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF" onclick="handlePaperAccess('${safeData}', 'Downloaded')">
+            <i class="fa-solid fa-download"></i>
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
   window.openModelModal = function(contextKey) {
     const data = MODEL_PAPERS_DATA[contextKey];
     if (!data || !modelModalOverlay) return;
@@ -725,27 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     if (data.papers.length > 0) {
       data.papers.forEach(p => {
-        html += `
-          <div class="modal-paper-item">
-            <div class="item-info">
-              <div class="item-icon">
-                <i class="fa-solid ${p.icon}"></i>
-              </div>
-              <div class="item-text">
-                <h4>${p.name}</h4>
-                <p><i class="fa-regular fa-clock"></i> ${p.marks}</p>
-              </div>
-            </div>
-            <div class="item-actions">
-              <a href="${p.file}" target="_blank" class="item-btn-open">
-                <i class="fa-solid fa-eye"></i> View
-              </a>
-              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF">
-                <i class="fa-solid fa-download"></i>
-              </a>
-            </div>
-          </div>
-        `;
+        html += generatePaperItemHtml(p, 'var(--primary-blue)', '#dbeafe', 'Official Model Paper');
       });
     }
 
@@ -890,27 +1021,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     if (data.papers && data.papers.length > 0) {
       data.papers.forEach(p => {
-        html += `
-          <div class="modal-paper-item">
-            <div class="item-info">
-              <div class="item-icon" style="background: #ecfdf5; color: #059669;">
-                <i class="fa-solid ${p.icon}"></i>
-              </div>
-              <div class="item-text">
-                <h4>${p.name}</h4>
-                <p><i class="fa-regular fa-bookmark" style="color: #059669;"></i> ${p.marks}</p>
-              </div>
-            </div>
-            <div class="item-actions">
-              <a href="${p.file}" target="_blank" class="item-btn-open" style="background: #059669;">
-                <i class="fa-solid fa-eye"></i> View
-              </a>
-              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF">
-                <i class="fa-solid fa-download"></i>
-              </a>
-            </div>
-          </div>
-        `;
+        html += generatePaperItemHtml(p, '#059669', '#ecfdf5', 'Crucial Questions (CYQ)');
       });
     }
 
@@ -1282,27 +1393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     if (data.papers && data.papers.length > 0) {
       data.papers.forEach(p => {
-        html += `
-          <div class="modal-paper-item">
-            <div class="item-info">
-              <div class="item-icon" style="background: #fff7ed; color: #ea580c;">
-                <i class="fa-solid ${p.icon}"></i>
-              </div>
-              <div class="item-text">
-                <h4>${p.name}</h4>
-                <p><i class="fa-regular fa-bookmark" style="color: #ea580c;"></i> ${p.marks}</p>
-              </div>
-            </div>
-            <div class="item-actions">
-              <a href="${p.file}" target="_blank" class="item-btn-open" style="background: #ea580c;">
-                <i class="fa-solid fa-eye"></i> View
-              </a>
-              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF">
-                <i class="fa-solid fa-download"></i>
-              </a>
-            </div>
-          </div>
-        `;
+        html += generatePaperItemHtml(p, '#ea580c', '#fff7ed', 'Previous Year Paper (PYQ)');
       });
     }
 
@@ -1333,12 +1424,356 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // =========================================================
+  // PAPER ACTIONS: STAR BOOKMARK & ACCESS TRACKING
+  // =========================================================
+  window.handlePaperStarToggle = function(btn, encodedData) {
+    try {
+      const paper = JSON.parse(decodeURIComponent(encodedData));
+      const isSaved = StudyLibrary.toggleBookmark(paper);
+      if (btn) {
+        if (isSaved) {
+          btn.classList.add('bookmarked');
+          btn.innerHTML = '<i class="fa-solid fa-star"></i>';
+          btn.title = 'Remove from Saved';
+        } else {
+          btn.classList.remove('bookmarked');
+          btn.innerHTML = '<i class="fa-regular fa-star"></i>';
+          btn.title = 'Save / Bookmark paper';
+        }
+      }
+
+      // If My Library modal is currently active, live-refresh its view
+      const libModal = document.getElementById('libraryModalOverlay');
+      if (libModal && libModal.classList.contains('active')) {
+        renderLibraryContent();
+      }
+    } catch(err) {
+      console.warn("Bookmark toggle error:", err);
+    }
+  };
+
+  window.handlePaperAccess = function(encodedData, action) {
+    try {
+      const paper = JSON.parse(decodeURIComponent(encodedData));
+      StudyLibrary.recordHistory(paper, action);
+    } catch (err) {
+      console.warn("Record history error:", err);
+    }
+  };
+
+  // =========================================================
+  // MY STUDY LIBRARY MODAL CONTROLLER
+  // =========================================================
+  let currentLibraryTab = 'bookmarks';
+
+  function formatTimeAgo(timestamp) {
+    if (!timestamp) return 'Recently';
+    const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+    if (diffSec < 60) return 'Just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr}h ago`;
+    const diffDays = Math.floor(diffHr / 24);
+    return `${diffDays}d ago`;
+  }
+
+  window.openLibraryModal = function() {
+    const modal = document.getElementById('libraryModalOverlay');
+    if (!modal) return;
+    StudyLibrary.updateBadges();
+    window.switchLibraryTab(currentLibraryTab);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeLibraryModalDirect = function() {
+    const modal = document.getElementById('libraryModalOverlay');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.closeLibraryModal = function(e) {
+    const modal = document.getElementById('libraryModalOverlay');
+    if (e.target === modal) {
+      closeLibraryModalDirect();
+    }
+  };
+
+  window.switchLibraryTab = function(tabName) {
+    currentLibraryTab = tabName;
+    const tabBookmarksBtn = document.getElementById('tabBookmarksBtn');
+    const tabHistoryBtn = document.getElementById('tabHistoryBtn');
+    if (tabBookmarksBtn && tabHistoryBtn) {
+      if (tabName === 'bookmarks') {
+        tabBookmarksBtn.classList.add('active');
+        tabHistoryBtn.classList.remove('active');
+      } else {
+        tabHistoryBtn.classList.add('active');
+        tabBookmarksBtn.classList.remove('active');
+      }
+    }
+    renderLibraryContent();
+  };
+
+  function renderLibraryContent() {
+    const container = document.getElementById('libraryModalBody');
+    if (!container) return;
+
+    StudyLibrary.updateBadges();
+
+    if (currentLibraryTab === 'bookmarks') {
+      const bookmarks = StudyLibrary.getBookmarks();
+      if (bookmarks.length === 0) {
+        container.innerHTML = `
+          <div class="lib-empty-state">
+            <div class="lib-empty-icon"><i class="fa-regular fa-star"></i></div>
+            <h4>No Saved Papers Yet</h4>
+            <p>Click the <i class="fa-solid fa-star" style="color: #f59e0b;"></i> star icon next to any PYQ or CYQ paper to save it here for quick revision before exams.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = bookmarks.map(p => {
+        const safeData = encodeURIComponent(JSON.stringify(p));
+        return `
+          <div class="modal-paper-item">
+            <div class="item-info">
+              <div class="item-icon" style="background: #fef3c7; color: #d97706;">
+                <i class="fa-solid ${p.icon || 'fa-file-pdf'}"></i>
+              </div>
+              <div class="item-text">
+                <h4>${p.name}</h4>
+                <p><i class="fa-regular fa-bookmark" style="color: #d97706;"></i> ${p.marks || 'Saved Paper'} • <span style="color: #94a3b8;">${formatTimeAgo(p.timestamp)}</span></p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <button type="button" class="item-btn-star bookmarked" onclick="handlePaperStarToggle(this, '${safeData}')" title="Remove from Saved">
+                <i class="fa-solid fa-star"></i>
+              </button>
+              <a href="${p.file}" target="_blank" class="item-btn-open" style="background: var(--primary-blue);" onclick="handlePaperAccess('${safeData}', 'Viewed')">
+                <i class="fa-solid fa-eye"></i> View
+              </a>
+              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF" onclick="handlePaperAccess('${safeData}', 'Downloaded')">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } else {
+      const history = StudyLibrary.getHistory();
+      if (history.length === 0) {
+        container.innerHTML = `
+          <div class="lib-empty-state">
+            <div class="lib-empty-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <h4>No Download History Yet</h4>
+            <p>Papers you view or download from any class or stream will automatically appear here so you can access them again quickly.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = history.map(p => {
+        const isStarred = StudyLibrary.isBookmarked(p.file);
+        const starClass = isStarred ? 'bookmarked' : '';
+        const starIcon = isStarred ? 'fa-solid fa-star' : 'fa-regular fa-star';
+        const safeData = encodeURIComponent(JSON.stringify(p));
+        const actionBadge = p.action === 'Downloaded' 
+          ? '<span style="color: #059669; font-weight: 700;"><i class="fa-solid fa-arrow-down"></i> Downloaded</span>'
+          : '<span style="color: #2563eb; font-weight: 700;"><i class="fa-solid fa-eye"></i> Opened</span>';
+
+        return `
+          <div class="modal-paper-item">
+            <div class="item-info">
+              <div class="item-icon" style="background: #eff6ff; color: var(--primary-blue);">
+                <i class="fa-solid ${p.icon || 'fa-file-pdf'}"></i>
+              </div>
+              <div class="item-text">
+                <h4>${p.name}</h4>
+                <p>${actionBadge} • ${formatTimeAgo(p.timestamp)}</p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <button type="button" class="item-btn-star ${starClass}" onclick="handlePaperStarToggle(this, '${safeData}')" title="${isStarred ? 'Remove from Saved' : 'Save / Bookmark paper'}">
+                <i class="${starIcon}"></i>
+              </button>
+              <a href="${p.file}" target="_blank" class="item-btn-open" style="background: var(--primary-blue);" onclick="handlePaperAccess('${safeData}', 'Viewed')">
+                <i class="fa-solid fa-eye"></i> View
+              </a>
+              <a href="${p.file}" download class="item-btn-open" style="background: var(--primary-navy);" title="Download PDF" onclick="handlePaperAccess('${safeData}', 'Downloaded')">
+                <i class="fa-solid fa-download"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  window.confirmClearHistory = function() {
+    if (confirm("Are you sure you want to clear your download and viewing history?")) {
+      StudyLibrary.clearHistory();
+      renderLibraryContent();
+    }
+  };
+
+  // =========================================================
+  // USER AUTHENTICATION & GOOGLE SIGN-IN CONTROLLER
+  // =========================================================
+  window.currentUser = null;
+
+  function setLoggedInUser(user) {
+    window.currentUser = user;
+    localStorage.setItem('jk_study_user', JSON.stringify(user));
+
+    const btnLogin = document.getElementById('btnGoogleLogin');
+    const userProfileMenu = document.getElementById('userProfileMenu');
+    const userAvatarImg = document.getElementById('userAvatarImg');
+    const userFirstName = document.getElementById('userFirstName');
+    const dropdownUserName = document.getElementById('dropdownUserName');
+    const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+    const syncPill = document.getElementById('librarySyncPill');
+    const syncPillText = document.getElementById('syncPillText');
+
+    if (btnLogin) btnLogin.style.display = 'none';
+    if (userProfileMenu) userProfileMenu.style.display = 'block';
+
+    const firstName = (user.displayName || 'Student').split(' ')[0];
+    if (userFirstName) userFirstName.textContent = firstName;
+    if (userAvatarImg) userAvatarImg.src = user.photoURL || 'ceo-placeholder.svg';
+    if (dropdownUserName) dropdownUserName.textContent = user.displayName || 'Student';
+    if (dropdownUserEmail) dropdownUserEmail.textContent = user.email || 'Google Account';
+
+    if (syncPill) syncPill.classList.remove('local');
+    if (syncPillText) syncPillText.textContent = 'Cloud Synced';
+
+    // Sync cloud bookmarks if firestore available
+    if (window.db && user.uid) {
+      window.db.collection('student_libraries').doc(user.uid).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.bookmarks) localStorage.setItem(StudyLibrary.BOOKMARKS_KEY, JSON.stringify(data.bookmarks));
+          if (data.history) localStorage.setItem(StudyLibrary.HISTORY_KEY, JSON.stringify(data.history));
+          StudyLibrary.updateBadges();
+        }
+      }).catch(err => console.warn(err));
+    }
+  }
+
+  function setLoggedOutState() {
+    window.currentUser = null;
+    localStorage.removeItem('jk_study_user');
+
+    const btnLogin = document.getElementById('btnGoogleLogin');
+    const userProfileMenu = document.getElementById('userProfileMenu');
+    const syncPill = document.getElementById('librarySyncPill');
+    const syncPillText = document.getElementById('syncPillText');
+
+    if (btnLogin) btnLogin.style.display = 'inline-flex';
+    if (userProfileMenu) userProfileMenu.style.display = 'none';
+
+    if (syncPill) syncPill.classList.add('local');
+    if (syncPillText) syncPillText.textContent = 'Local Storage';
+  }
+
+  window.handleGoogleSignIn = function() {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(res => {
+        setLoggedInUser({
+          displayName: res.user.displayName,
+          email: res.user.email,
+          photoURL: res.user.photoURL,
+          uid: res.user.uid
+        });
+      }).catch(err => {
+        console.warn("Google popup auth:", err.message);
+        const name = prompt("Welcome to JK Study Hub! Enter your name for your personalized Study Desk:", "Student");
+        if (name && name.trim()) {
+          setLoggedInUser({
+            displayName: name.trim(),
+            email: `${name.trim().toLowerCase().replace(/\\s+/g, '')}@student.jkstudyhub.online`,
+            photoURL: 'ceo-placeholder.svg',
+            uid: 'student_' + Date.now()
+          });
+        }
+      });
+    } else {
+      const name = prompt("Welcome to JK Study Hub! Enter your name for your personalized Study Desk:", "Student");
+      if (name && name.trim()) {
+        setLoggedInUser({
+          displayName: name.trim(),
+          email: `${name.trim().toLowerCase().replace(/\\s+/g, '')}@student.jkstudyhub.online`,
+          photoURL: 'ceo-placeholder.svg',
+          uid: 'student_' + Date.now()
+        });
+      }
+    }
+  };
+
+  window.handleGoogleSignOut = function() {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      firebase.auth().signOut().then(() => {
+        setLoggedOutState();
+        window.toggleUserDropdown(false);
+      }).catch(() => {
+        setLoggedOutState();
+        window.toggleUserDropdown(false);
+      });
+    } else {
+      setLoggedOutState();
+      window.toggleUserDropdown(false);
+    }
+  };
+
+  window.toggleUserDropdown = function(forceClose) {
+    const card = document.getElementById('userDropdownCard');
+    if (!card) return;
+    if (forceClose === false) {
+      card.classList.remove('show');
+    } else {
+      card.classList.toggle('show');
+    }
+  };
+
+  // Check saved session on load
+  try {
+    const savedUser = JSON.parse(localStorage.getItem('jk_study_user'));
+    if (savedUser) {
+      setLoggedInUser(savedUser);
+    } else {
+      setLoggedOutState();
+    }
+  } catch(e) {
+    setLoggedOutState();
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    const userProfileMenu = document.getElementById('userProfileMenu');
+    const userDropdownCard = document.getElementById('userDropdownCard');
+    if (userProfileMenu && userDropdownCard && !userProfileMenu.contains(e.target)) {
+      userDropdownCard.classList.remove('show');
+    }
+  });
+
+  // Initialize Library Badges
+  StudyLibrary.updateBadges();
+
   // Close modals on Escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       closeModelModalDirect();
       closeCyqModalDirect();
       closePyqModalDirect();
+      closeLibraryModalDirect();
+      window.toggleUserDropdown(false);
     }
   });
 
