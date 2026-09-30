@@ -1247,9 +1247,16 @@ document.addEventListener('DOMContentLoaded', () => {
           file: 'pyqs/class-10-mathematics-pyq-series-x-hardzone-2025.pdf',
           icon: 'fa-square-root-variable',
           badge: 'Hard Zone (403-X)'
+        },
+        {
+          name: 'Class 10th Mathematics (Half-Yearly Examination Paper)',
+          marks: 'Comprehensive Half-Yearly Exam • 40 Questions • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-half-yearly-paper.pdf',
+          icon: 'fa-file-lines',
+          badge: 'Half-Yearly Exam'
         }
       ],
-      notice: 'All Class 10th Mathematics multi-year & multi-series official board papers (2025, 2024, 2023, Hard Zone) are verified and available.'
+      notice: 'All Class 10th Mathematics board papers (Series X, Y, Z across 2025, 2024, 2023, Hard Zone, and Half-Yearly) are verified and available.'
     },
     'c10-sst': {
       title: 'Class 10th • Social Science PYQs',
