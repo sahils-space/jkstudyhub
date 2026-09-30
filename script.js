@@ -1207,6 +1207,34 @@ document.addEventListener('DOMContentLoaded', () => {
           badge: 'Series Y (2025)'
         },
         {
+          name: 'Class 10th Mathematics (Series Z - 2025)',
+          marks: 'Series: 10th ARF(SZ) 2024-25 • Code: 103-Z • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-z-2025.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Series Z (2025)'
+        },
+        {
+          name: 'Class 10th Mathematics (Series X - Annual 2024)',
+          marks: 'Series: 10th ARM(SZ) 2024 • Code: 1003-X • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-x-annual-2024.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Annual 2024 (1003-X)'
+        },
+        {
+          name: 'Class 10th Mathematics (Series Z - Annual 2024)',
+          marks: 'Series: 10th ARM(SZ) 2024 • Code: 1003-Z • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-z-annual-2024.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Annual 2024 (1003-Z)'
+        },
+        {
+          name: 'Class 10th Mathematics (Series X - 2023)',
+          marks: 'Series: XARJKUT23 • Code: 9303-X • 80 Marks',
+          file: 'pyqs/class-10-mathematics-pyq-series-x-2023.pdf',
+          icon: 'fa-square-root-variable',
+          badge: 'Series X (2023)'
+        },
+        {
           name: 'Class 10th Mathematics (Series Z - 2023)',
           marks: 'Series: XARJKUT23 • Code: 9303-Z • 80 Marks',
           file: 'pyqs/class-10-mathematics-pyq-series-z-2023.pdf',
@@ -1219,16 +1247,9 @@ document.addEventListener('DOMContentLoaded', () => {
           file: 'pyqs/class-10-mathematics-pyq-series-x-hardzone-2025.pdf',
           icon: 'fa-square-root-variable',
           badge: 'Hard Zone (403-X)'
-        },
-        {
-          name: 'Class 10th Mathematics (Annual - Series X 2024)',
-          marks: 'Series: 10th ARM(SZ) 2024 • Code: 1003-X • 80 Marks',
-          file: 'pyqs/class-10-mathematics-pyq-series-x-annual-2024.pdf',
-          icon: 'fa-square-root-variable',
-          badge: 'Annual 2024 (1003-X)'
         }
       ],
-      notice: 'All Class 10th Mathematics multi-series official board papers (Series X, Series Y, Series Z, Hard Zone) are verified and available.'
+      notice: 'All Class 10th Mathematics multi-year & multi-series official board papers (2025, 2024, 2023, Hard Zone) are verified and available.'
     },
     'c10-sst': {
       title: 'Class 10th • Social Science PYQs',
