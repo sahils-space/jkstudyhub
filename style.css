@@ -1094,8 +1094,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 0;
-    order: 2;
     border: 1.5px solid #cbd5e1;
     border-radius: 6px;
     padding: 6px 12px;
@@ -2640,13 +2638,11 @@ body {
 /* Mobile Adjustments for Navbar Cluster */
 @media (max-width: 768px) {
   .nav-container {
-    justify-content: flex-end;
+    justify-content: space-between;
   }
   .nav-auth-cluster {
-    margin-left: 0;
-    margin-right: 12px;
+    margin-right: 0;
     gap: 8px;
-    order: 1;
   }
   .nav-library-btn span:not(.library-badge) {
     display: none;
