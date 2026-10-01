@@ -12,10 +12,14 @@ new_js = """
       { file: 'class-10-general-english-syllabus.pdf', name: 'Class 10th General English' },
       { file: 'class-10-urdu-syllabus.pdf', name: 'Class 10th Urdu' }
     ]},
+    'c10-cs': { title: 'Computer Science Syllabus', file: 'class-10-computer-science-syllabus.pdf', name: 'Class 10th Computer Science' },
+    
     '11-med': { title: 'Medical Stream Syllabus', files: [
       { file: 'class-11-physics-syllabus.pdf', name: 'Physics' },
       { file: 'class-11-chemistry-syllabus.pdf', name: 'Chemistry' },
       { file: 'class-11-biology-syllabus.pdf', name: 'Biology (Botany & Zoology)' },
+      { file: 'class-11-botany-syllabus.pdf', name: 'Botany Specific' },
+      { file: 'class-11-zoology-syllabus.pdf', name: 'Zoology Specific' },
       { file: 'class-11-general-english-syllabus.pdf', name: 'General English' }
     ]},
     '11-nonmed': { title: 'Non-Medical Stream Syllabus', files: [
@@ -40,9 +44,8 @@ new_js = """
       { file: 'class-11-geography-syllabus.pdf', name: 'Geography' },
       { file: 'class-11-education-syllabus.pdf', name: 'Education' },
       { file: 'class-11-islamic-studies-syllabus.pdf', name: 'Islamic Studies' },
-      { file: 'class-11-philosophy-syllabus.pdf', name: 'Philosophy' },
-      { file: 'class-11-urdu-literature-syllabus.pdf', name: 'Urdu Literature' },
-      { file: 'class-11-english-literature-syllabus.pdf', name: 'English Literature' }
+      { file: 'class-11-english-literature-syllabus.pdf', name: 'English Literature' },
+      { file: 'class-11-general-english-syllabus.pdf', name: 'General English' }
     ]}
   };
 
@@ -59,7 +62,7 @@ new_js = """
     itemsToRender.forEach(p => {
       const pMod = {
         name: p.name,
-        marks: 'Detailed Chapter & Topic Breakdown',
+        marks: 'Official PDF Pages',
         file: 'syllabus-papers/' + p.file,
         icon: 'fa-file-pdf',
         badge: 'Official Syllabus PDF'
@@ -73,11 +76,10 @@ new_js = """
   };
 """
 
-# Extract the old block and replace
 pattern = re.compile(r'  const SYLLABUS_PDF_DATA = \{.*?document\.body\.style\.overflow = \'hidden\';\n  };', re.DOTALL)
 content = pattern.sub(new_js.strip(), content)
 
 with open('script.js', 'w') as f:
     f.write(content)
 
-print("JS mapped to all newly generated PDFs successfully!")
+print("JS mapped correctly!")
