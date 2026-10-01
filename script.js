@@ -1987,7 +1987,7 @@ const SYLLABUS_PDF_DATA = {
     orderSubmitBtn.style.opacity = '0.7';
     orderSubmitBtn.disabled = true;
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwNrVQ5f00XGkX6iOxJqup2YsOeA89ITUr-qIZkYieLtbldxeLZ5E-rhPVdxCapUXmm/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
     
     const formData = new FormData();
     formData.append('name', name);
