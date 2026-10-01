@@ -719,12 +719,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // STUDENT STUDY LIBRARY (STORAGE & BOOKMARKS ENGINE)
   // =========================================================
   const StudyLibrary = {
-    BOOKMARKS_KEY: 'jk_study_bookmarks',
-    HISTORY_KEY: 'jk_study_history',
+    getBookmarkKey: function() {
+      const user = window.currentUser || JSON.parse(localStorage.getItem('jk_study_user'));
+      return user && user.uid ? `jk_study_bookmarks_${user.uid}` : 'jk_study_bookmarks';
+    },
+    getHistoryKey: function() {
+      const user = window.currentUser || JSON.parse(localStorage.getItem('jk_study_user'));
+      return user && user.uid ? `jk_study_history_${user.uid}` : 'jk_study_history';
+    },
 
     getBookmarks: function() {
       try {
-        return JSON.parse(localStorage.getItem(this.BOOKMARKS_KEY)) || [];
+        return JSON.parse(localStorage.getItem(this.getBookmarkKey())) || [];
       } catch (e) {
         return [];
       }
@@ -757,7 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isSaved = true;
       }
 
-      localStorage.setItem(this.BOOKMARKS_KEY, JSON.stringify(list));
+      localStorage.setItem(this.getBookmarkKey(), JSON.stringify(list));
       this.updateBadges();
       this.syncToCloud();
       return isSaved;
@@ -765,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     getHistory: function() {
       try {
-        return JSON.parse(localStorage.getItem(this.HISTORY_KEY)) || [];
+        return JSON.parse(localStorage.getItem(this.getHistoryKey())) || [];
       } catch (e) {
         return [];
       }
@@ -785,13 +791,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (list.length > 40) list = list.slice(0, 40);
-      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(list));
+      localStorage.setItem(this.getHistoryKey(), JSON.stringify(list));
       this.updateBadges();
       this.syncToCloud();
     },
 
     clearHistory: function() {
-      localStorage.removeItem(this.HISTORY_KEY);
+      localStorage.removeItem(this.getHistoryKey());
       this.updateBadges();
       this.syncToCloud();
     },
@@ -1658,12 +1664,15 @@ document.addEventListener('DOMContentLoaded', () => {
       window.db.collection('student_libraries').doc(user.uid).get().then(doc => {
         if (doc.exists) {
           const data = doc.data();
-          if (data.bookmarks) localStorage.setItem(StudyLibrary.BOOKMARKS_KEY, JSON.stringify(data.bookmarks));
-          if (data.history) localStorage.setItem(StudyLibrary.HISTORY_KEY, JSON.stringify(data.history));
+          if (data.bookmarks) localStorage.setItem(StudyLibrary.getBookmarkKey(), JSON.stringify(data.bookmarks));
+          if (data.history) localStorage.setItem(StudyLibrary.getHistoryKey(), JSON.stringify(data.history));
           StudyLibrary.updateBadges();
         }
       }).catch(err => console.warn(err));
     }
+    
+    // Update local UI immediately when switching accounts
+    StudyLibrary.updateBadges();
   }
 
   function setLoggedOutState() {
@@ -1680,6 +1689,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (syncPill) syncPill.classList.add('local');
     if (syncPillText) syncPillText.textContent = 'Local Storage';
+    
+    // Update local UI immediately when logging out
+    StudyLibrary.updateBadges();
   }
 
   window.handleGoogleSignIn = function() {
