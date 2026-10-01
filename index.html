@@ -46,7 +46,6 @@
         </button>
         <ul class="nav-links" id="navLinks">
           <li><a href="#home" class="nav-item active">Home</a></li>
-          <li><a href="#syllabus" class="nav-item">Digital Syllabus</a></li>
           <li><a href="#subjects" class="nav-item">Subject Portals</a></li>
           <li><a href="#ceo" class="nav-item">Founder's Desk</a></li>
           <li><a href="#contact" class="nav-item">Contact Us</a></li>
@@ -108,107 +107,7 @@
         A structured academic portal crafted to support <strong>Class 10th</strong> and <strong>Class 11th</strong> students with official digital syllabi, curated notes, solved examples, and exam preparation resources.
       </p>
       <div class="hero-actions">
-        <a href="#syllabus" class="btn btn-primary"><i class="fa-solid fa-book-bookmark"></i> Explore Digital Syllabus</a>
-        <a href="#subjects" class="btn btn-secondary"><i class="fa-solid fa-layer-group"></i> View Subject Portals</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 1. PREMIER SECTION: UNIFIED DIGITAL SYLLABUS HUB (FOR BOTH CLASSES) -->
-  <section class="section syllabus-master-section bg-light" id="syllabus">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Official JKBOSE Curriculum</span>
-        <h2 class="section-title">Official Digital Syllabus</h2>
-        <div class="title-underline"></div>
-        <p class="section-subtitle">
-          Select your class below to instantly view unit-wise digital syllabus, marks weightage, laboratory practicals, and prescribed textbooks.
-        </p>
-      </div>
-
-      <!-- Class Switcher Tabs -->
-      <div class="class-toggle-wrapper">
-        <div class="class-toggle-bar">
-          <button class="class-toggle-btn active" id="btnClass10" onclick="switchClassView('10')">
-            <i class="fa-solid fa-book-bookmark"></i>
-            <span>Class 10th Syllabus</span>
-          </button>
-          <button class="class-toggle-btn" id="btnClass11" onclick="switchClassView('11')">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <span>Class 11th Syllabus</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Class 10th Syllabus Panel -->
-      <div id="viewClass10" class="class-syllabus-panel active">
-        <!-- Assessment & Scheme Highlights Bar -->
-        <div class="syllabus-info-bar">
-          <div class="info-pill"><i class="fa-solid fa-file-signature"></i> <strong>Theory Paper:</strong> 80 Marks</div>
-          <div class="info-pill"><i class="fa-solid fa-list-check"></i> <strong>Internal Assessment:</strong> 20 Marks (Tests 10m + Portfolio 5m + Activities 5m)</div>
-          <div class="info-pill"><i class="fa-solid fa-award"></i> <strong>Passing Standard:</strong> Minimum 33% (28% for CWSN)</div>
-        </div>
-
-        <!-- Search & Controls for Class 10th -->
-        <div class="syllabus-controls">
-          <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="syllabus10Search" placeholder="Search Class 10th subjects or topics (e.g. Light, Electricity, Triangles, Nationalism, Carbon)..." aria-label="Search Class 10th syllabus">
-          </div>
-        </div>
-
-        <!-- Dynamic Digital Syllabus Container for Class 10th -->
-        <div id="syllabus10Container" class="syllabus-accordion-container">
-          <!-- Rendered by JavaScript dynamically -->
-        </div>
-      </div>
-
-      <!-- Class 11th Syllabus Panel -->
-      <div id="viewClass11" class="class-syllabus-panel" style="display: none;">
-        <!-- Assessment & Scheme Highlights Bar -->
-        <div class="syllabus-info-bar">
-          <div class="info-pill"><i class="fa-solid fa-graduation-cap"></i> <strong>Passing Marks:</strong> 36% overall (33% in General English)</div>
-          <div class="info-pill"><i class="fa-solid fa-file-invoice"></i> <strong>Theory Pass Min:</strong> 25/70 Marks or 29/80 Marks</div>
-          <div class="info-pill"><i class="fa-solid fa-wheelchair"></i> <strong>CWSN:</strong> 31% qualifying criteria + full exam fee concession</div>
-        </div>
-
-        <!-- Stream Selector Tabs (Strict Stream Segregation) -->
-        <div class="stream-tabs-wrapper">
-          <div class="stream-tabs" id="streamTabs">
-            <button class="stream-tab-btn active" data-stream="medical">
-              <i class="fa-solid fa-dna"></i>
-              <span>Medical Science</span>
-            </button>
-            <button class="stream-tab-btn" data-stream="nonmedical">
-              <i class="fa-solid fa-compass-drafting"></i>
-              <span>Non-Medical Science</span>
-            </button>
-            <button class="stream-tab-btn" data-stream="commerce">
-              <i class="fa-solid fa-chart-line"></i>
-              <span>Commerce</span>
-            </button>
-            <button class="stream-tab-btn" data-stream="humanities">
-              <i class="fa-solid fa-landmark"></i>
-              <span>Arts &amp; Humanities</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Search & Filter Controls -->
-        <div class="syllabus-controls">
-          <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="syllabusSearch" placeholder="Search subjects or topics in this stream (e.g. Physics, Botany, Calculus, Python)..." aria-label="Search syllabus topics">
-          </div>
-          <div class="stream-meta" id="streamMeta">
-            <!-- Populated dynamically via JS -->
-          </div>
-        </div>
-
-        <!-- Dynamic Digital Syllabus Container for Class 11th -->
-        <div id="syllabusContainer" class="syllabus-accordion-container">
-          <!-- Rendered by JavaScript based on active stream -->
-        </div>
+        <a href="#subjects" class="btn btn-primary"><i class="fa-solid fa-layer-group"></i> Explore Subject Portals</a>
       </div>
     </div>
   </section>
@@ -242,7 +141,7 @@
               <li><i class="fa-regular fa-circle-check"></i> Reactions, Carbon Compounds</li>
               <li><i class="fa-regular fa-circle-check"></i> Life Processes &amp; Reproduction</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sci');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -259,7 +158,7 @@
               <li><i class="fa-regular fa-circle-check"></i> Geometry &amp; Trigonometry (27m)</li>
               <li><i class="fa-regular fa-circle-check"></i> Mensuration &amp; Statistics (21m)</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-math');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -276,7 +175,7 @@
               <li><i class="fa-regular fa-circle-check"></i> J&amp;K Economy &amp; Reorganization Act</li>
               <li><i class="fa-regular fa-circle-check"></i> Disaster Survival &amp; Map Practice</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sst');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -293,7 +192,7 @@
               <li><i class="fa-regular fa-circle-check"></i> Formal Letters &amp; Creative Stories</li>
               <li><i class="fa-regular fa-circle-check"></i> Urdu Ghazals &amp; Takhleeqi Mazmoon</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('10');" class="card-btn">View Digital Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-eng');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -321,7 +220,7 @@
               <li><i class="fa-regular fa-circle-check"></i> Cell Biology, Genetics &amp; Ecology</li>
               <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('11-med');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('11-med');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -339,7 +238,7 @@
               <li><i class="fa-regular fa-circle-check"></i> Mechanics, Waves &amp; Thermodynamics</li>
               <li><i class="fa-regular fa-circle-check"></i> Python Programming &amp; Logic Design</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('11-nonmed');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -357,7 +256,7 @@
               <li><i class="fa-regular fa-circle-check"></i> Business Finance &amp; E-Commerce</li>
               <li><i class="fa-regular fa-circle-check"></i> Statistical Tools &amp; Indian Economic Development</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('11-comm');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -375,7 +274,7 @@
               <li><i class="fa-regular fa-circle-check"></i> World History (Mesopotamia, Rome, Mongols)</li>
               <li><i class="fa-regular fa-circle-check"></i> Classical Sociological &amp; Psychological Thought</li>
             </ul>
-            <a href="#syllabus" onclick="switchClassView('11');" class="card-btn">Open Stream Syllabus <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="javascript:void(0)" onclick="openSyllabusModal('11-arts');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
             <div class="card-action-grid">
               <a href="javascript:void(0)" onclick="openPyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
               <a href="javascript:void(0)" onclick="openCyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
@@ -386,6 +285,27 @@
       </div>
     </div>
   </section>
+
+  
+  <!-- Interactive Syllabus Popup Modal -->
+  <div class="modal-overlay" id="syllabusModalOverlay" onclick="closeSyllabusModal(event)">
+    <div class="modal-card" id="syllabusModalCard">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e40af, #2563eb);">
+        <div class="modal-title-wrap">
+          <h3 id="modalSyllabusTitle">Official PDF Syllabus</h3>
+          <p id="modalSyllabusSubtitle">Select a subject to view or download</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeSyllabusModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalSyllabusList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-certificate" style="color: var(--primary-blue); margin-right: 6px;"></i> Official JKBOSE Board Syllabus</span>
+        <button type="button" onclick="closeSyllabusModalDirect()" style="background: var(--primary-navy); color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Interactive Model Papers Popup Modal -->
   <div class="modal-overlay" id="modelModalOverlay" onclick="closeModelModal(event)">
@@ -704,7 +624,6 @@
   </script>
 
   <!-- Syllabus Dataset & Main JavaScript File -->
-  <script src="syllabus-data.js?v=2"></script>
   <script src="script.js?v=17"></script>
 </body>
 </html>
