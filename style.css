@@ -636,7 +636,7 @@ body {
   border: 1px solid var(--border-color);
   padding: 44px;
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 1fr;
   gap: 48px;
   align-items: center;
   box-shadow: var(--shadow-lg);
