@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JK STUDY HUB - Empowering Class 10th & 11th Students</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
   <meta name="description" content="JK STUDY HUB - Comprehensive educational resources, notes, and study materials for Class 10th and 11th students by Sahil Zahoor in Jammu and Kashmir.">
   <meta name="keywords" content="JK Study Hub, JKBOSE Class 10th notes, JKBOSE Class 11th streams, Kashmir students, Sahil Zahoor, study material, board exam preparation">
   <meta name="author" content="Sahil Zahoor">
@@ -636,5 +638,34 @@
     <p>&copy; 2026 JK Study Hub. All rights reserved.</p>
   </footer>
 
+
+  <!-- PWA Scripts -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('installAppBtn');
+      if(installBtn) installBtn.style.display = 'inline-block';
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            document.getElementById('installAppBtn').style.display = 'none';
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+  </script>
 </body>
 </html>
