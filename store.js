@@ -211,23 +211,26 @@ function updateBadges() {
   else { wBadge.style.display = 'none'; }
 }
 
-// --- SIDEBAR UI ---
+
+// --- PAGE VIEW LOGIC ---
+function showHomeView() {
+  document.getElementById('homeView').style.display = 'block';
+  document.getElementById('cartView').style.display = 'none';
+  document.getElementById('wishlistView').style.display = 'none';
+}
+
 function openCart() {
   renderCart();
-  document.getElementById('sidebarOverlay').classList.add('active');
-  document.getElementById('cartSidebar').classList.add('active');
+  document.getElementById('homeView').style.display = 'none';
+  document.getElementById('wishlistView').style.display = 'none';
+  document.getElementById('cartView').style.display = 'block';
 }
 
 function openWishlist() {
   renderWishlist();
-  document.getElementById('sidebarOverlay').classList.add('active');
-  document.getElementById('wishlistSidebar').classList.add('active');
-}
-
-function closeSidebars() {
-  document.getElementById('sidebarOverlay').classList.remove('active');
-  document.getElementById('cartSidebar').classList.remove('active');
-  document.getElementById('wishlistSidebar').classList.remove('active');
+  document.getElementById('homeView').style.display = 'none';
+  document.getElementById('cartView').style.display = 'none';
+  document.getElementById('wishlistView').style.display = 'block';
 }
 
 // --- WISHLIST LOGIC ---
@@ -263,71 +266,15 @@ function renderWishlist() {
   let html = '';
   wishlist.forEach((item, index) => {
     html += `
-      <div class="cart-item">
+      
+      <div class="cart-item" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
         <div class="cart-item-info">
-          <h4>${item.name}</h4>
-          <p>₹${item.price}</p>
-          <button class="remove-btn" onclick="removeFromWishlist(${index})">Remove</button>
+          <h4 style="font-size:16px;">${item.name}</h4>
+          <p style="font-size:14px; margin-top:5px;">₹${item.price}</p>
         </div>
-        <button class="btn-primary" style="padding: 6px 12px; font-size:12px;" onclick="addToCart('${item.name}', ${item.price}, 'physical', '${item.category}')">Add to Cart</button>
+        <button class="remove-btn" onclick="removeFromCart(${index})" style="background:#fee2e2; padding:8px 12px; border-radius:6px;">Remove</button>
       </div>
-    `;
-  });
-  container.innerHTML = html;
-}
 
-function removeFromWishlist(index) {
-  wishlist.splice(index, 1);
-  saveState();
-  renderWishlist();
-  
-  // Also uncheck the heart on the main page
-  document.querySelectorAll('.product-card').forEach(card => {
-    const title = card.querySelector('.product-title').innerText;
-    if(!wishlist.find(i => i.name === title)) {
-      const icon = card.querySelector('.wishlist-icon');
-      if(icon) icon.classList.remove('active');
-    }
-  });
-}
-
-// --- CART LOGIC ---
-function addToCart(name, price, type, category) {
-  cart.push({ name, price, category });
-  saveState();
-  
-  // Show quick toast/alert or just open cart
-  openCart();
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  saveState();
-  renderCart();
-}
-
-function renderCart() {
-  const container = document.getElementById('cartItemsContainer');
-  const subtotalEl = document.getElementById('cartSubtotal');
-  
-  if (cart.length === 0) {
-    container.innerHTML = '<p style="text-align:center; color:#64748b; margin-top: 20px;">Your cart is empty.</p>';
-    subtotalEl.innerText = '₹0';
-    return;
-  }
-  
-  let html = '';
-  let subtotal = 0;
-  cart.forEach((item, index) => {
-    subtotal += item.price;
-    html += `
-      <div class="cart-item">
-        <div class="cart-item-info">
-          <h4>${item.name}</h4>
-          <p>₹${item.price}</p>
-          <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
-        </div>
-      </div>
     `;
   });
   container.innerHTML = html;
@@ -361,21 +308,17 @@ function checkoutCart() {
   else if (hasNotes) targetCategory = 'notes';
   else if (hasForms) targetCategory = 'form';
   
-  closeSidebars();
+  
   openCheckout(combinedName, total, 'mixed', targetCategory);
 }
 
-// --- INIT ---
-window.addEventListener('DOMContentLoaded', () => {
-  updateBadges();
-  
-  // Restore heart icons
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach(card => {
-    const title = card.querySelector('.product-title').innerText;
-    if(wishlist.find(i => i.name === title)) {
-      const icon = card.querySelector('.wishlist-icon');
-      if(icon) icon.classList.add('active');
-    }
-  });
+// --- INIT (Runs immediately to fix refresh bug) ---
+updateBadges();
+const cards = document.querySelectorAll('.product-card');
+cards.forEach(card => {
+  const title = card.querySelector('.product-title').innerText;
+  if(wishlist.find(i => i.name === title)) {
+    const icon = card.querySelector('.wishlist-icon');
+    if(icon) icon.classList.add('active');
+  }
 });
