@@ -29,17 +29,17 @@ function openCheckout(name, price, type, category) {
   document.getElementById('orderAddress').removeAttribute('required');
 
   // Specific Modal Views
-  if (category === 'notes') {
+  if (category === 'notes' || category === 'both') {
     document.getElementById('notesSpecificFields').style.display = 'block';
     document.getElementById('notesSubject').setAttribute('required', 'true');
     document.getElementById('addressFields').style.display = 'block';
     document.getElementById('orderAddress').setAttribute('required', 'true');
   } 
-  else if (category === 'form') {
+  if (category === 'form' || category === 'both') {
     document.getElementById('formSpecificFields').style.display = 'block';
     document.getElementById('digitalFormType').setAttribute('required', 'true');
   } 
-  else if (category === 'standard') {
+  if (category === 'standard' || category === 'both') {
     document.getElementById('addressFields').style.display = 'block';
     document.getElementById('orderAddress').setAttribute('required', 'true');
   }
@@ -176,7 +176,8 @@ function processOrder(txnId) {
 
   fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
-      alert(`Order Successful!\n\nThank you, ${name}. Your payment of ₹${totalPaid} has been verified.\nWe will contact you on WhatsApp shortly.`);
+            alert(`Order Successful!\n\nThank you, ${name}. Your payment of ₹${totalPaid} has been verified.\nWe will contact you on WhatsApp shortly.`);
+      if(isCartCheckout) { cart = []; saveState(); isCartCheckout = false; }
       closeCheckout();
       document.getElementById('submitOrderBtn').innerHTML = 'Pay Securely';
       document.getElementById('submitOrderBtn').disabled = false;
@@ -187,53 +188,194 @@ function processOrder(txnId) {
 }
 
 
+
+// --- CART & WISHLIST STATE ---
+let cart = JSON.parse(localStorage.getItem('jk_cart') || '[]');
+let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+let isCartCheckout = false;
+
+function saveState() {
+  localStorage.setItem('jk_cart', JSON.stringify(cart));
+  localStorage.setItem('wishlist', JSON.stringify(wishlist));
+  updateBadges();
+}
+
+function updateBadges() {
+  const cBadge = document.getElementById('cartCount');
+  const wBadge = document.getElementById('wishlistCount');
+  
+  if(cart.length > 0) { cBadge.style.display = 'inline-block'; cBadge.innerText = cart.length; }
+  else { cBadge.style.display = 'none'; }
+  
+  if(wishlist.length > 0) { wBadge.style.display = 'inline-block'; wBadge.innerText = wishlist.length; }
+  else { wBadge.style.display = 'none'; }
+}
+
+// --- SIDEBAR UI ---
+function openCart() {
+  renderCart();
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.getElementById('cartSidebar').classList.add('active');
+}
+
+function openWishlist() {
+  renderWishlist();
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.getElementById('wishlistSidebar').classList.add('active');
+}
+
+function closeSidebars() {
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.getElementById('cartSidebar').classList.remove('active');
+  document.getElementById('wishlistSidebar').classList.remove('active');
+}
+
 // --- WISHLIST LOGIC ---
 function toggleFavorite(btn) {
-  btn.classList.toggle('active');
   const card = btn.closest('.product-card');
   const title = card.querySelector('.product-title').innerText;
+  const priceText = card.querySelector('.product-price').innerText.replace('₹','');
   
-  let favorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  // Try to find the onclick args from the buy button to save category data
+  const onclickStr = card.querySelector('.buy-btn').getAttribute('onclick');
+  const args = onclickStr.replace('openCheckout(', '').replace(')', '').split(',');
+  const category = args[3] ? args[3].replace(/'/g, '').trim() : 'standard';
+
+  btn.classList.toggle('active');
+  
   if (btn.classList.contains('active')) {
-    if(!favorites.includes(title)) favorites.push(title);
+    if(!wishlist.find(i => i.name === title)) {
+      wishlist.push({ name: title, price: parseInt(priceText), category: category });
+    }
   } else {
-    favorites = favorites.filter(item => item !== title);
+    wishlist = wishlist.filter(item => item.name !== title);
   }
-  localStorage.setItem('wishlist', JSON.stringify(favorites));
+  saveState();
 }
 
-let showingWishlist = false;
-function toggleWishlistView() {
-  showingWishlist = !showingWishlist;
-  const btn = document.getElementById('showWishlistBtn');
-  const cards = document.querySelectorAll('.product-card');
-  const favorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
-
-  if (showingWishlist) {
-    btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Close Wishlist';
-    cards.forEach(card => {
-      const title = card.querySelector('.product-title').innerText;
-      if(favorites.includes(title)) {
-        card.style.display = 'block';
-        card.querySelector('.wishlist-icon').classList.add('active');
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  } else {
-    btn.innerHTML = '<i class="fa-solid fa-heart"></i> Wishlist';
-    cards.forEach(card => card.style.display = 'block');
+function renderWishlist() {
+  const container = document.getElementById('wishlistItemsContainer');
+  if (wishlist.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#64748b; margin-top: 20px;">Your wishlist is empty.</p>';
+    return;
   }
+  
+  let html = '';
+  wishlist.forEach((item, index) => {
+    html += `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <p>₹${item.price}</p>
+          <button class="remove-btn" onclick="removeFromWishlist(${index})">Remove</button>
+        </div>
+        <button class="btn-primary" style="padding: 6px 12px; font-size:12px;" onclick="addToCart('${item.name}', ${item.price}, 'physical', '${item.category}')">Add to Cart</button>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
 }
 
-// Initialize wishlist states on load
+function removeFromWishlist(index) {
+  wishlist.splice(index, 1);
+  saveState();
+  renderWishlist();
+  
+  // Also uncheck the heart on the main page
+  document.querySelectorAll('.product-card').forEach(card => {
+    const title = card.querySelector('.product-title').innerText;
+    if(!wishlist.find(i => i.name === title)) {
+      const icon = card.querySelector('.wishlist-icon');
+      if(icon) icon.classList.remove('active');
+    }
+  });
+}
+
+// --- CART LOGIC ---
+function addToCart(name, price, type, category) {
+  cart.push({ name, price, category });
+  saveState();
+  
+  // Show quick toast/alert or just open cart
+  openCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  saveState();
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItemsContainer');
+  const subtotalEl = document.getElementById('cartSubtotal');
+  
+  if (cart.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#64748b; margin-top: 20px;">Your cart is empty.</p>';
+    subtotalEl.innerText = '₹0';
+    return;
+  }
+  
+  let html = '';
+  let subtotal = 0;
+  cart.forEach((item, index) => {
+    subtotal += item.price;
+    html += `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <p>₹${item.price}</p>
+          <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  subtotalEl.innerText = '₹' + subtotal;
+}
+
+function checkoutCart() {
+  if (cart.length === 0) return;
+  
+  isCartCheckout = true;
+  
+  // Calculate totals and combined names
+  let total = 0;
+  let names = [];
+  let hasNotes = false;
+  let hasForms = false;
+  
+  cart.forEach(item => {
+    total += item.price;
+    names.push(item.name);
+    if(item.category === 'notes') hasNotes = true;
+    if(item.category === 'form') hasForms = true;
+  });
+  
+  const combinedName = "Cart: " + names.join(", ");
+  
+  // We need to trigger the checkout modal but adapt it for multiple items
+  // To keep it simple, if they mix forms and notes, show both fields.
+  let targetCategory = 'standard';
+  if (hasNotes && hasForms) targetCategory = 'both';
+  else if (hasNotes) targetCategory = 'notes';
+  else if (hasForms) targetCategory = 'form';
+  
+  closeSidebars();
+  openCheckout(combinedName, total, 'mixed', targetCategory);
+}
+
+// --- INIT ---
 window.addEventListener('DOMContentLoaded', () => {
-  const favorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  updateBadges();
+  
+  // Restore heart icons
   const cards = document.querySelectorAll('.product-card');
   cards.forEach(card => {
     const title = card.querySelector('.product-title').innerText;
-    if(favorites.includes(title)) {
-      card.querySelector('.wishlist-icon').classList.add('active');
+    if(wishlist.find(i => i.name === title)) {
+      const icon = card.querySelector('.wishlist-icon');
+      if(icon) icon.classList.add('active');
     }
   });
 });
