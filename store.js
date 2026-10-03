@@ -1,5 +1,5 @@
-// JK STUDY HUB - MASTER E-COMMERCE ENGINE v2.1
-// Full Cart, Wishlist, BFCache Support, and Razorpay Live Integration
+// JK STUDY HUB - MASTER E-COMMERCE ENGINE v3.0
+// Cart, Wishlist, Orders Tracking, Unified Google Auth & Razorpay Live Integration
 
 const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
@@ -78,7 +78,7 @@ const PRODUCT_CATALOG = {
   }
 };
 
-// --- DATA ACCESS LAYER (Supports both new and old storage keys) ---
+// --- DATA ACCESS LAYER ---
 function getCart() {
   try {
     const raw = localStorage.getItem('jk_cart') || localStorage.getItem('cart');
@@ -115,13 +115,49 @@ function saveWishlist(wishlist) {
   updateNavBadges();
 }
 
+function getOrders() {
+  try {
+    const raw = localStorage.getItem('jk_orders');
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function saveOrders(orders) {
+  localStorage.setItem('jk_orders', JSON.stringify(orders));
+  updateNavBadges();
+}
+
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem('jk_study_user') || 'null');
+  } catch(e) {
+    return null;
+  }
+}
+
+function setCurrentUser(user) {
+  if (user) {
+    localStorage.setItem('jk_study_user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('jk_study_user');
+  }
+  updateAuthUI();
+  updateNavBadges();
+}
+
 // --- NAV BADGES UPDATER ---
 function updateNavBadges() {
   const cart = getCart();
   const wishlist = getWishlist();
+  const orders = getOrders();
 
   const totalCartQty = cart.reduce((acc, item) => acc + (parseInt(item.qty) || 1), 0);
   const totalWishlistCount = wishlist.length;
+  const totalOrdersCount = orders.length;
 
   const cartBadges = document.querySelectorAll('.nav-badge-count, #cartCount');
   cartBadges.forEach(el => {
@@ -142,6 +178,126 @@ function updateNavBadges() {
       el.style.display = 'none';
     }
   });
+
+  const orderBadges = document.querySelectorAll('.orders-badge-count, #ordersCount');
+  orderBadges.forEach(el => {
+    if (totalOrdersCount > 0) {
+      el.style.display = 'inline-block';
+      el.innerText = totalOrdersCount;
+    } else {
+      el.style.display = 'none';
+    }
+  });
+}
+
+// --- AUTHENTICATION UI LAYER ---
+function updateAuthUI() {
+  const user = getCurrentUser();
+  const authContainers = document.querySelectorAll('.store-auth-cluster');
+
+  authContainers.forEach(container => {
+    if (user) {
+      const firstName = (user.displayName || 'Student').split(' ')[0];
+      const avatarSrc = user.photoURL || 'ceo-placeholder.svg';
+      container.innerHTML = `
+        <div style="position: relative; display: inline-block;">
+          <button type="button" onclick="toggleStoreUserDropdown(this)" style="display: flex; align-items: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 50px; cursor: pointer; color: #1e3a8a; font-weight: 700; font-size: 13px;">
+            <img src="${avatarSrc}" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+            <span>${firstName}</span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+          </button>
+          <div class="store-user-dropdown" style="display: none; position: absolute; right: 0; top: 110%; width: 220px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 10001; padding: 12px;">
+            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 8px;">
+              <p style="margin: 0; font-weight: 700; font-size: 14px; color: #1e293b;">${user.displayName || 'Student'}</p>
+              <p style="margin: 3px 0 0; font-size: 12px; color: #64748b; word-break: break-all;">${user.email || ''}</p>
+            </div>
+            <a href="orders.html" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+              <i class="fa-solid fa-box" style="color: #10b981;"></i> My Orders
+            </a>
+            <a href="wishlist.html" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+              <i class="fa-solid fa-heart" style="color: #ef4444;"></i> My Wishlist
+            </a>
+            <a href="cart.html" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+              <i class="fa-solid fa-cart-shopping" style="color: #2563eb;"></i> My Cart
+            </a>
+            <div style="border-top: 1px solid #f1f5f9; margin-top: 8px; padding-top: 8px;">
+              <button onclick="handleStoreSignOut()" style="width: 100%; text-align: left; background: none; border: none; color: #ef4444; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 6px 8px;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <button type="button" onclick="handleStoreSignIn()" class="store-nav-btn" style="background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; font-weight: 700; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+          <svg style="width: 16px; height: 16px;" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          <span>Sign In</span>
+        </button>
+      `;
+    }
+  });
+}
+
+function toggleStoreUserDropdown(btn) {
+  const dropdown = btn.parentElement.querySelector('.store-user-dropdown');
+  if (dropdown) {
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.store-auth-cluster')) {
+    document.querySelectorAll('.store-user-dropdown').forEach(d => d.style.display = 'none');
+  }
+});
+
+function handleStoreSignIn() {
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(res => {
+      const user = {
+        displayName: res.user.displayName,
+        email: res.user.email,
+        photoURL: res.user.photoURL,
+        uid: res.user.uid
+      };
+      setCurrentUser(user);
+      showToast(`Welcome back, ${user.displayName.split(' ')[0]}!`);
+    }).catch(err => {
+      fallbackLoginPrompt();
+    });
+  } else {
+    fallbackLoginPrompt();
+  }
+}
+
+function fallbackLoginPrompt() {
+  const name = prompt("Enter your Name to sign in to JK Study Hub:", "Student");
+  if (name && name.trim()) {
+    const user = {
+      displayName: name.trim(),
+      email: `${name.trim().toLowerCase().replace(/\s+/g, '')}@student.jkstudyhub.online`,
+      photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+      uid: 'student_' + Date.now()
+    };
+    setCurrentUser(user);
+    showToast(`Welcome, ${user.displayName}!`);
+  }
+}
+
+function handleStoreSignOut() {
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().signOut().catch(() => {});
+  }
+  setCurrentUser(null);
+  showToast("You have signed out successfully.");
 }
 
 // --- TOAST NOTIFICATION ---
@@ -293,13 +449,11 @@ function toggleFavorite(btn, productName) {
   const existingIdx = wishlist.findIndex(w => w.name === title);
 
   if (existingIdx > -1) {
-    // Remove
     wishlist.splice(existingIdx, 1);
     saveWishlist(wishlist);
     if (btn) btn.classList.remove('active');
     showToast(`Removed from Wishlist`);
   } else {
-    // Add
     let finalPrice = catalog.price;
     if (!finalPrice && card) {
       const pEl = card.querySelector('.product-price');
@@ -325,7 +479,6 @@ function toggleFavorite(btn, productName) {
     showToast(`❤️ Saved to Wishlist!`, 'wishlist.html', 'View Wishlist ➔');
   }
 
-  // Update hearts on page
   syncHeartIcons();
 
   if (typeof renderWishlistPage === 'function') {
@@ -538,6 +691,86 @@ function renderWishlistPage() {
   container.innerHTML = html;
 }
 
+// --- RENDER DEDICATED ORDERS PAGE (orders.html) ---
+function renderOrdersPage() {
+  const container = document.getElementById('ordersListContainer');
+  if (!container) return;
+
+  const orders = getOrders();
+  const countEl = document.getElementById('ordersHeaderCount');
+  if (countEl) countEl.innerText = `(${orders.length} orders)`;
+
+  if (orders.length === 0) {
+    container.innerHTML = `
+      <div style="background: white; border-radius: 16px; padding: 60px 20px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+        <div style="width: 90px; height: 90px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 38px; color: #10b981;">
+          <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h3 style="font-size: 22px; color: #1e293b; font-weight: 700; margin-bottom: 8px;">No Orders Yet</h3>
+        <p style="color: #64748b; font-size: 14px; max-width: 440px; margin: 0 auto 24px; line-height: 1.5;">When you purchase notes, printed PYQs, stationery, or form filling services, your order receipts, tracking numbers, and delivery updates will appear right here!</p>
+        <a href="store.html" style="display: inline-block; background: #2563eb; color: white; padding: 12px 28px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 15px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">Explore Store</a>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  orders.forEach((order, index) => {
+    const safeOrderId = order.orderId || ('ORD-' + index);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I have an inquiry about my Order ${safeOrderId} (TXN: ${order.txnId}) placed on ${order.date}.`);
+    
+    html += `
+      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+        <!-- Order Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #1e293b; background: #f1f5f9; padding: 4px 10px; border-radius: 6px;">${safeOrderId}</span>
+              <span style="font-size: 12px; color: #64748b;">${order.date}</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="background: #dcfce7; color: #166534; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-circle-check"></i> Order Confirmed & Paid
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Body -->
+        <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 250px;">
+            <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px;">${order.product}</h4>
+            <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
+              <p style="margin: 0;"><strong>Recipient:</strong> ${order.name} (${order.phone})</p>
+              <p style="margin: 4px 0 0;"><strong>Delivery Location:</strong> ${order.address}</p>
+            </div>
+            <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; padding: 4px 10px; border-radius: 6px; display: inline-block;">
+              <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${order.txnId}</strong>
+            </div>
+          </div>
+
+          <div style="text-align: right; min-width: 140px;">
+            <div style="font-size: 12px; color: #64748b;">Total Paid</div>
+            <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${order.amount}</div>
+          </div>
+        </div>
+
+        <!-- Order Footer -->
+        <div style="border-top: 1px solid #f1f5f9; margin-top: 18px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <span style="font-size: 12px; color: #16a34a; font-weight: 600;">
+            <i class="fa-solid fa-truck-fast"></i> Delivery to Pattan (Standard Delivery)
+          </span>
+          <a href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="background: #25d366; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(37,211,102,0.3);">
+            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Track on WhatsApp
+          </a>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
 // --- CHECKOUT & PAYMENT LOGIC (AMAZON-STYLE 2-STEP) ---
 let currentCheckoutProduct = '';
 let currentCheckoutPrice = 0;
@@ -603,6 +836,13 @@ function setupCheckoutModal(name, price, category) {
 
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
+
+  // Pre-fill user name if logged in
+  const user = getCurrentUser();
+  if (user && user.displayName) {
+    const nameInput = document.getElementById('orderName');
+    if (nameInput) nameInput.value = user.displayName;
+  }
 
   document.getElementById('step2').style.display = 'none';
   document.getElementById('step1').style.display = 'block';
@@ -705,7 +945,7 @@ function startRazorpayPayment() {
 
   const options = {
     "key": RAZORPAY_KEY,
-    "amount": totalPaid * 100, // Amount in paise
+    "amount": totalPaid * 100,
     "currency": "INR",
     "name": "JK Study Hub",
     "description": currentCheckoutProduct.substring(0, 250),
@@ -781,6 +1021,27 @@ function processOrder(txnId) {
   const totalPaid = currentCheckoutPrice + 5;
   const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | TXN: ${txnId}`;
 
+  // 1. SAVE LOCALLY TO ORDERS HISTORY IMMEDIATELY!
+  const user = getCurrentUser();
+  const orderRecord = {
+    orderId: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+    txnId: txnId,
+    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+    timestamp: Date.now(),
+    name: name,
+    phone: phone,
+    address: finalAddress,
+    product: finalProductDesc,
+    amount: totalPaid,
+    userEmail: user ? user.email : null,
+    status: 'Confirmed'
+  };
+
+  let orders = getOrders();
+  orders.unshift(orderRecord);
+  saveOrders(orders);
+
+  // 2. DISPATCH TO GOOGLE SHEETS WEB APP
   const formData = new FormData();
   formData.append('name', name);
   formData.append('phone', phone);
@@ -789,7 +1050,7 @@ function processOrder(txnId) {
 
   fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
-      alert(`🎉 ORDER SUCCESSFUL!\n\nThank you, ${name}!\nYour payment of ₹${totalPaid} is verified.\nRazorpay TXN ID: ${txnId}\n\nWe will contact your WhatsApp (${phone}) shortly to confirm delivery!`);
+      alert(`🎉 ORDER SUCCESSFUL!\n\nOrder ID: ${orderRecord.orderId}\nPayment Verified: ₹${totalPaid}\nTXN ID: ${txnId}\n\nYour order has been recorded in the Orders Section! We will contact you on WhatsApp (${phone}) shortly.`);
 
       if (isCartCheckoutSession) {
         localStorage.removeItem('jk_cart');
@@ -806,9 +1067,14 @@ function processOrder(txnId) {
         btn.innerHTML = 'Pay Securely';
         btn.disabled = false;
       }
+
+      // If on orders page, re-render
+      if (typeof renderOrdersPage === 'function') {
+        renderOrdersPage();
+      }
     })
     .catch(err => {
-      alert(`Payment verified (${txnId}), but error saving details. Please message us on WhatsApp with your payment ID!`);
+      alert(`Payment verified (${txnId})! Order ID ${orderRecord.orderId} saved locally. Please contact us on WhatsApp if any issues arise.`);
       closeCheckout();
     });
 }
@@ -816,6 +1082,7 @@ function processOrder(txnId) {
 // --- INITIALIZATION & BFCACHE HANDLERS ---
 function initShop() {
   updateNavBadges();
+  updateAuthUI();
   syncHeartIcons();
 
   if (document.getElementById('cartItemsList')) {
@@ -825,23 +1092,24 @@ function initShop() {
   if (document.getElementById('wishlistGrid')) {
     renderWishlistPage();
   }
+
+  if (document.getElementById('ordersListContainer')) {
+    renderOrdersPage();
+  }
 }
 
-// 1. Initial Load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initShop);
 } else {
   initShop();
 }
 
-// 2. BFCache Support: Re-run every time the page is shown (fixes Back/Forward navigation)
 window.addEventListener('pageshow', function(event) {
   initShop();
 });
 
-// 3. Multi-Tab Support: Sync badges if updated in another tab
 window.addEventListener('storage', function(e) {
-  if (e.key === 'jk_cart' || e.key === 'cart' || e.key === 'jk_wishlist' || e.key === 'wishlist') {
+  if (e.key === 'jk_cart' || e.key === 'cart' || e.key === 'jk_wishlist' || e.key === 'wishlist' || e.key === 'jk_orders' || e.key === 'jk_study_user') {
     initShop();
   }
 });

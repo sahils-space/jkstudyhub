@@ -301,7 +301,7 @@
 <body>
 
   <!-- Top Navigation Bar -->
-      <nav class="store-nav">
+        <nav class="store-nav">
     <a href="index.html" class="logo">
       <i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> JK STUDY HUB
     </a>
@@ -320,6 +320,15 @@
         <i class="fa-solid fa-cart-shopping" style="color:#2563eb;"></i> Cart
         <span id="cartCount" class="cart-badge-count nav-badge-count" style="display:none;">0</span>
       </a>
+
+      <a href="orders.html" class="store-nav-btn ">
+        <i class="fa-solid fa-box" style="color:#10b981;"></i> Orders
+        <span id="ordersCount" class="orders-badge-count nav-badge-count" style="display:none; background:#10b981 !important;">0</span>
+      </a>
+
+      <div class="store-auth-cluster">
+        <!-- Rendered by store.js?v=3.0 -->
+      </div>
 
       <a href="index.html" class="back-btn-pill">
         <i class="fa-solid fa-arrow-left"></i> Hub
@@ -352,7 +361,7 @@
 
     <!-- Wishlist Grid -->
     <div class="product-grid" id="wishlistGrid">
-      <!-- Rendered by store.js?v=2.3 -->
+      <!-- Rendered by store.js?v=3.0 -->
     </div>
 
   </div>
@@ -506,7 +515,23 @@
   </footer>
 
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="store.js?v=2.3"></script>
+    <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script>
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyA_fgnUKqpy15ku81BKKSa5b-wMuyeT9uw",
+        authDomain: "jk-study-hub-574c7.firebaseapp.com",
+        projectId: "jk-study-hub-574c7",
+        storageBucket: "jk-study-hub-574c7.firebasestorage.app",
+        messagingSenderId: "544447856590",
+        appId: "1:544447856590:web:9280ed66e744e6b8cfb59f"
+      });
+    }
+  </script>
+
+  <script src="store.js?v=3.0"></script>
 
   <!-- Mobile Bottom App Bar (Like Flipkart / Amazon) -->
   <div class="mobile-bottom-nav">
