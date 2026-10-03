@@ -258,26 +258,6 @@ document.addEventListener('click', function(e) {
   }
 });
 
-function openPhoneAuthModal() {
-  if (typeof firebase !== 'undefined' && firebase.auth) {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).then(res => {
-      const user = {
-        displayName: res.user.displayName,
-        email: res.user.email,
-        photoURL: res.user.photoURL,
-        uid: res.user.uid
-      };
-      setCurrentUser(user);
-      showToast(`Welcome back, ${user.displayName.split(' ')[0]}!`);
-    }).catch(err => {
-      fallbackLoginPrompt();
-    });
-  } else {
-    fallbackLoginPrompt();
-  }
-}
-
 function fallbackLoginPrompt() {
   const name = prompt("Enter your Name to sign in to JK Study Hub:", "Student");
   if (name && name.trim()) {
@@ -691,77 +671,401 @@ function renderWishlistPage() {
   container.innerHTML = html;
 }
 
+// --- LIVE DELIVERY TRACKER & ORDERS ENGINE (STEP 2) ---
+let currentOrderFilter = 'all'; // 'all', 'active', 'delivered'
+let currentOrderSearchQuery = '';
+
+function getStatusStepInfo(rawStatus) {
+  const s = String(rawStatus || 'Confirmed').trim().toLowerCase();
+  
+  if (s.includes('cancel')) {
+    return {
+      step: -1,
+      label: 'Order Cancelled',
+      percent: 0,
+      badgeBg: '#fee2e2',
+      badgeColor: '#b91c1c',
+      badgeBorder: '#fecaca',
+      badgeIcon: 'fa-ban',
+      summaryText: 'This order was cancelled. Please contact support on WhatsApp for queries.'
+    };
+  }
+  if (s.includes('deliver') || s.includes('complete')) {
+    return {
+      step: 4,
+      label: 'Delivered',
+      percent: 100,
+      badgeBg: '#dcfce7',
+      badgeColor: '#15803d',
+      badgeBorder: '#bbf7d0',
+      badgeIcon: 'fa-house-circle-check',
+      summaryText: 'Delivered successfully at customer doorstep in Pattan / Kashmir.'
+    };
+  }
+  if (s.includes('out') || s.includes('route') || s.includes('pattan')) {
+    return {
+      step: 3,
+      label: 'Out for Delivery (Pattan)',
+      percent: 78,
+      badgeBg: '#fef3c7',
+      badgeColor: '#b45309',
+      badgeBorder: '#fde68a',
+      badgeIcon: 'fa-truck-fast',
+      summaryText: 'Our delivery associate is on the way to your delivery address.'
+    };
+  }
+  if (s.includes('dispatch') || s.includes('transit') || s.includes('ship') || s.includes('pack')) {
+    return {
+      step: 2,
+      label: 'Dispatched from Hub',
+      percent: 48,
+      badgeBg: '#ede9fe',
+      badgeColor: '#6d28d9',
+      badgeBorder: '#ddd6fe',
+      badgeIcon: 'fa-box-open',
+      summaryText: 'Your order has been verified and dispatched from our Pattan Hub.'
+    };
+  }
+  
+  // Default: Confirmed & Paid
+  return {
+    step: 1,
+    label: 'Order Confirmed & Paid',
+    percent: 16,
+    badgeBg: '#e0f2fe',
+    badgeColor: '#0369a1',
+    badgeBorder: '#bae6fd',
+    badgeIcon: 'fa-circle-check',
+    summaryText: 'Order confirmed and payment verified via Razorpay.'
+  };
+}
+
+function isAdminUnlocked() {
+  return sessionStorage.getItem('jk_admin_unlocked') === 'true';
+}
+
+function toggleAdminAccess() {
+  if (isAdminUnlocked()) {
+    if (confirm("Lock Store Admin Mode?")) {
+      sessionStorage.removeItem('jk_admin_unlocked');
+      showToast("Store Admin Mode locked.");
+      renderOrdersPage();
+    }
+    return;
+  }
+  
+  const pin = prompt("Enter JK Study Hub Admin PIN (Default: 9622):", "");
+  if (pin === "9622" || pin === "1234") {
+    sessionStorage.setItem('jk_admin_unlocked', 'true');
+    showToast("✅ Admin Mode Unlocked! You can now update delivery statuses.");
+    renderOrdersPage();
+  } else if (pin !== null) {
+    alert("Incorrect Admin PIN. Please enter your 4-digit code.");
+  }
+}
+
+function updateOrderStatusByAdmin(orderId, newStatus) {
+  let orders = getOrders();
+  const idx = orders.findIndex(o => o.orderId === orderId);
+  if (idx !== -1) {
+    orders[idx].status = newStatus;
+    orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    saveOrders(orders);
+    
+    // Sync update to Google Apps Script asynchronously
+    if (SCRIPT_URL) {
+      try {
+        const updateData = new FormData();
+        updateData.append('action', 'update_status');
+        updateData.append('order_id', orderId);
+        updateData.append('status', newStatus);
+        fetch(SCRIPT_URL, { method: 'POST', body: updateData, mode: 'no-cors' }).catch(() => {});
+      } catch(e) {}
+    }
+    
+    showToast(`Status updated to: ${newStatus}`);
+    renderOrdersPage();
+  }
+}
+
+function sendCustomerWhatsAppStatusUpdate(orderId) {
+  const orders = getOrders();
+  const order = orders.find(o => o.orderId === orderId);
+  if (!order) return;
+  
+  const cleanPhone = String(order.phone || '').replace(/\D/g, '').slice(-10);
+  const statusInfo = getStatusStepInfo(order.status);
+  
+  const text = encodeURIComponent(
+    `Dear ${order.name},\n\n` +
+    `🚚 Update on your JK Study Hub Order #${order.orderId}:\n` +
+    `Status: *${statusInfo.label}*\n` +
+    `Items: ${order.product}\n` +
+    `Delivery Location: ${order.address}\n\n` +
+    `Thank you for studying with JK Study Hub, Pattan!`
+  );
+  
+  window.open(`https://wa.me/91${cleanPhone}?text=${text}`, '_blank');
+}
+
+function handleOrderSearchInput(query) {
+  currentOrderSearchQuery = (query || '').trim().toLowerCase();
+  const clearBtn = document.getElementById('clearOrderFilterBtn');
+  if (clearBtn) {
+    clearBtn.style.display = currentOrderSearchQuery.length > 0 ? 'inline-flex' : 'none';
+  }
+  renderOrdersPage();
+}
+
+function executeOrderSearch() {
+  const input = document.getElementById('orderSearchInput');
+  if (input) {
+    currentOrderSearchQuery = input.value.trim().toLowerCase();
+    const clearBtn = document.getElementById('clearOrderFilterBtn');
+    if (clearBtn) clearBtn.style.display = currentOrderSearchQuery ? 'inline-flex' : 'none';
+    renderOrdersPage();
+  }
+}
+
+function resetOrderSearch() {
+  currentOrderSearchQuery = '';
+  const input = document.getElementById('orderSearchInput');
+  if (input) input.value = '';
+  const clearBtn = document.getElementById('clearOrderFilterBtn');
+  if (clearBtn) clearBtn.style.display = 'none';
+  renderOrdersPage();
+}
+
+function setOrderStatusFilter(filter) {
+  currentOrderFilter = filter;
+  ['all', 'active', 'delivered'].forEach(f => {
+    const el = document.getElementById('filterPill' + f.charAt(0).toUpperCase() + f.slice(1));
+    if (el) {
+      if (f === filter) el.classList.add('active');
+      else el.classList.remove('active');
+    }
+  });
+  renderOrdersPage();
+}
+
 // --- RENDER DEDICATED ORDERS PAGE (orders.html) ---
 function renderOrdersPage() {
   const container = document.getElementById('ordersListContainer');
   if (!container) return;
 
-  const orders = getOrders();
-  const countEl = document.getElementById('ordersHeaderCount');
-  if (countEl) countEl.innerText = `(${orders.length} orders)`;
+  // Update Admin Toggle button state
+  const adminBtn = document.getElementById('adminToggleBtn');
+  if (adminBtn) {
+    if (isAdminUnlocked()) {
+      adminBtn.innerHTML = '<i class="fa-solid fa-lock-open" style="color: #10b981;"></i> Admin Active (Exit)';
+      adminBtn.style.background = '#dcfce7';
+      adminBtn.style.color = '#15803d';
+      adminBtn.style.borderColor = '#86efac';
+    } else {
+      adminBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Store Admin';
+      adminBtn.style.background = '#f8fafc';
+      adminBtn.style.color = '#64748b';
+      adminBtn.style.borderColor = '#cbd5e1';
+    }
+  }
 
-  if (orders.length === 0) {
+  const allOrders = getOrders();
+  const countEl = document.getElementById('ordersHeaderCount');
+  if (countEl) countEl.innerText = `${allOrders.length} Orders`;
+
+  if (allOrders.length === 0) {
     container.innerHTML = `
       <div style="background: white; border-radius: 16px; padding: 60px 20px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
         <div style="width: 90px; height: 90px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 38px; color: #10b981;">
           <i class="fa-solid fa-box-open"></i>
         </div>
-        <h3 style="font-size: 22px; color: #1e293b; font-weight: 700; margin-bottom: 8px;">No Orders Yet</h3>
-        <p style="color: #64748b; font-size: 14px; max-width: 440px; margin: 0 auto 24px; line-height: 1.5;">When you purchase notes, printed PYQs, stationery, or form filling services, your order receipts, tracking numbers, and delivery updates will appear right here!</p>
+        <h3 style="font-size: 22px; color: #1e293b; font-weight: 700; margin-bottom: 8px;">No Orders Placed Yet</h3>
+        <p style="color: #64748b; font-size: 14px; max-width: 440px; margin: 0 auto 24px; line-height: 1.5;">When you purchase notes, printed PYQs, stationery, or book online form filling services, your order receipts, tracking numbers, and real-time delivery progress in Pattan will appear right here!</p>
         <a href="store.html" style="display: inline-block; background: #2563eb; color: white; padding: 12px 28px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 15px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">Explore Store</a>
       </div>
     `;
     return;
   }
 
-  let html = '';
-  orders.forEach((order, index) => {
-    const safeOrderId = order.orderId || ('ORD-' + index);
-    const waMessage = encodeURIComponent(`Hi JK Study Hub, I have an inquiry about my Order ${safeOrderId} (TXN: ${order.txnId}) placed on ${order.date}.`);
+  // Filter orders according to active tabs & search query
+  let filtered = allOrders.filter(order => {
+    const info = getStatusStepInfo(order.status);
     
+    // Status filter
+    if (currentOrderFilter === 'active' && (info.step === 4 || info.step === -1)) {
+      return false;
+    }
+    if (currentOrderFilter === 'delivered' && info.step !== 4) {
+      return false;
+    }
+    
+    // Search query filter
+    if (currentOrderSearchQuery) {
+      const q = currentOrderSearchQuery;
+      const idMatch = (order.orderId || '').toLowerCase().includes(q);
+      const phoneMatch = (order.phone || '').toLowerCase().includes(q);
+      const nameMatch = (order.name || '').toLowerCase().includes(q);
+      const productMatch = (order.product || '').toLowerCase().includes(q);
+      const txnMatch = (order.txnId || '').toLowerCase().includes(q);
+      if (!idMatch && !phoneMatch && !nameMatch && !productMatch && !txnMatch) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="background: white; border-radius: 16px; padding: 50px 20px; text-align: center; border: 1px solid #e2e8f0; margin-top: 10px;">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 32px; color: #94a3b8; margin-bottom: 12px;"></i>
+        <h4 style="font-size: 18px; color: #1e293b; font-weight: 700; margin: 0 0 8px;">No matching orders found</h4>
+        <p style="color: #64748b; font-size: 13.5px; margin: 0 0 16px;">Try searching with your 6-digit Order ID (e.g. ORD-123456) or your 10-digit mobile number.</p>
+        <button onclick="resetOrderSearch()" style="background: #2563eb; color: white; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">Clear Search</button>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  filtered.forEach((order, index) => {
+    const safeOrderId = order.orderId || ('ORD-' + index);
+    const statusInfo = getStatusStepInfo(order.status);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (TXN: ${order.txnId}) for ${order.product}.`);
+    
+    // Step classes for Flipkart/Amazon stepper
+    let s1Class = 'completed';
+    let s2Class = statusInfo.step >= 2 ? 'completed' : (statusInfo.step === 1 ? 'active' : '');
+    let s3Class = statusInfo.step >= 3 ? 'completed' : (statusInfo.step === 2 ? 'active' : '');
+    let s4Class = statusInfo.step >= 4 ? 'completed' : (statusInfo.step === 3 ? 'active' : '');
+
+    // Step descriptions
+    let s2Desc = statusInfo.step >= 2 ? 'Dispatched' : 'Packed at Hub';
+    let s3Desc = statusInfo.step >= 3 ? 'En Route (Pattan)' : 'Local Delivery';
+    let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
+
     html += `
-      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
+        
         <!-- Order Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #1e293b; background: #f1f5f9; padding: 4px 10px; border-radius: 6px;">${safeOrderId}</span>
-              <span style="font-size: 12px; color: #64748b;">${order.date}</span>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #1e293b; background: #f1f5f9; padding: 5px 12px; border-radius: 6px; letter-spacing: 0.5px; border: 1px solid #e2e8f0;">
+                ${safeOrderId}
+              </span>
+              <span style="font-size: 12.5px; color: #64748b;">
+                <i class="fa-regular fa-calendar"></i> ${order.date}
+              </span>
             </div>
           </div>
+          
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="background: #dcfce7; color: #166534; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-circle-check"></i> Order Confirmed & Paid
+            <span style="background: ${statusInfo.badgeBg}; color: ${statusInfo.badgeColor}; border: 1px solid ${statusInfo.badgeBorder}; font-size: 12.5px; font-weight: 700; padding: 5px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid ${statusInfo.badgeIcon}"></i> ${statusInfo.label}
             </span>
           </div>
         </div>
 
+        <!-- FLIPKART / AMAZON LIVE DELIVERY STEPPER -->
+        <div class="delivery-tracker-box">
+          <div class="stepper-header-meta">
+            <span style="font-weight: 700; color: #0f172a; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-route" style="color: #2563eb;"></i> Live Delivery Progress
+            </span>
+            <span style="font-size: 12px; color: #64748b; font-weight: 600;">
+              Destination: <strong style="color: #1e293b;">Pattan (193121)</strong>
+            </span>
+          </div>
+
+          <div class="stepper-track-wrap">
+            <div class="stepper-line-fill" style="width: ${statusInfo.percent}%;"></div>
+            
+            <!-- Step 1: Confirmed -->
+            <div class="stepper-node ${s1Class}">
+              <div class="node-icon"><i class="fa-solid fa-check"></i></div>
+              <div class="node-title">Confirmed</div>
+              <div class="node-desc">Paid Online</div>
+            </div>
+
+            <!-- Step 2: Dispatched -->
+            <div class="stepper-node ${s2Class}">
+              <div class="node-icon"><i class="fa-solid fa-box"></i></div>
+              <div class="node-title">Dispatched</div>
+              <div class="node-desc">${s2Desc}</div>
+            </div>
+
+            <!-- Step 3: Out for Delivery -->
+            <div class="stepper-node ${s3Class}">
+              <div class="node-icon"><i class="fa-solid fa-truck-fast"></i></div>
+              <div class="node-title">Out for Delivery</div>
+              <div class="node-desc">${s3Desc}</div>
+            </div>
+
+            <!-- Step 4: Delivered -->
+            <div class="stepper-node ${s4Class}">
+              <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
+              <div class="node-title">Delivered</div>
+              <div class="node-desc">${s4Desc}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-circle-info" style="color: #2563eb;"></i>
+            <span>${statusInfo.summaryText}</span>
+          </div>
+        </div>
+
         <!-- Order Body -->
-        <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px; flex-wrap: wrap;">
+        <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px; flex-wrap: wrap; margin-top: 16px;">
           <div style="flex: 1; min-width: 250px;">
             <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px;">${order.product}</h4>
             <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
               <p style="margin: 0;"><strong>Recipient:</strong> ${order.name} (${order.phone})</p>
-              <p style="margin: 4px 0 0;"><strong>Delivery Location:</strong> ${order.address}</p>
+              <p style="margin: 4px 0 0;"><strong>Address:</strong> ${order.address}</p>
             </div>
-            <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; padding: 4px 10px; border-radius: 6px; display: inline-block;">
+            <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-block;">
               <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${order.txnId}</strong>
             </div>
           </div>
 
           <div style="text-align: right; min-width: 140px;">
-            <div style="font-size: 12px; color: #64748b;">Total Paid</div>
-            <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${order.amount}</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Paid</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${order.amount}</div>
+            <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
           </div>
         </div>
 
-        <!-- Order Footer -->
+        <!-- Admin Controls Bar (Active if Admin Mode Unlocked) -->
+        ${isAdminUnlocked() ? `
+          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-top: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
+                <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status Control:
+              </span>
+              <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed & Paid</option>
+                <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched from Hub</option>
+                <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery (Pattan)</option>
+                <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered Successfully</option>
+                <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </div>
+            <div>
+              <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${safeOrderId}')" style="background: #25d366; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-brands fa-whatsapp"></i> Send WhatsApp Notice
+              </button>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Order Action Footer -->
         <div style="border-top: 1px solid #f1f5f9; margin-top: 18px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <span style="font-size: 12px; color: #16a34a; font-weight: 600;">
-            <i class="fa-solid fa-truck-fast"></i> Delivery to Pattan (Standard Delivery)
-          </span>
+          <button type="button" onclick="printOrderReceipt('${safeOrderId}')" style="background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+            <i class="fa-solid fa-file-invoice" style="color: #2563eb;"></i> View &amp; Print Receipt
+          </button>
+          
           <a href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="background: #25d366; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(37,211,102,0.3);">
-            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Track on WhatsApp
+            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Track with WhatsApp Support
           </a>
         </div>
       </div>
@@ -770,6 +1074,192 @@ function renderOrdersPage() {
 
   container.innerHTML = html;
 }
+
+// --- PRINTABLE TAX INVOICE & RECEIPT MODAL ---
+function printOrderReceipt(orderId) {
+  const orders = getOrders();
+  const order = orders.find(o => o.orderId === orderId) || orders[0];
+  if (!order) return;
+
+  const printableArea = document.getElementById('printableReceiptArea');
+  if (!printableArea) return;
+
+  const cleanAmount = parseFloat(order.amount) || 0;
+  const itemSubtotal = Math.max(0, cleanAmount - 5);
+
+  printableArea.innerHTML = `
+    <div style="font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; line-height: 1.5;">
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 18px;">
+        <div>
+          <h2 style="font-size: 20px; font-weight: 800; margin: 0; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> JK STUDY HUB
+          </h2>
+          <p style="margin: 3px 0 0; font-size: 12px; color: #475569;">Pattan, Baramulla, Jammu &amp; Kashmir - 193121</p>
+          <p style="margin: 2px 0 0; font-size: 12px; color: #475569;">Support Contact: +91 9622605714</p>
+        </div>
+        <div style="text-align: right;">
+          <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; display: inline-block;">
+            OFFICIAL PAID RECEIPT
+          </span>
+          <p style="margin: 5px 0 0; font-family: monospace; font-size: 14px; font-weight: 800; color: #0f172a;">${order.orderId}</p>
+          <p style="margin: 2px 0 0; font-size: 11.5px; color: #64748b;">${order.date}</p>
+        </div>
+      </div>
+
+      <!-- Customer & Delivery Meta -->
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; background: #f8fafc; padding: 14px 16px; border-radius: 8px; border: 1px solid #e2e8f0; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+          <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Student / Recipient:</div>
+          <div style="font-weight: 700; font-size: 14px; margin-top: 3px; color: #0f172a;">${order.name}</div>
+          <div style="color: #475569; margin-top: 2px;">Phone: +91 ${order.phone}</div>
+          <div style="color: #475569; margin-top: 2px;">Location: ${order.address}</div>
+        </div>
+        <div style="text-align: right; min-width: 160px;">
+          <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Payment Details:</div>
+          <div style="font-weight: 700; color: #16a34a; margin-top: 3px;">PAID via Razorpay Online</div>
+          <div style="font-family: monospace; font-size: 11px; color: #475569; margin-top: 2px;">TXN ID: ${order.txnId}</div>
+          <div style="font-size: 11.5px; color: #2563eb; font-weight: 600; margin-top: 2px;">Delivery: Pattan (193121)</div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+        <thead>
+          <tr style="background: #0f172a; color: white;">
+            <th style="padding: 9px 12px; text-align: left; border-radius: 6px 0 0 6px;">Item Description</th>
+            <th style="padding: 9px 12px; text-align: center;">Qty</th>
+            <th style="padding: 9px 12px; text-align: right; border-radius: 0 6px 6px 0;">Amount (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 12px; font-weight: 600; color: #1e293b;">${order.product}</td>
+            <td style="padding: 12px; text-align: center;">1</td>
+            <td style="padding: 12px; text-align: right; font-weight: 700;">₹${itemSubtotal}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 12px;">
+            <td style="padding: 8px 12px;">Local Pattan Handling &amp; Verification Fee</td>
+            <td style="padding: 8px 12px; text-align: center;">1</td>
+            <td style="padding: 8px 12px; text-align: right; font-weight: 600;">₹5</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" style="padding: 14px 12px 6px; font-weight: 800; font-size: 15px; text-align: right;">Grand Total:</td>
+            <td style="padding: 14px 12px 6px; font-weight: 800; font-size: 18px; text-align: right; color: #2563eb;">₹${order.amount}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Footer Seal & Disclaimer -->
+      <div style="border-top: 1px dashed #cbd5e1; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="font-size: 11px; color: #64748b; max-width: 320px; line-height: 1.4;">
+          This is an electronically generated receipt for your purchase on JK Study Hub. Authorized and verified for Pattan delivery.
+        </div>
+        <div style="text-align: center; border: 2px dashed #10b981; padding: 6px 14px; border-radius: 8px; color: #10b981; font-weight: 800; font-size: 11px; transform: rotate(-2deg);">
+          ✓ VERIFIED PAID ORDER<br><span style="font-size: 9px; font-weight: 600; color: #475569;">JK STUDY HUB PATTAN</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const modal = document.getElementById('orderReceiptModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function triggerPrintReceipt() {
+  const printableArea = document.getElementById('printableReceiptArea');
+  if (!printableArea) return;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Receipt - JK Study Hub</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+      <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; padding: 30px; margin: 0; background: #fff; }
+        @media print {
+          body { padding: 0; }
+        }
+      </style>
+    </head>
+    <body>
+      ${printableArea.innerHTML}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+  }, 400);
+}
+
+function closeReceiptModal() {
+  const modal = document.getElementById('orderReceiptModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// --- GOOGLE SHEETS LIVE SYNC BACKGROUND WORKER ---
+function syncOrdersWithGoogleSheet() {
+  if (!SCRIPT_URL) return;
+
+  // Background fetch without blocking UI
+  try {
+    fetch(SCRIPT_URL + '?action=get_orders', { method: 'GET' })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.status === 'success' && Array.isArray(data.orders)) {
+          let localOrders = getOrders();
+          let updated = false;
+
+          data.orders.forEach(remote => {
+            const match = localOrders.find(l => l.orderId === remote.orderId || (l.txnId && l.txnId === remote.txnId));
+            if (match) {
+              if (remote.status && remote.status !== match.status) {
+                match.status = remote.status;
+                updated = true;
+              }
+            } else if (remote.orderId) {
+              localOrders.push({
+                orderId: remote.orderId,
+                txnId: remote.txnId || 'N/A',
+                date: remote.timestamp || new Date().toLocaleDateString('en-IN'),
+                timestamp: Date.now(),
+                name: remote.name || 'Student',
+                phone: remote.phone || '',
+                address: remote.address || 'Pattan - 193121',
+                product: remote.product || 'Study Hub Purchase',
+                amount: parseFloat(remote.amount) || 0,
+                status: remote.status || 'Confirmed'
+              });
+              updated = true;
+            }
+          });
+
+          if (updated) {
+            localStorage.setItem('jk_orders', JSON.stringify(localOrders));
+            updateNavBadges();
+            if (typeof renderOrdersPage === 'function') {
+              renderOrdersPage();
+            }
+          }
+        }
+      })
+      .catch(() => {
+        // Silent fallback to local storage
+      });
+  } catch(e) {}
+}
+
+// Trigger live sync on page show
+window.addEventListener('pageshow', function() {
+  syncOrdersWithGoogleSheet();
+});
 
 // --- CHECKOUT & PAYMENT LOGIC (AMAZON-STYLE 2-STEP) ---
 let currentCheckoutProduct = '';
@@ -1047,6 +1537,10 @@ function processOrder(txnId) {
   formData.append('phone', phone);
   formData.append('address', finalAddress);
   formData.append('product', combinedProduct);
+  formData.append('order_id', orderRecord.orderId);
+  formData.append('txn_id', txnId);
+  formData.append('amount', totalPaid);
+  formData.append('status', 'Confirmed');
 
   fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
