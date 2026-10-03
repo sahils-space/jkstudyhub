@@ -1393,3 +1393,28 @@ function handleGooglePopupAuth() {
     fallbackLoginPrompt();
   }
 }
+
+// --- PWA INSTALLATION CONTROLLER ---
+let deferredPWA = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPWA = e;
+  document.querySelectorAll('.install-app-btn').forEach(b => b.style.display = 'inline-flex');
+});
+
+window.installApp = function() {
+  if (deferredPWA) {
+    deferredPWA.prompt();
+    deferredPWA.userChoice.then(() => {
+      deferredPWA = null;
+      document.querySelectorAll('.install-app-btn').forEach(b => b.style.display = 'none');
+    });
+  } else {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      alert("📱 How to Install on iPhone:\n\n1. Tap the Share button (square with arrow ↑) at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen' (+).\n3. Tap 'Add' in the top right.\n\nJK Study Hub will be added right to your home screen like a real app!");
+    } else {
+      alert("📲 How to Install JK Study Hub App:\n\n• Android (Chrome): Tap the 3 dots (⋮) in the top right and tap 'Install app' or 'Add to Home screen'.\n\n• Laptop/Mac (Chrome): Look at the right side of the address bar at the top and click the Install icon (computer with down arrow)!");
+    }
+  }
+};

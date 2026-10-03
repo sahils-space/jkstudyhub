@@ -56,6 +56,9 @@
 
         <!-- Study Library & User Auth Cluster -->
         <div class="nav-auth-cluster">
+          <button type="button" class="nav-library-btn" id="installAppBtn" onclick="installApp()" title="Install JK Study Hub App on your Phone or PC" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-right: 8px;">
+            <i class="fa-solid fa-download"></i> <span>Install App</span>
+          </button>
           <button type="button" class="nav-library-btn" id="navLibraryBtn" onclick="openLibraryModal()" title="View your study history and bookmarked papers">
             <i class="fa-solid fa-book-bookmark"></i>
             <span>My Library</span>
@@ -674,7 +677,12 @@
           deferredPrompt = null;
         });
       } else {
-        alert("To install this app on your phone:\n\n📱 Android: Tap the 3 dots (⋮) at the top right and select 'Install app'.\n\n🍎 iPhone: Tap the Share button (square with arrow) at the bottom, then scroll down and tap 'Add to Home Screen'.");
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          alert("📱 How to Install on iPhone:\n\n1. Tap the Share button (square with arrow ↑) at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen' (+).\n3. Tap 'Add' in the top right.\n\nJK Study Hub will be added right to your home screen like a real app!");
+        } else {
+          alert("📲 How to Install JK Study Hub App:\n\n• Android (Chrome): Tap the 3 dots (⋮) in the top right and tap 'Install app' or 'Add to Home screen'.\n\n• Laptop/Mac (Chrome): Look at the right side of the address bar at the top and click the Install icon (computer with down arrow)!");
+        }
       }
     }
   </script>
