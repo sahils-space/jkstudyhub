@@ -56,6 +56,15 @@
     .checklist-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px; margin-bottom: 20px; display: none; }
     .checklist-box ul { margin: 10px 0 0 20px; color: #b91c1c; font-size: 13px; }
   </style>
+
+  <!-- Wishlist Script & CSS -->
+  <style>
+    .wishlist-icon { position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 32px; height: 32px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; color: #cbd5e1; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s; }
+    .wishlist-icon.active { color: #ef4444; }
+    .wishlist-icon:hover { transform: scale(1.1); }
+    .product-card { position: relative; } /* Ensure absolute positioning works */
+  </style>
+
 </head>
 <body>
 
@@ -76,6 +85,7 @@
     <div class="product-grid">
       
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" alt="Printed Notes" class="product-img">
         <div class="product-info">
           <span class="product-badge">Top Seller</span>
@@ -89,6 +99,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" alt="Instant Notes" class="product-img">
         <div class="product-info">
           <span class="product-badge">High Demand</span>
@@ -102,6 +113,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" alt="Exam Kit" class="product-img">
         <div class="product-info">
           <span class="product-badge">Bundle & Save 20%</span>
@@ -115,6 +127,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="images/spiral-copies.png" alt="Spiral Notebooks" class="product-img">
         <div class="product-info">
           <h3 class="product-title">Premium Spiral Copies (Set of 2)</h3>
@@ -127,6 +140,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="images/geometry-box.png" alt="Geometry Box" class="product-img">
         <div class="product-info">
           <h3 class="product-title">Geometry Box Pro</h3>
@@ -139,6 +153,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="images/quran.png" alt="Holy Quran" class="product-img">
         <div class="product-info">
           <h3 class="product-title">The Holy Quran</h3>
@@ -151,6 +166,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="images/diary.png" alt="Gift Diary" class="product-img">
         <div class="product-info">
           <h3 class="product-title">Beautiful Gift Diary</h3>
@@ -163,6 +179,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=500" alt="Premium Pens" class="product-img">
         <div class="product-info">
           <h3 class="product-title">Premium Pen Set</h3>
@@ -175,6 +192,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="images/pen-stand.png" alt="Pen Stand" class="product-img">
         <div class="product-info">
           <h3 class="product-title">Desk Pen Stand</h3>
@@ -187,6 +205,7 @@
       </div>
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="images/study-table.png" alt="Study Table" class="product-img">
         <div class="product-info">
           <span class="product-badge">Premium</span>
@@ -202,6 +221,7 @@
     
 
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="https://image.pollinations.ai/prompt/A_simple_modern_LED_study_table_lamp_product_photography_on_white_background?width=600&height=400&nologo=true" alt="Study Lamp" class="product-img">
         <div class="product-info">
           <h3 class="product-title">LED Study Table Lamp</h3>
@@ -220,6 +240,7 @@
     <div class="product-grid">
       
       <div class="product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <div style="height: 150px; background: linear-gradient(135deg, #1e293b, #334155); display: flex; align-items: center; justify-content: center; font-size: 50px; color: white;">
           <i class="fa-solid fa-file-signature"></i>
         </div>
@@ -308,14 +329,29 @@
 
             <div class="form-group">
               <label class="form-label">WhatsApp Number</label>
-              <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit number" pattern="[0-9]{10}">
+              <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit Indian number" pattern="[6789][0-9]{9}" title="Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9">
             </div>
 
             <!-- Dynamic Field: Physical Address -->
-            <div id="addressFields" style="display:none;">
-              <div class="form-group">
-                <label class="form-label">Delivery Address Details</label>
-                <textarea id="orderAddress" class="form-input" rows="2" placeholder="Street, Landmark, and Pincode"></textarea>
+            <div id="addressFields" style="display:none; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+              <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 10px;">Delivery Location</h4>
+              
+              <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <div style="flex:1;">
+                  <label class="form-label">Pincode (Fixed)</label>
+                  <select id="orderPin" class="form-input" style="background:#e2e8f0; pointer-events: none;">
+                    <option value="193121" selected>193121</option>
+                  </select>
+                </div>
+                <div style="flex:1;">
+                  <label class="form-label">City</label>
+                  <input type="text" id="orderCity" class="form-input" value="Pattan" readonly style="background:#e2e8f0; color:#64748b;">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Street Name & Exact Landmark</label>
+                <input type="text" id="orderAddress" class="form-input" placeholder="e.g. Near Main Market, House No 12">
               </div>
             </div>
             

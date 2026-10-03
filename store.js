@@ -145,19 +145,22 @@ function processOrder(txnId) {
   let finalAddress = 'Digital Service (No Address)';
   let finalProductDesc = currentProduct;
 
-  if (productCategory === 'notes') {
-    const cls = document.getElementById('notesClass').value;
-    const sub = document.getElementById('notesSubject').value;
-    finalProductDesc = `${currentProduct} [${cls} - ${sub}]`;
-    finalAddress = document.getElementById('orderAddress').value;
+  if (productCategory === 'notes' || productCategory === 'standard') {
+    const pin = document.getElementById('orderPin').value;
+    const city = document.getElementById('orderCity').value;
+    const street = document.getElementById('orderAddress').value;
+    finalAddress = `${street}, ${city} - ${pin}`;
+    
+    if (productCategory === 'notes') {
+      const cls = document.getElementById('notesClass').value;
+      const sub = document.getElementById('notesSubject').value;
+      finalProductDesc = `${currentProduct} [${cls} - ${sub}]`;
+    }
   } 
   else if (productCategory === 'form') {
     const formSelected = document.getElementById('digitalFormType').value;
     const filesAttached = document.getElementById('formAttachments').files.length;
     finalProductDesc = `${currentProduct} [Type: ${formSelected}] (Files Attached: ${filesAttached})`;
-  } 
-  else if (productCategory === 'standard') {
-    finalAddress = document.getElementById('orderAddress').value;
   }
 
   const totalPaid = currentPrice + 5;
@@ -182,3 +185,55 @@ function processOrder(txnId) {
       alert("Error saving order details. Please contact support.");
     });
 }
+
+
+// --- WISHLIST LOGIC ---
+function toggleFavorite(btn) {
+  btn.classList.toggle('active');
+  const card = btn.closest('.product-card');
+  const title = card.querySelector('.product-title').innerText;
+  
+  let favorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  if (btn.classList.contains('active')) {
+    if(!favorites.includes(title)) favorites.push(title);
+  } else {
+    favorites = favorites.filter(item => item !== title);
+  }
+  localStorage.setItem('wishlist', JSON.stringify(favorites));
+}
+
+let showingWishlist = false;
+function toggleWishlistView() {
+  showingWishlist = !showingWishlist;
+  const btn = document.getElementById('showWishlistBtn');
+  const cards = document.querySelectorAll('.product-card');
+  const favorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
+
+  if (showingWishlist) {
+    btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Close Wishlist';
+    cards.forEach(card => {
+      const title = card.querySelector('.product-title').innerText;
+      if(favorites.includes(title)) {
+        card.style.display = 'block';
+        card.querySelector('.wishlist-icon').classList.add('active');
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  } else {
+    btn.innerHTML = '<i class="fa-solid fa-heart"></i> Wishlist';
+    cards.forEach(card => card.style.display = 'block');
+  }
+}
+
+// Initialize wishlist states on load
+window.addEventListener('DOMContentLoaded', () => {
+  const favorites = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  const cards = document.querySelectorAll('.product-card');
+  cards.forEach(card => {
+    const title = card.querySelector('.product-title').innerText;
+    if(favorites.includes(title)) {
+      card.querySelector('.wishlist-icon').classList.add('active');
+    }
+  });
+});
