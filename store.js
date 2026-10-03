@@ -1,9 +1,10 @@
-// JK STUDY HUB - E-COMMERCE ENGINE (Cart, Wishlist, Multi-Step Checkout & Razorpay)
+// JK STUDY HUB - MASTER E-COMMERCE ENGINE v2.1
+// Full Cart, Wishlist, BFCache Support, and Razorpay Live Integration
 
 const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
 
-// Master Product Catalog
+// Master Catalog
 const PRODUCT_CATALOG = {
   "Printed PYQs & Syllabus": {
     price: 49,
@@ -77,41 +78,52 @@ const PRODUCT_CATALOG = {
   }
 };
 
-// --- DATA ACCESS LAYER ---
+// --- DATA ACCESS LAYER (Supports both new and old storage keys) ---
 function getCart() {
   try {
-    return JSON.parse(localStorage.getItem('jk_cart') || '[]');
+    const raw = localStorage.getItem('jk_cart') || localStorage.getItem('cart');
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch(e) {
     return [];
   }
 }
 
 function saveCart(cart) {
-  localStorage.setItem('jk_cart', JSON.stringify(cart));
+  const json = JSON.stringify(cart);
+  localStorage.setItem('jk_cart', json);
+  localStorage.setItem('cart', json);
   updateNavBadges();
 }
 
 function getWishlist() {
   try {
-    return JSON.parse(localStorage.getItem('jk_wishlist') || '[]');
+    const raw = localStorage.getItem('jk_wishlist') || localStorage.getItem('wishlist');
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch(e) {
     return [];
   }
 }
 
 function saveWishlist(wishlist) {
-  localStorage.setItem('jk_wishlist', JSON.stringify(wishlist));
+  const json = JSON.stringify(wishlist);
+  localStorage.setItem('jk_wishlist', json);
+  localStorage.setItem('wishlist', json);
   updateNavBadges();
 }
 
-// --- BADGE UPDATER ---
+// --- NAV BADGES UPDATER ---
 function updateNavBadges() {
   const cart = getCart();
   const wishlist = getWishlist();
 
-  const totalCartQty = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
+  const totalCartQty = cart.reduce((acc, item) => acc + (parseInt(item.qty) || 1), 0);
+  const totalWishlistCount = wishlist.length;
 
-  const cartBadges = document.querySelectorAll('.cart-badge-count, #cartCount');
+  const cartBadges = document.querySelectorAll('.nav-badge-count, #cartCount');
   cartBadges.forEach(el => {
     if (totalCartQty > 0) {
       el.style.display = 'inline-block';
@@ -123,9 +135,9 @@ function updateNavBadges() {
 
   const wishlistBadges = document.querySelectorAll('.wishlist-badge-count, #wishlistCount');
   wishlistBadges.forEach(el => {
-    if (wishlist.length > 0) {
+    if (totalWishlistCount > 0) {
       el.style.display = 'inline-block';
-      el.innerText = wishlist.length;
+      el.innerText = totalWishlistCount;
     } else {
       el.style.display = 'none';
     }
@@ -164,7 +176,7 @@ function showToast(message, linkUrl, linkText) {
 
   let html = `<span>${message}</span>`;
   if (linkUrl && linkText) {
-    html += `<a href="${linkUrl}" style="background: #2563eb; color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;">${linkText}</a>`;
+    html += `<a href="${linkUrl}" style="background: #2563eb; color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap;">${linkText}</a>`;
   }
   toast.innerHTML = html;
   toast.style.pointerEvents = 'auto';
@@ -179,18 +191,32 @@ function showToast(message, linkUrl, linkText) {
   }, 4000);
 }
 
-// --- CART OPERATIONS ---
+// --- CART ACTIONS ---
 function addToCart(name, price, type, category) {
+  const card = event && event.target ? event.target.closest('.product-card') : null;
   const catalog = PRODUCT_CATALOG[name] || {};
-  const finalPrice = price || catalog.price || 99;
+
+  let finalPrice = price || catalog.price;
+  if (!finalPrice && card) {
+    const pEl = card.querySelector('.product-price');
+    if (pEl) finalPrice = parseInt(pEl.innerText.replace(/[^0-9]/g, ''));
+  }
+  finalPrice = finalPrice || 99;
+
+  let finalImg = catalog.image;
+  if (!finalImg && card) {
+    const imEl = card.querySelector('img');
+    if (imEl) finalImg = imEl.getAttribute('src');
+  }
+  finalImg = finalImg || 'images/icon.svg';
+
   const finalCat = category || catalog.category || 'standard';
-  const finalImg = catalog.image || 'images/icon.svg';
 
   let cart = getCart();
-  const existingIndex = cart.findIndex(i => i.name === name);
+  const existingIdx = cart.findIndex(i => i.name === name);
 
-  if (existingIndex > -1) {
-    cart[existingIndex].qty = (cart[existingIndex].qty || 1) + 1;
+  if (existingIdx > -1) {
+    cart[existingIdx].qty = (parseInt(cart[existingIdx].qty) || 1) + 1;
   } else {
     cart.push({
       name: name,
@@ -209,7 +235,7 @@ function updateCartQty(index, delta) {
   let cart = getCart();
   if (!cart[index]) return;
 
-  cart[index].qty = (cart[index].qty || 1) + delta;
+  cart[index].qty = (parseInt(cart[index].qty) || 1) + delta;
   if (cart[index].qty <= 0) {
     cart.splice(index, 1);
   }
@@ -236,7 +262,6 @@ function moveToWishlist(index) {
   if (!cart[index]) return;
   const item = cart[index];
 
-  // Add to wishlist
   let wishlist = getWishlist();
   if (!wishlist.find(w => w.name === item.name)) {
     wishlist.push({
@@ -248,20 +273,19 @@ function moveToWishlist(index) {
     saveWishlist(wishlist);
   }
 
-  // Remove from cart
   cart.splice(index, 1);
   saveCart(cart);
 
-  showToast(`❤️ Moved "${item.name}" to Wishlist!`, 'wishlist.html', 'View Wishlist ➔');
+  showToast(`❤️ Saved "${item.name}" to Wishlist!`, 'wishlist.html', 'View Wishlist ➔');
   if (typeof renderCartPage === 'function') {
     renderCartPage();
   }
 }
 
-// --- WISHLIST OPERATIONS ---
+// --- WISHLIST ACTIONS ---
 function toggleFavorite(btn, productName) {
   const card = btn ? btn.closest('.product-card') : null;
-  const title = productName || (card ? card.querySelector('.product-title').innerText : '');
+  const title = productName || (card && card.querySelector('.product-title') ? card.querySelector('.product-title').innerText.trim() : '');
   if (!title) return;
 
   const catalog = PRODUCT_CATALOG[title] || {};
@@ -269,37 +293,62 @@ function toggleFavorite(btn, productName) {
   const existingIdx = wishlist.findIndex(w => w.name === title);
 
   if (existingIdx > -1) {
+    // Remove
     wishlist.splice(existingIdx, 1);
     saveWishlist(wishlist);
     if (btn) btn.classList.remove('active');
     showToast(`Removed from Wishlist`);
   } else {
+    // Add
+    let finalPrice = catalog.price;
+    if (!finalPrice && card) {
+      const pEl = card.querySelector('.product-price');
+      if (pEl) finalPrice = parseInt(pEl.innerText.replace(/[^0-9]/g, ''));
+    }
+    finalPrice = finalPrice || 99;
+
+    let finalImg = catalog.image;
+    if (!finalImg && card) {
+      const imEl = card.querySelector('img');
+      if (imEl) finalImg = imEl.getAttribute('src');
+    }
+    finalImg = finalImg || 'images/icon.svg';
+
     wishlist.push({
       name: title,
-      price: catalog.price || 99,
+      price: finalPrice,
       category: catalog.category || 'standard',
-      image: catalog.image || 'images/icon.svg'
+      image: finalImg
     });
     saveWishlist(wishlist);
     if (btn) btn.classList.add('active');
     showToast(`❤️ Saved to Wishlist!`, 'wishlist.html', 'View Wishlist ➔');
   }
 
-  // Update all hearts on current page with this title
-  document.querySelectorAll('.product-card').forEach(c => {
-    const t = c.querySelector('.product-title');
-    if (t && t.innerText === title) {
-      const h = c.querySelector('.wishlist-icon');
-      if (h) {
-        if (wishlist.find(w => w.name === title)) h.classList.add('active');
-        else h.classList.remove('active');
-      }
-    }
-  });
+  // Update hearts on page
+  syncHeartIcons();
 
   if (typeof renderWishlistPage === 'function') {
     renderWishlistPage();
   }
+}
+
+function syncHeartIcons() {
+  const wishlist = getWishlist();
+  document.querySelectorAll('.product-card').forEach(c => {
+    const t = c.querySelector('.product-title');
+    if (t) {
+      const title = t.innerText.trim();
+      const h = c.querySelector('.wishlist-icon');
+      if (h) {
+        if (wishlist.find(w => w.name === title)) {
+          h.classList.add('active');
+        } else {
+          h.classList.remove('active');
+        }
+      }
+    }
+  });
 }
 
 function removeFromWishlist(index) {
@@ -309,6 +358,7 @@ function removeFromWishlist(index) {
   wishlist.splice(index, 1);
   saveWishlist(wishlist);
   showToast(`Removed "${name}" from Wishlist`);
+  syncHeartIcons();
   if (typeof renderWishlistPage === 'function') {
     renderWishlistPage();
   }
@@ -319,11 +369,10 @@ function moveWishlistToCart(index) {
   if (!wishlist[index]) return;
   const item = wishlist[index];
 
-  // Add to cart
   let cart = getCart();
   const existingIdx = cart.findIndex(c => c.name === item.name);
   if (existingIdx > -1) {
-    cart[existingIdx].qty = (cart[existingIdx].qty || 1) + 1;
+    cart[existingIdx].qty = (parseInt(cart[existingIdx].qty) || 1) + 1;
   } else {
     cart.push({
       name: item.name,
@@ -335,11 +384,11 @@ function moveWishlistToCart(index) {
   }
   saveCart(cart);
 
-  // Remove from wishlist
   wishlist.splice(index, 1);
   saveWishlist(wishlist);
 
   showToast(`🛒 Moved "${item.name}" to Cart!`, 'cart.html', 'View Cart ➔');
+  syncHeartIcons();
   if (typeof renderWishlistPage === 'function') {
     renderWishlistPage();
   }
@@ -385,13 +434,14 @@ function renderCartPage() {
   `;
 
   cart.forEach((item, index) => {
-    const itemTotal = item.price * (item.qty || 1);
+    const q = parseInt(item.qty) || 1;
+    const itemTotal = item.price * q;
     subtotal += itemTotal;
-    totalQty += (item.qty || 1);
+    totalQty += q;
 
     itemsHtml += `
       <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 16px; display: flex; gap: 18px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-        <img src="${item.image}" alt="${item.name}" style="width: 85px; height: 85px; object-fit: cover; border-radius: 10px; border: 1px solid #f1f5f9; flex-shrink: 0;">
+        <img src="${item.image || 'images/icon.svg'}" alt="${item.name}" style="width: 85px; height: 85px; object-fit: cover; border-radius: 10px; border: 1px solid #f1f5f9; flex-shrink: 0;">
         <div style="flex-grow: 1;">
           <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px;">${item.name}</h4>
           <div style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
@@ -400,7 +450,7 @@ function renderCartPage() {
           <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden;">
               <button onclick="updateCartQty(${index}, -1)" style="background: #f8fafc; border: none; padding: 6px 12px; cursor: pointer; font-size: 14px; font-weight: bold; color: #475569;">−</button>
-              <span style="padding: 6px 14px; font-weight: 700; font-size: 14px; background: white;">${item.qty || 1}</span>
+              <span style="padding: 6px 14px; font-weight: 700; font-size: 14px; background: white;">${q}</span>
               <button onclick="updateCartQty(${index}, 1)" style="background: #f8fafc; border: none; padding: 6px 12px; cursor: pointer; font-size: 14px; font-weight: bold; color: #475569;">+</button>
             </div>
             <button onclick="removeFromCart(${index})" style="background: none; border: none; color: #ef4444; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;">
@@ -423,7 +473,6 @@ function renderCartPage() {
   const countEl = document.getElementById('cartHeaderCount');
   if (countEl) countEl.innerText = `(${totalQty} items)`;
 
-  // Update Summary
   const subtotalEl = document.getElementById('summarySubtotal');
   if (subtotalEl) subtotalEl.innerText = '₹' + subtotal;
 
@@ -467,7 +516,7 @@ function renderWishlistPage() {
         <button onclick="removeFromWishlist(${index})" style="position: absolute; top: 12px; right: 12px; background: white; border: none; border-radius: 50%; width: 34px; height: 34px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; color: #ef4444; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10;" title="Remove from Wishlist">
           <i class="fa-solid fa-xmark"></i>
         </button>
-        <img src="${item.image}" alt="${item.name}" class="product-img" style="height: 190px; object-fit: cover;">
+        <img src="${item.image || 'images/icon.svg'}" alt="${item.name}" class="product-img" style="height: 190px; object-fit: cover;">
         <div class="product-info">
           <h3 class="product-title" style="font-size: 17px; margin-bottom: 6px;">${item.name}</h3>
           <div class="product-footer" style="margin-top: 15px;">
@@ -519,9 +568,9 @@ function openCartCheckout() {
   let hasForms = false;
 
   cart.forEach(item => {
-    const itemTotal = item.price * (item.qty || 1);
-    total += itemTotal;
-    names.push(`${item.name} (x${item.qty || 1})`);
+    const q = parseInt(item.qty) || 1;
+    total += item.price * q;
+    names.push(`${item.name} (x${q})`);
     if (item.category === 'notes') hasNotes = true;
     if (item.category === 'form') hasForms = true;
   });
@@ -543,7 +592,6 @@ function setupCheckoutModal(name, price, category) {
   const modal = document.getElementById('checkoutModal');
   if (!modal) return;
 
-  // Set invoice
   const nameEl = document.getElementById('itemName');
   if (nameEl) nameEl.innerText = name;
 
@@ -553,11 +601,9 @@ function setupCheckoutModal(name, price, category) {
   const totalEl = document.getElementById('totalPrice');
   if (totalEl) totalEl.innerText = '₹' + (price + 5);
 
-  // Reset form
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
 
-  // Reset Step view
   document.getElementById('step2').style.display = 'none';
   document.getElementById('step1').style.display = 'block';
 
@@ -566,7 +612,6 @@ function setupCheckoutModal(name, price, category) {
   if (p1) p1.classList.add('active-step');
   if (p2) p2.classList.remove('active-step');
 
-  // Dynamic Fields
   const notesFields = document.getElementById('notesSpecificFields');
   const formFields = document.getElementById('formSpecificFields');
   const addressFields = document.getElementById('addressFields');
@@ -744,16 +789,11 @@ function processOrder(txnId) {
 
   fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
-      alert(`🎉 ORDER SUCCESSFUL!
-
-Thank you, ${name}!
-Your payment of ₹${totalPaid} is verified.
-Razorpay TXN ID: ${txnId}
-
-We will contact your WhatsApp (${phone}) shortly to confirm delivery!`);
+      alert(`🎉 ORDER SUCCESSFUL!\n\nThank you, ${name}!\nYour payment of ₹${totalPaid} is verified.\nRazorpay TXN ID: ${txnId}\n\nWe will contact your WhatsApp (${phone}) shortly to confirm delivery!`);
 
       if (isCartCheckoutSession) {
         localStorage.removeItem('jk_cart');
+        localStorage.removeItem('cart');
         updateNavBadges();
         if (typeof renderCartPage === 'function') {
           renderCartPage();
@@ -773,41 +813,35 @@ We will contact your WhatsApp (${phone}) shortly to confirm delivery!`);
     });
 }
 
-// --- PAGE INITIALIZATION ---
+// --- INITIALIZATION & BFCACHE HANDLERS ---
 function initShop() {
   updateNavBadges();
+  syncHeartIcons();
 
-  // Restore Wishlist heart states on store page
-  const wishlist = getWishlist();
-  document.querySelectorAll('.product-card').forEach(card => {
-    const titleEl = card.querySelector('.product-title');
-    if (titleEl) {
-      const title = titleEl.innerText.trim();
-      const icon = card.querySelector('.wishlist-icon');
-      if (icon) {
-        if (wishlist.find(w => w.name === title)) {
-          icon.classList.add('active');
-        } else {
-          icon.classList.remove('active');
-        }
-      }
-    }
-  });
-
-  // If on cart page, render it
   if (document.getElementById('cartItemsList')) {
     renderCartPage();
   }
 
-  // If on wishlist page, render it
   if (document.getElementById('wishlistGrid')) {
     renderWishlistPage();
   }
 }
 
-// Run immediately and also on DOMContentLoaded
+// 1. Initial Load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initShop);
 } else {
   initShop();
 }
+
+// 2. BFCache Support: Re-run every time the page is shown (fixes Back/Forward navigation)
+window.addEventListener('pageshow', function(event) {
+  initShop();
+});
+
+// 3. Multi-Tab Support: Sync badges if updated in another tab
+window.addEventListener('storage', function(e) {
+  if (e.key === 'jk_cart' || e.key === 'cart' || e.key === 'jk_wishlist' || e.key === 'wishlist') {
+    initShop();
+  }
+});
