@@ -85,8 +85,56 @@ function backToStep1() {
 
 // --- RAZORPAY INTEGRATION ---
 function startRazorpayPayment() {
-  alert("Waiting for Razorpay Key ID to activate live payments! Send it to the developer.");
-  // Razorpay integration code will go here once Key ID is provided.
+  const form = document.getElementById('checkoutForm');
+  if (!form.reportValidity()) {
+    return;
+  }
+
+  const name = document.getElementById('orderName').value;
+  const phone = document.getElementById('orderPhone').value;
+  const totalPaid = currentPrice + 5;
+  
+  const btn = document.getElementById('submitOrderBtn');
+  btn.innerHTML = 'Opening Secure Checkout...';
+  btn.disabled = true;
+
+  var options = {
+    "key": "rzp_live_TjJ6bv39yo6Gds",
+    "amount": totalPaid * 100, // Amount is in currency subunits (paise)
+    "currency": "INR",
+    "name": "JK Study Hub",
+    "description": currentProduct,
+    "image": "images/icon.svg",
+    "handler": function (response) {
+        // Automatically called when payment succeeds
+        const txnId = response.razorpay_payment_id;
+        btn.innerHTML = 'Verifying & Saving...';
+        processOrder(txnId); // Save to Google Sheets
+    },
+    "prefill": {
+        "name": name,
+        "contact": phone
+    },
+    "theme": {
+        "color": "#2563eb"
+    },
+    "modal": {
+        "ondismiss": function() {
+            btn.innerHTML = 'Pay Securely';
+            btn.disabled = false;
+        }
+    }
+  };
+  
+  var rzp1 = new Razorpay(options);
+  
+  rzp1.on('payment.failed', function (response){
+      alert("Payment Failed! Reason: " + response.error.description);
+      btn.innerHTML = 'Pay Securely';
+      btn.disabled = false;
+  });
+  
+  rzp1.open();
 }
 
 // --- GOOGLE SHEETS BACKEND (Will be called after successful payment) ---
