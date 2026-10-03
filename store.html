@@ -246,117 +246,127 @@
       </div>
       
       
+      
       <div class="checkout-body">
-        <form id="checkoutForm" onsubmit="processOrder(event)">
+        
+        <div class="checkout-progress">
+          <span id="progressStep1" class="active-step"><i class="fa-solid fa-address-card"></i> 1. Address</span>
+          <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+          <span id="progressStep2"><i class="fa-solid fa-credit-card"></i> 2. Pay</span>
+        </div>
+
+        <form id="checkoutForm" onsubmit="return false;">
           
-          <!-- Invoice -->
-          <div class="invoice-box">
-            <div class="invoice-row">
-              <span id="itemName">Item Name</span>
-              <span id="itemPrice">₹0</span>
+          <!-- STEP 1: Details & Address -->
+          <div id="step1">
+            <!-- Dynamic Field: Notes & PYQs -->
+            <div id="notesSpecificFields" style="display:none; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 15px;">
+              <h4 style="font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">Select Class & Subject Details</h4>
+              <div class="form-group">
+                <label class="form-label">Select Class</label>
+                <select id="notesClass" class="form-input">
+                  <option value="Class 10th">Class 10th</option>
+                  <option value="Class 11th">Class 11th</option>
+                  <option value="Class 12th">Class 12th</option>
+                  <option value="Other">Other (College/Competitive)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Specific Subject (e.g. Physics, History)</label>
+                <input type="text" id="notesSubject" class="form-input" placeholder="Type your subject here...">
+              </div>
             </div>
-            <div class="invoice-row">
-              <span>Platform Fee</span>
-              <span>₹5</span>
-            </div>
-            <div class="invoice-total">
-              <span>Total Amount to Pay</span>
-              <span id="totalPrice">₹5</span>
-            </div>
-          </div>
 
-          <!-- Dynamic Field: Notes & PYQs -->
-          <div id="notesSpecificFields" style="display:none; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 15px;">
-            <h4 style="font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">Select Class & Subject Details</h4>
+            <!-- Dynamic Field: Form Filling Services -->
+            <div id="formSpecificFields" style="display:none; background: #fef2f2; padding: 15px; border-radius: 8px; border: 1px solid #fecaca; margin-bottom: 15px;">
+              <h4 style="font-size: 14px; font-weight: 700; color: #991b1b; margin-bottom: 10px;">Form Filling Documentation</h4>
+              <div class="form-group">
+                <label class="form-label">Which Form do you want us to fill?</label>
+                <select id="digitalFormType" class="form-input" onchange="updateChecklist()">
+                  <option value="" disabled selected>Select a Form Type...</option>
+                  <option value="Scholarship">Scholarship Form</option>
+                  <option value="JKBOSE Registration">JKBOSE Registration</option>
+                  <option value="College Admission">College Admission</option>
+                </select>
+              </div>
+              <p style="font-size: 12px; font-weight: 600; color: #991b1b; margin-top: 10px;">Required Documents:</p>
+              <ul id="checklistItems" style="margin: 5px 0 15px 20px; color: #b91c1c; font-size: 12px;">
+                <li>Select a form above to view required documents.</li>
+              </ul>
+              <div class="form-group">
+                <label class="form-label">Attach Documents (Images/PDFs)</label>
+                <input type="file" id="formAttachments" multiple class="form-input" style="padding: 6px;">
+                <p style="font-size:11px; color:#64748b; margin-top:4px;">*You can also send documents securely via WhatsApp after payment.</p>
+              </div>
+            </div>
+
+            <!-- Universal User Details -->
             <div class="form-group">
-              <label class="form-label">Select Class</label>
-              <select id="notesClass" class="form-input">
-                <option value="Class 10th">Class 10th</option>
-                <option value="Class 11th">Class 11th</option>
-                <option value="Class 12th">Class 12th</option>
-                <option value="Other">Other (College/Competitive)</option>
-              </select>
+              <label class="form-label">Full Name</label>
+              <input type="text" id="orderName" required class="form-input" placeholder="Your name">
             </div>
+
             <div class="form-group">
-              <label class="form-label">Specific Subject (e.g. Physics, History)</label>
-              <input type="text" id="notesSubject" class="form-input" placeholder="Type your subject here...">
+              <label class="form-label">WhatsApp Number</label>
+              <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit number" pattern="[0-9]{10}">
             </div>
-          </div>
 
-          <!-- Dynamic Field: Form Filling Services -->
-          <div id="formSpecificFields" style="display:none; background: #fef2f2; padding: 15px; border-radius: 8px; border: 1px solid #fecaca; margin-bottom: 15px;">
-            <h4 style="font-size: 14px; font-weight: 700; color: #991b1b; margin-bottom: 10px;">Form Filling Documentation</h4>
-            <div class="form-group">
-              <label class="form-label">Which Form do you want us to fill?</label>
-              <select id="digitalFormType" class="form-input" onchange="updateChecklist()">
-                <option value="" disabled selected>Select a Form Type...</option>
-                <option value="Scholarship">Scholarship Form</option>
-                <option value="JKBOSE Registration">JKBOSE Registration</option>
-                <option value="College Admission">College Admission</option>
-              </select>
+            <!-- Dynamic Field: Physical Address -->
+            <div id="addressFields" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Delivery Address Details</label>
+                <textarea id="orderAddress" class="form-input" rows="2" placeholder="Street, Landmark, and Pincode"></textarea>
+              </div>
             </div>
-            <p style="font-size: 12px; font-weight: 600; color: #991b1b; margin-top: 10px;">Required Documents:</p>
-            <ul id="checklistItems" style="margin: 5px 0 15px 20px; color: #b91c1c; font-size: 12px;">
-              <li>Select a form above to view required documents.</li>
-            </ul>
-            <div class="form-group">
-              <label class="form-label">Attach Documents (Images/PDFs)</label>
-              <input type="file" id="formAttachments" multiple class="form-input" style="padding: 6px;">
-              <p style="font-size:11px; color:#64748b; margin-top:4px;">*You can also send documents securely via WhatsApp after payment.</p>
+            
+            <button type="button" class="btn-primary" style="width:100%; margin-top: 10px;" onclick="goToStep2()">Continue to Payment <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- STEP 2: Review & Razorpay -->
+          <div id="step2" style="display:none;">
+            
+            <!-- Invoice Box -->
+            <div class="invoice-box" style="margin-bottom: 15px;">
+              <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Order Summary</h4>
+              <div class="invoice-row">
+                <span id="itemName">Item Name</span>
+                <span id="itemPrice">₹0</span>
+              </div>
+              <div class="invoice-row">
+                <span>Platform Fee</span>
+                <span>₹5</span>
+              </div>
+              <div class="invoice-total">
+                <span>Total to Pay</span>
+                <span id="totalPrice">₹5</span>
+              </div>
             </div>
-          </div>
 
-          <!-- Universal User Details -->
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" id="orderName" required class="form-input" placeholder="Your name">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">WhatsApp Number</label>
-            <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit number" pattern="[0-9]{10}">
-          </div>
-
-          <!-- Dynamic Field: Physical Address -->
-          <div id="addressFields" style="display:none;">
-            <div class="form-group">
-              <label class="form-label">Delivery Address Details</label>
-              <textarea id="orderAddress" class="form-input" rows="2" placeholder="Street, Landmark, and Pincode"></textarea>
+            <div style="text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+              <h4 style="font-size: 14px; font-weight: 700; color: #334155;">Secure Payment</h4>
+              <p style="font-size: 12px; color: #64748b; margin-top: 5px;">You will be securely redirected to Razorpay to complete your payment.</p>
+              
+              <div class="payment-methods-icons">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+              </div>
             </div>
-          </div>
 
-          <!-- Payment Section (UPI Only) -->
-          <div class="payment-box">
-            <h4 style="font-size: 15px; font-weight: 700; color: #1e3a8a; margin-bottom: 5px;">Scan to Pay via UPI Only</h4>
-            <div class="qr-placeholder" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg'); background-size: cover;">
+            <div class="step-actions">
+              <button type="button" class="btn-secondary" onclick="backToStep1()">Back</button>
+              <button type="button" id="submitOrderBtn" class="btn-primary" onclick="startRazorpayPayment()">Pay Securely</button>
             </div>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 5px;">Or pay directly to UPI ID:</p>
-            <div class="upi-id">jkstudyhub@upi</div>
+            <p style="text-align:center; font-size:11px; color:#94a3b8; margin-top:10px;"><i class="fa-solid fa-lock"></i> 100% Secure Payments by Razorpay</p>
           </div>
 
-          <!-- Transaction ID (Proof) -->
-          <div class="form-group">
-            <label class="form-label">UPI Transaction ID <span style="color:red;">*</span></label>
-            <input type="text" id="orderTxn" required class="form-input" placeholder="Enter 12-digit UPI Ref ID after paying">
-          </div>
-
-          <!-- Final Review Confirmation -->
-          <div class="form-group" style="background: #f1f5f9; padding: 10px; border-radius: 6px; border: 1px dashed #cbd5e1;">
-            <label style="display: flex; align-items: start; gap: 10px; cursor: pointer; font-size: 13px; color: #334155;">
-              <input type="checkbox" required style="margin-top: 3px;">
-              <span><strong>Order Review:</strong> I have reviewed all my details above and confirm that they are 100% true and accurate.</span>
-            </label>
-          </div>
-
-          <button type="submit" id="submitOrderBtn" style="width: 100%; background: #2563eb; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px;">
-            Place Order
-          </button>
         </form>
       </div>
 
     </div>
   </div>
 
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="store.js"></script>
 
   <!-- Legal Footer for Payment Gateway -->

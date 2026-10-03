@@ -2717,3 +2717,62 @@ body {
 
 
 
+
+
+/* Checkout Wizard Styles */
+.checkout-progress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+.checkout-progress span {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #f1f5f9;
+}
+.checkout-progress .active-step {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.btn-secondary {
+  background: #e2e8f0;
+  color: #475569;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 30%;
+}
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-grow: 1;
+}
+.step-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.payment-methods-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
+  opacity: 0.7;
+}
+.payment-methods-icons img {
+  height: 25px;
+}

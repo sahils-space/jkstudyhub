@@ -12,6 +12,13 @@ function openCheckout(name, price, type, category) {
   document.getElementById('itemPrice').innerText = '₹' + price;
   document.getElementById('totalPrice').innerText = '₹' + (price + 5);
 
+  // Reset Modal to Step 1
+  document.getElementById('checkoutForm').reset();
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('progressStep2').classList.remove('active-step');
+  document.getElementById('progressStep1').classList.add('active-step');
+
   // Reset displays
   document.getElementById('notesSpecificFields').style.display = 'none';
   document.getElementById('formSpecificFields').style.display = 'none';
@@ -42,7 +49,6 @@ function openCheckout(name, price, type, category) {
 
 function closeCheckout() {
   document.getElementById('checkoutModal').classList.remove('active');
-  document.getElementById('checkoutForm').reset();
 }
 
 function updateChecklist() {
@@ -58,12 +64,35 @@ function updateChecklist() {
   }
 }
 
-function processOrder(e) {
-  e.preventDefault();
-  
+// --- WIZARD NAVIGATION ---
+function goToStep2() {
+  const form = document.getElementById('checkoutForm');
+  if (!form.reportValidity()) {
+    return; // Stop if required fields are empty
+  }
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  document.getElementById('progressStep1').classList.remove('active-step');
+  document.getElementById('progressStep2').classList.add('active-step');
+}
+
+function backToStep1() {
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('progressStep2').classList.remove('active-step');
+  document.getElementById('progressStep1').classList.add('active-step');
+}
+
+// --- RAZORPAY INTEGRATION ---
+function startRazorpayPayment() {
+  alert("Waiting for Razorpay Key ID to activate live payments! Send it to the developer.");
+  // Razorpay integration code will go here once Key ID is provided.
+}
+
+// --- GOOGLE SHEETS BACKEND (Will be called after successful payment) ---
+function processOrder(txnId) {
   const name = document.getElementById('orderName').value;
   const phone = document.getElementById('orderPhone').value;
-  const txnId = document.getElementById('orderTxn').value;
   
   let finalAddress = 'Digital Service (No Address)';
   let finalProductDesc = currentProduct;
@@ -86,10 +115,6 @@ function processOrder(e) {
   const totalPaid = currentPrice + 5;
   const combinedProduct = `${finalProductDesc} | Paid: ₹${totalPaid} | TXN: ${txnId}`;
 
-  const btn = document.getElementById('submitOrderBtn');
-  btn.innerHTML = 'Processing...';
-  btn.disabled = true;
-
   const scriptURL = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
   
   const formData = new FormData();
@@ -100,14 +125,12 @@ function processOrder(e) {
 
   fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
-      alert(`Order Successful!\n\nThank you, ${name}. Your payment of ₹${totalPaid} has been recorded.\nWe will contact you on WhatsApp shortly.`);
+      alert(`Order Successful!\n\nThank you, ${name}. Your payment of ₹${totalPaid} has been verified.\nWe will contact you on WhatsApp shortly.`);
       closeCheckout();
-      btn.innerHTML = 'Place Order';
-      btn.disabled = false;
+      document.getElementById('submitOrderBtn').innerHTML = 'Pay Securely';
+      document.getElementById('submitOrderBtn').disabled = false;
     })
     .catch(error => {
-      alert("Error placing order. Please try again.");
-      btn.innerHTML = 'Place Order';
-      btn.disabled = false;
+      alert("Error saving order details. Please contact support.");
     });
 }
