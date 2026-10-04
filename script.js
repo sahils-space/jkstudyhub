@@ -2219,17 +2219,17 @@ function handleSendOTP() {
           window.recaptchaVerifier = null;
         }
 
-        let friendlyMsg = "Unable to send SMS: " + (error.message || error.code);
+        let friendlyMsg = "⚠️ Google Firebase Message: " + (error.message || error.code);
         if (error.code === 'auth/unauthorized-domain') {
-          friendlyMsg = "⚠️ Domain Blocked by Google: 'jkstudyhub.online' must be added under Firebase Console ➔ Authentication ➔ Settings ➔ Authorized Domains.";
+          friendlyMsg = "⚠️ Domain Blocked by Google: 'jkstudyhub.online' must be added under Firebase Console ➔ Authentication ➔ Settings ➔ Authorized Domains. (" + error.message + ")";
         } else if (error.code === 'auth/operation-not-allowed') {
-          friendlyMsg = "⚠️ Phone Sign-in Disabled: Please enable 'Phone' in Firebase Console ➔ Authentication ➔ Sign-in method.";
+          friendlyMsg = "⚠️ Google Sign-in Blocked: " + error.message;
         } else if (error.code === 'auth/quota-exceeded') {
-          friendlyMsg = "⚠️ Daily SMS Quota Exceeded: Google Firebase daily free SMS limit reached for today.";
+          friendlyMsg = "⚠️ Daily SMS Quota Exceeded: " + error.message;
         } else if (error.code === 'auth/invalid-phone-number') {
-          friendlyMsg = "⚠️ Invalid Phone Number: Please enter a valid 10-digit Indian mobile number.";
+          friendlyMsg = "⚠️ Invalid Phone Number: " + error.message;
         } else if (error.code === 'auth/captcha-check-failed') {
-          friendlyMsg = "⚠️ reCAPTCHA Check Failed: Please refresh the page and try again.";
+          friendlyMsg = "⚠️ reCAPTCHA Check Failed: " + error.message;
         }
 
         errorMsg.innerHTML = friendlyMsg;
