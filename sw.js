@@ -1,9 +1,9 @@
-const CACHE_NAME = 'jk-study-hub-v7';
+const CACHE_NAME = 'jk-study-hub-v9';
 const urlsToCache = [
   './',
   './index.html',
   './store.html',
-  './account.html#orders',
+  './account.html',
   './style.css',
   './store_v7.js'
 ];
@@ -27,6 +27,11 @@ self.addEventListener('activate', event => {
 
 // Network-First Strategy: always get fresh files when online
 self.addEventListener('fetch', event => {
+  // Bypass Service Worker for API calls and external domains
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin || url.hostname.includes('google') || url.hostname.includes('firebase')) {
+    return;
+  }
   event.respondWith(
     fetch(event.request)
       .then(response => {
