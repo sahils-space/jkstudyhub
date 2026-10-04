@@ -2298,9 +2298,10 @@ function handleVerifyOTP() {
         }
       })
       .catch(err => {
+        console.error(err);
         btn.innerHTML = 'Verify OTP & Login ➔';
         btn.disabled = false;
-        errorMsg.innerText = "❌ Verification service error. Please try again.";
+        errorMsg.innerText = "❌ " + err.message;
         errorMsg.style.display = 'block';
       });
     return;
