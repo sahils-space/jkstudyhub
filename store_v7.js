@@ -1,33 +1,4 @@
-
-// Nuke old Service Workers to fix Safari caching bugs
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  });
-}
-    let adminControls = '';
-    if (isStaff) {
-      const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
-      adminControls = `
-        <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
-          <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
-          <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <select ${isLocked ? 'disabled' : ''} class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; ${isLocked ? 'background-color:#f1f5f9; cursor:not-allowed; opacity:0.7;' : ''}" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
-              <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-              <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-              <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered 🔒</option>
-              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled 🔒</option>
-            </select>
-            <button onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
-          </div>
-        </div>
-      `;
-    }// JK STUDY HUB - MASTER E-COMMERCE ENGINE v3.0
+// JK STUDY HUB - MASTER E-COMMERCE ENGINE v3.0
 // Cart, Wishlist, Orders Tracking, Unified Google Auth & Razorpay Live Integration
 
 const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
@@ -222,12 +193,15 @@ function getCurrentUser() {
 function setCurrentUser(user) {
   window.currentUser = user;
   if (user) {
-    try { localStorage.setItem('jk_study_user', JSON.stringify(user)); } catch(e) { console.warn('LocalStorage error', e); }
+    try { localStorage.setItem('jk_study_user', JSON.stringify(user)); } catch(e) {}
   } else {
     try { localStorage.removeItem('jk_study_user'); } catch(e) {}
   }
   updateAuthUI();
   updateNavBadges();
+  if (typeof renderAccountDashboard === 'function') {
+    renderAccountDashboard();
+  }
 }
 
 // --- NAV BADGES UPDATER ---
@@ -920,11 +894,6 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
   let orders = getOrders();
   const idx = orders.findIndex(o => o.orderId === orderId);
   if (idx !== -1) {
-    if (orders[idx].status === 'Delivered' || orders[idx].status === 'Cancelled') {
-      showToast('⚠️ Cannot modify a ' + orders[idx].status + ' order.');
-      if (typeof renderAccountOrders === 'function') { setTimeout(renderAccountOrders, 100); }
-      return;
-    }
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     saveOrders(orders);
@@ -1973,10 +1942,7 @@ function handleSendOTP() {
   const phoneInput = document.getElementById('authPhoneNumber');
   const errorMsg = document.getElementById('phoneErrorMsg');
   const btn = document.getElementById('sendOtpBtn');
-    const phone = phoneInput.value.trim();
-
-  
-
+  const phone = phoneInput.value.trim();
 
   if (!/^[6789][0-9]{9}$/.test(phone)) {
     errorMsg.innerText = "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.";
@@ -1987,16 +1953,6 @@ function handleSendOTP() {
 
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending SMS OTP...';
   btn.disabled = true;
-  
-  // Timeout safeguard
-  setTimeout(() => {
-    if (btn.disabled && btn.innerHTML.includes('Sending SMS OTP')) {
-      btn.innerHTML = 'Send OTP Code ➔';
-      btn.disabled = false;
-      errorMsg.innerHTML = '⚠️ Network timeout. Firebase verification may be blocked by your browser. Please try "1-Click Sign in with Google" instead.';
-      errorMsg.style.display = 'block';
-    }
-  }, 12000);
 
   const fullPhoneNumber = '+91' + phone;
   const scriptEndpoint = SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
@@ -2187,13 +2143,6 @@ function finishPhoneLogin(user) {
   if (orderName && !orderName.value) orderName.value = user.displayName;
   const orderPhone = document.getElementById('orderPhone');
   if (orderPhone && !orderPhone.value) orderPhone.value = user.phoneNumber.replace('+91', '');
-  if (typeof renderAccountDashboard === 'function') { setTimeout(renderAccountDashboard, 100); }
-  if (window.location.pathname.includes('account.html')) {
-    setTimeout(() => {
-      if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
-      if (typeof initShop === 'function') initShop();
-    }, 100);
-  }
 }
 
 function handleGooglePopupAuth() {
@@ -2209,18 +2158,10 @@ function handleGooglePopupAuth() {
         uid: res.user.uid
       };
       setCurrentUser(user);
-      showToast(`Welcome, ${(user.displayName || "Student").split(" ")[0]}!`);
-      if (typeof renderAccountDashboard === 'function') { setTimeout(renderAccountDashboard, 100); }
-      if (document.getElementById('checkoutModal') && document.getElementById('checkoutModal').style.display === 'flex') {
-        const orderName = document.getElementById('orderName');
-        if (orderName && !orderName.value) orderName.value = user.displayName;
-        const orderPhone = document.getElementById('orderPhone');
-        if (orderPhone && !orderPhone.value) orderPhone.value = (user.phoneNumber || '').replace('+91', '');
-      } else if (window.location.pathname.includes('account.html')) {
-        setTimeout(() => {
-          if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
-          if (typeof initShop === 'function') initShop();
-        }, 100);
+      const firstName = (user.displayName || 'Student').split(' ')[0];
+      showToast(`Welcome, ${firstName}!`);
+      if (typeof renderAccountDashboard === 'function') {
+        renderAccountDashboard();
       }
     }).catch(err => {
       fallbackLoginPrompt();
