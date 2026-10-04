@@ -33,6 +33,84 @@ function doPost(e) {
     
     var p = e.parameter || {};
     
+    // --- FAST2SMS OTP CONFIGURATION ---
+    var FAST2SMS_API_KEY = "WdLfVOXlz9U0EiJe5t8kxCm3sqHwcbFATDrpI46gjGB2NMRSKZDUqXtJIKMHSzPAEybfTreQlRpVhL5a";
+
+    // ACTION: Send SMS OTP via Fast2SMS
+    if (p.action === "send_otp") {
+      var phone = String(p.phone || "").replace(/\D/g, "").slice(-10);
+      if (!phone.match(/^[6789]\d{9}$/)) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "Please enter a valid 10-digit Indian mobile number."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      // Generate secure 6-digit random OTP
+      var otp = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Cache OTP for 10 minutes
+      var cache = CacheService.getScriptCache();
+      cache.put("otp_" + phone, otp, 600);
+      
+      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
+                "&route=otp&variables_values=" + encodeURIComponent(otp) +
+                "&flash=0&numbers=" + encodeURIComponent(phone);
+      
+      try {
+        var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+        var resJson = JSON.parse(response.getContentText());
+        
+        if (resJson.return === true || resJson.status_code === 200) {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: "success",
+            message: "OTP sent successfully to your phone via SMS.",
+            phone: phone
+          })).setMimeType(ContentService.MimeType.JSON);
+        } else {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: "fast2sms_pending",
+            message: resJson.message || "Fast2SMS activation pending.",
+            status_code: resJson.status_code
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      } catch (err) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "SMS Gateway error: " + err.toString()
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    // ACTION: Verify SMS OTP
+    if (p.action === "verify_otp") {
+      var phone = String(p.phone || "").replace(/\D/g, "").slice(-10);
+      var userOtp = String(p.otp || "").trim();
+      var cache = CacheService.getScriptCache();
+      var storedOtp = cache.get("otp_" + phone);
+      
+      if (!storedOtp) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "OTP has expired or was not requested. Please request a new code."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      if (storedOtp === userOtp) {
+        cache.remove("otp_" + phone);
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "success",
+          verified: true,
+          phone: phone
+        })).setMimeType(ContentService.MimeType.JSON);
+      } else {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "Incorrect OTP code. Please enter the valid 6-digit code received on your phone."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
     // ACTION: Admin Status Update from Website
     if (p.action === "update_status") {
       var targetId = String(p.order_id || "").trim();
@@ -98,6 +176,81 @@ function doPost(e) {
 
 function doGet(e) {
   try {
+    var p = (e && e.parameter) ? e.parameter : {};
+    var FAST2SMS_API_KEY = "WdLfVOXlz9U0EiJe5t8kxCm3sqHwcbFATDrpI46gjGB2NMRSKZDUqXtJIKMHSzPAEybfTreQlRpVhL5a";
+
+    // ACTION: Send SMS OTP via Fast2SMS (GET)
+    if (p.action === "send_otp") {
+      var phone = String(p.phone || "").replace(/\D/g, "").slice(-10);
+      if (!phone.match(/^[6789]\d{9}$/)) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "Please enter a valid 10-digit Indian mobile number."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      var otp = Math.floor(100000 + Math.random() * 900000).toString();
+      var cache = CacheService.getScriptCache();
+      cache.put("otp_" + phone, otp, 600);
+      
+      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
+                "&route=otp&variables_values=" + encodeURIComponent(otp) +
+                "&flash=0&numbers=" + encodeURIComponent(phone);
+      
+      try {
+        var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+        var resJson = JSON.parse(response.getContentText());
+        
+        if (resJson.return === true || resJson.status_code === 200) {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: "success",
+            message: "OTP sent successfully to your phone via SMS.",
+            phone: phone
+          })).setMimeType(ContentService.MimeType.JSON);
+        } else {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: "fast2sms_pending",
+            message: resJson.message || "Fast2SMS activation pending.",
+            status_code: resJson.status_code
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      } catch (err) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "SMS Gateway error: " + err.toString()
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    // ACTION: Verify SMS OTP (GET)
+    if (p.action === "verify_otp") {
+      var phone = String(p.phone || "").replace(/\D/g, "").slice(-10);
+      var userOtp = String(p.otp || "").trim();
+      var cache = CacheService.getScriptCache();
+      var storedOtp = cache.get("otp_" + phone);
+      
+      if (!storedOtp) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "OTP has expired or was not requested. Please request a new code."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      if (storedOtp === userOtp) {
+        cache.remove("otp_" + phone);
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "success",
+          verified: true,
+          phone: phone
+        })).setMimeType(ContentService.MimeType.JSON);
+      } else {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "Incorrect OTP code. Please enter the valid 6-digit code received on your phone."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = sheet.getDataRange().getValues();
     
@@ -108,7 +261,6 @@ function doGet(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    var p = (e && e.parameter) ? e.parameter : {};
     var filterId = String(p.order_id || "").trim();
     var filterPhone = String(p.phone || "").trim();
     

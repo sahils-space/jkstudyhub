@@ -2047,32 +2047,44 @@ function injectPhoneAuthModal() {
           <div style="margin-bottom: 14px;">
             <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Mobile Number</label>
             <div style="display: flex; gap: 8px;">
+        <!-- STEP 1: Enter Phone Number or Google -->
+        <div id="phoneStep1">
+          <!-- 1-Click Google Sign In (Primary Free Option) -->
+          <button type="button" onclick="handleGooglePopupAuth()" style="width: 100%; background: #ffffff; border: 2px solid #cbd5e1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14.5px; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s;">
+            <svg style="width: 20px; height: 20px;" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span>1-Click Sign in with Google (Free)</span>
+          </button>
+
+          <div style="text-align: center; margin: 16px 0; display: flex; align-items: center; gap: 10px;">
+            <span style="flex: 1; height: 1px; background: #e2e8f0;"></span>
+            <span style="font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">OR VIA MOBILE SMS OTP</span>
+            <span style="flex: 1; height: 1px; background: #e2e8f0;"></span>
+          </div>
+
+          <p style="font-size: 13px; color: #64748b; margin: 0 0 12px; line-height: 1.4;">
+            Enter your 10-digit mobile number to receive a verification SMS OTP.
+          </p>
+
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Mobile Number</label>
+            <div style="display: flex; gap: 8px;">
               <span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; font-weight: 800; color: #334155; font-size: 14px; display: flex; align-items: center; gap: 6px;">
                 🇮🇳 +91
               </span>
               <input type="tel" id="authPhoneNumber" class="form-input" placeholder="10-digit number" maxlength="10" pattern="[6789][0-9]{9}" style="font-size: 15px; font-weight: 700; letter-spacing: 0.5px; flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
             </div>
-            <p id="phoneErrorMsg" style="color: #ef4444; font-size: 12px; font-weight: 600; margin: 6px 0 0; display: none;"></p>
+            <p id="phoneErrorMsg" style="color: #ef4444; font-size: 12px; font-weight: 600; margin: 6px 0 0; display: none; line-height: 1.4;"></p>
           </div>
 
           <div id="recaptcha-container" style="margin-bottom: 12px;"></div>
 
           <button type="button" id="sendOtpBtn" onclick="handleSendOTP()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
             Send OTP Code ➔
-          </button>
-
-          <div style="text-align: center; margin: 16px 0 12px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
-            <span style="font-size: 12px; color: #94a3b8; font-weight: 600;">OR CONTINUE WITH</span>
-          </div>
-
-          <button type="button" onclick="handleGooglePopupAuth()" style="width: 100%; background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 13.5px; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
-            <svg style="width: 18px; height: 18px;" viewBox="0 0 48 48">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            </svg>
-            Sign in with Google
           </button>
         </div>
 
@@ -2152,45 +2164,18 @@ function handleSendOTP() {
   }
   errorMsg.style.display = 'none';
 
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending OTP...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending SMS OTP...';
   btn.disabled = true;
 
   const fullPhoneNumber = '+91' + phone;
+  const scriptEndpoint = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
 
-  // Real Firebase Phone Auth
-  if (typeof firebase === 'undefined' || !firebase.auth) {
-    btn.innerHTML = 'Send OTP Code ➔';
-    btn.disabled = false;
-    errorMsg.innerHTML = "<strong>Authentication Error:</strong> Firebase service is still loading. Please refresh the page.";
-    errorMsg.style.display = 'block';
-    return;
-  }
-
-  // Reset any existing reCAPTCHA instance to prevent state collision
-  const rcContainer = document.getElementById('recaptcha-container');
-  if (rcContainer) rcContainer.innerHTML = '';
-  if (window.recaptchaVerifier) {
-    try {
-      window.recaptchaVerifier.clear();
-    } catch(e) {}
-    window.recaptchaVerifier = null;
-  }
-
-  try {
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      'size': 'invisible',
-      'callback': () => {},
-      'expired-callback': () => {
-        btn.innerHTML = 'Send OTP Code ➔';
-        btn.disabled = false;
-        errorMsg.innerText = "reCAPTCHA expired. Please click 'Send OTP Code' again.";
-        errorMsg.style.display = 'block';
-      }
-    });
-
-    firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
-      .then((confirmationResult) => {
-        activePhoneConfirmation = confirmationResult;
+  // 1. Try Fast2SMS via backend
+  fetch(`${scriptEndpoint}?action=send_otp&phone=${encodeURIComponent(phone)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'success') {
+        activePhoneConfirmation = { fast2sms: true, phone: phone };
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
 
@@ -2208,39 +2193,71 @@ function handleSendOTP() {
           msgEl.style.display = 'none';
           msgEl.innerText = '';
         }
-      })
-      .catch((error) => {
-        console.error("Firebase Phone Auth error:", error.code, error.message);
+        if (typeof showToast === 'function') showToast("📱 Real SMS OTP sent to your phone!");
+      } else if (data.status === 'fast2sms_pending') {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-
+        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant free login!</span>`;
+        errorMsg.style.display = 'block';
+      } else {
+        throw new Error(data.message || 'Fast2SMS error');
+      }
+    })
+    .catch(err => {
+      // 2. Fallback to Firebase Phone Auth if Apps Script fails
+      if (typeof firebase !== 'undefined' && firebase.auth) {
         if (window.recaptchaVerifier) {
           try { window.recaptchaVerifier.clear(); } catch(e) {}
           window.recaptchaVerifier = null;
         }
+        const rcContainer = document.getElementById('recaptcha-container');
+        if (rcContainer) rcContainer.innerHTML = '';
 
-        let friendlyMsg = "⚠️ Google Firebase Message: " + (error.message || error.code);
-        if (error.code === 'auth/unauthorized-domain') {
-          friendlyMsg = "⚠️ Domain Blocked by Google: 'jkstudyhub.online' must be added under Firebase Console ➔ Authentication ➔ Settings ➔ Authorized Domains. (" + error.message + ")";
-        } else if (error.code === 'auth/operation-not-allowed') {
-          friendlyMsg = "⚠️ Google Sign-in Blocked: " + error.message;
-        } else if (error.code === 'auth/quota-exceeded') {
-          friendlyMsg = "⚠️ Daily SMS Quota Exceeded: " + error.message;
-        } else if (error.code === 'auth/invalid-phone-number') {
-          friendlyMsg = "⚠️ Invalid Phone Number: " + error.message;
-        } else if (error.code === 'auth/captcha-check-failed') {
-          friendlyMsg = "⚠️ reCAPTCHA Check Failed: " + error.message;
+        try {
+          window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': () => {},
+            'expired-callback': () => {
+              btn.innerHTML = 'Send OTP Code ➔';
+              btn.disabled = false;
+            }
+          });
+
+          firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
+            .then((confirmationResult) => {
+              activePhoneConfirmation = confirmationResult;
+              btn.innerHTML = 'Send OTP Code ➔';
+              btn.disabled = false;
+
+              document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
+              document.getElementById('phoneStep1').style.display = 'none';
+              document.getElementById('phoneStep2').style.display = 'block';
+              const otpInput = document.getElementById('authOtpCode');
+              if (otpInput) {
+                otpInput.value = '';
+                otpInput.placeholder = '• • • • • •';
+                otpInput.focus();
+              }
+            })
+            .catch((fbError) => {
+              btn.innerHTML = 'Send OTP Code ➔';
+              btn.disabled = false;
+              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+              errorMsg.style.display = 'block';
+            });
+        } catch(e) {
+          btn.innerHTML = 'Send OTP Code ➔';
+          btn.disabled = false;
+          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+          errorMsg.style.display = 'block';
         }
-
-        errorMsg.innerHTML = friendlyMsg;
+      } else {
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
+        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
         errorMsg.style.display = 'block';
-      });
-  } catch(err) {
-    btn.innerHTML = 'Send OTP Code ➔';
-    btn.disabled = false;
-    errorMsg.innerText = "Setup error: " + (err.message || err);
-    errorMsg.style.display = 'block';
-  }
+      }
+    });
 }
 
 function handleVerifyOTP() {
@@ -2263,7 +2280,42 @@ function handleVerifyOTP() {
   const phone = document.getElementById('authPhoneNumber').value.trim();
   const isOwner = (phone === '9622605714');
   const studentName = isOwner ? 'Sahil Zahoor (Owner)' : (nameInput.value.trim() || ('Student ' + phone.slice(-4)));
+  const scriptEndpoint = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
 
+  // Fast2SMS verification via backend
+  if (activePhoneConfirmation && activePhoneConfirmation.fast2sms) {
+    fetch(`${scriptEndpoint}?action=verify_otp&phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(code)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success' && data.verified) {
+          const user = {
+            displayName: studentName,
+            phoneNumber: '+91' + phone,
+            email: isOwner ? 'sahilsspace20@gmail.com' : (phone + '@student.jkstudyhub.online'),
+            uid: 'fast2sms_' + phone,
+            photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+          };
+          if (isOwner) {
+            sessionStorage.setItem('jk_admin_unlocked', 'true');
+          }
+          finishPhoneLogin(user);
+        } else {
+          btn.innerHTML = 'Verify OTP & Login ➔';
+          btn.disabled = false;
+          errorMsg.innerText = data.message || "❌ Incorrect OTP code. Please enter the valid code received on your phone.";
+          errorMsg.style.display = 'block';
+        }
+      })
+      .catch(err => {
+        btn.innerHTML = 'Verify OTP & Login ➔';
+        btn.disabled = false;
+        errorMsg.innerText = "❌ Verification service error. Please try again.";
+        errorMsg.style.display = 'block';
+      });
+    return;
+  }
+
+  // Firebase fallback verification
   if (activePhoneConfirmation && typeof activePhoneConfirmation.confirm === 'function') {
     activePhoneConfirmation.confirm(code)
       .then((result) => {
@@ -2285,12 +2337,13 @@ function handleVerifyOTP() {
         errorMsg.innerText = "❌ Incorrect OTP code. Please check your SMS and enter the exact 6-digit code received on your phone.";
         errorMsg.style.display = 'block';
       });
-  } else {
-    btn.innerHTML = 'Verify OTP &amp; Login ➔';
-    btn.disabled = false;
-    errorMsg.innerText = "❌ Session expired or invalid. Please click 'Change' and request a fresh OTP code.";
-    errorMsg.style.display = 'block';
+    return;
   }
+
+  btn.innerHTML = 'Verify OTP &amp; Login ➔';
+  btn.disabled = false;
+  errorMsg.innerText = "❌ Session expired or invalid. Please click 'Change' and request a fresh OTP code.";
+  errorMsg.style.display = 'block';
 }
 
 function finishPhoneLogin(user) {
