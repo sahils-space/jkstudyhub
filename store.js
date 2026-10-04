@@ -1938,65 +1938,86 @@ function handleSendOTP() {
   }
 
   // 2. Regular Students via Firebase Phone Auth
-  if (typeof firebase !== 'undefined' && firebase.auth) {
-    try {
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-          'size': 'invisible',
-          'callback': () => {}
-        });
-      }
-
-      firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
-        .then((confirmationResult) => {
-          activePhoneConfirmation = confirmationResult;
-          btn.innerHTML = 'Send OTP Code ➔';
-          btn.disabled = false;
-
-          document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-          document.getElementById('phoneStep1').style.display = 'none';
-          document.getElementById('phoneStep2').style.display = 'block';
-          document.getElementById('authOtpCode').value = '';
-          document.getElementById('authOtpCode').focus();
-        })
-        .catch((error) => {
-          console.warn("Firebase Phone Auth error:", error.code, error.message);
-          btn.innerHTML = 'Send OTP Code ➔';
-          btn.disabled = false;
-
-          // If Firebase SMS is not active in console, provide seamless fast verification
-          activePhoneConfirmation = { fast: true, phone: phone };
-          document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-          document.getElementById('phoneStep1').style.display = 'none';
-          document.getElementById('phoneStep2').style.display = 'block';
-          const otpInput = document.getElementById('authOtpCode');
-          if (otpInput) {
-            otpInput.value = '';
-            otpInput.placeholder = '1234';
-            otpInput.focus();
-          }
-          const msgEl = document.getElementById('otpErrorMsg');
-          if (msgEl) {
-            msgEl.innerText = "Notice: Enter 1234 or your SMS code to verify!";
-            msgEl.style.color = '#10b981';
-            msgEl.style.display = 'block';
-          }
-        });
-    } catch(e) {
-      btn.innerHTML = 'Send OTP Code ➔';
-      btn.disabled = false;
-      activePhoneConfirmation = { fast: true, phone: phone };
-      document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-      document.getElementById('phoneStep1').style.display = 'none';
-      document.getElementById('phoneStep2').style.display = 'block';
-    }
-  } else {
+  if (typeof firebase === 'undefined' || !firebase.auth) {
     btn.innerHTML = 'Send OTP Code ➔';
     btn.disabled = false;
-    activePhoneConfirmation = { fast: true, phone: phone };
-    document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-    document.getElementById('phoneStep1').style.display = 'none';
-    document.getElementById('phoneStep2').style.display = 'block';
+    errorMsg.innerHTML = "<strong>Authentication Error:</strong> Firebase service is still loading. Please refresh the page.";
+    errorMsg.style.display = 'block';
+    return;
+  }
+
+  // Reset any existing reCAPTCHA instance to prevent state collision
+  if (window.recaptchaVerifier) {
+    try {
+      window.recaptchaVerifier.clear();
+    } catch(e) {}
+    window.recaptchaVerifier = null;
+  }
+
+  try {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'invisible',
+      'callback': () => {},
+      'expired-callback': () => {
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
+        errorMsg.innerText = "reCAPTCHA expired. Please click 'Send OTP Code' again.";
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
+      .then((confirmationResult) => {
+        activePhoneConfirmation = confirmationResult;
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
+
+        document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
+        document.getElementById('phoneStep1').style.display = 'none';
+        document.getElementById('phoneStep2').style.display = 'block';
+        const otpInput = document.getElementById('authOtpCode');
+        if (otpInput) {
+          otpInput.value = '';
+          otpInput.placeholder = '• • • • • •';
+          otpInput.focus();
+        }
+        const msgEl = document.getElementById('otpErrorMsg');
+        if (msgEl) {
+          msgEl.style.display = 'none';
+          msgEl.innerText = '';
+        }
+      })
+      .catch((error) => {
+        console.error("Firebase Phone Auth error:", error.code, error.message);
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
+
+        if (window.recaptchaVerifier) {
+          try { window.recaptchaVerifier.clear(); } catch(e) {}
+          window.recaptchaVerifier = null;
+        }
+
+        let friendlyMsg = "Unable to send SMS: " + (error.message || error.code);
+        if (error.code === 'auth/unauthorized-domain') {
+          friendlyMsg = "⚠️ Domain Blocked by Google: 'jkstudyhub.online' must be added under Firebase Console ➔ Authentication ➔ Settings ➔ Authorized Domains.";
+        } else if (error.code === 'auth/operation-not-allowed') {
+          friendlyMsg = "⚠️ Phone Sign-in Disabled: Please enable 'Phone' in Firebase Console ➔ Authentication ➔ Sign-in method.";
+        } else if (error.code === 'auth/quota-exceeded') {
+          friendlyMsg = "⚠️ Daily SMS Quota Exceeded: Google Firebase daily free SMS limit reached for today.";
+        } else if (error.code === 'auth/invalid-phone-number') {
+          friendlyMsg = "⚠️ Invalid Phone Number: Please enter a valid 10-digit Indian mobile number.";
+        } else if (error.code === 'auth/captcha-check-failed') {
+          friendlyMsg = "⚠️ reCAPTCHA Check Failed: Please refresh the page and try again.";
+        }
+
+        errorMsg.innerHTML = friendlyMsg;
+        errorMsg.style.display = 'block';
+      });
+  } catch(err) {
+    btn.innerHTML = 'Send OTP Code ➔';
+    btn.disabled = false;
+    errorMsg.innerText = "Setup error: " + (err.message || err);
+    errorMsg.style.display = 'block';
   }
 }
 
@@ -2008,7 +2029,7 @@ function handleVerifyOTP() {
   const code = otpInput.value.trim();
 
   if (code.length < 4) {
-    errorMsg.innerText = "Please enter the valid OTP code.";
+    errorMsg.innerText = "Please enter the valid OTP code received on your phone.";
     errorMsg.style.display = 'block';
     return;
   }
@@ -2022,7 +2043,7 @@ function handleVerifyOTP() {
 
   // Store Owner Login Verification (PIN: 9622 or 180508)
   if (activePhoneConfirmation && activePhoneConfirmation.owner) {
-    if (code === '9622' || code === '180508' || code === '1234') {
+    if (code === '9622' || code === '180508') {
       const user = {
         displayName: 'Sahil Zahoor (Owner)',
         phoneNumber: '+91' + phone,
@@ -2036,19 +2057,20 @@ function handleVerifyOTP() {
     } else {
       btn.innerHTML = 'Verify OTP &amp; Login ➔';
       btn.disabled = false;
-      errorMsg.innerText = "Incorrect Owner code. Please enter 9622 or 180508.";
+      errorMsg.innerText = "Incorrect Owner PIN. Please enter 9622 or 180508.";
       errorMsg.style.display = 'block';
       return;
     }
   }
 
-  if (activePhoneConfirmation && activePhoneConfirmation.confirm && !activePhoneConfirmation.fast) {
+  // Genuine Firebase SMS Verification (No mock/default codes)
+  if (activePhoneConfirmation && typeof activePhoneConfirmation.confirm === 'function') {
     activePhoneConfirmation.confirm(code)
       .then((result) => {
         const user = {
           displayName: studentName,
           phoneNumber: '+91' + phone,
-          email: phone + '@student.jkstudyhub.online',
+          email: (result.user && result.user.email) ? result.user.email : (phone + '@student.jkstudyhub.online'),
           uid: result.user ? result.user.uid : ('phone_' + phone),
           photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
         };
@@ -2057,21 +2079,14 @@ function handleVerifyOTP() {
       .catch((error) => {
         btn.innerHTML = 'Verify OTP &amp; Login ➔';
         btn.disabled = false;
-        errorMsg.innerText = "Incorrect OTP code. Please try again.";
+        errorMsg.innerText = "❌ Incorrect OTP code. Please check your SMS and enter the exact 6-digit code received on your phone.";
         errorMsg.style.display = 'block';
       });
   } else {
-    // Mock / Fast verification
-    setTimeout(() => {
-      const user = {
-        displayName: studentName,
-        phoneNumber: '+91' + phone,
-        email: phone + '@student.jkstudyhub.online',
-        uid: 'phone_' + phone,
-        photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-      };
-      finishPhoneLogin(user);
-    }, 400);
+    btn.innerHTML = 'Verify OTP &amp; Login ➔';
+    btn.disabled = false;
+    errorMsg.innerText = "❌ Session expired or invalid. Please click 'Change' and request a fresh OTP code.";
+    errorMsg.style.display = 'block';
   }
 }
 
