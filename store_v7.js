@@ -1973,7 +1973,10 @@ function handleSendOTP() {
   const phoneInput = document.getElementById('authPhoneNumber');
   const errorMsg = document.getElementById('phoneErrorMsg');
   const btn = document.getElementById('sendOtpBtn');
-  const phone = phoneInput.value.trim();
+    const phone = phoneInput.value.trim();
+
+  
+
 
   if (!/^[6789][0-9]{9}$/.test(phone)) {
     errorMsg.innerText = "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.";
@@ -1990,72 +1993,602 @@ function handleSendOTP() {
     if (btn.disabled && btn.innerHTML.includes('Sending SMS OTP')) {
       btn.innerHTML = 'Send OTP Code ➔';
       btn.disabled = false;
-      errorMsg.innerHTML = '⚠️ Network timeout. Please try "1-Click Sign in with Google" instead.';
+      errorMsg.innerHTML = '⚠️ Network timeout. Firebase verification may be blocked by your browser. Please try "1-Click Sign in with Google" instead.';
       errorMsg.style.display = 'block';
     }
   }, 12000);
 
   const fullPhoneNumber = '+91' + phone;
+  const scriptEndpoint = SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
 
-  if (typeof firebase !== 'undefined' && firebase.auth) {
-    if (window.recaptchaVerifier) {
-      try { window.recaptchaVerifier.clear(); } catch(e) {}
-      window.recaptchaVerifier = null;
-    }
-    const rcContainer = document.getElementById('recaptcha-container');
-    if (rcContainer) {
-      rcContainer.innerHTML = '';
-      rcContainer.style.display = 'block';
-      rcContainer.style.margin = '10px auto';
-    }
+  // 1. Try Fast2SMS via Apps Script backend
+  fetch(`${scriptEndpoint}?action=send_otp&phone=${encodeURIComponent(phone)}&t=${Date.now()}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'success') {
+        activePhoneConfirmation = { fast2sms: true, phone: phone };
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
 
-    try {
-      // Use normal visible Recaptcha to bypass Safari strict blocking
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'normal',
-        'callback': () => {},
-        'expired-callback': () => {
+        document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
+        document.getElementById('phoneStep1').style.display = 'none';
+        document.getElementById('phoneStep2').style.display = 'block';
+        const otpInput = document.getElementById('authOtpCode');
+        if (otpInput) {
+          otpInput.value = '';
+          otpInput.placeholder = '• • • • • •';
+          otpInput.focus();
+        }
+        const msgEl = document.getElementById('otpErrorMsg');
+        if (msgEl) {
+          msgEl.style.display = 'none';
+          msgEl.innerText = '';
+        }
+        showToast("📱 Real SMS OTP sent to your phone!");
+      } else if (data.status === 'fast2sms_pending') {
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
+        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant login!</span>`;
+        errorMsg.style.display = 'block';
+      } else {
+        throw new Error(data.message || 'Fast2SMS error');
+      }
+    })
+    .catch(err => {
+      // 2. Fallback to Firebase Phone Auth if Apps Script fails
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        if (window.recaptchaVerifier) {
+          try { window.recaptchaVerifier.clear(); } catch(e) {}
+          window.recaptchaVerifier = null;
+        }
+        const rcContainer = document.getElementById('recaptcha-container');
+        if (rcContainer) rcContainer.innerHTML = '';
+
+        try {
+          window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': () => {},
+            'expired-callback': () => {
+              btn.innerHTML = 'Send OTP Code ➔';
+              btn.disabled = false;
+            }
+          });
+
+          firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
+            .then((confirmationResult) => {
+              activePhoneConfirmation = confirmationResult;
+              btn.innerHTML = 'Send OTP Code ➔';
+              btn.disabled = false;
+
+              document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
+              document.getElementById('phoneStep1').style.display = 'none';
+              document.getElementById('phoneStep2').style.display = 'block';
+              const otpInput = document.getElementById('authOtpCode');
+              if (otpInput) {
+                otpInput.value = '';
+                otpInput.placeholder = '• • • • • •';
+                otpInput.focus();
+              }
+            })
+            .catch((fbError) => {
+              btn.innerHTML = 'Send OTP Code ➔';
+              btn.disabled = false;
+              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
+              errorMsg.style.display = 'block';
+            });
+        } catch(e) {
           btn.innerHTML = 'Send OTP Code ➔';
           btn.disabled = false;
+          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
+          errorMsg.style.display = 'block';
         }
-      });
+      } else {
+        btn.innerHTML = 'Send OTP Code ➔';
+        btn.disabled = false;
+        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
+        errorMsg.style.display = 'block';
+      }
+    });
+}
 
-      window.recaptchaVerifier.render().then(() => {
-        firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
-          .then((confirmationResult) => {
-            activePhoneConfirmation = confirmationResult;
-            btn.innerHTML = 'Send OTP Code ➔';
-            btn.disabled = false;
-            if(rcContainer) rcContainer.style.display = 'none';
+function handleVerifyOTP() {
+  const otpInput = document.getElementById('authOtpCode');
+  const nameInput = document.getElementById('authStudentName');
+  const errorMsg = document.getElementById('otpErrorMsg');
+  const btn = document.getElementById('verifyOtpBtn');
+  const code = otpInput.value.trim();
 
-            document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-            document.getElementById('phoneStep1').style.display = 'none';
-            document.getElementById('phoneStep2').style.display = 'block';
-            
-            const otpInput = document.getElementById('authOtpCode');
-            if (otpInput) {
-              otpInput.value = '';
-              otpInput.placeholder = '• • • • • •';
-              otpInput.focus();
-            }
-            if (typeof showToast === 'function') showToast("📱 Free Firebase OTP sent!");
-          })
-          .catch((error) => {
-            btn.innerHTML = 'Send OTP Code ➔';
-            btn.disabled = false;
-            if(rcContainer) rcContainer.style.display = 'none';
-            errorMsg.innerText = "Failed to send OTP: " + error.message;
-            errorMsg.style.display = 'block';
-          });
+  if (code.length < 4) {
+    errorMsg.innerText = "Please enter the valid OTP code received on your phone.";
+    errorMsg.style.display = 'block';
+    return;
+  }
+  errorMsg.style.display = 'none';
+
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+  btn.disabled = true;
+
+  const phone = document.getElementById('authPhoneNumber').value.trim();
+  const isOwner = (phone === '9622605714' || STORE_OWNER_PHONES.some(p => p.slice(-10) === phone));
+  const studentName = isOwner ? 'Sahil Zahoor (Owner)' : (nameInput.value.trim() || ('Student ' + phone.slice(-4)));
+  const scriptEndpoint = SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+
+  // Fast2SMS verification via backend
+  if (activePhoneConfirmation && activePhoneConfirmation.fast2sms) {
+    fetch(`${scriptEndpoint}?action=verify_otp&phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(code)}&t=${Date.now()}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success' && data.verified) {
+          const user = {
+            displayName: studentName,
+            phoneNumber: '+91' + phone,
+            email: isOwner ? 'sahilsspace20@gmail.com' : (phone + '@student.jkstudyhub.online'),
+            uid: 'fast2sms_' + phone,
+            photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+          };
+          if (isOwner) {
+            sessionStorage.setItem('jk_admin_unlocked', 'true');
+          }
+          finishPhoneLogin(user);
+        } else {
+          btn.innerHTML = 'Verify OTP & Login ➔';
+          btn.disabled = false;
+          errorMsg.innerText = data.message || "❌ Incorrect OTP code. Please enter the valid code received on your phone.";
+          errorMsg.style.display = 'block';
+        }
+      })
+      .catch(err => {
+        btn.innerHTML = 'Verify OTP & Login ➔';
+        btn.disabled = false;
+        errorMsg.innerText = "❌ Verification service error. Please try again.";
+        errorMsg.style.display = 'block';
       });
-    } catch (e) {
-      btn.innerHTML = 'Send OTP Code ➔';
-      btn.disabled = false;
-      errorMsg.innerText = "Security check failed. Try Google Sign-in.";
-      errorMsg.style.display = 'block';
+    return;
+  }
+
+  // Firebase fallback verification
+  if (activePhoneConfirmation && typeof activePhoneConfirmation.confirm === 'function') {
+    activePhoneConfirmation.confirm(code)
+      .then((result) => {
+        const user = {
+          displayName: studentName,
+          phoneNumber: '+91' + phone,
+          email: isOwner ? 'sahilsspace20@gmail.com' : ((result.user && result.user.email) ? result.user.email : (phone + '@student.jkstudyhub.online')),
+          uid: result.user ? result.user.uid : ('phone_' + phone),
+          photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+        };
+        if (isOwner) {
+          sessionStorage.setItem('jk_admin_unlocked', 'true');
+        }
+        finishPhoneLogin(user);
+      })
+      .catch((error) => {
+        btn.innerHTML = 'Verify OTP & Login ➔';
+        btn.disabled = false;
+        errorMsg.innerText = "❌ Incorrect OTP code. Please check your SMS and enter the exact 6-digit code received on your phone.";
+        errorMsg.style.display = 'block';
+      });
+    return;
+  }
+
+  btn.innerHTML = 'Verify OTP & Login ➔';
+  btn.disabled = false;
+  errorMsg.innerText = "❌ Session expired or invalid. Please click 'Change' and request a fresh OTP code.";
+  errorMsg.style.display = 'block';
+}
+
+function finishPhoneLogin(user) {
+  setCurrentUser(user);
+  closePhoneAuthModal();
+  showToast(`🎉 Logged in as ${user.displayName}!`);
+  
+  // Also pre-fill checkout if form is open
+  const orderName = document.getElementById('orderName');
+  if (orderName && !orderName.value) orderName.value = user.displayName;
+  const orderPhone = document.getElementById('orderPhone');
+  if (orderPhone && !orderPhone.value) orderPhone.value = user.phoneNumber.replace('+91', '');
+  if (typeof renderAccountDashboard === 'function') { setTimeout(renderAccountDashboard, 100); }
+  if (window.location.pathname.includes('account.html')) {
+    setTimeout(() => {
+      if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
+      if (typeof initShop === 'function') initShop();
+    }, 100);
+  }
+}
+
+function handleGooglePopupAuth() {
+  closePhoneAuthModal();
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(res => {
+      const user = {
+        displayName: res.user.displayName,
+        email: res.user.email,
+        phoneNumber: res.user.phoneNumber || '',
+        photoURL: res.user.photoURL,
+        uid: res.user.uid
+      };
+      setCurrentUser(user);
+      showToast(`Welcome, ${(user.displayName || "Student").split(" ")[0]}!`);
+      if (typeof renderAccountDashboard === 'function') { setTimeout(renderAccountDashboard, 100); }
+      if (document.getElementById('checkoutModal') && document.getElementById('checkoutModal').style.display === 'flex') {
+        const orderName = document.getElementById('orderName');
+        if (orderName && !orderName.value) orderName.value = user.displayName;
+        const orderPhone = document.getElementById('orderPhone');
+        if (orderPhone && !orderPhone.value) orderPhone.value = (user.phoneNumber || '').replace('+91', '');
+      } else if (window.location.pathname.includes('account.html')) {
+        setTimeout(() => {
+          if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
+          if (typeof initShop === 'function') initShop();
+        }, 100);
+      }
+    }).catch(err => {
+      fallbackLoginPrompt();
+    });
+  } else {
+    fallbackLoginPrompt();
+  }
+}
+
+// --- PWA INSTALLATION CONTROLLER ---
+let deferredPWA = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPWA = e;
+  document.querySelectorAll('.install-app-btn').forEach(b => b.style.display = 'inline-flex');
+});
+
+window.installApp = function() {
+  if (deferredPWA) {
+    deferredPWA.prompt();
+    deferredPWA.userChoice.then(() => {
+      deferredPWA = null;
+      document.querySelectorAll('.install-app-btn').forEach(b => b.style.display = 'none');
+    });
+  } else {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      alert("📱 How to Install on iPhone:\n\n1. Tap the Share button (square with arrow ↑) at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen' (+).\n3. Tap 'Add' in the top right.\n\nJK Study Hub will be added right to your home screen like a real app!");
+    } else {
+      alert("📲 How to Install JK Study Hub App:\n\n• Android (Chrome): Tap the 3 dots (⋮) in the top right and tap 'Install app' or 'Add to Home screen'.\n\n• Laptop/Mac (Chrome): Look at the right side of the address bar at the top and click the Install icon (computer with down arrow)!");
+    }
+  }
+};
+
+// ==========================================
+// ACCOUNT DASHBOARD FUNCTIONS (ZAPVI STYLE)
+// ==========================================
+
+function renderAccountDashboard() {
+  const user = getCurrentUser();
+  const profileCard = document.getElementById('sidebarProfileCard');
+  if (!profileCard) return;
+
+  if (user) {
+    const firstName = (user.displayName || 'Student').split(' ')[0];
+    const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
+    profileCard.innerHTML = `
+      <h3 style="font-size: 18px; margin-bottom: 5px;">Hi, ${firstName}!</h3>
+      <p style="margin-bottom: 15px; color: #475569;"><i class="fa-solid fa-mobile-screen"></i> +91 ${phone}</p>
+      <button class="yellow-btn" style="background: #f87171; color: white;" onclick="handleStoreSignOut()">Sign Out</button>
+    `;
+    
+    // Auto-render current active tab if logged in
+    const activeMenu = document.querySelector('.account-menu a.active');
+    if (activeMenu) {
+      const tabId = activeMenu.id.replace('menu-', '');
+      if (tabId === 'orders') renderAccountOrders();
+      if (tabId === 'wishlist') renderAccountWishlist();
+      if (tabId === 'addresses') renderAddresses();
+      if (tabId === 'details') renderAccountDetails();
+    }
+  } else {
+    profileCard.innerHTML = `
+      <h3>Login with OTP</h3>
+      <p>See your orders and saved addresses on any device.</p>
+      <button class="yellow-btn" onclick="openPhoneAuthModal()">Login / Sign up</button>
+    `;
+    // Empty states are already in HTML, but we need to reset them if user logs out
+    const ordersContainer = document.getElementById('ordersListContainer');
+    if (ordersContainer) {
+      ordersContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
+          <h3>See your orders</h3>
+          <p>Login with your mobile number to see all your orders.</p>
+          <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
+        </div>
+      `;
+    }
+    const addContainer = document.getElementById('addressesListContainer');
+    if(addContainer) {
+      addContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/House.png" style="width:80%; "></div>
+          <h3>See your saved addresses</h3>
+          <p>Login with your mobile number to see your saved addresses, or add one here.</p>
+          <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
+        </div>
+      `;
+    }
+    const detContainer = document.getElementById('accountDetailsContainer');
+    if(detContainer) {
+      detContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png" style="width:90%; "></div>
+          <h3>Manage your account</h3>
+          <p>Login to update your profile details.</p>
+          <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login / Sign up</button>
+        </div>
+      `;
     }
   }
 }
+
+function renderAccountOrders() {
+  const user = getCurrentUser();
+  if (!user) return renderAccountDashboard(); // Will render empty state
+  
+  const container = document.getElementById('ordersListContainer');
+  if (!container) return;
+  
+  const allOrders = getOrders();
+  const role = getUserStoreRole(user);
+  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  
+  let userOrders = allOrders;
+  if (!isStaff) {
+    const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+    userOrders = allOrders.filter(o => String(o.phone || '').replace(/\D/g, '').slice(-10) === uPhone);
+  }
+
+  if (userOrders.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding-top: 60px;">
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
+        <h3>No orders found</h3>
+        <p>Looks like you haven't placed any orders yet.</p>
+        <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Reverse sort by timestamp
+  userOrders.sort((a,b) => b.timestamp - a.timestamp);
+
+  let html = '';
+  userOrders.forEach(o => {
+    let statusColor = '#3b82f6';
+    if(o.status === 'Delivered') statusColor = '#10b981';
+    if(o.status === 'Cancelled') statusColor = '#ef4444';
+    
+    let adminControls = '';
+    if (isStaff) {
+      adminControls = `
+        <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
+          <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
+          <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <select class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b;" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
+              <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+            <button onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
+          </div>
+        </div>
+      `;
+    }
+
+    html += `
+      <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:4px;">ORDER ID</div>
+            <div style="font-size:16px; font-weight:800; color:#1e293b;">${o.orderId}</div>
+          </div>
+          <div style="text-align:right;">
+            <span style="background:${statusColor}15; color:${statusColor}; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;">${o.status}</span>
+          </div>
+        </div>
+        <div style="font-size:15px; font-weight:600; color:#334155; margin-bottom:10px;">${o.product}</div>
+        
+        ${(() => {
+          let progressWidth = '0%';
+          let s1 = '', s2 = '', s3 = '', s4 = '';
+          let c1 = '', c2 = '', c3 = '', c4 = '';
+          let statusLower = (o.status || 'Confirmed').toLowerCase();
+          
+          if (statusLower === 'cancelled') {
+            progressWidth = '100%';
+            s1 = 'active'; s2 = 'active'; s3 = 'active'; s4 = 'active';
+            c1 = c2 = c3 = c4 = 'background: #ef4444; box-shadow: 0 0 0 2px #ef4444;';
+          } else {
+            if (statusLower === 'confirmed' || statusLower === 'processing') {
+              progressWidth = '15%'; s1 = 'active current';
+            } else if (statusLower === 'shipped') {
+              progressWidth = '50%'; s1 = 'active'; s2 = 'active current';
+            } else if (statusLower === 'out for delivery') {
+              progressWidth = '85%'; s1 = 'active'; s2 = 'active'; s3 = 'active current';
+            } else if (statusLower === 'delivered') {
+              progressWidth = '100%'; s1 = 'active'; s2 = 'active'; s3 = 'active'; s4 = 'active current';
+            }
+          }
+          
+          return `
+            <div class="order-track" style="margin-top:25px; margin-bottom: 25px;">
+              <div class="track-progress" style="width: ${progressWidth}; ${statusLower === 'cancelled' ? 'background: #ef4444;' : ''}"></div>
+              <div class="track-step ${s1}">
+                <div class="track-icon" style="${c1}"><i class="fa-solid fa-clipboard-check"></i></div>
+                <div class="track-label">Confirmed</div>
+              </div>
+              <div class="track-step ${s2}">
+                <div class="track-icon" style="${c2}"><i class="fa-solid fa-box"></i></div>
+                <div class="track-label">Shipped</div>
+              </div>
+              <div class="track-step ${s3}">
+                <div class="track-icon" style="${c3}"><i class="fa-solid fa-truck-fast"></i></div>
+                <div class="track-label">Out for delivery</div>
+              </div>
+              <div class="track-step ${s4}">
+                <div class="track-icon" style="${c4}"><i class="${statusLower === 'cancelled' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-house-circle-check'}"></i></div>
+                <div class="track-label" style="${statusLower === 'cancelled' ? 'color:#ef4444;' : ''}">${statusLower === 'cancelled' ? 'Cancelled' : 'Delivered'}</div>
+              </div>
+            </div>
+          `;
+        })()}
+        <div style="display:flex; justify-content:space-between; font-size:14px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:10px;">
+          <span>${o.date}</span>
+          <span style="font-weight:700; color:#1e293b;">₹${o.amount}</span>
+        </div>
+        ${adminControls}
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function renderAccountWishlist() {
+  const container = document.getElementById('wishlistContainer');
+  if(!container) return;
+  const w = getWishlist();
+  if (w.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding-top: 40px; margin:0 auto;">
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Broken%20Heart.png" style="width:80%; "></div>
+        <h3>Your wishlist is empty</h3>
+        <p>Save items you love here to easily find them later.</p>
+        <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
+      </div>
+    `;
+    return;
+  }
+  // Render using existing logic but adapted for this container
+  let html = `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:20px;">`;
+  w.forEach(item => {
+    html += `
+      <div class="product-card" style="border-radius:12px; box-shadow:none; border:1px solid #e2e8f0;">
+        <button class="wishlist-icon active" onclick="toggleFavorite(this, '${item.name}')" style="top:10px; right:10px;"><i class="fa-solid fa-heart"></i></button>
+        <img src="${item.image || item.img}" class="product-img" style="height:160px; object-fit:cover;" onerror="this.src='https://placehold.co/400x300?text=JK+Study+Hub'">
+        <div class="product-info" style="padding:15px;">
+          <div class="product-title" style="font-size:15px; margin-bottom:10px;">${item.name}</div>
+          <div class="product-footer" style="margin-top:auto;">
+            <div class="product-price" style="font-size:16px;">₹${item.price}</div>
+            <button class="buy-btn" onclick="addToCart('${item.name}', ${item.price}, 'standard', '${item.category}')" style="padding:6px 12px; font-size:13px;">Add <i class="fa-solid fa-cart-shopping"></i></button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function renderAddresses() {
+  const user = getCurrentUser();
+  if (!user) return renderAccountDashboard();
+  
+  const container = document.getElementById('addressesListContainer');
+  if(!container) return;
+  
+  let addresses = JSON.parse(localStorage.getItem('jk_saved_addresses') || '[]');
+  
+  if (addresses.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding-top: 40px;">
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/House.png" style="width:80%; "></div>
+        <h3>No saved addresses</h3>
+        <p>Add an address to checkout faster next time.</p>
+        <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="addNewAddress()">Add Address</button>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  addresses.forEach((adr, idx) => {
+    html += `
+      <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px; position:relative;">
+        <button onclick="deleteAddress(${idx})" style="position:absolute; top:20px; right:20px; background:none; border:none; color:#ef4444; cursor:pointer; font-size:16px;"><i class="fa-regular fa-trash-can"></i></button>
+        <div style="font-weight:700; color:#1e293b; margin-bottom:8px; font-size:16px;">${adr.name} <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:10px; margin-left:8px; color:#64748b; font-weight:800;">${adr.type || 'HOME'}</span></div>
+        <div style="color:#475569; font-size:14px; margin-bottom:5px;">${adr.phone}</div>
+        <div style="color:#64748b; font-size:14px; line-height:1.5; max-width:85%;">${adr.fullAddress}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function addNewAddress() {
+  const name = prompt("Enter full name for this address:");
+  if(!name) return;
+  const phone = prompt("Enter phone number for this address:");
+  if(!phone) return;
+  const address = prompt("Enter full delivery address (Street, Landmark, Pincode):");
+  if(!address) return;
+  
+  let addresses = JSON.parse(localStorage.getItem('jk_saved_addresses') || '[]');
+  addresses.push({ name: name, phone: phone, fullAddress: address, type: 'HOME' });
+  localStorage.setItem('jk_saved_addresses', JSON.stringify(addresses));
+  renderAddresses();
+}
+
+function deleteAddress(idx) {
+  if(!confirm("Delete this address?")) return;
+  let addresses = JSON.parse(localStorage.getItem('jk_saved_addresses') || '[]');
+  addresses.splice(idx, 1);
+  localStorage.setItem('jk_saved_addresses', JSON.stringify(addresses));
+  renderAddresses();
+}
+
+function renderAccountDetails() {
+  const user = getCurrentUser();
+  if (!user) return renderAccountDashboard();
+  
+  const container = document.getElementById('accountDetailsContainer');
+  if(!container) return;
+  
+  const firstName = (user.displayName || 'Student').split(' ')[0];
+  const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
+  
+  container.innerHTML = `
+    <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:25px;">
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">FULL NAME</label>
+        <div style="font-size:16px; font-weight:600; color:#1e293b; padding:10px 15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">${user.displayName || 'Not Set'}</div>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">MOBILE NUMBER</label>
+        <div style="font-size:16px; font-weight:600; color:#1e293b; padding:10px 15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between;">
+          <span>+91 ${phone}</span>
+          <span style="color:#10b981; font-size:12px; font-weight:800;"><i class="fa-solid fa-circle-check"></i> VERIFIED</span>
+        </div>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">EMAIL ID</label>
+        <div style="font-size:16px; font-weight:600; color:#1e293b; padding:10px 15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">${user.email || 'Not Set'}</div>
+      </div>
+      
+      <p style="font-size:13px; color:#94a3b8; margin-top:30px;">
+        * Phone number cannot be changed as it is verified via OTP. To update your name or email, please contact support.
+      </p>
+    </div>
+  `;
+}
+
+// Hook into updateAuthUI so that when user logs in via OTP on the account page, it re-renders
+const originalUpdateAuthUI = updateAuthUI;
+updateAuthUI = function() {
+  originalUpdateAuthUI();
+  if (typeof renderAccountDashboard === 'function') {
+    renderAccountDashboard();
+  }
+};
 
 function resendOTP(e) {
   if (e) e.preventDefault();
