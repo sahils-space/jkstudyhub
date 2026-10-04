@@ -854,7 +854,7 @@ function promptAdminLogin() {
   if (pin === "9622" || pin === "1234") {
     sessionStorage.setItem('jk_admin_unlocked', 'true');
     showToast("✅ Admin Mode Unlocked!");
-    renderOrdersPage();
+    if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   } else if (pin !== null) {
     alert("Incorrect Admin PIN.");
   }
@@ -877,7 +877,7 @@ function toggleAdminAccess() {
     if (confirm("Lock Store Admin Mode?")) {
       sessionStorage.removeItem('jk_admin_unlocked');
       showToast("Store Admin Mode locked.");
-      renderOrdersPage();
+      if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
     }
     return;
   }
@@ -905,7 +905,7 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
     }
     
     showToast(`Status updated to: ${newStatus}`);
-    renderOrdersPage();
+    if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   }
 }
 
@@ -954,7 +954,7 @@ function handleOrderSearchInput(query) {
   if (clearBtn) {
     clearBtn.style.display = currentOrderSearchQuery.length > 0 ? 'inline-flex' : 'none';
   }
-  renderOrdersPage();
+  if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
 }
 
 function executeOrderSearch() {
@@ -963,7 +963,7 @@ function executeOrderSearch() {
     currentOrderSearchQuery = input.value.trim().toLowerCase();
     const clearBtn = document.getElementById('clearOrderFilterBtn');
     if (clearBtn) clearBtn.style.display = currentOrderSearchQuery ? 'inline-flex' : 'none';
-    renderOrdersPage();
+    if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   }
 }
 
@@ -973,7 +973,7 @@ function resetOrderSearch() {
   if (input) input.value = '';
   const clearBtn = document.getElementById('clearOrderFilterBtn');
   if (clearBtn) clearBtn.style.display = 'none';
-  renderOrdersPage();
+  if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
 }
 
 function setOrderStatusFilter(filter) {
@@ -985,7 +985,7 @@ function setOrderStatusFilter(filter) {
       else el.classList.remove('active');
     }
   });
-  renderOrdersPage();
+  if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
 }
 
 // --- RENDER DEDICATED ORDERS PAGE (account.html#orders) ---
@@ -1444,7 +1444,7 @@ function syncOrdersWithGoogleSheet() {
             localStorage.setItem('jk_orders', JSON.stringify(localOrders));
             updateNavBadges();
             if (typeof renderOrdersPage === 'function') {
-              renderOrdersPage();
+              if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
             }
           }
         }
@@ -1763,7 +1763,7 @@ function processOrder(txnId) {
 
       // If on orders page, re-render
       if (typeof renderOrdersPage === 'function') {
-        renderOrdersPage();
+        if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
       }
     })
     .catch(err => {
@@ -1787,7 +1787,7 @@ function initShop() {
   }
 
   if (document.getElementById('ordersListContainer')) {
-    renderOrdersPage();
+    if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   }
 }
 
@@ -2295,6 +2295,27 @@ function renderAccountOrders() {
     if(o.status === 'Delivered') statusColor = '#10b981';
     if(o.status === 'Cancelled') statusColor = '#ef4444';
     
+    let adminControls = '';
+    if (isStaff) {
+      adminControls = `
+        <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
+          <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
+          <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <select class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b;" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
+              <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+            <button onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
+          </div>
+        </div>
+      `;
+    }
+
     html += `
       <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
@@ -2311,6 +2332,7 @@ function renderAccountOrders() {
           <span>${o.date}</span>
           <span style="font-weight:700; color:#1e293b;">₹${o.amount}</span>
         </div>
+        ${adminControls}
       </div>
     `;
   });
