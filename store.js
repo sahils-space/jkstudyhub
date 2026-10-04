@@ -1877,7 +1877,10 @@ function injectPhoneAuthModal() {
           <div style="margin-bottom: 14px;">
             <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Enter 6-Digit OTP</label>
             <input type="text" id="authOtpCode" class="form-input" placeholder="• • • • • •" maxlength="6" style="font-size: 22px; font-weight: 800; letter-spacing: 6px; text-align: center; width: 100%; padding: 10px; border: 2px solid #2563eb; border-radius: 8px; box-sizing: border-box;">
-            <p id="otpErrorMsg" style="color: #ef4444; font-size: 12px; font-weight: 600; margin: 6px 0 0; display: none;"></p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+              <p id="otpErrorMsg" style="color: #ef4444; font-size: 12px; font-weight: 600; margin: 0; display: none;"></p>
+              <a href="#" onclick="resendOTP(event)" id="resendOtpBtn" style="color: #2563eb; font-size: 12px; font-weight: 700; text-decoration: none; margin-left: auto;">Resend OTP</a>
+            </div>
           </div>
 
           <div style="margin-bottom: 16px;">
@@ -2451,3 +2454,50 @@ updateAuthUI = function() {
     renderAccountDashboard();
   }
 };
+
+function resendOTP(e) {
+  if (e) e.preventDefault();
+  const resendBtn = document.getElementById('resendOtpBtn');
+  if (resendBtn.style.pointerEvents === 'none') return;
+  
+  const phone = document.getElementById('authPhoneNumber').value.trim();
+  if (!phone) return backToPhoneStep1();
+  
+  resendBtn.innerText = 'Sending...';
+  resendBtn.style.color = '#94a3b8';
+  resendBtn.style.pointerEvents = 'none';
+  
+  const scriptEndpoint = (typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec');
+  
+  fetch(scriptEndpoint + '?action=send_otp&phone=' + encodeURIComponent(phone) + '&t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+       if (data.status === 'success') {
+         if (typeof showToast === 'function') showToast("📱 New OTP sent to your phone!");
+         let countdown = 30;
+         resendBtn.innerText = 'Wait ' + countdown + 's';
+         const timer = setInterval(() => {
+           countdown--;
+           resendBtn.innerText = 'Wait ' + countdown + 's';
+           if (countdown <= 0) {
+             clearInterval(timer);
+             resendBtn.innerText = 'Resend OTP';
+             resendBtn.style.color = '#2563eb';
+             resendBtn.style.pointerEvents = 'auto';
+           }
+         }, 1000);
+       } else {
+         throw new Error(data.message);
+       }
+    })
+    .catch(err => {
+       resendBtn.innerText = 'Resend OTP';
+       resendBtn.style.color = '#2563eb';
+       resendBtn.style.pointerEvents = 'auto';
+       const msgEl = document.getElementById('otpErrorMsg');
+       if (msgEl) {
+         msgEl.innerText = "Error sending OTP. Please try again.";
+         msgEl.style.display = 'block';
+       }
+    });
+}
