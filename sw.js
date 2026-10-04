@@ -1,11 +1,11 @@
-const CACHE_NAME = 'jk-study-hub-v11';
+const CACHE_NAME = 'jk-study-hub-v7';
 const urlsToCache = [
   './',
   './index.html',
   './store.html',
   './account.html#orders',
   './style.css',
-  './store.js'
+  './store_v7.js'
 ];
 
 self.addEventListener('install', event => {
