@@ -2236,7 +2236,7 @@ function renderAccountDashboard() {
     if(addContainer) {
       addContainer.innerHTML = `
         <div class="empty-state">
-          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Round%20Pushpin.png" style="width:80%; "></div>
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/House.png" style="width:80%; "></div>
           <h3>See your saved addresses</h3>
           <p>Login with your mobile number to see your saved addresses, or add one here.</p>
           <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
@@ -2366,7 +2366,7 @@ function renderAddresses() {
   if (addresses.length === 0) {
     container.innerHTML = `
       <div class="empty-state" style="padding-top: 40px;">
-        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Round%20Pushpin.png" style="width:80%; "></div>
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/House.png" style="width:80%; "></div>
         <h3>No saved addresses</h3>
         <p>Add an address to checkout faster next time.</p>
         <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="addNewAddress()">Add Address</button>
