@@ -277,10 +277,10 @@ function updateAuthUI() {
               <p style="margin: 0; font-weight: 700; font-size: 14px; color: #1e293b;">${user.displayName || 'Student'}</p>
               <p style="margin: 3px 0 0; font-size: 12px; color: #64748b; word-break: break-all;">${user.email || ''}</p>
             </div>
-            <a href="orders.html" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+            <a href="account.html#orders" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
               <i class="fa-solid fa-box" style="color: #10b981;"></i> My Orders
             </a>
-            <a href="wishlist.html" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+            <a href="account.html#wishlist" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
               <i class="fa-solid fa-heart" style="color: #ef4444;"></i> My Wishlist
             </a>
             <a href="cart.html" style="display: flex; align-items: center; gap: 8px; color: #334155; text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
@@ -478,7 +478,7 @@ function moveToWishlist(index) {
   cart.splice(index, 1);
   saveCart(cart);
 
-  showToast(`❤️ Saved "${item.name}" to Wishlist!`, 'wishlist.html', 'View Wishlist ➔');
+  showToast(`❤️ Saved "${item.name}" to Wishlist!`, 'account.html#wishlist', 'View Wishlist ➔');
   if (typeof renderCartPage === 'function') {
     renderCartPage();
   }
@@ -522,7 +522,7 @@ function toggleFavorite(btn, productName) {
     });
     saveWishlist(wishlist);
     if (btn) btn.classList.add('active');
-    showToast(`❤️ Saved to Wishlist!`, 'wishlist.html', 'View Wishlist ➔');
+    showToast(`❤️ Saved to Wishlist!`, 'account.html#wishlist', 'View Wishlist ➔');
   }
 
   syncHeartIcons();
@@ -685,7 +685,7 @@ function renderCartPage() {
   if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${subtotal + 5}) ➔`;
 }
 
-// --- RENDER DEDICATED WISHLIST PAGE (wishlist.html) ---
+// --- RENDER DEDICATED WISHLIST PAGE (account.html#wishlist) ---
 function renderWishlistPage() {
   const container = document.getElementById('wishlistGrid');
   if (!container) return;
@@ -988,7 +988,7 @@ function setOrderStatusFilter(filter) {
   renderOrdersPage();
 }
 
-// --- RENDER DEDICATED ORDERS PAGE (orders.html) ---
+// --- RENDER DEDICATED ORDERS PAGE (account.html#orders) ---
 function renderOrdersPage() {
   const container = document.getElementById('ordersListContainer');
   if (!container) return;
