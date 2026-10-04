@@ -2158,10 +2158,7 @@ function handleSendOTP() {
   const phoneInput = document.getElementById('authPhoneNumber');
   const errorMsg = document.getElementById('phoneErrorMsg');
   const btn = document.getElementById('sendOtpBtn');
-    const phone = phoneInput.value.trim();
-
-  
-
+  const phone = phoneInput.value.trim();
 
   if (!/^[6789][0-9]{9}$/.test(phone)) {
     errorMsg.innerText = "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.";
@@ -2178,233 +2175,70 @@ function handleSendOTP() {
     if (btn.disabled && btn.innerHTML.includes('Sending SMS OTP')) {
       btn.innerHTML = 'Send OTP Code ➔';
       btn.disabled = false;
-      errorMsg.innerHTML = '⚠️ Network timeout. Firebase verification may be blocked by your browser. Please try "1-Click Sign in with Google" instead.';
+      errorMsg.innerHTML = '⚠️ Network timeout. Please try "1-Click Sign in with Google" instead.';
       errorMsg.style.display = 'block';
     }
   }, 12000);
 
   const fullPhoneNumber = '+91' + phone;
-  const scriptEndpoint = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
 
-  // 1. Try Fast2SMS via backend
-  fetch(`${scriptEndpoint}?action=send_otp&phone=${encodeURIComponent(phone)}&t=${Date.now()}`)
-    .then(r => r.json())
-    .then(data => {
-      if (data.status === 'success') {
-        activePhoneConfirmation = { fast2sms: true, phone: phone };
-        btn.innerHTML = 'Send OTP Code ➔';
-        btn.disabled = false;
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    if (window.recaptchaVerifier) {
+      try { window.recaptchaVerifier.clear(); } catch(e) {}
+      window.recaptchaVerifier = null;
+    }
+    const rcContainer = document.getElementById('recaptcha-container');
+    if (rcContainer) {
+      rcContainer.innerHTML = '';
+      rcContainer.style.display = 'block';
+      rcContainer.style.margin = '10px auto';
+    }
 
-        document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-        document.getElementById('phoneStep1').style.display = 'none';
-        document.getElementById('phoneStep2').style.display = 'block';
-        const otpInput = document.getElementById('authOtpCode');
-        if (otpInput) {
-          otpInput.value = '';
-          otpInput.placeholder = '• • • • • •';
-          otpInput.focus();
-        }
-        const msgEl = document.getElementById('otpErrorMsg');
-        if (msgEl) {
-          msgEl.style.display = 'none';
-          msgEl.innerText = '';
-        }
-        if (typeof showToast === 'function') showToast("📱 Real SMS OTP sent to your phone!");
-      } else if (data.status === 'fast2sms_pending') {
-        btn.innerHTML = 'Send OTP Code ➔';
-        btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant login!</span>`;
-        errorMsg.style.display = 'block';
-      } else {
-        throw new Error(data.message || 'Fast2SMS error');
-      }
-    })
-    .catch(err => {
-      // 2. Fallback to Firebase Phone Auth if Apps Script fails
-      if (typeof firebase !== 'undefined' && firebase.auth) {
-        if (window.recaptchaVerifier) {
-          try { window.recaptchaVerifier.clear(); } catch(e) {}
-          window.recaptchaVerifier = null;
-        }
-        const rcContainer = document.getElementById('recaptcha-container');
-        if (rcContainer) rcContainer.innerHTML = '';
-
-        try {
-          window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            'size': 'invisible',
-            'callback': () => {},
-            'expired-callback': () => {
-              btn.innerHTML = 'Send OTP Code ➔';
-              btn.disabled = false;
-            }
-          });
-
-          firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
-            .then((confirmationResult) => {
-              activePhoneConfirmation = confirmationResult;
-              btn.innerHTML = 'Send OTP Code ➔';
-              btn.disabled = false;
-
-              document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-              document.getElementById('phoneStep1').style.display = 'none';
-              document.getElementById('phoneStep2').style.display = 'block';
-              const otpInput = document.getElementById('authOtpCode');
-              if (otpInput) {
-                otpInput.value = '';
-                otpInput.placeholder = '• • • • • •';
-                otpInput.focus();
-              }
-            })
-            .catch((fbError) => {
-              btn.innerHTML = 'Send OTP Code ➔';
-              btn.disabled = false;
-              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
-              errorMsg.style.display = 'block';
-            });
-        } catch(e) {
+    try {
+      // Use normal visible Recaptcha to bypass Safari strict blocking
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'normal',
+        'callback': () => {},
+        'expired-callback': () => {
           btn.innerHTML = 'Send OTP Code ➔';
           btn.disabled = false;
-          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
-          errorMsg.style.display = 'block';
         }
-      } else {
-        btn.innerHTML = 'Send OTP Code ➔';
-        btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
-        errorMsg.style.display = 'block';
-      }
-    });
-}
-
-function handleVerifyOTP() {
-  const otpInput = document.getElementById('authOtpCode');
-  const nameInput = document.getElementById('authStudentName');
-  const errorMsg = document.getElementById('otpErrorMsg');
-  const btn = document.getElementById('verifyOtpBtn');
-  const code = otpInput.value.trim();
-
-  if (code.length < 4) {
-    errorMsg.innerText = "Please enter the valid OTP code received on your phone.";
-    errorMsg.style.display = 'block';
-    return;
-  }
-  errorMsg.style.display = 'none';
-
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-  btn.disabled = true;
-
-  const phone = document.getElementById('authPhoneNumber').value.trim();
-  const isOwner = (phone === '9622605714');
-  const studentName = isOwner ? 'Sahil Zahoor (Owner)' : (nameInput.value.trim() || ('Student ' + phone.slice(-4)));
-  const scriptEndpoint = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
-
-  // Fast2SMS verification via backend
-  if (activePhoneConfirmation && activePhoneConfirmation.fast2sms) {
-    fetch(`${scriptEndpoint}?action=verify_otp&phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(code)}&t=${Date.now()}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.status === 'success' && data.verified) {
-          const user = {
-            displayName: studentName,
-            phoneNumber: '+91' + phone,
-            email: isOwner ? 'sahilsspace20@gmail.com' : (phone + '@student.jkstudyhub.online'),
-            uid: 'fast2sms_' + phone,
-            photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-          };
-          if (isOwner) {
-            sessionStorage.setItem('jk_admin_unlocked', 'true');
-          }
-          finishPhoneLogin(user);
-        } else {
-          btn.innerHTML = 'Verify OTP & Login ➔';
-          btn.disabled = false;
-          errorMsg.innerText = data.message || "❌ Incorrect OTP code. Please enter the valid code received on your phone.";
-          errorMsg.style.display = 'block';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        btn.innerHTML = 'Verify OTP & Login ➔';
-        btn.disabled = false;
-        errorMsg.innerText = "❌ " + err.message;
-        errorMsg.style.display = 'block';
       });
-    return;
-  }
 
-  // Firebase fallback verification
-  if (activePhoneConfirmation && typeof activePhoneConfirmation.confirm === 'function') {
-    activePhoneConfirmation.confirm(code)
-      .then((result) => {
-        const user = {
-          displayName: studentName,
-          phoneNumber: '+91' + phone,
-          email: isOwner ? 'sahilsspace20@gmail.com' : ((result.user && result.user.email) ? result.user.email : (phone + '@student.jkstudyhub.online')),
-          uid: result.user ? result.user.uid : ('phone_' + phone),
-          photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-        };
-        if (isOwner) {
-          sessionStorage.setItem('jk_admin_unlocked', 'true');
-        }
-        finishPhoneLogin(user);
-      })
-      .catch((error) => {
-        btn.innerHTML = 'Verify OTP &amp; Login ➔';
-        btn.disabled = false;
-        errorMsg.innerText = "❌ Incorrect OTP code. Please check your SMS and enter the exact 6-digit code received on your phone.";
-        errorMsg.style.display = 'block';
+      window.recaptchaVerifier.render().then(() => {
+        firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
+          .then((confirmationResult) => {
+            activePhoneConfirmation = confirmationResult;
+            btn.innerHTML = 'Send OTP Code ➔';
+            btn.disabled = false;
+            if(rcContainer) rcContainer.style.display = 'none';
+
+            document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
+            document.getElementById('phoneStep1').style.display = 'none';
+            document.getElementById('phoneStep2').style.display = 'block';
+            
+            const otpInput = document.getElementById('authOtpCode');
+            if (otpInput) {
+              otpInput.value = '';
+              otpInput.placeholder = '• • • • • •';
+              otpInput.focus();
+            }
+            if (typeof showToast === 'function') showToast("📱 Free Firebase OTP sent!");
+          })
+          .catch((error) => {
+            btn.innerHTML = 'Send OTP Code ➔';
+            btn.disabled = false;
+            if(rcContainer) rcContainer.style.display = 'none';
+            errorMsg.innerText = "Failed to send OTP: " + error.message;
+            errorMsg.style.display = 'block';
+          });
       });
-    return;
-  }
-
-  btn.innerHTML = 'Verify OTP &amp; Login ➔';
-  btn.disabled = false;
-  errorMsg.innerText = "❌ Session expired or invalid. Please click 'Change' and request a fresh OTP code.";
-  errorMsg.style.display = 'block';
-}
-
-function finishPhoneLogin(user) {
-  if (typeof setLoggedInUser === 'function') {
-    setLoggedInUser(user);
-  } else {
-    window.currentUser = user;
-    localStorage.setItem('jk_study_user', JSON.stringify(user));
-    location.reload(); // fallback
-  }
-  
-  closePhoneAuthModal();
-  
-  // Also pre-fill checkout if form is open
-  const orderName = document.getElementById('orderName');
-  if (orderName && !orderName.value) orderName.value = user.displayName;
-  const orderPhone = document.getElementById('orderPhone');
-  if (orderPhone && !orderPhone.value) orderPhone.value = user.phoneNumber.replace('+91', '');
-}
-
-function handleGooglePopupAuth() {
-  closePhoneAuthModal();
-  if (typeof firebase !== 'undefined' && firebase.auth) {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).then(res => {
-      const user = {
-        displayName: res.user.displayName,
-        email: res.user.email,
-        phoneNumber: res.user.phoneNumber || '',
-        photoURL: res.user.photoURL,
-        uid: res.user.uid
-      };
-      if (typeof setLoggedInUser === 'function') {
-        setLoggedInUser(user);
-      } else {
-        window.currentUser = user;
-        localStorage.setItem('jk_study_user', JSON.stringify(user));
-        location.reload(); // fallback
-      }
-    }).catch(err => {
-      fallbackLoginPrompt();
-    });
-  } else {
-    fallbackLoginPrompt();
+    } catch (e) {
+      btn.innerHTML = 'Send OTP Code ➔';
+      btn.disabled = false;
+      errorMsg.innerText = "Security check failed. Try Google Sign-in.";
+      errorMsg.style.display = 'block';
+    }
   }
 }
 
