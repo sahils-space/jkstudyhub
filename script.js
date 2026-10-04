@@ -2340,7 +2340,7 @@ function handleVerifyOTP() {
 function finishPhoneLogin(user) {
   setCurrentUser(user);
   closePhoneAuthModal();
-  showToast(`🎉 Logged in as ${user.displayName}!`);
+  if (typeof showToast === 'function') showToast(`🎉 Logged in as ${user.displayName}!`);
   
   // Also pre-fill checkout if form is open
   const orderName = document.getElementById('orderName');
@@ -2362,7 +2362,7 @@ function handleGooglePopupAuth() {
         uid: res.user.uid
       };
       setCurrentUser(user);
-      showToast(`Welcome, ${user.displayName.split(' ')[0]}!`);
+      if (typeof showToast === 'function') showToast(`Welcome, ${user.displayName.split(' ')[0]}!`);
     }).catch(err => {
       fallbackLoginPrompt();
     });
