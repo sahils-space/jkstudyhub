@@ -1741,6 +1741,12 @@ function processOrder(txnId) {
   orders.unshift(orderRecord);
   saveOrders(orders);
 
+  // Auto-link phone number to Google account session
+  if (user && (!user.phoneNumber || user.phoneNumber === '') && phone) {
+    user.phoneNumber = '+91' + phone;
+    setCurrentUser(user);
+  }
+
   // 2. DISPATCH TO GOOGLE SHEETS WEB APP
   const formData = new FormData();
   formData.append('name', name);
@@ -2286,7 +2292,14 @@ function renderAccountOrders() {
   let userOrders = allOrders;
   if (!isStaff) {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
-    userOrders = allOrders.filter(o => String(o.phone || '').replace(/\D/g, '').slice(-10) === uPhone);
+    const uEmail = String(user.email || '').trim().toLowerCase();
+    userOrders = allOrders.filter(o => {
+      const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
+      const oEmail = String(o.userEmail || '').trim().toLowerCase();
+      if (uPhone && oPhone === uPhone) return true;
+      if (uEmail && oEmail === uEmail) return true;
+      return false;
+    });
   }
 
   if (userOrders.length === 0) {
