@@ -1917,27 +1917,7 @@ function handleSendOTP() {
 
   const fullPhoneNumber = '+91' + phone;
 
-  // 1. Direct Instant Login for Store Owner (Sahil)
-  if (phone === '9622605714' || STORE_OWNER_PHONES.some(p => p.slice(-10) === phone)) {
-    btn.innerHTML = 'Send OTP Code ➔';
-    btn.disabled = false;
-    activePhoneConfirmation = { owner: true, phone: phone };
-    document.getElementById('displayTargetPhone').innerText = fullPhoneNumber + ' (Store Owner)';
-    document.getElementById('phoneStep1').style.display = 'none';
-    document.getElementById('phoneStep2').style.display = 'block';
-    
-    const otpLabel = document.querySelector('#phoneStep2 label');
-    if (otpLabel) otpLabel.innerText = "Enter Store Owner PIN / Code (9622 or 180508)";
-    const otpInput = document.getElementById('authOtpCode');
-    if (otpInput) {
-      otpInput.value = '';
-      otpInput.placeholder = '• • • •';
-      otpInput.focus();
-    }
-    return;
-  }
-
-  // 2. Regular Students via Firebase Phone Auth
+  // Real Firebase SMS Phone Auth for EVERYONE (Students & Store Owner alike)
   if (typeof firebase === 'undefined' || !firebase.auth) {
     btn.innerHTML = 'Send OTP Code ➔';
     btn.disabled = false;
@@ -1947,6 +1927,8 @@ function handleSendOTP() {
   }
 
   // Reset any existing reCAPTCHA instance to prevent state collision
+  const rcContainer = document.getElementById('recaptcha-container');
+  if (rcContainer) rcContainer.innerHTML = '';
   if (window.recaptchaVerifier) {
     try {
       window.recaptchaVerifier.clear();
@@ -2039,41 +2021,23 @@ function handleVerifyOTP() {
   btn.disabled = true;
 
   const phone = document.getElementById('authPhoneNumber').value.trim();
-  const studentName = nameInput.value.trim() || ('Student ' + phone.slice(-4));
+  const isOwner = (phone === '9622605714' || STORE_OWNER_PHONES.some(p => p.slice(-10) === phone));
+  const studentName = isOwner ? 'Sahil Zahoor (Owner)' : (nameInput.value.trim() || ('Student ' + phone.slice(-4)));
 
-  // Store Owner Login Verification (PIN: 9622 or 180508)
-  if (activePhoneConfirmation && activePhoneConfirmation.owner) {
-    if (code === '9622' || code === '180508') {
-      const user = {
-        displayName: 'Sahil Zahoor (Owner)',
-        phoneNumber: '+91' + phone,
-        email: 'sahilsspace20@gmail.com',
-        uid: 'owner_9622605714',
-        photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-      };
-      sessionStorage.setItem('jk_admin_unlocked', 'true');
-      finishPhoneLogin(user);
-      return;
-    } else {
-      btn.innerHTML = 'Verify OTP &amp; Login ➔';
-      btn.disabled = false;
-      errorMsg.innerText = "Incorrect Owner PIN. Please enter 9622 or 180508.";
-      errorMsg.style.display = 'block';
-      return;
-    }
-  }
-
-  // Genuine Firebase SMS Verification (No mock/default codes)
+  // Genuine Firebase SMS Verification for ALL users
   if (activePhoneConfirmation && typeof activePhoneConfirmation.confirm === 'function') {
     activePhoneConfirmation.confirm(code)
       .then((result) => {
         const user = {
           displayName: studentName,
           phoneNumber: '+91' + phone,
-          email: (result.user && result.user.email) ? result.user.email : (phone + '@student.jkstudyhub.online'),
+          email: isOwner ? 'sahilsspace20@gmail.com' : ((result.user && result.user.email) ? result.user.email : (phone + '@student.jkstudyhub.online')),
           uid: result.user ? result.user.uid : ('phone_' + phone),
           photoURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
         };
+        if (isOwner) {
+          sessionStorage.setItem('jk_admin_unlocked', 'true');
+        }
         finishPhoneLogin(user);
       })
       .catch((error) => {
