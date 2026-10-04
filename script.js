@@ -2038,15 +2038,6 @@ function injectPhoneAuthModal() {
       </div>
 
       <div class="phone-auth-body">
-        <!-- STEP 1: Enter Phone Number -->
-        <div id="phoneStep1">
-          <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px; line-height: 1.5;">
-            Enter your 10-digit mobile number to access your Orders, Wishlist, Cart & Study Desk.
-          </p>
-
-          <div style="margin-bottom: 14px;">
-            <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Mobile Number</label>
-            <div style="display: flex; gap: 8px;">
         <!-- STEP 1: Enter Phone Number or Google -->
         <div id="phoneStep1">
           <!-- 1-Click Google Sign In (Primary Free Option) -->
