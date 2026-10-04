@@ -1912,8 +1912,10 @@ function handleSendOTP() {
   }
   errorMsg.style.display = 'none';
 
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending OTP...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
   btn.disabled = true;
+
+  const fullPhoneNumber = '+91' + phone;
 
   // 1. Direct Instant Login for Store Owner (Sahil)
   if (phone === '9622605714' || STORE_OWNER_PHONES.some(p => p.slice(-10) === phone)) {
