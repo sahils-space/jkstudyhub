@@ -5,7 +5,7 @@ const urlsToCache = [
   './store.html',
   './account.html',
   './style.css',
-  './store_v7.js'
+  './store.js'
 ];
 
 self.addEventListener('install', event => {

@@ -1,12 +1,3 @@
-
-// Nuke old Service Workers to fix Safari caching bugs
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  });
-}
 // JK STUDY HUB - Interactive Scripts & Dual Digital Syllabus Engine (Class 10th & 11th)
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2158,10 +2149,7 @@ function handleSendOTP() {
   const phoneInput = document.getElementById('authPhoneNumber');
   const errorMsg = document.getElementById('phoneErrorMsg');
   const btn = document.getElementById('sendOtpBtn');
-    const phone = phoneInput.value.trim();
-
-  
-
+  const phone = phoneInput.value.trim();
 
   if (!/^[6789][0-9]{9}$/.test(phone)) {
     errorMsg.innerText = "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.";
@@ -2172,16 +2160,6 @@ function handleSendOTP() {
 
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending SMS OTP...';
   btn.disabled = true;
-  
-  // Timeout safeguard
-  setTimeout(() => {
-    if (btn.disabled && btn.innerHTML.includes('Sending SMS OTP')) {
-      btn.innerHTML = 'Send OTP Code ➔';
-      btn.disabled = false;
-      errorMsg.innerHTML = '⚠️ Network timeout. Firebase verification may be blocked by your browser. Please try "1-Click Sign in with Google" instead.';
-      errorMsg.style.display = 'block';
-    }
-  }, 12000);
 
   const fullPhoneNumber = '+91' + phone;
   const scriptEndpoint = 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
