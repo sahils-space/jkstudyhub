@@ -1836,7 +1836,7 @@ function injectPhoneAuthModal() {
               <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
               <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
-            <span>1-Click Sign in with Google (Free)</span>
+            <span>1-Click Sign in with Google </span>
           </button>
 
           <div style="text-align: center; margin: 16px 0; display: flex; align-items: center; gap: 10px;">
@@ -1979,7 +1979,7 @@ function handleSendOTP() {
       } else if (data.status === 'fast2sms_pending') {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant free login!</span>`;
+        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant login!</span>`;
         errorMsg.style.display = 'block';
       } else {
         throw new Error(data.message || 'Fast2SMS error');
@@ -2024,19 +2024,19 @@ function handleSendOTP() {
             .catch((fbError) => {
               btn.innerHTML = 'Send OTP Code ➔';
               btn.disabled = false;
-              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
               errorMsg.style.display = 'block';
             });
         } catch(e) {
           btn.innerHTML = 'Send OTP Code ➔';
           btn.disabled = false;
-          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
           errorMsg.style.display = 'block';
         }
       } else {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
         errorMsg.style.display = 'block';
       }
     });
@@ -2202,7 +2202,7 @@ function renderAccountDashboard() {
     profileCard.innerHTML = `
       <h3 style="font-size: 18px; margin-bottom: 5px;">Hi, ${firstName}!</h3>
       <p style="margin-bottom: 15px; color: #475569;"><i class="fa-solid fa-mobile-screen"></i> +91 ${phone}</p>
-      <button class="yellow-btn" style="background: #f87171; color: white;" onclick="logout()">Sign Out</button>
+      <button class="yellow-btn" style="background: #f87171; color: white;" onclick="handleStoreSignOut()">Sign Out</button>
     `;
     
     // Auto-render current active tab if logged in
@@ -2225,7 +2225,7 @@ function renderAccountDashboard() {
     if (ordersContainer) {
       ordersContainer.innerHTML = `
         <div class="empty-state">
-          <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png" style="width:100%; opacity:0.8;"></div>
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
           <h3>See your orders</h3>
           <p>Login with your mobile number to see all your orders.</p>
           <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
@@ -2236,7 +2236,7 @@ function renderAccountDashboard() {
     if(addContainer) {
       addContainer.innerHTML = `
         <div class="empty-state">
-          <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" style="width:80%; opacity:0.8;"></div>
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Round%20Pushpin.png" style="width:80%; "></div>
           <h3>See your saved addresses</h3>
           <p>Login with your mobile number to see your saved addresses, or add one here.</p>
           <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
@@ -2247,7 +2247,7 @@ function renderAccountDashboard() {
     if(detContainer) {
       detContainer.innerHTML = `
         <div class="empty-state">
-          <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width:90%; opacity:0.8;"></div>
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png" style="width:90%; "></div>
           <h3>Manage your account</h3>
           <p>Login to update your profile details.</p>
           <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login / Sign up</button>
@@ -2277,7 +2277,7 @@ function renderAccountOrders() {
   if (userOrders.length === 0) {
     container.innerHTML = `
       <div class="empty-state" style="padding-top: 60px;">
-        <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png" style="width:100%; opacity:0.3;"></div>
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
         <h3>No orders found</h3>
         <p>Looks like you haven't placed any orders yet.</p>
         <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
@@ -2325,7 +2325,7 @@ function renderAccountWishlist() {
   if (w.length === 0) {
     container.innerHTML = `
       <div class="empty-state" style="padding-top: 40px; margin:0 auto;">
-        <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" style="width:80%; opacity:0.3;"></div>
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Broken%20Heart.png" style="width:80%; "></div>
         <h3>Your wishlist is empty</h3>
         <p>Save items you love here to easily find them later.</p>
         <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
@@ -2366,7 +2366,7 @@ function renderAddresses() {
   if (addresses.length === 0) {
     container.innerHTML = `
       <div class="empty-state" style="padding-top: 40px;">
-        <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" style="width:80%; opacity:0.3;"></div>
+        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Round%20Pushpin.png" style="width:80%; "></div>
         <h3>No saved addresses</h3>
         <p>Add an address to checkout faster next time.</p>
         <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="addNewAddress()">Add Address</button>

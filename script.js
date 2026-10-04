@@ -2048,7 +2048,7 @@ function injectPhoneAuthModal() {
               <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
               <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
-            <span>1-Click Sign in with Google (Free)</span>
+            <span>1-Click Sign in with Google </span>
           </button>
 
           <div style="text-align: center; margin: 16px 0; display: flex; align-items: center; gap: 10px;">
@@ -2191,7 +2191,7 @@ function handleSendOTP() {
       } else if (data.status === 'fast2sms_pending') {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant free login!</span>`;
+        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant login!</span>`;
         errorMsg.style.display = 'block';
       } else {
         throw new Error(data.message || 'Fast2SMS error');
@@ -2236,19 +2236,19 @@ function handleSendOTP() {
             .catch((fbError) => {
               btn.innerHTML = 'Send OTP Code ➔';
               btn.disabled = false;
-              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
               errorMsg.style.display = 'block';
             });
         } catch(e) {
           btn.innerHTML = 'Send OTP Code ➔';
           btn.disabled = false;
-          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
           errorMsg.style.display = 'block';
         }
       } else {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly for free!`;
+        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
         errorMsg.style.display = 'block';
       }
     });
