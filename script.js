@@ -2339,9 +2339,15 @@ function handleVerifyOTP() {
 }
 
 function finishPhoneLogin(user) {
-  setCurrentUser(user);
+  if (typeof setLoggedInUser === 'function') {
+    setLoggedInUser(user);
+  } else {
+    window.currentUser = user;
+    localStorage.setItem('jk_study_user', JSON.stringify(user));
+    location.reload(); // fallback
+  }
+  
   closePhoneAuthModal();
-  if (typeof showToast === 'function') showToast(`🎉 Logged in as ${user.displayName}!`);
   
   // Also pre-fill checkout if form is open
   const orderName = document.getElementById('orderName');
@@ -2362,8 +2368,13 @@ function handleGooglePopupAuth() {
         photoURL: res.user.photoURL,
         uid: res.user.uid
       };
-      setCurrentUser(user);
-      if (typeof showToast === 'function') showToast(`Welcome, ${user.displayName.split(' ')[0]}!`);
+      if (typeof setLoggedInUser === 'function') {
+        setLoggedInUser(user);
+      } else {
+        window.currentUser = user;
+        localStorage.setItem('jk_study_user', JSON.stringify(user));
+        location.reload(); // fallback
+      }
     }).catch(err => {
       fallbackLoginPrompt();
     });
