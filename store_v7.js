@@ -1,3 +1,12 @@
+
+// Nuke old Service Workers to fix Safari caching bugs
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
     let adminControls = '';
     if (isStaff) {
       const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');

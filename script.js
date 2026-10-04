@@ -1,3 +1,12 @@
+
+// Nuke old Service Workers to fix Safari caching bugs
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
 // JK STUDY HUB - Interactive Scripts & Dual Digital Syllabus Engine (Class 10th & 11th)
 
 document.addEventListener('DOMContentLoaded', () => {
