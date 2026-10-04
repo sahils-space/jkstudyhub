@@ -53,10 +53,10 @@ function doPost(e) {
       var cache = CacheService.getScriptCache();
       cache.put("otp_" + phone, otp, 600);
       
-      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 minutes. Do not share with anyone.";
-      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
-                "&route=q&message=" + encodeURIComponent(message) +
-                "&flash=0&numbers=" + encodeURIComponent(phone);
+      // Use Fast2SMS Smart OTP (no DLT registration needed)
+      var url = "https://www.fast2sms.com/dev/smartotp?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
+                "&mobile=" + encodeURIComponent(phone) +
+                "&variables_values=" + encodeURIComponent(otp);
       
       try {
         var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -72,7 +72,8 @@ function doPost(e) {
           return ContentService.createTextOutput(JSON.stringify({
             status: "fast2sms_pending",
             message: resJson.message || "Fast2SMS activation pending.",
-            status_code: resJson.status_code
+            status_code: resJson.status_code,
+            raw: JSON.stringify(resJson)
           })).setMimeType(ContentService.MimeType.JSON);
         }
       } catch (err) {
@@ -194,10 +195,10 @@ function doGet(e) {
       var cache = CacheService.getScriptCache();
       cache.put("otp_" + phone, otp, 600);
       
-      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 minutes. Do not share with anyone.";
-      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
-                "&route=q&message=" + encodeURIComponent(message) +
-                "&flash=0&numbers=" + encodeURIComponent(phone);
+      // Use Fast2SMS Smart OTP (no DLT registration needed)
+      var url = "https://www.fast2sms.com/dev/smartotp?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
+                "&mobile=" + encodeURIComponent(phone) +
+                "&variables_values=" + encodeURIComponent(otp);
       
       try {
         var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -213,7 +214,8 @@ function doGet(e) {
           return ContentService.createTextOutput(JSON.stringify({
             status: "fast2sms_pending",
             message: resJson.message || "Fast2SMS activation pending.",
-            status_code: resJson.status_code
+            status_code: resJson.status_code,
+            raw: JSON.stringify(resJson)
           })).setMimeType(ContentService.MimeType.JSON);
         }
       } catch (err) {
