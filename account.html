@@ -117,7 +117,13 @@
       
       <!-- Orders Tab -->
       <div id="tab-orders" class="tab-pane active">
-        <h2 class="content-header">My Orders</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+          <h2 class="content-header" style="margin-bottom: 0;">My Orders</h2>
+          <div style="position: relative; flex: 1; max-width: 320px; min-width: 200px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px;"></i>
+            <input type="text" id="orderSearchInput" oninput="handleOrderSearch(this.value)" placeholder="Search Order ID, Phone, Item..." style="width: 100%; padding: 8px 12px 8px 34px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box; background: white;" onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'">
+          </div>
+        </div>
         <div id="ordersListContainer">
           <div class="empty-state">
             <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
@@ -145,7 +151,7 @@
       <div id="tab-wishlist" class="tab-pane">
         <h2 class="content-header">Wishlist</h2>
         <div id="wishlistContainer" class="product-grid" style="display: flex; flex-direction: column;">
-           <!-- Handled by store.js?v=9.3 -->
+           <!-- Handled by store.js?v=9.4 -->
         </div>
       </div>
 
@@ -201,7 +207,7 @@
       });
     }
   </script>
-  <script src="store.js?v=9.3"></script>
+  <script src="store.js?v=9.4"></script>
   <script>
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -242,7 +248,7 @@
         }
       }
       
-      // Wait for store.js?v=9.3 to initialize
+      // Wait for store.js?v=9.4 to initialize
       setTimeout(renderAccountDashboard, 500);
     });
   </script>

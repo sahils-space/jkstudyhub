@@ -170,7 +170,19 @@ function getOrders() {
     const raw = localStorage.getItem('jk_orders');
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return autoHealOrders(Array.isArray(parsed) ? parsed : []);
+    const orders = autoHealOrders(Array.isArray(parsed) ? parsed : []);
+    
+    // Permanently enforce Delivered and Cancelled states across reloads
+    try {
+      const locked = JSON.parse(localStorage.getItem('jk_locked_orders') || '{}');
+      orders.forEach(o => {
+        if (locked[o.orderId]) {
+          o.status = locked[o.orderId];
+        }
+      });
+    } catch(e) {}
+    
+    return orders;
   } catch(e) {
     return [];
   }
@@ -902,6 +914,16 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
 
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    
+    // Permanently record locked status
+    if (newStatus === 'Delivered' || newStatus === 'Cancelled') {
+      try {
+        let locked = JSON.parse(localStorage.getItem('jk_locked_orders') || '{}');
+        locked[orderId] = newStatus;
+        localStorage.setItem('jk_locked_orders', JSON.stringify(locked));
+      } catch(e) {}
+    }
+    
     saveOrders(orders);
     
     // Sync update to Google Apps Script asynchronously
@@ -1425,7 +1447,8 @@ function syncOrdersWithGoogleSheet() {
             }
 
             if (match) {
-              if (remote.status && remote.status !== match.status) {
+              const isLocallyLocked = (match.status === 'Delivered' || match.status === 'Cancelled');
+              if (!isLocallyLocked && remote.status && remote.status !== match.status) {
                 match.status = remote.status;
                 updated = true;
               }
@@ -2278,6 +2301,11 @@ function renderAccountDashboard() {
   }
 }
 
+function handleOrderSearch(query) {
+  currentOrderSearchQuery = (query || '').toLowerCase().trim();
+  renderAccountOrders();
+}
+
 function renderAccountOrders() {
   const user = getCurrentUser();
   if (!user) return renderAccountDashboard(); // Will render empty state
@@ -2302,23 +2330,49 @@ function renderAccountOrders() {
     });
   }
 
-  if (userOrders.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state" style="padding-top: 60px;">
-        <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
-        <h3>No orders found</h3>
-        <p>Looks like you haven't placed any orders yet.</p>
-        <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
-      </div>
-    `;
+  // Filter by search query if user types in search bar
+  let filteredOrders = userOrders;
+  if (currentOrderSearchQuery) {
+    const q = currentOrderSearchQuery;
+    filteredOrders = userOrders.filter(o => {
+      const idMatch = String(o.orderId || '').toLowerCase().includes(q);
+      const phoneMatch = String(o.phone || '').toLowerCase().includes(q);
+      const nameMatch = String(o.name || '').toLowerCase().includes(q);
+      const prodMatch = String(o.product || '').toLowerCase().includes(q);
+      const txnMatch = String(o.txnId || '').toLowerCase().includes(q);
+      const statusMatch = String(o.status || '').toLowerCase().includes(q);
+      return idMatch || phoneMatch || nameMatch || prodMatch || txnMatch || statusMatch;
+    });
+  }
+
+  if (filteredOrders.length === 0) {
+    if (currentOrderSearchQuery) {
+      container.innerHTML = `
+        <div class="empty-state" style="padding-top: 40px;">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png" style="width:80px; margin: 0 auto 10px;"></div>
+          <h3>No matching orders</h3>
+          <p>No orders matched your search "<strong>${currentOrderSearchQuery}</strong>".</p>
+          <button class="yellow-btn" style="width:auto; padding: 8px 24px; margin-top: 10px;" onclick="const el = document.getElementById('orderSearchInput'); if(el) el.value=''; handleOrderSearch('');">Clear Search</button>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="empty-state" style="padding-top: 60px;">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
+          <h3>No orders found</h3>
+          <p>Looks like you haven't placed any orders yet.</p>
+          <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
+        </div>
+      `;
+    }
     return;
   }
 
   // Reverse sort by timestamp
-  userOrders.sort((a,b) => b.timestamp - a.timestamp);
+  filteredOrders.sort((a,b) => b.timestamp - a.timestamp);
 
   let html = '';
-  userOrders.forEach(o => {
+  filteredOrders.forEach(o => {
     let statusColor = '#3b82f6';
     if(o.status === 'Delivered') statusColor = '#10b981';
     if(o.status === 'Cancelled') statusColor = '#ef4444';
