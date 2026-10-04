@@ -116,20 +116,53 @@ function doGet(e) {
     
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
+      if (!row || row.length === 0) continue;
+
       var oTimestamp = row[0];
-      var oId = String(row[1] || "");
-      var oName = String(row[2] || "");
-      var oPhone = String(row[3] || "");
-      var oAddress = String(row[4] || "");
-      var oProduct = String(row[5] || "");
-      var oAmount = String(row[6] || "");
-      var oTxnId = String(row[7] || "");
-      var oStatus = String(row[8] || "Confirmed");
-      
+      var oId = "";
+      var oName = "";
+      var oPhone = "";
+      var oAddress = "";
+      var oProduct = "";
+      var oAmount = "";
+      var oTxnId = "";
+      var oStatus = "Confirmed";
+
+      // Detect if row follows 9-column format (starts with ORD- in col 1)
+      if (String(row[1] || "").trim().toUpperCase().startsWith("ORD-")) {
+        oId = String(row[1] || "");
+        oName = String(row[2] || "");
+        oPhone = String(row[3] || "");
+        oAddress = String(row[4] || "");
+        oProduct = String(row[5] || "");
+        oAmount = String(row[6] || "");
+        oTxnId = String(row[7] || "");
+        oStatus = String(row[8] || "Confirmed");
+      } else {
+        // Legacy 5-column format: [Timestamp, Name, Phone, Address, Product]
+        oId = "ORD-" + (100000 + i);
+        oName = String(row[1] || "");
+        oPhone = String(row[2] || ""); // Column 2 is PHONE, not Address!
+        oAddress = String(row[3] || "");
+        oProduct = String(row[4] || "");
+      }
+
+      // Safeguard: Extract valid 10-digit Indian mobile number
+      var cleanDigits = String(oPhone).replace(/\D/g, "");
+      if (cleanDigits === "193121" || !cleanDigits.match(/[6789]\d{9}/)) {
+        for (var c = 0; c < row.length; c++) {
+          var match = String(row[c]).match(/[6789]\d{9}/);
+          if (match) {
+            oPhone = match[0];
+            break;
+          }
+        }
+      }
+
       // Apply filters if passed
       if (filterId && oId.toLowerCase() !== filterId.toLowerCase()) continue;
       if (filterPhone && !oPhone.includes(filterPhone)) continue;
-      
+
       orders.push({
         timestamp: oTimestamp,
         orderId: oId,

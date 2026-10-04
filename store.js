@@ -115,12 +115,62 @@ function saveWishlist(wishlist) {
   updateNavBadges();
 }
 
+function getValidCustomerPhone(order) {
+  if (!order) return '';
+  
+  // 1. Check order.phone (exclude fixed pincode 193121)
+  const raw = String(order.phone || '').trim();
+  const digits = raw.replace(/\D/g, '');
+  if (digits !== '193121' && digits.length >= 10) {
+    const m = digits.match(/[6789]\d{9}$/);
+    if (m) return m[0];
+  }
+  
+  // 2. Search other fields if phone was corrupted or shifted
+  const candidates = [order.name, order.address, order.product, order.orderId];
+  for (let c of candidates) {
+    const text = String(c || '').trim();
+    const m = text.match(/[6789]\d{9}/);
+    if (m && m[0] !== '193121') {
+      return m[0];
+    }
+  }
+  return '';
+}
+
+function autoHealOrders(orders) {
+  if (!Array.isArray(orders)) return [];
+  let changed = false;
+  orders.forEach(order => {
+    const cleanDigits = String(order.phone || '').replace(/\D/g, '');
+    // If phone is just pincode 193121 or invalid length
+    if (cleanDigits === '193121' || !cleanDigits.match(/^[6789]\d{9}$/)) {
+      const fixed = getValidCustomerPhone(order);
+      if (fixed) {
+        order.phone = fixed;
+        changed = true;
+      }
+    }
+    // If order.name was accidentally saved as a mobile number, fix name
+    if (String(order.name || '').match(/^[6789]\d{9}$/) && order.orderId && !order.orderId.startsWith('ORD-')) {
+      order.name = order.orderId;
+      changed = true;
+    }
+  });
+  if (changed) {
+    try {
+      localStorage.setItem('jk_orders', JSON.stringify(orders));
+    } catch(e) {}
+  }
+  return orders;
+}
+
 function getOrders() {
   try {
     const raw = localStorage.getItem('jk_orders');
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return autoHealOrders(Array.isArray(parsed) ? parsed : []);
   } catch(e) {
     return [];
   }
@@ -789,15 +839,34 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
 }
 
 function sendCustomerWhatsAppStatusUpdate(orderId) {
-  const orders = getOrders();
+  let orders = getOrders();
   const order = orders.find(o => o.orderId === orderId);
   if (!order) return;
   
-  const cleanPhone = String(order.phone || '').replace(/\D/g, '').slice(-10);
+  let validPhone = getValidCustomerPhone(order);
+  
+  // If phone is missing, invalid, or was mistakenly set to pincode 193121
+  if (!validPhone || validPhone.length !== 10) {
+    const input = prompt(
+      `Please confirm the 10-digit WhatsApp mobile number for ${order.name || 'this customer'} (Order: ${order.orderId}):`, 
+      ""
+    );
+    if (!input) return;
+    const match = input.match(/[6789]\d{9}/);
+    if (!match) {
+      alert("Invalid number! Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.");
+      return;
+    }
+    validPhone = match[0];
+    order.phone = validPhone;
+    saveOrders(orders); // Permanently save so you never have to re-enter it!
+  }
+  
   const statusInfo = getStatusStepInfo(order.status);
+  const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
   
   const text = encodeURIComponent(
-    `Dear ${order.name},\n\n` +
+    `Dear ${customerName},\n\n` +
     `🚚 Update on your JK Study Hub Order #${order.orderId}:\n` +
     `Status: *${statusInfo.label}*\n` +
     `Items: ${order.product}\n` +
@@ -805,7 +874,7 @@ function sendCustomerWhatsAppStatusUpdate(orderId) {
     `Thank you for studying with JK Study Hub, Pattan!`
   );
   
-  window.open(`https://wa.me/91${cleanPhone}?text=${text}`, '_blank');
+  window.open(`https://wa.me/91${validPhone}?text=${text}`, '_blank');
 }
 
 function handleOrderSearchInput(query) {
@@ -1020,7 +1089,7 @@ function renderOrdersPage() {
           <div style="flex: 1; min-width: 250px;">
             <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px;">${order.product}</h4>
             <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
-              <p style="margin: 0;"><strong>Recipient:</strong> ${order.name} (${order.phone})</p>
+              <p style="margin: 0;"><strong>Recipient:</strong> ${(order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student'} (${getValidCustomerPhone(order) || order.phone || 'Contact via WhatsApp'})</p>
               <p style="margin: 4px 0 0;"><strong>Address:</strong> ${order.address}</p>
             </div>
             <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-block;">
@@ -1219,9 +1288,25 @@ function syncOrdersWithGoogleSheet() {
 
           data.orders.forEach(remote => {
             const match = localOrders.find(l => l.orderId === remote.orderId || (l.txnId && l.txnId === remote.txnId));
+            
+            // Clean remote phone
+            let cleanRemotePhone = '';
+            const m = String(remote.phone || '').match(/[6789]\d{9}/);
+            if (m && m[0] !== '193121') {
+              cleanRemotePhone = m[0];
+            } else {
+              const m2 = String(remote.name || '').match(/[6789]\d{9}/);
+              if (m2) cleanRemotePhone = m2[0];
+            }
+
             if (match) {
               if (remote.status && remote.status !== match.status) {
                 match.status = remote.status;
+                updated = true;
+              }
+              // If local phone is invalid or pincode, but remote has a valid phone, heal it
+              if (cleanRemotePhone && String(match.phone || '').includes('193121')) {
+                match.phone = cleanRemotePhone;
                 updated = true;
               }
             } else if (remote.orderId) {
@@ -1230,8 +1315,8 @@ function syncOrdersWithGoogleSheet() {
                 txnId: remote.txnId || 'N/A',
                 date: remote.timestamp || new Date().toLocaleDateString('en-IN'),
                 timestamp: Date.now(),
-                name: remote.name || 'Student',
-                phone: remote.phone || '',
+                name: (remote.name && !remote.name.match(/^[6789]\d{9}$/)) ? remote.name : 'Student',
+                phone: cleanRemotePhone,
                 address: remote.address || 'Pattan - 193121',
                 product: remote.product || 'Study Hub Purchase',
                 amount: parseFloat(remote.amount) || 0,
