@@ -204,10 +204,26 @@ function updateNavBadges() {
   const cart = getCart();
   const wishlist = getWishlist();
   const orders = getOrders();
-
+  const user = getCurrentUser();
+  const role = getUserStoreRole(user);
+  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  
+  let userOrders = orders;
+  if (!isStaff && user) {
+    const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+    const uEmail = String(user.email || '').trim().toLowerCase();
+    userOrders = orders.filter(o => {
+      const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
+      const oEmail = String(o.userEmail || '').trim().toLowerCase();
+      if (uPhone && oPhone === uPhone) return true;
+      if (uEmail && oEmail === uEmail) return true;
+      return false;
+    });
+  }
+  
+  const totalOrdersCount = isStaff ? orders.length : userOrders.length;
   const totalCartQty = cart.reduce((acc, item) => acc + (parseInt(item.qty) || 1), 0);
   const totalWishlistCount = wishlist.length;
-  const totalOrdersCount = orders.length;
 
   const cartBadges = document.querySelectorAll('.nav-badge-count, #cartCount');
   cartBadges.forEach(el => {
