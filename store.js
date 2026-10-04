@@ -1990,7 +1990,7 @@ function handleSendOTP() {
       } else if (data.status === 'fast2sms_pending') {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>Fast2SMS Wallet Notice:</strong> ${data.message}<br><span style="font-size:12px;color:#334155;display:block;margin-top:4px;">Add ₹100 into your Fast2SMS wallet to activate automated SMS, or use <strong>"1-Click Sign in with Google"</strong> above for instant login!</span>`;
+        errorMsg.innerHTML = `⚠️ SMS service is temporarily unavailable. Please click <strong>"1-Click Sign in with Google"</strong> above for instant free login!`;
         errorMsg.style.display = 'block';
       } else {
         throw new Error(data.message || 'Fast2SMS error');
@@ -2035,19 +2035,19 @@ function handleSendOTP() {
             .catch((fbError) => {
               btn.innerHTML = 'Send OTP Code ➔';
               btn.disabled = false;
-              errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
+              errorMsg.innerHTML = `⚠️ SMS is temporarily paused. Please use <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
               errorMsg.style.display = 'block';
             });
         } catch(e) {
           btn.innerHTML = 'Send OTP Code ➔';
           btn.disabled = false;
-          errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
+          errorMsg.innerHTML = `⚠️ SMS is temporarily paused. Please use <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
           errorMsg.style.display = 'block';
         }
       } else {
         btn.innerHTML = 'Send OTP Code ➔';
         btn.disabled = false;
-        errorMsg.innerHTML = `⚠️ <strong>SMS Gateway Notice:</strong> Please add ₹100 into Fast2SMS wallet to activate automated SMS, or click <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
+        errorMsg.innerHTML = `⚠️ SMS is temporarily paused. Please use <strong>"1-Click Sign in with Google"</strong> above to log in instantly!`;
         errorMsg.style.display = 'block';
       }
     });

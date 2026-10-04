@@ -33,53 +33,12 @@ function doPost(e) {
     
     var p = e.parameter || {};
     
-    // --- FAST2SMS OTP CONFIGURATION ---
-    var FAST2SMS_API_KEY = "WdLfVOXlz9U0EiJe5t8kxCm3sqHwcbFATDrpI46gjGB2NMRSKZDUqXtJIKMHSzPAEybfTreQlRpVhL5a";
-
-    // ACTION: Send SMS OTP via Fast2SMS
+    // --- FAST2SMS OTP DISCONNECTED ---
     if (p.action === "send_otp") {
-      var phone = String(p.phone || "").replace(/\D/g, "").slice(-10);
-      if (!phone.match(/^[6789]\d{9}$/)) {
-        return ContentService.createTextOutput(JSON.stringify({
-          status: "error",
-          message: "Please enter a valid 10-digit Indian mobile number."
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-      
-      // Generate secure 6-digit random OTP
-      var otp = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      // Cache OTP for 10 minutes
-      var cache = CacheService.getScriptCache();
-      cache.put("otp_" + phone, otp, 600);
-      
-      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 min.";
-      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) + "&route=q&message=" + encodeURIComponent(message) + "&flash=0&numbers=" + encodeURIComponent(phone);
-      
-      try {
-        var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-        var resJson = JSON.parse(response.getContentText());
-        
-        if (resJson.return === true || resJson.status_code === 200) {
-          return ContentService.createTextOutput(JSON.stringify({
-            status: "success",
-            message: "OTP sent successfully to your phone via SMS.",
-            phone: phone
-          })).setMimeType(ContentService.MimeType.JSON);
-        } else {
-          return ContentService.createTextOutput(JSON.stringify({
-            status: "fast2sms_pending",
-            message: resJson.message || "Fast2SMS activation pending.",
-            status_code: resJson.status_code,
-            raw: JSON.stringify(resJson)
-          })).setMimeType(ContentService.MimeType.JSON);
-        }
-      } catch (err) {
-        return ContentService.createTextOutput(JSON.stringify({
-          status: "error",
-          message: "SMS Gateway error: " + err.toString()
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "disabled",
+        message: "Fast2SMS gateway has been permanently disconnected."
+      })).setMimeType(ContentService.MimeType.JSON);
     }
     
     // ACTION: Verify SMS OTP
@@ -177,49 +136,12 @@ function doPost(e) {
 function doGet(e) {
   try {
     var p = (e && e.parameter) ? e.parameter : {};
-    var FAST2SMS_API_KEY = "WdLfVOXlz9U0EiJe5t8kxCm3sqHwcbFATDrpI46gjGB2NMRSKZDUqXtJIKMHSzPAEybfTreQlRpVhL5a";
-
-    // ACTION: Send SMS OTP via Fast2SMS (GET)
+    // --- FAST2SMS OTP DISCONNECTED ---
     if (p.action === "send_otp") {
-      var phone = String(p.phone || "").replace(/\D/g, "").slice(-10);
-      if (!phone.match(/^[6789]\d{9}$/)) {
-        return ContentService.createTextOutput(JSON.stringify({
-          status: "error",
-          message: "Please enter a valid 10-digit Indian mobile number."
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-      
-      var otp = Math.floor(100000 + Math.random() * 900000).toString();
-      var cache = CacheService.getScriptCache();
-      cache.put("otp_" + phone, otp, 600);
-      
-      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 min.";
-      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) + "&route=q&message=" + encodeURIComponent(message) + "&flash=0&numbers=" + encodeURIComponent(phone);
-      
-      try {
-        var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-        var resJson = JSON.parse(response.getContentText());
-        
-        if (resJson.return === true || resJson.status_code === 200) {
-          return ContentService.createTextOutput(JSON.stringify({
-            status: "success",
-            message: "OTP sent successfully to your phone via SMS.",
-            phone: phone
-          })).setMimeType(ContentService.MimeType.JSON);
-        } else {
-          return ContentService.createTextOutput(JSON.stringify({
-            status: "fast2sms_pending",
-            message: resJson.message || "Fast2SMS activation pending.",
-            status_code: resJson.status_code,
-            raw: JSON.stringify(resJson)
-          })).setMimeType(ContentService.MimeType.JSON);
-        }
-      } catch (err) {
-        return ContentService.createTextOutput(JSON.stringify({
-          status: "error",
-          message: "SMS Gateway error: " + err.toString()
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "disabled",
+        message: "Fast2SMS gateway has been permanently disconnected."
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // ACTION: Verify SMS OTP (GET)
