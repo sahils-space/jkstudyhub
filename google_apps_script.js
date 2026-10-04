@@ -53,10 +53,8 @@ function doPost(e) {
       var cache = CacheService.getScriptCache();
       cache.put("otp_" + phone, otp, 600);
       
-      // Use Fast2SMS Smart OTP (no DLT registration needed)
-      var url = "https://www.fast2sms.com/dev/smartotp?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
-                "&mobile=" + encodeURIComponent(phone) +
-                "&variables_values=" + encodeURIComponent(otp);
+      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 min.";
+      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) + "&route=q&message=" + encodeURIComponent(message) + "&flash=0&numbers=" + encodeURIComponent(phone);
       
       try {
         var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -139,7 +137,7 @@ function doPost(e) {
     
     // ACTION: New Order Placement
     var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-    var orderId = p.order_id || ("ORD-" + Math.floor(100000 + Math.random() * 900000));
+    var orderId = p.order_id || ("OD" + Date.now() + Math.floor(Math.random() * 1000));
     var name = p.name || "Customer";
     var phone = p.phone || "";
     var address = p.address || "Pattan, Baramulla - 193121";
@@ -195,10 +193,8 @@ function doGet(e) {
       var cache = CacheService.getScriptCache();
       cache.put("otp_" + phone, otp, 600);
       
-      // Use Fast2SMS Smart OTP (no DLT registration needed)
-      var url = "https://www.fast2sms.com/dev/smartotp?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
-                "&mobile=" + encodeURIComponent(phone) +
-                "&variables_values=" + encodeURIComponent(otp);
+      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 min.";
+      var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) + "&route=q&message=" + encodeURIComponent(message) + "&flash=0&numbers=" + encodeURIComponent(phone);
       
       try {
         var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -284,8 +280,9 @@ function doGet(e) {
       var oTxnId = "";
       var oStatus = "Confirmed";
 
-      // Detect if row follows 9-column format (starts with ORD- in col 1)
-      if (String(row[1] || "").trim().toUpperCase().startsWith("ORD-")) {
+      // Detect if row follows 9-column format (starts with ORD- or OD in col 1)
+      var col1Str = String(row[1] || "").trim().toUpperCase();
+      if (col1Str.startsWith("ORD-") || col1Str.startsWith("OD")) {
         oId = String(row[1] || "");
         oName = String(row[2] || "");
         oPhone = String(row[3] || "");

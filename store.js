@@ -1363,13 +1363,25 @@ function closeReceiptModal() {
 function syncOrdersWithGoogleSheet() {
   if (!SCRIPT_URL) return;
 
+  const user = getCurrentUser();
+  const role = getUserStoreRole(user);
+  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  
+  let fetchUrl = SCRIPT_URL + '?action=get_orders';
+  if (!isStaff) {
+    if (!user) return; // Don't download orders if not logged in
+    const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+    if (!uPhone) return;
+    fetchUrl += '&phone=' + encodeURIComponent(uPhone);
+  }
+
   // Background fetch without blocking UI
   try {
-    fetch(SCRIPT_URL + '?action=get_orders', { method: 'GET' })
+    fetch(fetchUrl, { method: 'GET' })
       .then(res => res.json())
       .then(data => {
         if (data && data.status === 'success' && Array.isArray(data.orders)) {
-          let localOrders = getOrders();
+          let localOrders = isStaff ? getOrders() : []; // If student, strictly mirror the backend array for privacy
           let updated = false;
 
           data.orders.forEach(remote => {
@@ -1685,7 +1697,7 @@ function processOrder(txnId) {
   // 1. SAVE LOCALLY TO ORDERS HISTORY IMMEDIATELY!
   const user = getCurrentUser();
   const orderRecord = {
-    orderId: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+    orderId: 'OD' + Date.now() + Math.floor(Math.random() * 1000),
     txnId: txnId,
     date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     timestamp: Date.now(),
