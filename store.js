@@ -1393,7 +1393,7 @@ function syncOrdersWithGoogleSheet() {
 
   // Background fetch without blocking UI
   try {
-    fetch(fetchUrl, { method: 'GET' })
+    fetch(fetchUrl + (fetchUrl.includes('?') ? '&' : '?') + 't=' + Date.now(), { method: 'GET' })
       .then(res => res.json())
       .then(data => {
         if (data && data.status === 'success' && Array.isArray(data.orders)) {
@@ -1950,7 +1950,7 @@ function handleSendOTP() {
   const scriptEndpoint = SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
 
   // 1. Try Fast2SMS via Apps Script backend
-  fetch(`${scriptEndpoint}?action=send_otp&phone=${encodeURIComponent(phone)}`)
+  fetch(`${scriptEndpoint}?action=send_otp&phone=${encodeURIComponent(phone)}&t=${Date.now()}`)
     .then(r => r.json())
     .then(data => {
       if (data.status === 'success') {
@@ -2063,7 +2063,7 @@ function handleVerifyOTP() {
 
   // Fast2SMS verification via backend
   if (activePhoneConfirmation && activePhoneConfirmation.fast2sms) {
-    fetch(`${scriptEndpoint}?action=verify_otp&phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(code)}`)
+    fetch(`${scriptEndpoint}?action=verify_otp&phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(code)}&t=${Date.now()}`)
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success' && data.verified) {
