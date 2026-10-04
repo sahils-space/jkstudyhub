@@ -202,6 +202,7 @@ function saveOrders(orders) {
 }
 
 function getCurrentUser() {
+  if (window.currentUser) return window.currentUser;
   try {
     return JSON.parse(localStorage.getItem('jk_study_user') || 'null');
   } catch(e) {
@@ -210,10 +211,11 @@ function getCurrentUser() {
 }
 
 function setCurrentUser(user) {
+  window.currentUser = user;
   if (user) {
-    localStorage.setItem('jk_study_user', JSON.stringify(user));
+    try { localStorage.setItem('jk_study_user', JSON.stringify(user)); } catch(e) { console.warn('LocalStorage error', e); }
   } else {
-    localStorage.removeItem('jk_study_user');
+    try { localStorage.removeItem('jk_study_user'); } catch(e) {}
   }
   updateAuthUI();
   updateNavBadges();
@@ -2165,7 +2167,10 @@ function finishPhoneLogin(user) {
   if (orderPhone && !orderPhone.value) orderPhone.value = user.phoneNumber.replace('+91', '');
   if (typeof renderAccountDashboard === 'function') { setTimeout(renderAccountDashboard, 100); }
   if (window.location.pathname.includes('account.html')) {
-    setTimeout(() => window.location.reload(), 1000);
+    setTimeout(() => {
+      if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
+      if (typeof initShop === 'function') initShop();
+    }, 100);
   }
 }
 
@@ -2182,7 +2187,7 @@ function handleGooglePopupAuth() {
         uid: res.user.uid
       };
       setCurrentUser(user);
-      showToast(`Welcome, ${user.displayName.split(' ')[0]}!`);
+      showToast(`Welcome, ${(user.displayName || "Student").split(" ")[0]}!`);
       if (typeof renderAccountDashboard === 'function') { setTimeout(renderAccountDashboard, 100); }
       if (document.getElementById('checkoutModal') && document.getElementById('checkoutModal').style.display === 'flex') {
         const orderName = document.getElementById('orderName');
@@ -2190,7 +2195,10 @@ function handleGooglePopupAuth() {
         const orderPhone = document.getElementById('orderPhone');
         if (orderPhone && !orderPhone.value) orderPhone.value = (user.phoneNumber || '').replace('+91', '');
       } else if (window.location.pathname.includes('account.html')) {
-        setTimeout(() => window.location.reload(), 1000);
+        setTimeout(() => {
+          if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
+          if (typeof initShop === 'function') initShop();
+        }, 100);
       }
     }).catch(err => {
       fallbackLoginPrompt();
