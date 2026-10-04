@@ -53,8 +53,9 @@ function doPost(e) {
       var cache = CacheService.getScriptCache();
       cache.put("otp_" + phone, otp, 600);
       
+      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 minutes. Do not share with anyone.";
       var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
-                "&route=otp&variables_values=" + encodeURIComponent(otp) +
+                "&route=q&message=" + encodeURIComponent(message) +
                 "&flash=0&numbers=" + encodeURIComponent(phone);
       
       try {
@@ -193,8 +194,9 @@ function doGet(e) {
       var cache = CacheService.getScriptCache();
       cache.put("otp_" + phone, otp, 600);
       
+      var message = "Your JK Study Hub OTP is: " + otp + ". Valid for 10 minutes. Do not share with anyone.";
       var url = "https://www.fast2sms.com/dev/bulkV2?authorization=" + encodeURIComponent(FAST2SMS_API_KEY) +
-                "&route=otp&variables_values=" + encodeURIComponent(otp) +
+                "&route=q&message=" + encodeURIComponent(message) +
                 "&flash=0&numbers=" + encodeURIComponent(phone);
       
       try {
