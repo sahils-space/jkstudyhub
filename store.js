@@ -894,6 +894,12 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
   let orders = getOrders();
   const idx = orders.findIndex(o => o.orderId === orderId);
   if (idx !== -1) {
+    if (orders[idx].status === 'Delivered' || orders[idx].status === 'Cancelled') {
+      showToast(`⚠️ Order is ${orders[idx].status} and cannot be modified.`);
+      if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+      return;
+    }
+
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     saveOrders(orders);
@@ -2306,12 +2312,13 @@ function renderAccountOrders() {
     
     let adminControls = '';
     if (isStaff) {
+      const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
       adminControls = `
         <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
           <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
           <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
           <div style="display:flex; align-items:center; gap:10px;">
-            <select class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b;" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
+            <select ${isLocked ? 'disabled' : ''} class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; ${isLocked ? 'background-color:#f8fafc; cursor:default; pointer-events:none;' : ''}" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
               <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
               <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
               <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>

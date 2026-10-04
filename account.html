@@ -145,7 +145,7 @@
       <div id="tab-wishlist" class="tab-pane">
         <h2 class="content-header">Wishlist</h2>
         <div id="wishlistContainer" class="product-grid" style="display: flex; flex-direction: column;">
-           <!-- Handled by store.js -->
+           <!-- Handled by store.js?v=9.3 -->
         </div>
       </div>
 
@@ -201,7 +201,7 @@
       });
     }
   </script>
-  <script src="store.js"></script>
+  <script src="store.js?v=9.3"></script>
   <script>
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -242,7 +242,7 @@
         }
       }
       
-      // Wait for store.js to initialize
+      // Wait for store.js?v=9.3 to initialize
       setTimeout(renderAccountDashboard, 500);
     });
   </script>
