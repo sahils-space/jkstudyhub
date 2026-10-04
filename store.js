@@ -790,12 +790,74 @@ function getStatusStepInfo(rawStatus) {
   };
 }
 
+// --- AUTHORIZED STORE TEAM ROLES ---
+// Sahil's Master Owner Credentials (Auto-detected on login):
+const STORE_OWNER_PHONES = ['9622605714'];
+const STORE_OWNER_EMAILS = ['sahilsspace20@gmail.com', 'admin@jkstudyhub.online'];
+
+// Delivery Team Phones (Add your delivery boy numbers here anytime):
+const DELIVERY_BOY_PHONES = [
+  // '9876543210'
+];
+
+function getUserStoreRole(user) {
+  if (!user) return 'student';
+  const phone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+  const email = String(user.email || '').trim().toLowerCase();
+
+  if (phone && STORE_OWNER_PHONES.some(p => p.slice(-10) === phone)) {
+    return 'owner';
+  }
+  if (email && STORE_OWNER_EMAILS.includes(email)) {
+    return 'owner';
+  }
+  if (phone && DELIVERY_BOY_PHONES.some(p => p.slice(-10) === phone)) {
+    return 'delivery';
+  }
+  return 'student';
+}
+
 function isAdminUnlocked() {
+  const user = getCurrentUser();
+  const role = getUserStoreRole(user);
+  if (role === 'owner' || role === 'delivery') return true;
   return sessionStorage.getItem('jk_admin_unlocked') === 'true';
 }
 
+let secretAdminClickCount = 0;
+function handleSecretAdminClick() {
+  secretAdminClickCount++;
+  if (secretAdminClickCount >= 3) {
+    secretAdminClickCount = 0;
+    promptAdminLogin();
+  }
+}
+
+function promptAdminLogin() {
+  const pin = prompt("Enter JK Study Hub Admin PIN:", "");
+  if (pin === "9622" || pin === "1234") {
+    sessionStorage.setItem('jk_admin_unlocked', 'true');
+    showToast("✅ Admin Mode Unlocked!");
+    renderOrdersPage();
+  } else if (pin !== null) {
+    alert("Incorrect Admin PIN.");
+  }
+}
+
 function toggleAdminAccess() {
-  if (isAdminUnlocked()) {
+  const user = getCurrentUser();
+  const role = getUserStoreRole(user);
+  
+  if (role === 'owner') {
+    showToast("👑 You are signed in as Store Owner (Admin).");
+    return;
+  }
+  if (role === 'delivery') {
+    showToast("🚚 You are signed in as Delivery Partner.");
+    return;
+  }
+
+  if (sessionStorage.getItem('jk_admin_unlocked') === 'true') {
     if (confirm("Lock Store Admin Mode?")) {
       sessionStorage.removeItem('jk_admin_unlocked');
       showToast("Store Admin Mode locked.");
@@ -804,14 +866,7 @@ function toggleAdminAccess() {
     return;
   }
   
-  const pin = prompt("Enter JK Study Hub Admin PIN (Default: 9622):", "");
-  if (pin === "9622" || pin === "1234") {
-    sessionStorage.setItem('jk_admin_unlocked', 'true');
-    showToast("✅ Admin Mode Unlocked! You can now update delivery statuses.");
-    renderOrdersPage();
-  } else if (pin !== null) {
-    alert("Incorrect Admin PIN. Please enter your 4-digit code.");
-  }
+  promptAdminLogin();
 }
 
 function updateOrderStatusByAdmin(orderId, newStatus) {
@@ -922,33 +977,64 @@ function renderOrdersPage() {
   const container = document.getElementById('ordersListContainer');
   if (!container) return;
 
+  const user = getCurrentUser();
+  const role = getUserStoreRole(user);
+  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+
   // Update Admin Toggle button state
   const adminBtn = document.getElementById('adminToggleBtn');
   if (adminBtn) {
-    if (isAdminUnlocked()) {
+    if (role === 'owner') {
+      adminBtn.style.display = 'inline-flex';
+      adminBtn.innerHTML = '<i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Store Owner (Admin)';
+      adminBtn.style.background = '#fef3c7';
+      adminBtn.style.color = '#b45309';
+      adminBtn.style.borderColor = '#fcd34d';
+    } else if (role === 'delivery') {
+      adminBtn.style.display = 'inline-flex';
+      adminBtn.innerHTML = '<i class="fa-solid fa-truck" style="color: #2563eb;"></i> Delivery Partner';
+      adminBtn.style.background = '#eff6ff';
+      adminBtn.style.color = '#1e40af';
+      adminBtn.style.borderColor = '#bfdbfe';
+    } else if (sessionStorage.getItem('jk_admin_unlocked') === 'true') {
+      adminBtn.style.display = 'inline-flex';
       adminBtn.innerHTML = '<i class="fa-solid fa-lock-open" style="color: #10b981;"></i> Admin Active (Exit)';
       adminBtn.style.background = '#dcfce7';
       adminBtn.style.color = '#15803d';
       adminBtn.style.borderColor = '#86efac';
     } else {
-      adminBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Store Admin';
-      adminBtn.style.background = '#f8fafc';
-      adminBtn.style.color = '#64748b';
-      adminBtn.style.borderColor = '#cbd5e1';
+      // Normal students & visitors: completely HIDE the admin button!
+      adminBtn.style.display = 'none';
     }
   }
 
   const allOrders = getOrders();
-  const countEl = document.getElementById('ordersHeaderCount');
-  if (countEl) countEl.innerText = `${allOrders.length} Orders`;
+  
+  // For normal logged-in students, only show THEIR orders!
+  let baseOrders = allOrders;
+  if (!isStaff && user) {
+    const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+    const uEmail = String(user.email || '').trim().toLowerCase();
+    
+    baseOrders = allOrders.filter(o => {
+      const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
+      const oEmail = String(o.userEmail || '').trim().toLowerCase();
+      if (uPhone && oPhone === uPhone) return true;
+      if (uEmail && oEmail === uEmail) return true;
+      return false;
+    });
+  }
 
-  if (allOrders.length === 0) {
+  const countEl = document.getElementById('ordersHeaderCount');
+  if (countEl) countEl.innerText = `${baseOrders.length} Orders`;
+
+  if (baseOrders.length === 0) {
     container.innerHTML = `
       <div style="background: white; border-radius: 16px; padding: 60px 20px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
         <div style="width: 90px; height: 90px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 38px; color: #10b981;">
           <i class="fa-solid fa-box-open"></i>
         </div>
-        <h3 style="font-size: 22px; color: #1e293b; font-weight: 700; margin-bottom: 8px;">No Orders Placed Yet</h3>
+        <h3 style="font-size: 22px; color: #1e293b; font-weight: 700; margin-bottom: 8px;">No Orders Found</h3>
         <p style="color: #64748b; font-size: 14px; max-width: 440px; margin: 0 auto 24px; line-height: 1.5;">When you purchase notes, printed PYQs, stationery, or book online form filling services, your order receipts, tracking numbers, and real-time delivery progress in Pattan will appear right here!</p>
         <a href="store.html" style="display: inline-block; background: #2563eb; color: white; padding: 12px 28px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 15px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">Explore Store</a>
       </div>
@@ -957,7 +1043,7 @@ function renderOrdersPage() {
   }
 
   // Filter orders according to active tabs & search query
-  let filtered = allOrders.filter(order => {
+  let filtered = baseOrders.filter(order => {
     const info = getStatusStepInfo(order.status);
     
     // Status filter
@@ -1853,36 +1939,35 @@ function handleSendOTP() {
           document.getElementById('authOtpCode').focus();
         })
         .catch((error) => {
-          console.warn("Firebase Phone Auth notice:", error.message);
+          console.warn("Firebase Phone Auth error:", error.code, error.message);
           btn.innerHTML = 'Send OTP Code ➔';
           btn.disabled = false;
 
-          // If phone auth needs configuration or hits test quota, provide seamless OTP verification
-          activePhoneConfirmation = { mock: true, phone: phone };
-          document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-          document.getElementById('phoneStep1').style.display = 'none';
-          document.getElementById('phoneStep2').style.display = 'block';
-          document.getElementById('authOtpCode').value = '123456';
-          document.getElementById('otpErrorMsg').innerText = "Notice: Enter 123456 or your SMS code to verify!";
-          document.getElementById('otpErrorMsg').style.color = '#10b981';
-          document.getElementById('otpErrorMsg').style.display = 'block';
-          document.getElementById('authOtpCode').focus();
+          let msg = "Could not send SMS code. ";
+          if (error.code === 'auth/unauthorized-domain') {
+            msg = "Firebase domain not authorized: Please add 'jkstudyhub.online' in Firebase Console Settings -> Authorized Domains. Or use 'Sign in with Google' below!";
+          } else if (error.code === 'auth/operation-not-allowed') {
+            msg = "Phone Auth is disabled in Firebase Console: Please enable 'Phone' under Firebase -> Authentication -> Sign-in method. Or use 'Sign in with Google' below!";
+          } else if (error.code === 'auth/quota-exceeded') {
+            msg = "SMS daily limit reached. Please use 'Sign in with Google' below!";
+          } else if (error.message) {
+            msg += error.message;
+          }
+
+          errorMsg.innerText = msg;
+          errorMsg.style.display = 'block';
         });
     } catch(e) {
       btn.innerHTML = 'Send OTP Code ➔';
       btn.disabled = false;
-      activePhoneConfirmation = { mock: true, phone: phone };
-      document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-      document.getElementById('phoneStep1').style.display = 'none';
-      document.getElementById('phoneStep2').style.display = 'block';
+      errorMsg.innerText = "Error initializing SMS service. Please use 'Sign in with Google' below!";
+      errorMsg.style.display = 'block';
     }
   } else {
     btn.innerHTML = 'Send OTP Code ➔';
     btn.disabled = false;
-    activePhoneConfirmation = { mock: true, phone: phone };
-    document.getElementById('displayTargetPhone').innerText = fullPhoneNumber;
-    document.getElementById('phoneStep1').style.display = 'none';
-    document.getElementById('phoneStep2').style.display = 'block';
+    errorMsg.innerText = "Firebase authentication is loading. Please try again or use Google Sign-in below.";
+    errorMsg.style.display = 'block';
   }
 }
 
