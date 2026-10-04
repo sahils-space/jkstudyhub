@@ -2183,3 +2183,271 @@ window.installApp = function() {
     }
   }
 };
+
+// ==========================================
+// ACCOUNT DASHBOARD FUNCTIONS (ZAPVI STYLE)
+// ==========================================
+
+function renderAccountDashboard() {
+  const user = getCurrentUser();
+  const profileCard = document.getElementById('sidebarProfileCard');
+  if (!profileCard) return;
+
+  if (user) {
+    const firstName = (user.displayName || 'Student').split(' ')[0];
+    const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
+    profileCard.innerHTML = `
+      <h3 style="font-size: 18px; margin-bottom: 5px;">Hi, ${firstName}!</h3>
+      <p style="margin-bottom: 15px; color: #475569;"><i class="fa-solid fa-mobile-screen"></i> +91 ${phone}</p>
+      <button class="yellow-btn" style="background: #f87171; color: white;" onclick="logout()">Sign Out</button>
+    `;
+    
+    // Auto-render current active tab if logged in
+    const activeMenu = document.querySelector('.account-menu a.active');
+    if (activeMenu) {
+      const tabId = activeMenu.id.replace('menu-', '');
+      if (tabId === 'orders') renderAccountOrders();
+      if (tabId === 'wishlist') renderAccountWishlist();
+      if (tabId === 'addresses') renderAddresses();
+      if (tabId === 'details') renderAccountDetails();
+    }
+  } else {
+    profileCard.innerHTML = `
+      <h3>Login with OTP</h3>
+      <p>See your orders and saved addresses on any device.</p>
+      <button class="yellow-btn" onclick="openPhoneAuthModal()">Login / Sign up</button>
+    `;
+    // Empty states are already in HTML, but we need to reset them if user logs out
+    const ordersContainer = document.getElementById('ordersListContainer');
+    if (ordersContainer) {
+      ordersContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png" style="width:100%; opacity:0.8;"></div>
+          <h3>See your orders</h3>
+          <p>Login with your mobile number to see all your orders.</p>
+          <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
+        </div>
+      `;
+    }
+    const addContainer = document.getElementById('addressesListContainer');
+    if(addContainer) {
+      addContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" style="width:80%; opacity:0.8;"></div>
+          <h3>See your saved addresses</h3>
+          <p>Login with your mobile number to see your saved addresses, or add one here.</p>
+          <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
+        </div>
+      `;
+    }
+    const detContainer = document.getElementById('accountDetailsContainer');
+    if(detContainer) {
+      detContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width:90%; opacity:0.8;"></div>
+          <h3>Manage your account</h3>
+          <p>Login to update your profile details.</p>
+          <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login / Sign up</button>
+        </div>
+      `;
+    }
+  }
+}
+
+function renderAccountOrders() {
+  const user = getCurrentUser();
+  if (!user) return renderAccountDashboard(); // Will render empty state
+  
+  const container = document.getElementById('ordersListContainer');
+  if (!container) return;
+  
+  const allOrders = getOrders();
+  const role = getUserStoreRole(user);
+  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  
+  let userOrders = allOrders;
+  if (!isStaff) {
+    const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+    userOrders = allOrders.filter(o => String(o.phone || '').replace(/\D/g, '').slice(-10) === uPhone);
+  }
+
+  if (userOrders.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding-top: 60px;">
+        <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png" style="width:100%; opacity:0.3;"></div>
+        <h3>No orders found</h3>
+        <p>Looks like you haven't placed any orders yet.</p>
+        <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Reverse sort by timestamp
+  userOrders.sort((a,b) => b.timestamp - a.timestamp);
+
+  let html = '';
+  userOrders.forEach(o => {
+    let statusColor = '#3b82f6';
+    if(o.status === 'Delivered') statusColor = '#10b981';
+    if(o.status === 'Cancelled') statusColor = '#ef4444';
+    
+    html += `
+      <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:4px;">ORDER ID</div>
+            <div style="font-size:16px; font-weight:800; color:#1e293b;">${o.orderId}</div>
+          </div>
+          <div style="text-align:right;">
+            <span style="background:${statusColor}15; color:${statusColor}; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;">${o.status}</span>
+          </div>
+        </div>
+        <div style="font-size:15px; font-weight:600; color:#334155; margin-bottom:10px;">${o.product}</div>
+        <div style="display:flex; justify-content:space-between; font-size:14px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:10px;">
+          <span>${o.date}</span>
+          <span style="font-weight:700; color:#1e293b;">₹${o.amount}</span>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function renderAccountWishlist() {
+  const container = document.getElementById('wishlistContainer');
+  if(!container) return;
+  const w = getWishlist();
+  if (w.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding-top: 40px; margin:0 auto;">
+        <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" style="width:80%; opacity:0.3;"></div>
+        <h3>Your wishlist is empty</h3>
+        <p>Save items you love here to easily find them later.</p>
+        <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
+      </div>
+    `;
+    return;
+  }
+  // Render using existing logic but adapted for this container
+  let html = `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:20px;">`;
+  w.forEach(item => {
+    html += `
+      <div class="product-card" style="border-radius:12px; box-shadow:none; border:1px solid #e2e8f0;">
+        <button class="wishlist-icon active" onclick="toggleWishlist('${item.id}', '${item.name}', ${item.price}, '${item.img}', '${item.category}')" style="top:10px; right:10px;"><i class="fa-solid fa-heart"></i></button>
+        <img src="${item.img}" class="product-img" style="height:160px; object-fit:cover;" onerror="this.src='https://placehold.co/400x300?text=JK+Study+Hub'">
+        <div class="product-info" style="padding:15px;">
+          <div class="product-title" style="font-size:15px; margin-bottom:10px;">${item.name}</div>
+          <div class="product-footer" style="margin-top:auto;">
+            <div class="product-price" style="font-size:16px;">₹${item.price}</div>
+            <button class="buy-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price}, '${item.img}', '${item.category}')" style="padding:6px 12px; font-size:13px;">Add <i class="fa-solid fa-cart-shopping"></i></button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function renderAddresses() {
+  const user = getCurrentUser();
+  if (!user) return renderAccountDashboard();
+  
+  const container = document.getElementById('addressesListContainer');
+  if(!container) return;
+  
+  let addresses = JSON.parse(localStorage.getItem('jk_saved_addresses') || '[]');
+  
+  if (addresses.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding-top: 40px;">
+        <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" style="width:80%; opacity:0.3;"></div>
+        <h3>No saved addresses</h3>
+        <p>Add an address to checkout faster next time.</p>
+        <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="addNewAddress()">Add Address</button>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  addresses.forEach((adr, idx) => {
+    html += `
+      <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px; position:relative;">
+        <button onclick="deleteAddress(${idx})" style="position:absolute; top:20px; right:20px; background:none; border:none; color:#ef4444; cursor:pointer; font-size:16px;"><i class="fa-regular fa-trash-can"></i></button>
+        <div style="font-weight:700; color:#1e293b; margin-bottom:8px; font-size:16px;">${adr.name} <span style="font-size:11px; background:#f1f5f9; padding:2px 8px; border-radius:10px; margin-left:8px; color:#64748b; font-weight:800;">${adr.type || 'HOME'}</span></div>
+        <div style="color:#475569; font-size:14px; margin-bottom:5px;">${adr.phone}</div>
+        <div style="color:#64748b; font-size:14px; line-height:1.5; max-width:85%;">${adr.fullAddress}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function addNewAddress() {
+  const name = prompt("Enter full name for this address:");
+  if(!name) return;
+  const phone = prompt("Enter phone number for this address:");
+  if(!phone) return;
+  const address = prompt("Enter full delivery address (Street, Landmark, Pincode):");
+  if(!address) return;
+  
+  let addresses = JSON.parse(localStorage.getItem('jk_saved_addresses') || '[]');
+  addresses.push({ name: name, phone: phone, fullAddress: address, type: 'HOME' });
+  localStorage.setItem('jk_saved_addresses', JSON.stringify(addresses));
+  renderAddresses();
+}
+
+function deleteAddress(idx) {
+  if(!confirm("Delete this address?")) return;
+  let addresses = JSON.parse(localStorage.getItem('jk_saved_addresses') || '[]');
+  addresses.splice(idx, 1);
+  localStorage.setItem('jk_saved_addresses', JSON.stringify(addresses));
+  renderAddresses();
+}
+
+function renderAccountDetails() {
+  const user = getCurrentUser();
+  if (!user) return renderAccountDashboard();
+  
+  const container = document.getElementById('accountDetailsContainer');
+  if(!container) return;
+  
+  const firstName = (user.displayName || 'Student').split(' ')[0];
+  const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
+  
+  container.innerHTML = `
+    <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:25px;">
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">FULL NAME</label>
+        <div style="font-size:16px; font-weight:600; color:#1e293b; padding:10px 15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">${user.displayName || 'Not Set'}</div>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">MOBILE NUMBER</label>
+        <div style="font-size:16px; font-weight:600; color:#1e293b; padding:10px 15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between;">
+          <span>+91 ${phone}</span>
+          <span style="color:#10b981; font-size:12px; font-weight:800;"><i class="fa-solid fa-circle-check"></i> VERIFIED</span>
+        </div>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">EMAIL ID</label>
+        <div style="font-size:16px; font-weight:600; color:#1e293b; padding:10px 15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">${user.email || 'Not Set'}</div>
+      </div>
+      
+      <p style="font-size:13px; color:#94a3b8; margin-top:30px;">
+        * Phone number cannot be changed as it is verified via OTP. To update your name or email, please contact support.
+      </p>
+    </div>
+  `;
+}
+
+// Hook into updateAuthUI so that when user logs in via OTP on the account page, it re-renders
+const originalUpdateAuthUI = updateAuthUI;
+updateAuthUI = function() {
+  originalUpdateAuthUI();
+  if (typeof renderAccountDashboard === 'function') {
+    renderAccountDashboard();
+  }
+};

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account - JK Study Hub</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding-bottom: 70px; }
+    
+    /* Top Navbar */
+    .store-nav {
+      background: #ffffff; padding: 12px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center;
+    }
+    .store-nav .logo { font-size: 18px; font-weight: 800; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; }
+    .store-nav-links { display: flex; align-items: center; gap: 15px; }
+    .nav-icon-btn { color: #334155; font-size: 20px; text-decoration: none; position: relative; }
+    .nav-badge-count { background: #ef4444; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; position: absolute; top: -5px; right: -8px; font-weight: 800; }
+
+    /* Account Layout */
+    .account-wrapper { max-width: 1100px; margin: 30px auto; padding: 0 20px; display: flex; gap: 30px; align-items: flex-start; }
+    
+    /* Sidebar */
+    .account-sidebar { width: 300px; flex-shrink: 0; }
+    .user-profile-card { background: #fffbeb; border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #fef3c7; }
+    .user-profile-card h3 { margin: 0 0 5px; font-size: 16px; font-weight: 700; color: #1e293b; }
+    .user-profile-card p { margin: 0 0 15px; font-size: 13px; color: #64748b; }
+    .yellow-btn { background: #facc15; color: #1e293b; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer; width: 100%; transition: background 0.2s; text-align: center; display: inline-block; text-decoration: none; box-sizing: border-box; }
+    .yellow-btn:hover { background: #eab308; }
+    
+    .account-menu { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); list-style: none; padding: 0; margin: 0; border: 1px solid #e2e8f0; }
+    .account-menu li { border-bottom: 1px solid #f1f5f9; }
+    .account-menu li:last-child { border-bottom: none; }
+    .account-menu a { display: flex; align-items: center; padding: 16px 20px; text-decoration: none; color: #334155; font-weight: 600; font-size: 15px; transition: background 0.2s; }
+    .account-menu a:hover, .account-menu a.active { background: #f8fafc; color: #2563eb; }
+    .account-menu a i.fa-solid, .account-menu a i.fa-regular { width: 24px; color: #64748b; font-size: 18px; margin-right: 12px; text-align: center; }
+    .account-menu a:hover i, .account-menu a.active i { color: #2563eb; }
+    .account-menu a .float-right { margin-left: auto; font-size: 12px; color: #cbd5e1; margin-right: 0; }
+
+    /* Content Area */
+    .account-content { flex-grow: 1; background: white; border-radius: 16px; min-height: 400px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    
+    .content-header { font-size: 20px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    
+    /* Empty States */
+    .empty-state { text-align: center; padding: 40px 20px; }
+    .empty-state .icon-container { display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 100px; margin-bottom: 20px; }
+    .empty-state h3 { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+    .empty-state p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
+    
+    /* Mobile Layout Overrides */
+    @media (max-width: 768px) {
+      .account-wrapper { flex-direction: column; padding: 15px; margin: 10px auto; }
+      .account-sidebar { width: 100%; }
+      .account-content { display: none; /* In mobile, content usually replaces the menu entirely or overlays. For now, hide content until a tab is clicked, or hide menu when content is shown */ }
+      .mobile-hide-menu .account-sidebar { display: none; }
+      .mobile-hide-menu .account-content { display: block; padding: 15px; border: none; box-shadow: none; border-radius: 0; background: transparent; }
+      .mobile-back-btn { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; margin-bottom: 20px; text-decoration: none; }
+    }
+    
+    /* Mobile Bottom Navigation */
+    .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; justify-content: space-around; align-items: center; padding: 10px 0; padding-bottom: calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #e2e8f0; }
+    .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; text-decoration: none; font-size: 11px; font-weight: 600; width: 20%; position: relative; }
+    .mobile-nav-item i { font-size: 20px; }
+    .mobile-nav-item.active { color: #1e293b; }
+    .mobile-nav-item.active i { color: #2563eb; }
+    @media (max-width: 768px) { .mobile-bottom-nav { display: flex; } }
+  </style>
+</head>
+<body id="accountBody">
+
+  <nav class="store-nav">
+    <a href="store.html" class="logo">
+      <i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> JK STUDY HUB
+    </a>
+    
+    <div class="store-nav-links">
+      <a href="store.html" class="nav-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="#" class="nav-icon-btn"><i class="fa-regular fa-bell"></i></a>
+      <a href="cart.html" class="nav-icon-btn">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span id="cartCount" class="nav-badge-count" style="display:none;">0</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="account-wrapper" id="accountWrapper">
+    
+    <!-- Sidebar / Menu -->
+    <div class="account-sidebar" id="accountSidebar">
+      
+      <div class="user-profile-card" id="sidebarProfileCard">
+        <h3>Login with OTP</h3>
+        <p>See your orders and saved addresses on any device.</p>
+        <button class="yellow-btn" onclick="openPhoneAuthModal()">Login / Sign up</button>
+      </div>
+
+      <ul class="account-menu">
+        <li><a href="#orders" id="menu-orders" onclick="switchTab('orders')"><i class="fa-solid fa-box"></i> My Orders <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+        <li><a href="#addresses" id="menu-addresses" onclick="switchTab('addresses')"><i class="fa-solid fa-location-dot"></i> Addresses <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+        <li><a href="#wishlist" id="menu-wishlist" onclick="switchTab('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+        <li><a href="#details" id="menu-details" onclick="switchTab('details')"><i class="fa-regular fa-user"></i> Account details <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+        <li><a href="#support" id="menu-support" onclick="switchTab('support')"><i class="fa-regular fa-circle-question"></i> Help & Support <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="account-content" id="accountContent">
+      <a href="#" class="mobile-back-btn" id="mobileBackBtn" onclick="backToMenu(event)" style="display:none;"><i class="fa-solid fa-arrow-left"></i> Back to Menu</a>
+      
+      <!-- Orders Tab -->
+      <div id="tab-orders" class="tab-pane active">
+        <h2 class="content-header">My Orders</h2>
+        <div id="ordersListContainer">
+          <div class="empty-state">
+            <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png" style="width:100%; opacity:0.8;"></div>
+            <h3>See your orders</h3>
+            <p>Login with your mobile number to see all your orders.</p>
+            <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Addresses Tab -->
+      <div id="tab-addresses" class="tab-pane">
+        <h2 class="content-header">Addresses <button class="yellow-btn" style="width:auto; padding: 6px 15px; font-size:12px; margin-left:auto;" onclick="addNewAddress()">+ Add</button></h2>
+        <div id="addressesListContainer">
+          <div class="empty-state">
+            <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" style="width:80%; opacity:0.8;"></div>
+            <h3>See your saved addresses</h3>
+            <p>Login with your mobile number to see your saved addresses, or add one here.</p>
+            <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login with OTP</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wishlist Tab -->
+      <div id="tab-wishlist" class="tab-pane">
+        <h2 class="content-header">Wishlist</h2>
+        <div id="wishlistContainer" class="product-grid" style="display: flex; flex-direction: column;">
+           <!-- Handled by store.js -->
+        </div>
+      </div>
+
+      <!-- Details Tab -->
+      <div id="tab-details" class="tab-pane">
+        <h2 class="content-header">Account details</h2>
+        <div id="accountDetailsContainer">
+          <div class="empty-state">
+            <div class="icon-container"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width:90%; opacity:0.8;"></div>
+            <h3>Manage your account</h3>
+            <p>Login to update your profile details.</p>
+            <button class="yellow-btn" style="width:auto; padding: 10px 30px;" onclick="openPhoneAuthModal()">Login / Sign up</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support Tab -->
+      <div id="tab-support" class="tab-pane">
+        <h2 class="content-header">Help & Support</h2>
+        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+          <h4 style="margin-top:0;">Contact Us</h4>
+          <p style="font-size: 14px; color:#475569;"><i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:18px;"></i> WhatsApp Support: <a href="https://wa.me/919622605714" style="font-weight:700; color:#2563eb; text-decoration:none;">+91 96226 05714</a></p>
+          <p style="font-size: 14px; color:#475569; margin-bottom:0;"><i class="fa-regular fa-envelope" style="color:#64748b; font-size:16px;"></i> Email: support@jkstudyhub.online</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <div class="mobile-bottom-nav">
+    <a href="store.html" class="mobile-nav-item"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="store.html#categories" class="mobile-nav-item"><i class="fa-solid fa-border-all"></i> Categories</a>
+    <a href="account.html#wishlist" class="mobile-nav-item"><i class="fa-regular fa-heart"></i> Wishlist</a>
+    <a href="cart.html" class="mobile-nav-item">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span id="mobileCartCount" class="nav-badge-count" style="display:none; right:15px; top:-2px;">0</span>
+    </a>
+    <a href="account.html" class="mobile-nav-item active"><i class="fa-regular fa-user"></i> Account</a>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="store.js?v=5.0"></script>
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.account-menu a').forEach(el => el.classList.remove('active'));
+      
+      const targetPane = document.getElementById('tab-' + tabId);
+      const targetMenu = document.getElementById('menu-' + tabId);
+      
+      if (targetPane) targetPane.classList.add('active');
+      if (targetMenu) targetMenu.classList.add('active');
+      
+      // On mobile, hide sidebar and show content
+      if (window.innerWidth <= 768) {
+        document.getElementById('accountBody').classList.add('mobile-hide-menu');
+        document.getElementById('mobileBackBtn').style.display = 'inline-flex';
+      }
+      
+      if (tabId === 'orders' && typeof renderAccountOrders === 'function') renderAccountOrders();
+      if (tabId === 'wishlist' && typeof renderAccountWishlist === 'function') renderAccountWishlist();
+      if (tabId === 'addresses' && typeof renderAddresses === 'function') renderAddresses();
+      if (tabId === 'details' && typeof renderAccountDetails === 'function') renderAccountDetails();
+    }
+    
+    function backToMenu(e) {
+      if(e) e.preventDefault();
+      document.getElementById('accountBody').classList.remove('mobile-hide-menu');
+      window.location.hash = '';
+    }
+
+    window.addEventListener('load', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById('tab-' + hash)) {
+        switchTab(hash);
+      } else {
+        // Default on desktop is orders, on mobile is menu
+        if (window.innerWidth > 768) {
+          switchTab('orders');
+        }
+      }
+      
+      // Wait for store.js to initialize
+      setTimeout(renderAccountDashboard, 500);
+    });
+  </script>
+</body>
+</html>

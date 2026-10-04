@@ -2802,3 +2802,12 @@ body {
 
 /* Nav Badges */
 .nav-badge { background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; position: absolute; top: -5px; right: -10px; font-weight: bold; }
+
+/* Mobile Bottom Navigation - ZAPVI Style */
+.mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; justify-content: space-around; align-items: center; padding: 10px 0; padding-bottom: calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #e2e8f0; }
+.mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; text-decoration: none; font-size: 11px; font-weight: 600; width: 20%; position: relative; }
+.mobile-nav-item i { font-size: 20px; }
+.mobile-nav-item.active { color: #1e293b; }
+.mobile-nav-item.active i { color: #2563eb; }
+.mobile-nav-item .nav-badge-count { background: #ef4444; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; position: absolute; top: -5px; right: 15px; font-weight: 800; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4); }
+@media (max-width: 768px) { .mobile-bottom-nav { display: flex; } body { padding-bottom: 70px; } }
