@@ -1,4 +1,24 @@
-// JK STUDY HUB - MASTER E-COMMERCE ENGINE v3.0
+    let adminControls = '';
+    if (isStaff) {
+      const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
+      adminControls = `
+        <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
+          <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
+          <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <select ${isLocked ? 'disabled' : ''} class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; ${isLocked ? 'background-color:#f1f5f9; cursor:not-allowed; opacity:0.7;' : ''}" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
+              <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered 🔒</option>
+              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled 🔒</option>
+            </select>
+            <button onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
+          </div>
+        </div>
+      `;
+    }// JK STUDY HUB - MASTER E-COMMERCE ENGINE v3.0
 // Cart, Wishlist, Orders Tracking, Unified Google Auth & Razorpay Live Integration
 
 const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
@@ -889,6 +909,11 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
   let orders = getOrders();
   const idx = orders.findIndex(o => o.orderId === orderId);
   if (idx !== -1) {
+    if (orders[idx].status === 'Delivered' || orders[idx].status === 'Cancelled') {
+      showToast('⚠️ Cannot modify a ' + orders[idx].status + ' order.');
+      if (typeof renderAccountOrders === 'function') { setTimeout(renderAccountOrders, 100); }
+      return;
+    }
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     saveOrders(orders);
@@ -1885,7 +1910,7 @@ function injectPhoneAuthModal() {
 
           <div style="margin-bottom: 16px;">
             <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Your Full Name (Optional)</label>
-            <input type="text" id="authStudentName" class="form-input" placeholder="e.g. Sahil Zahoor" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+            <input type="text" id="authStudentName" class="form-input" placeholder="e.g. Student Name" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
           </div>
 
           <button type="button" id="verifyOtpBtn" onclick="handleVerifyOTP()" style="width: 100%; background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(16,185,129,0.25);">
