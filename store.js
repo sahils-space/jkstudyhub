@@ -2338,13 +2338,13 @@ function renderAccountWishlist() {
   w.forEach(item => {
     html += `
       <div class="product-card" style="border-radius:12px; box-shadow:none; border:1px solid #e2e8f0;">
-        <button class="wishlist-icon active" onclick="toggleWishlist('${item.id}', '${item.name}', ${item.price}, '${item.img}', '${item.category}')" style="top:10px; right:10px;"><i class="fa-solid fa-heart"></i></button>
-        <img src="${item.img}" class="product-img" style="height:160px; object-fit:cover;" onerror="this.src='https://placehold.co/400x300?text=JK+Study+Hub'">
+        <button class="wishlist-icon active" onclick="toggleFavorite(this, '${item.name}')" style="top:10px; right:10px;"><i class="fa-solid fa-heart"></i></button>
+        <img src="${item.image || item.img}" class="product-img" style="height:160px; object-fit:cover;" onerror="this.src='https://placehold.co/400x300?text=JK+Study+Hub'">
         <div class="product-info" style="padding:15px;">
           <div class="product-title" style="font-size:15px; margin-bottom:10px;">${item.name}</div>
           <div class="product-footer" style="margin-top:auto;">
             <div class="product-price" style="font-size:16px;">₹${item.price}</div>
-            <button class="buy-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price}, '${item.img}', '${item.category}')" style="padding:6px 12px; font-size:13px;">Add <i class="fa-solid fa-cart-shopping"></i></button>
+            <button class="buy-btn" onclick="addToCart('${item.name}', ${item.price}, 'standard', '${item.category}')" style="padding:6px 12px; font-size:13px;">Add <i class="fa-solid fa-cart-shopping"></i></button>
           </div>
         </div>
       </div>
