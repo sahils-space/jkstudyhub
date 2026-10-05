@@ -303,6 +303,300 @@
     }
   </style>
 
+
+  <!-- Bestselling Books & Swipeable Galleries Styling -->
+  <style>
+    .book-product-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .book-product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    }
+    .swipe-photo-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: #0f172a;
+      overflow: hidden;
+      user-select: none;
+      touch-action: pan-y;
+      cursor: pointer;
+    }
+    .carousel-track {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .carousel-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+      background: #0f172a;
+    }
+    .carousel-img.active {
+      opacity: 1;
+      z-index: 2;
+    }
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #0f172a;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      transition: all 0.2s;
+    }
+    .carousel-arrow:hover {
+      background: white;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .carousel-arrow.prev { left: 8px; }
+    .carousel-arrow.next { right: 8px; }
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      z-index: 5;
+    }
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .carousel-dot.active {
+      background: #fbbf24;
+      width: 16px;
+      border-radius: 4px;
+    }
+    .card-dim-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(4px);
+      color: #f8fafc;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      z-index: 6;
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-dim-tag:hover {
+      background: #2563eb;
+    }
+
+    /* Modal Styles */
+    .book-details-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .book-details-modal.active {
+      display: flex;
+    }
+    .book-details-card {
+      background: white;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 880px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: #f1f5f9;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 30px;
+      padding: 30px;
+    }
+    @media(max-width: 768px) {
+      .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+      }
+    }
+    .modal-main-img-box {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      background: #0f172a;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-main-img-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .modal-nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      color: #0f172a;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .modal-nav-arrow.prev { left: 10px; }
+    .modal-nav-arrow.next { right: 10px; }
+    .modal-counter-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.75);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    .modal-thumbnails {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .modal-thumb {
+      width: 62px;
+      height: 62px;
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      background: #0f172a;
+      transition: all 0.2s;
+    }
+    .modal-thumb.active {
+      border-color: #2563eb;
+      transform: scale(1.05);
+    }
+    .modal-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumb-dim-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: #fbbf24;
+      color: #0f172a;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    .specs-table-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .spec-cell {
+      display: flex;
+      flex-direction: column;
+    }
+    .spec-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .spec-val {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+  </style>
+
 </head>
 <body>
 
@@ -332,7 +626,7 @@
       </a>
 
       <div class="store-auth-cluster">
-        <!-- Rendered by store.js?v=9.4 -->
+        <!-- Rendered by store.js?v=9.5 -->
       </div>
 
       <a href="index.html" class="back-btn-pill">
@@ -349,6 +643,826 @@
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
     
     <!-- Stationery & Materials -->
+    
+    <!-- Bestselling Books & Novels Section -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 45px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
+      <div>
+        <h2 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-book-open-reader" style="color: #2563eb;"></i> Bestselling Books, Novels &amp; Exam Prep
+        </h2>
+        <p style="font-size: 14px; color: #64748b; margin: 4px 0 0 0;">Swipe photos to inspect dimensions, page counts, and authentic student editions.</p>
+      </div>
+      <span style="background:#eff6ff; color:#2563eb; font-weight:700; font-size:12.5px; padding:6px 14px; border-radius:20px; border:1px solid #bfdbfe;">
+        ⚡ Instant Delivery in Pattan &amp; COD
+      </span>
+    </div>
+
+    <div class="product-grid">
+
+      <!-- Book Card 1: Atomic Habits -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Atomic Habits')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Bestseller #1</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-0">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-0', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-0', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/81F90H7hnML.jpg" alt="Atomic Habits - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Atomic Habits')">
+            
+              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600" alt="Atomic Habits - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Atomic Habits')">
+            
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600" alt="Atomic Habits - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Atomic Habits')">
+            
+              <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600" alt="Atomic Habits - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Atomic Habits')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_AtomicHabits%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_AtomicHabits%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_AtomicHabits%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_AtomicHabits)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EAtomic%20Habits%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_AtomicHabits)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_AtomicHabits)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_AtomicHabits)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E12.9%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.4%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E320%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Cream%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Atomic Habits - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Atomic Habits')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-0', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-0', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-0', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-0', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-0', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-0', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 12.9 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By James Clear</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Atomic Habits')">Atomic Habits</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(1.2k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">An easy and proven way to build good habits and break bad ones. The #1 self-discipline handbook for students and high achievers.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹249</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹499</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 50% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Atomic Habits', 249, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Atomic Habits', 249, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Atomic Habits')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 2: The Psychology of Money -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'The Psychology of Money')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Youth Favorite</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-1">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-1', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-1', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/71g2ednj0JL.jpg" alt="The Psychology of Money - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('The Psychology of Money')">
+            
+              <img src="https://images.unsplash.com/photo-1592496431122-2349e0fbc666?auto=format&fit=crop&q=80&w=600" alt="The Psychology of Money - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Psychology of Money')">
+            
+              <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=600" alt="The Psychology of Money - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Psychology of Money')">
+            
+              <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=600" alt="The Psychology of Money - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Psychology of Money')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_ThePsychologyofMoney%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_ThePsychologyofMoney%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_ThePsychologyofMoney%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_ThePsychologyofMoney)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EThe%20Psychology%20of%20Money%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_ThePsychologyofMoney)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_ThePsychologyofMoney)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_ThePsychologyofMoney)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E12.9%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.0%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E256%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Cream%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="The Psychology of Money - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Psychology of Money')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-1', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-1', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-1', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-1', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-1', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-1', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 12.9 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Morgan Housel</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('The Psychology of Money')">The Psychology of Money</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
+            <span style="color:#94a3b8;">(950 reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">Timeless lessons on wealth, greed, and happiness. Crucial financial wisdom every young student should understand before college.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹220</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹399</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 45% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('The Psychology of Money', 220, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('The Psychology of Money', 220, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('The Psychology of Money')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 3: Deep Work -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Deep Work')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Exam Prep Must-Have</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-2">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-2', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-2', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/61rDOVzBtzL.jpg" alt="Deep Work - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Deep Work')">
+            
+              <img src="https://images.unsplash.com/photo-1491841573634-28140fc7ced7?auto=format&fit=crop&q=80&w=600" alt="Deep Work - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Deep Work')">
+            
+              <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=600" alt="Deep Work - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Deep Work')">
+            
+              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600" alt="Deep Work - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Deep Work')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_DeepWork%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_DeepWork%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_DeepWork%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_DeepWork)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EDeep%20Work%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_DeepWork)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_DeepWork)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_DeepWork)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E12.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.2%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E304%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Natural%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Deep Work - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Deep Work')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-2', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-2', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-2', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-2', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-2', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-2', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 12.8 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Cal Newport</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Deep Work')">Deep Work</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
+            <span style="color:#94a3b8;">(820 reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹240</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹499</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 52% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Deep Work', 240, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Deep Work', 240, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Deep Work')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 4: The Alchemist -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'The Alchemist')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Inspiring Classic</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-3">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-3', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-3', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/71aFt4+OTOL.jpg" alt="The Alchemist - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('The Alchemist')">
+            
+              <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600" alt="The Alchemist - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Alchemist')">
+            
+              <img src="https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&q=80&w=600" alt="The Alchemist - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Alchemist')">
+            
+              <img src="https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600" alt="The Alchemist - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Alchemist')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_TheAlchemist%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_TheAlchemist%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_TheAlchemist%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_TheAlchemist)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EThe%20Alchemist%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_TheAlchemist)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_TheAlchemist)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_TheAlchemist)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E12.9%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E1.6%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E208%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Soft%20White%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="The Alchemist - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Alchemist')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-3', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-3', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-3', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-3', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-3', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-3', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 12.9 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Paulo Coelho</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('The Alchemist')">The Alchemist</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(2.1k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹180</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹350</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 49% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('The Alchemist', 180, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('The Alchemist', 180, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('The Alchemist')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 5: The Kite Runner -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'The Kite Runner')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Epic Masterpiece</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-4">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-4', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-4', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/81IzbD2n4-L.jpg" alt="The Kite Runner - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('The Kite Runner')">
+            
+              <img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&q=80&w=600" alt="The Kite Runner - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Kite Runner')">
+            
+              <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=600" alt="The Kite Runner - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Kite Runner')">
+            
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600" alt="The Kite Runner - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Kite Runner')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_TheKiteRunner%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_TheKiteRunner%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_TheKiteRunner%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_TheKiteRunner)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EThe%20Kite%20Runner%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_TheKiteRunner)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_TheKiteRunner)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_TheKiteRunner)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E12.9%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.6%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E400%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Smooth%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="The Kite Runner - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('The Kite Runner')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-4', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-4', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-4', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-4', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-4', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-4', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 12.9 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Khaled Hosseini</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('The Kite Runner')">The Kite Runner</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(1.8k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">A powerful, unforgettable story of friendship, betrayal, and redemption set in Kabul. An all-time favorite in the valley.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹260</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹499</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 48% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('The Kite Runner', 260, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('The Kite Runner', 260, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('The Kite Runner')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 6: A Thousand Splendid Suns -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'A Thousand Splendid Suns')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Deeply Moving</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-5">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-5', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-5', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/81x0866yXkL.jpg" alt="A Thousand Splendid Suns - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('A Thousand Splendid Suns')">
+            
+              <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600" alt="A Thousand Splendid Suns - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('A Thousand Splendid Suns')">
+            
+              <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&q=80&w=600" alt="A Thousand Splendid Suns - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('A Thousand Splendid Suns')">
+            
+              <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=600" alt="A Thousand Splendid Suns - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('A Thousand Splendid Suns')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_AThousandSplendidSuns%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_AThousandSplendidSuns%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_AThousandSplendidSuns%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_AThousandSplendidSuns)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EA%20Thousand%20Splendid%20Suns%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_AThousandSplendidSuns)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_AThousandSplendidSuns)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_AThousandSplendidSuns)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E12.9%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.8%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E432%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Smooth%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="A Thousand Splendid Suns - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('A Thousand Splendid Suns')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-5', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-5', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-5', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-5', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-5', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-5', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 12.9 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Khaled Hosseini</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('A Thousand Splendid Suns')">A Thousand Splendid Suns</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(1.5k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">An incredible portrait of resilience and hope across three decades in Afghanistan. Masterpiece storytelling of two women's courage.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹260</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹499</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 48% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('A Thousand Splendid Suns', 260, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('A Thousand Splendid Suns', 260, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('A Thousand Splendid Suns')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 7: Secrets of Divine Love -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Secrets of Divine Love')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Spiritual Bestseller</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-6">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-6', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-6', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/81u8L3v+ZPL.jpg" alt="Secrets of Divine Love - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Secrets of Divine Love')">
+            
+              <img src="https://images.unsplash.com/photo-1584286595398-a59f21d313f5?auto=format&fit=crop&q=80&w=600" alt="Secrets of Divine Love - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Secrets of Divine Love')">
+            
+              <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=600" alt="Secrets of Divine Love - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Secrets of Divine Love')">
+            
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600" alt="Secrets of Divine Love - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Secrets of Divine Love')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_SecretsofDivineLove%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_SecretsofDivineLove%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_SecretsofDivineLove%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_SecretsofDivineLove)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3ESecrets%20of%20Divine%20Love%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_SecretsofDivineLove)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_SecretsofDivineLove)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E21.6%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_SecretsofDivineLove)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E14.0%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.5%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E384%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E75%20GSM%20Eye-Care%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Secrets of Divine Love - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Secrets of Divine Love')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-6', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-6', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-6', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-6', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-6', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-6', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 21.6 cm × 14.0 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By A. Helwa</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Secrets of Divine Love')">Secrets of Divine Love</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(1.1k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">A spiritual journey into the heart of Islam. Connecting spiritual faith, divine love, hope, and peace for the modern youth.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹299</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹599</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 50% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Secrets of Divine Love', 299, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Secrets of Divine Love', 299, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Secrets of Divine Love')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 8: Reclaim Your Heart -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Reclaim Your Heart')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Peace & Healing</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-7">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-7', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-7', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/61NqK+u3rZL.jpg" alt="Reclaim Your Heart - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Reclaim Your Heart')">
+            
+              <img src="https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600" alt="Reclaim Your Heart - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Reclaim Your Heart')">
+            
+              <img src="https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&q=80&w=600" alt="Reclaim Your Heart - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Reclaim Your Heart')">
+            
+              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600" alt="Reclaim Your Heart - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Reclaim Your Heart')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_ReclaimYourHeart%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_ReclaimYourHeart%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_ReclaimYourHeart%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_ReclaimYourHeart)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EReclaim%20Your%20Heart%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_ReclaimYourHeart)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_ReclaimYourHeart)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E21.6%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_ReclaimYourHeart)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E14.0%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.1%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E304%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Cream%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Reclaim Your Heart - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Reclaim Your Heart')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-7', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-7', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-7', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-7', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-7', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-7', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 21.6 cm × 14.0 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Yasmin Mogahed</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Reclaim Your Heart')">Reclaim Your Heart</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
+            <span style="color:#94a3b8;">(780 reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">Keeping faith in the face of life's distractions. Overcoming anxiety, emotional attachments, and study burnout with peace.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹249</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹499</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 50% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Reclaim Your Heart', 249, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Reclaim Your Heart', 249, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Reclaim Your Heart')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 9: Wings of Fire -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Wings of Fire')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> National Inspiration</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-8">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-8', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-8', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/71KKZlV+qUL.jpg" alt="Wings of Fire - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Wings of Fire')">
+            
+              <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=600" alt="Wings of Fire - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wings of Fire')">
+            
+              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600" alt="Wings of Fire - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wings of Fire')">
+            
+              <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=600" alt="Wings of Fire - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wings of Fire')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_WingsofFire%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_WingsofFire%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_WingsofFire%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_WingsofFire)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EWings%20of%20Fire%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_WingsofFire)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_WingsofFire)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E19.8%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_WingsofFire)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E13.0%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E1.5%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E180%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Print%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Wings of Fire - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wings of Fire')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-8', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-8', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-8', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-8', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-8', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-8', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 19.8 cm × 13.0 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Dr. A.P.J. Abdul Kalam</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Wings of Fire')">Wings of Fire</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(2.5k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">The legendary autobiography of Dr. Kalam. From humble origins in Rameswaram to the father of India's space and missile science.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹190</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹399</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 52% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Wings of Fire', 190, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Wings of Fire', 190, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Wings of Fire')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 10: Lucent's General Knowledge -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Lucent's General Knowledge')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> #1 Exam Guide</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-9">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-9', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-9', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/71r9d6l1JkL.jpg" alt="Lucent's General Knowledge - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Lucent's General Knowledge')">
+            
+              <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600" alt="Lucent's General Knowledge - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Lucent's General Knowledge')">
+            
+              <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&q=80&w=600" alt="Lucent's General Knowledge - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Lucent's General Knowledge')">
+            
+              <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=600" alt="Lucent's General Knowledge - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Lucent's General Knowledge')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_LucentsGeneralKnowledge%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_LucentsGeneralKnowledge%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_LucentsGeneralKnowledge%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_LucentsGeneralKnowledge)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3ELucent's%20General%20Knowledg...%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_LucentsGeneralKnowledge)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_LucentsGeneralKnowledge)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E24.0%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_LucentsGeneralKnowledge)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E18.0%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E2.8%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E440%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E65%20GSM%20Print%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Lucent's General Knowledge - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Lucent's General Knowledge')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-9', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-9', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-9', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-9', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-9', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-9', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 24.0 cm × 18.0 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Lucent Publications</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Lucent's General Knowledge')">Lucent's General Knowledge</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
+            <span style="color:#94a3b8;">(3.2k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">The essential reference bible for all competitive exams: JKSSB, JK Police Sub-Inspector, SSC CGL, and State College Entrances.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹230</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹380</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 39% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Lucent's General Knowledge', 230, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Lucent's General Knowledge', 230, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Lucent's General Knowledge')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Book Card 11: Wren & Martin High School Grammar -->
+      <div class="book-product-card">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'Wren & Martin High School Grammar')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-fire"></i> Gold Standard</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="carousel-book-10">
+          <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-10', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-10', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="carousel-track">
+            
+              <img src="https://images-na.ssl-images-amazon.com/images/I/81sL8xU+rLL.jpg" alt="Wren & Martin High School Grammar - View 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Wren & Martin High School Grammar')">
+            
+              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600" alt="Wren & Martin High School Grammar - View 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wren & Martin High School Grammar')">
+            
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600" alt="Wren & Martin High School Grammar - View 3" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wren & Martin High School Grammar')">
+            
+              <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=600" alt="Wren & Martin High School Grammar - View 4" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wren & Martin High School Grammar')">
+            
+              <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20width%3D%22600%22%20height%3D%22600%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg_WrenMartinHighSchoolGrammar%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230f172a%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e293b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22gold_WrenMartinHighSchoolGrammar%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fbbf24%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22sh_WrenMartinHighSchoolGrammar%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22130%25%22%20height%3D%22130%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%224%22%20dy%3D%228%22%20stdDeviation%3D%226%22%20flood-color%3D%22%23000%22%20flood-opacity%3D%220.4%22%2F%3E%0A%20%20%20%20%3C%2Ffilter%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20rx%3D%2220%22%20fill%3D%22url(%23bg_WrenMartinHighSchoolGrammar)%22%2F%3E%0A%20%20%3Crect%20x%3D%2225%22%20y%3D%2225%22%20width%3D%22550%22%20height%3D%22550%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%226%206%22%2F%3E%0A%20%20%3Crect%20x%3D%2245%22%20y%3D%2245%22%20width%3D%22220%22%20height%3D%2232%22%20rx%3D%2216%22%20fill%3D%22%231e3a8a%22%2F%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20fill%3D%22%2360a5fa%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22bold%22%3E%F0%9F%93%8F%20OFFICIAL%20SIZE%20%26amp%3B%20SPECS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22115%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%3EWren%20%26%20Martin%20High%20School...%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22138%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%3EPhysical%20Dimensions%20%26amp%3B%20Quality%20Measurement%20Chart%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%203D%20Book%20Graphic%20--%3E%0A%20%20%3Cg%20transform%3D%22translate(170%2C%20165)%22%20filter%3D%22url(%23sh_WrenMartinHighSchoolGrammar)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20210%20240%20L%2070%20270%20Z%22%20fill%3D%22%232563eb%22%20opacity%3D%220.95%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2018%2052%20L%2040%2040%20L%2070%20270%20L%2048%20282%20Z%22%20fill%3D%22%231d4ed8%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2040%2040%20L%20180%2020%20L%20165%2033%20L%2025%2053%20Z%22%20fill%3D%22%2393c5fd%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%2280%22%20y%3D%22155%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20transform%3D%22rotate(9%2C%2080%2C%20155)%22%3EORIGINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2288%22%20y%3D%22178%22%20fill%3D%22%23e0f2fe%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22600%22%20transform%3D%22rotate(9%2C%2088%2C%20178)%22%3EEDITION%3C%2Ftext%3E%0A%20%20%3C%2Fg%3E%0A%20%20%0A%20%20%3C!--%20Height%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22120%22%20y1%3D%22210%22%20x2%3D%22120%22%20y2%3D%22460%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C222%20120%2C210%20126%2C222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22114%2C448%20120%2C460%20126%2C448%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%22320%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_WrenMartinHighSchoolGrammar)%22%2F%3E%0A%20%20%3Ctext%20x%3D%2248%22%20y%3D%22340%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E23.5%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22365%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EHeight%2FLength%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Width%20Marker%20--%3E%0A%20%20%3Cg%20stroke%3D%22%23fbbf24%22%20stroke-width%3D%222%22%3E%0A%20%20%20%20%3Cline%20x1%3D%22235%22%20y1%3D%22475%22%20x2%3D%22385%22%20y2%3D%22450%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22244%2C467%20235%2C475%20246%2C482%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%3Cpolyline%20points%3D%22375%2C443%20385%2C450%20377%2C458%22%20fill%3D%22none%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22275%22%20y%3D%22475%22%20width%3D%2275%22%20height%3D%2230%22%20rx%3D%226%22%20fill%3D%22url(%23gold_WrenMartinHighSchoolGrammar)%22%2F%3E%0A%20%20%3Ctext%20x%3D%22283%22%20y%3D%22495%22%20fill%3D%22%230f172a%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20font-weight%3D%22800%22%3E17.5%20cm%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22295%22%20y%3D%22520%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%3EWidth%3C%2Ftext%3E%0A%20%20%0A%20%20%3C!--%20Specs%20Grid%20Right%20--%3E%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22190%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22215%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3ESPINE%20THICKNESS%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22244%22%20fill%3D%22%23f59e0b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E3.0%20cm%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22275%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22300%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAGE%20COUNT%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22329%22%20fill%3D%22%2338bdf8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22800%22%3E464%20pgs%3C%2Ftext%3E%0A%20%20%0A%20%20%3Crect%20x%3D%22420%22%20y%3D%22360%22%20width%3D%22145%22%20height%3D%2268%22%20rx%3D%2210%22%20fill%3D%22%231e293b%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221.5%22%2F%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22385%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2211%22%20font-weight%3D%22bold%22%3EPAPER%20QUALITY%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22435%22%20y%3D%22412%22%20fill%3D%22%234ade80%22%20font-family%3D%22sans-serif%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%3E70%20GSM%20Print%3C%2Ftext%3E%0A%20%20%0A%20%20%3Cline%20x1%3D%2245%22%20y1%3D%22535%22%20x2%3D%22555%22%20y2%3D%22535%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%3Ctext%20x%3D%2245%22%20y%3D%22560%22%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%3EFormat%3A%20Paperback%20%26bull%3B%20High%20Quality%20Print%20%26bull%3B%20Cash%20On%20Delivery%20in%20Pattan%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="Wren & Martin High School Grammar - View 5" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Wren & Martin High School Grammar')">
+            
+          </div>
+
+          <div class="carousel-dots">
+            
+              <span class="carousel-dot active" onclick="setCardPhoto('carousel-book-10', 0, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-10', 1, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-10', 2, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-10', 3, event)"></span>
+            
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-book-10', 4, event)"></span>
+            
+          </div>
+
+          <div class="card-dim-tag" onclick="setCardPhoto('carousel-book-10', 4, event)" title="Tap to view Dimension Infographic">
+            <i class="fa-solid fa-ruler-combined"></i> 23.5 cm × 17.5 cm
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By P.C. Wren & H. Martin</div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Wren & Martin High School Grammar')">Wren & Martin High School Grammar</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span style="color:#94a3b8;">(1.9k reviews)</span>
+            <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
+          </div>
+
+          <p class="product-desc">The definitive English grammar, syntax, and composition workbook trusted by top schools, teachers, and students in Kashmir.</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹260</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹450</span>
+              </div>
+              <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 42% Today</span>
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Wren & Martin High School Grammar', 260, 'physical', 'books')">Buy</button>
+              <button class="btn-icon" onclick="addToCart('Wren & Martin High School Grammar', 260, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('Wren & Martin High School Grammar')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
     <h2 class="category-title"><i class="fa-solid fa-box"></i> Physical Study Materials & Stationery</h2>
     <div class="product-grid">
       
@@ -780,6 +1894,80 @@
       <span id="mobileCartCount" class="nav-badge-count cart-badge-count" style="display:none;">0</span>
     </a>
     <a href="account.html" class="mobile-nav-item"><i class="fa-regular fa-user"></i> Account</a>
+  </div>
+
+
+  <!-- Book Quick View & Dimensions Modal (Shopping App Style) -->
+  <div id="bookDetailsModal" class="book-details-modal">
+    <div class="book-details-card">
+      <button class="modal-close-btn" onclick="closeBookDetailsModal()">&times;</button>
+      
+      <div class="modal-grid">
+        <!-- Left: Large Photo Gallery with Swipe & Thumbnails -->
+        <div class="modal-gallery">
+          <div class="modal-main-img-box">
+            <button class="modal-nav-arrow prev" onclick="cycleModalPhoto(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="modal-nav-arrow next" onclick="cycleModalPhoto(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <img id="modalMainImg" src="" alt="Book Preview">
+            <div class="modal-counter-badge" id="modalImgCounter">1 / 5</div>
+          </div>
+          <div class="modal-thumbnails" id="modalThumbnails"></div>
+        </div>
+
+        <!-- Right: Book Details, Specs & Buying Actions -->
+        <div class="modal-info" style="display:flex; flex-direction:column;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-bolt"></i> Verified Student Edition</span>
+            <span style="color:#10b981; font-size:12px; font-weight:800;" id="modalBookDiscount"></span>
+          </div>
+
+          <h2 id="modalBookTitle" style="font-size:24px; font-weight:800; color:#1e293b; margin-bottom:4px; line-height:1.3;"></h2>
+          <div id="modalBookAuthor" style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:14px;"></div>
+
+          <div style="display:flex; align-items:baseline; gap:10px; padding:12px 16px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:18px;">
+            <span id="modalBookPrice" style="font-size:28px; font-weight:800; color:#0f172a;"></span>
+            <span id="modalBookMrp" style="font-size:15px; color:#94a3b8; text-decoration:line-through; font-weight:600;"></span>
+            <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;"><i class="fa-solid fa-truck-fast"></i> Cash On Delivery in Pattan</span>
+          </div>
+
+          <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin-bottom:8px;">📏 Physical Dimensions &amp; Specifications</h4>
+          <div class="specs-table-grid">
+            <div class="spec-cell">
+              <span class="spec-lbl">Height / Length</span>
+              <strong class="spec-val" id="specLength">-</strong>
+            </div>
+            <div class="spec-cell">
+              <span class="spec-lbl">Width</span>
+              <strong class="spec-val" id="specWidth">-</strong>
+            </div>
+            <div class="spec-cell">
+              <span class="spec-lbl">Thickness / Spine</span>
+              <strong class="spec-val" id="specThickness">-</strong>
+            </div>
+            <div class="spec-cell">
+              <span class="spec-lbl">Total Pages</span>
+              <strong class="spec-val" id="specPages">-</strong>
+            </div>
+            <div class="spec-cell" style="grid-column: span 2;">
+              <span class="spec-lbl">Paper &amp; Print Quality</span>
+              <strong class="spec-val" id="specPaper" style="color:#059669;">-</strong>
+            </div>
+          </div>
+
+          <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin:16px 0 6px;">Synopsis &amp; What You'll Learn</h4>
+          <p id="modalBookDesc" style="font-size:13.5px; color:#475569; line-height:1.6; margin-bottom:20px;"></p>
+
+          <div style="display:flex; gap:12px; margin-top:auto;">
+            <button id="modalBuyBtn" class="yellow-btn" style="flex:2; background:#2563eb; color:white; padding:14px; font-size:16px; font-weight:700; border-radius:10px; box-shadow:0 4px 14px rgba(37,99,235,0.25);">
+              ⚡ Buy Now (COD Available)
+            </button>
+            <button id="modalCartBtn" class="yellow-btn" style="flex:1; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; padding:14px; font-size:15px; font-weight:700; border-radius:10px;">
+              <i class="fa-solid fa-cart-plus"></i> Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </body>
