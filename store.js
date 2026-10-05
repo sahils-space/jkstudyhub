@@ -14,8 +14,8 @@ const PRODUCT_CATALOG = {
     badge: "Bestseller #1",
     rating: "4.9",
     reviews: "1.2k",
-    image: "images/books/atomic-habits-1.jpg",
-    images: ["images/books/atomic-habits-1.jpg", "images/books/atomic-habits-2.jpg", "images/books/atomic-habits-3.jpg", "images/books/atomic-habits-4.jpg"],
+    image: "images/books/atomic-habits-1.webp",
+    images: ["images/books/atomic-habits-1.webp", "images/books/atomic-habits-2.webp", "images/books/atomic-habits-3.webp", "images/books/atomic-habits-4.webp"],
     desc: "An easy and proven way to build good habits and break bad ones. The #1 self-discipline handbook for students and high achievers.",
     specs: {
       length: "19.8 cm",
@@ -35,8 +35,8 @@ const PRODUCT_CATALOG = {
     badge: "Youth Favorite",
     rating: "4.8",
     reviews: "950",
-    image: "images/books/psychology-of-money-1.jpg",
-    images: ["images/books/psychology-of-money-1.jpg", "images/books/psychology-of-money-2.jpg", "images/books/psychology-of-money-3.jpg", "images/books/psychology-of-money-4.jpg"],
+    image: "images/books/psychology-of-money-1.webp",
+    images: ["images/books/psychology-of-money-1.webp", "images/books/psychology-of-money-2.webp", "images/books/psychology-of-money-3.webp", "images/books/psychology-of-money-4.webp"],
     desc: "Timeless lessons on wealth, greed, and happiness. Crucial financial wisdom every young student should understand before college.",
     specs: {
       length: "19.8 cm",
@@ -56,8 +56,8 @@ const PRODUCT_CATALOG = {
     badge: "Exam Prep Must-Have",
     rating: "4.8",
     reviews: "820",
-    image: "images/books/deep-work-1.jpg",
-    images: ["images/books/deep-work-1.jpg", "images/books/deep-work-2.jpg", "images/books/deep-work-3.jpg", "images/books/deep-work-4.jpg"],
+    image: "images/books/deep-work-1.webp",
+    images: ["images/books/deep-work-1.webp", "images/books/deep-work-2.webp", "images/books/deep-work-3.webp", "images/books/deep-work-4.webp"],
     desc: "Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.",
     specs: {
       length: "19.8 cm",
@@ -77,8 +77,8 @@ const PRODUCT_CATALOG = {
     badge: "Inspiring Classic",
     rating: "4.9",
     reviews: "2.1k",
-    image: "images/books/the-alchemist-1.jpg",
-    images: ["images/books/the-alchemist-1.jpg", "images/books/the-alchemist-2.jpg", "images/books/the-alchemist-3.jpg", "images/books/the-alchemist-4.jpg"],
+    image: "images/books/the-alchemist-1.webp",
+    images: ["images/books/the-alchemist-1.webp", "images/books/the-alchemist-2.webp", "images/books/the-alchemist-3.webp", "images/books/the-alchemist-4.webp"],
     desc: "A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.",
     specs: {
       length: "19.8 cm",
@@ -98,8 +98,8 @@ const PRODUCT_CATALOG = {
     badge: "Epic Masterpiece",
     rating: "4.9",
     reviews: "1.8k",
-    image: "images/books/the-kite-runner-1.jpg",
-    images: ["images/books/the-kite-runner-1.jpg", "images/books/the-kite-runner-2.jpg", "images/books/the-kite-runner-3.jpg", "images/books/the-kite-runner-4.jpg"],
+    image: "images/books/the-kite-runner-1.webp",
+    images: ["images/books/the-kite-runner-1.webp", "images/books/the-kite-runner-2.webp", "images/books/the-kite-runner-3.webp", "images/books/the-kite-runner-4.webp"],
     desc: "An unforgettable, heartbreaking story of the unlikely friendship between a wealthy boy and the son of his father's servant in Afghanistan.",
     specs: {
       length: "19.8 cm",
@@ -119,8 +119,8 @@ const PRODUCT_CATALOG = {
     badge: "Emotional Journey",
     rating: "4.9",
     reviews: "1.5k",
-    image: "images/books/thousand-splendid-suns-1.jpg",
-    images: ["images/books/thousand-splendid-suns-1.jpg", "images/books/thousand-splendid-suns-2.jpg", "images/books/thousand-splendid-suns-3.jpg", "images/books/thousand-splendid-suns-4.jpg"],
+    image: "images/books/thousand-splendid-suns-1.webp",
+    images: ["images/books/thousand-splendid-suns-1.webp", "images/books/thousand-splendid-suns-2.webp", "images/books/thousand-splendid-suns-3.webp", "images/books/thousand-splendid-suns-4.webp"],
     desc: "A breathtaking story of two women brought together by war and tragedy in Kabul. Unputdownable modern literature.",
     specs: {
       length: "19.8 cm",
@@ -140,8 +140,8 @@ const PRODUCT_CATALOG = {
     badge: "Spiritual Bestseller",
     rating: "4.9",
     reviews: "1.3k",
-    image: "images/books/secrets-of-divine-love-1.jpg",
-    images: ["images/books/secrets-of-divine-love-1.jpg", "images/books/secrets-of-divine-love-2.jpg", "images/books/secrets-of-divine-love-3.jpg", "images/books/secrets-of-divine-love-4.jpg"],
+    image: "images/books/secrets-of-divine-love-1.webp",
+    images: ["images/books/secrets-of-divine-love-1.webp", "images/books/secrets-of-divine-love-2.webp", "images/books/secrets-of-divine-love-3.webp", "images/books/secrets-of-divine-love-4.webp"],
     desc: "A heart-centered, practical guide to using the Quran and Islamic spirituality to awaken divine love, peace, and hope.",
     specs: {
       length: "21.6 cm",
@@ -161,8 +161,8 @@ const PRODUCT_CATALOG = {
     badge: "Mental Peace Guide",
     rating: "4.8",
     reviews: "920",
-    image: "images/books/reclaim-your-heart-1.jpg",
-    images: ["images/books/reclaim-your-heart-1.jpg", "images/books/reclaim-your-heart-2.jpg", "images/books/reclaim-your-heart-3.jpg", "images/books/reclaim-your-heart-4.jpg"],
+    image: "images/books/reclaim-your-heart-1.webp",
+    images: ["images/books/reclaim-your-heart-1.webp", "images/books/reclaim-your-heart-2.webp", "images/books/reclaim-your-heart-3.webp", "images/books/reclaim-your-heart-4.webp"],
     desc: "Manual on freeing the heart from life's attachments, overcoming emotional pain, and staying mentally strong as a student.",
     specs: {
       length: "20.3 cm",
@@ -182,8 +182,8 @@ const PRODUCT_CATALOG = {
     badge: "National Inspiration",
     rating: "4.9",
     reviews: "3.4k",
-    image: "images/books/wings-of-fire-1.jpg",
-    images: ["images/books/wings-of-fire-1.jpg", "images/books/wings-of-fire-2.jpg", "images/books/wings-of-fire-3.jpg", "images/books/wings-of-fire-4.jpg"],
+    image: "images/books/wings-of-fire-1.webp",
+    images: ["images/books/wings-of-fire-1.webp", "images/books/wings-of-fire-2.webp", "images/books/wings-of-fire-3.webp", "images/books/wings-of-fire-4.webp"],
     desc: "Inspiring autobiography of Dr. Kalam—from a humble boy in Rameswaram to leading India's space and missile programs.",
     specs: {
       length: "19.8 cm",
@@ -203,8 +203,8 @@ const PRODUCT_CATALOG = {
     badge: "Exam Rank Booster",
     rating: "4.7",
     reviews: "4.1k",
-    image: "images/books/lucent-gk-1.jpg",
-    images: ["images/books/lucent-gk-1.jpg", "images/books/lucent-gk-2.jpg", "images/books/lucent-gk-3.jpg", "images/books/lucent-gk-4.jpg"],
+    image: "images/books/lucent-gk-1.webp",
+    images: ["images/books/lucent-gk-1.webp", "images/books/lucent-gk-2.webp", "images/books/lucent-gk-3.webp", "images/books/lucent-gk-4.webp"],
     desc: "Essential handbook covering Indian History, Polity, Geography, Economy, and General Science. The Bible for JKSSB & SSC exams.",
     specs: {
       length: "24.0 cm",
@@ -224,8 +224,8 @@ const PRODUCT_CATALOG = {
     badge: "Grammar Foundation",
     rating: "4.9",
     reviews: "2.8k",
-    image: "images/books/wren-martin-1.jpg",
-    images: ["images/books/wren-martin-1.jpg", "images/books/wren-martin-2.jpg", "images/books/wren-martin-3.jpg", "images/books/wren-martin-4.jpg"],
+    image: "images/books/wren-martin-1.webp",
+    images: ["images/books/wren-martin-1.webp", "images/books/wren-martin-2.webp", "images/books/wren-martin-3.webp", "images/books/wren-martin-4.webp"],
     desc: "High School English Grammar and Composition. Comprehensive rules, sentence structures, vocabulary, and writing techniques.",
     specs: {
       length: "24.0 cm",
@@ -261,22 +261,22 @@ const PRODUCT_CATALOG = {
   "Premium Spiral Copies (Set of 2)": {
     price: 149,
     category: "standard",
-    image: "images/spiral-copies.png"
+    image: "images/spiral-copies.webp"
   },
   "Geometry Box Pro": {
     price: 170,
     category: "standard",
-    image: "images/geometry-box.png"
+    image: "images/geometry-box.webp"
   },
   "The Holy Quran": {
     price: 200,
     category: "standard",
-    image: "images/quran.png"
+    image: "images/quran.webp"
   },
   "Beautiful Gift Diary": {
     price: 99,
     category: "standard",
-    image: "images/diary.png"
+    image: "images/diary.webp"
   },
   "Premium Pen Set": {
     price: 99,
@@ -286,12 +286,12 @@ const PRODUCT_CATALOG = {
   "Desk Pen Stand": {
     price: 149,
     category: "standard",
-    image: "images/pen-stand.png"
+    image: "images/pen-stand.webp"
   },
   "Folding Study Table": {
     price: 490,
     category: "standard",
-    image: "images/study-table.png"
+    image: "images/study-table.webp"
   },
   "LED Study Table Lamp": {
     price: 299,
@@ -1379,6 +1379,9 @@ function renderOrdersPage() {
     let s3Desc = statusInfo.step >= 3 ? 'En Route (Pattan)' : 'Local Delivery';
     let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
 
+    const matchedBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA : []).find(b => order.product && order.product.includes(b.name)) || (PRODUCT_CATALOG[order.product] ? { image: PRODUCT_CATALOG[order.product].image } : null);
+    const orderImgSrc = (matchedBook && matchedBook.photos && matchedBook.photos[0]) ? matchedBook.photos[0] : ((matchedBook && matchedBook.image) ? matchedBook.image : (order.image || ''));
+
     html += `
       <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
         
@@ -1453,7 +1456,9 @@ function renderOrdersPage() {
 
         <!-- Order Body -->
         <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px; flex-wrap: wrap; margin-top: 16px;">
-          <div style="flex: 1; min-width: 250px;">
+          <div style="display: flex; gap: 16px; align-items: flex-start; flex: 1; min-width: 250px;">
+            ${orderImgSrc ? `<img src="${orderImgSrc}" alt="${order.product}" style="width: 65px; height: 85px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);" loading="eager">` : ''}
+            <div>
             <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px;">${order.product}</h4>
             <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
               <p style="margin: 0;"><strong>Recipient:</strong> ${(order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student'} (${getValidCustomerPhone(order) || order.phone || 'Contact via WhatsApp'})</p>
@@ -1461,6 +1466,7 @@ function renderOrdersPage() {
             </div>
             <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-block;">
               <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${order.txnId}</strong>
+            </div>
             </div>
           </div>
 
@@ -2906,17 +2912,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "320 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/atomic-habits-1.jpg",
-      "images/books/atomic-habits-2.jpg",
-      "images/books/atomic-habits-3.jpg",
-      "images/books/atomic-habits-4.jpg"
+      "images/books/atomic-habits-1.webp",
+      "images/books/atomic-habits-2.webp",
+      "images/books/atomic-habits-3.webp",
+      "images/books/atomic-habits-4.webp"
     ],
-    "dimSvg": "images/books/atomic-habits-4.jpg",
+    "dimSvg": "images/books/atomic-habits-4.webp",
     "allImages": [
-      "images/books/atomic-habits-1.jpg",
-      "images/books/atomic-habits-2.jpg",
-      "images/books/atomic-habits-3.jpg",
-      "images/books/atomic-habits-4.jpg"
+      "images/books/atomic-habits-1.webp",
+      "images/books/atomic-habits-2.webp",
+      "images/books/atomic-habits-3.webp",
+      "images/books/atomic-habits-4.webp"
     ]
   },
   {
@@ -2935,17 +2941,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "256 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/psychology-of-money-1.jpg",
-      "images/books/psychology-of-money-2.jpg",
-      "images/books/psychology-of-money-3.jpg",
-      "images/books/psychology-of-money-4.jpg"
+      "images/books/psychology-of-money-1.webp",
+      "images/books/psychology-of-money-2.webp",
+      "images/books/psychology-of-money-3.webp",
+      "images/books/psychology-of-money-4.webp"
     ],
-    "dimSvg": "images/books/psychology-of-money-4.jpg",
+    "dimSvg": "images/books/psychology-of-money-4.webp",
     "allImages": [
-      "images/books/psychology-of-money-1.jpg",
-      "images/books/psychology-of-money-2.jpg",
-      "images/books/psychology-of-money-3.jpg",
-      "images/books/psychology-of-money-4.jpg"
+      "images/books/psychology-of-money-1.webp",
+      "images/books/psychology-of-money-2.webp",
+      "images/books/psychology-of-money-3.webp",
+      "images/books/psychology-of-money-4.webp"
     ]
   },
   {
@@ -2964,17 +2970,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "304 pgs",
     "paper": "70 GSM Natural Paper",
     "photos": [
-      "images/books/deep-work-1.jpg",
-      "images/books/deep-work-2.jpg",
-      "images/books/deep-work-3.jpg",
-      "images/books/deep-work-4.jpg"
+      "images/books/deep-work-1.webp",
+      "images/books/deep-work-2.webp",
+      "images/books/deep-work-3.webp",
+      "images/books/deep-work-4.webp"
     ],
-    "dimSvg": "images/books/deep-work-4.jpg",
+    "dimSvg": "images/books/deep-work-4.webp",
     "allImages": [
-      "images/books/deep-work-1.jpg",
-      "images/books/deep-work-2.jpg",
-      "images/books/deep-work-3.jpg",
-      "images/books/deep-work-4.jpg"
+      "images/books/deep-work-1.webp",
+      "images/books/deep-work-2.webp",
+      "images/books/deep-work-3.webp",
+      "images/books/deep-work-4.webp"
     ]
   },
   {
@@ -2993,17 +2999,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "208 pgs",
     "paper": "70 GSM Soft White",
     "photos": [
-      "images/books/the-alchemist-1.jpg",
-      "images/books/the-alchemist-2.jpg",
-      "images/books/the-alchemist-3.jpg",
-      "images/books/the-alchemist-4.jpg"
+      "images/books/the-alchemist-1.webp",
+      "images/books/the-alchemist-2.webp",
+      "images/books/the-alchemist-3.webp",
+      "images/books/the-alchemist-4.webp"
     ],
-    "dimSvg": "images/books/the-alchemist-4.jpg",
+    "dimSvg": "images/books/the-alchemist-4.webp",
     "allImages": [
-      "images/books/the-alchemist-1.jpg",
-      "images/books/the-alchemist-2.jpg",
-      "images/books/the-alchemist-3.jpg",
-      "images/books/the-alchemist-4.jpg"
+      "images/books/the-alchemist-1.webp",
+      "images/books/the-alchemist-2.webp",
+      "images/books/the-alchemist-3.webp",
+      "images/books/the-alchemist-4.webp"
     ]
   },
   {
@@ -3022,17 +3028,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "384 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/the-kite-runner-1.jpg",
-      "images/books/the-kite-runner-2.jpg",
-      "images/books/the-kite-runner-3.jpg",
-      "images/books/the-kite-runner-4.jpg"
+      "images/books/the-kite-runner-1.webp",
+      "images/books/the-kite-runner-2.webp",
+      "images/books/the-kite-runner-3.webp",
+      "images/books/the-kite-runner-4.webp"
     ],
-    "dimSvg": "images/books/the-kite-runner-4.jpg",
+    "dimSvg": "images/books/the-kite-runner-4.webp",
     "allImages": [
-      "images/books/the-kite-runner-1.jpg",
-      "images/books/the-kite-runner-2.jpg",
-      "images/books/the-kite-runner-3.jpg",
-      "images/books/the-kite-runner-4.jpg"
+      "images/books/the-kite-runner-1.webp",
+      "images/books/the-kite-runner-2.webp",
+      "images/books/the-kite-runner-3.webp",
+      "images/books/the-kite-runner-4.webp"
     ]
   },
   {
@@ -3051,17 +3057,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "432 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/thousand-splendid-suns-1.jpg",
-      "images/books/thousand-splendid-suns-2.jpg",
-      "images/books/thousand-splendid-suns-3.jpg",
-      "images/books/thousand-splendid-suns-4.jpg"
+      "images/books/thousand-splendid-suns-1.webp",
+      "images/books/thousand-splendid-suns-2.webp",
+      "images/books/thousand-splendid-suns-3.webp",
+      "images/books/thousand-splendid-suns-4.webp"
     ],
-    "dimSvg": "images/books/thousand-splendid-suns-4.jpg",
+    "dimSvg": "images/books/thousand-splendid-suns-4.webp",
     "allImages": [
-      "images/books/thousand-splendid-suns-1.jpg",
-      "images/books/thousand-splendid-suns-2.jpg",
-      "images/books/thousand-splendid-suns-3.jpg",
-      "images/books/thousand-splendid-suns-4.jpg"
+      "images/books/thousand-splendid-suns-1.webp",
+      "images/books/thousand-splendid-suns-2.webp",
+      "images/books/thousand-splendid-suns-3.webp",
+      "images/books/thousand-splendid-suns-4.webp"
     ]
   },
   {
@@ -3080,17 +3086,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "400 pgs",
     "paper": "80 GSM Royal White",
     "photos": [
-      "images/books/secrets-of-divine-love-1.jpg",
-      "images/books/secrets-of-divine-love-2.jpg",
-      "images/books/secrets-of-divine-love-3.jpg",
-      "images/books/secrets-of-divine-love-4.jpg"
+      "images/books/secrets-of-divine-love-1.webp",
+      "images/books/secrets-of-divine-love-2.webp",
+      "images/books/secrets-of-divine-love-3.webp",
+      "images/books/secrets-of-divine-love-4.webp"
     ],
-    "dimSvg": "images/books/secrets-of-divine-love-4.jpg",
+    "dimSvg": "images/books/secrets-of-divine-love-4.webp",
     "allImages": [
-      "images/books/secrets-of-divine-love-1.jpg",
-      "images/books/secrets-of-divine-love-2.jpg",
-      "images/books/secrets-of-divine-love-3.jpg",
-      "images/books/secrets-of-divine-love-4.jpg"
+      "images/books/secrets-of-divine-love-1.webp",
+      "images/books/secrets-of-divine-love-2.webp",
+      "images/books/secrets-of-divine-love-3.webp",
+      "images/books/secrets-of-divine-love-4.webp"
     ]
   },
   {
@@ -3109,17 +3115,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "240 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/reclaim-your-heart-1.jpg",
-      "images/books/reclaim-your-heart-2.jpg",
-      "images/books/reclaim-your-heart-3.jpg",
-      "images/books/reclaim-your-heart-4.jpg"
+      "images/books/reclaim-your-heart-1.webp",
+      "images/books/reclaim-your-heart-2.webp",
+      "images/books/reclaim-your-heart-3.webp",
+      "images/books/reclaim-your-heart-4.webp"
     ],
-    "dimSvg": "images/books/reclaim-your-heart-4.jpg",
+    "dimSvg": "images/books/reclaim-your-heart-4.webp",
     "allImages": [
-      "images/books/reclaim-your-heart-1.jpg",
-      "images/books/reclaim-your-heart-2.jpg",
-      "images/books/reclaim-your-heart-3.jpg",
-      "images/books/reclaim-your-heart-4.jpg"
+      "images/books/reclaim-your-heart-1.webp",
+      "images/books/reclaim-your-heart-2.webp",
+      "images/books/reclaim-your-heart-3.webp",
+      "images/books/reclaim-your-heart-4.webp"
     ]
   },
   {
@@ -3138,17 +3144,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "180 pgs",
     "paper": "70 GSM Soft White",
     "photos": [
-      "images/books/wings-of-fire-1.jpg",
-      "images/books/wings-of-fire-2.jpg",
-      "images/books/wings-of-fire-3.jpg",
-      "images/books/wings-of-fire-4.jpg"
+      "images/books/wings-of-fire-1.webp",
+      "images/books/wings-of-fire-2.webp",
+      "images/books/wings-of-fire-3.webp",
+      "images/books/wings-of-fire-4.webp"
     ],
-    "dimSvg": "images/books/wings-of-fire-4.jpg",
+    "dimSvg": "images/books/wings-of-fire-4.webp",
     "allImages": [
-      "images/books/wings-of-fire-1.jpg",
-      "images/books/wings-of-fire-2.jpg",
-      "images/books/wings-of-fire-3.jpg",
-      "images/books/wings-of-fire-4.jpg"
+      "images/books/wings-of-fire-1.webp",
+      "images/books/wings-of-fire-2.webp",
+      "images/books/wings-of-fire-3.webp",
+      "images/books/wings-of-fire-4.webp"
     ]
   },
   {
@@ -3167,17 +3173,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "450 pgs",
     "paper": "65 GSM Crisp White",
     "photos": [
-      "images/books/lucent-gk-1.jpg",
-      "images/books/lucent-gk-2.jpg",
-      "images/books/lucent-gk-3.jpg",
-      "images/books/lucent-gk-4.jpg"
+      "images/books/lucent-gk-1.webp",
+      "images/books/lucent-gk-2.webp",
+      "images/books/lucent-gk-3.webp",
+      "images/books/lucent-gk-4.webp"
     ],
-    "dimSvg": "images/books/lucent-gk-4.jpg",
+    "dimSvg": "images/books/lucent-gk-4.webp",
     "allImages": [
-      "images/books/lucent-gk-1.jpg",
-      "images/books/lucent-gk-2.jpg",
-      "images/books/lucent-gk-3.jpg",
-      "images/books/lucent-gk-4.jpg"
+      "images/books/lucent-gk-1.webp",
+      "images/books/lucent-gk-2.webp",
+      "images/books/lucent-gk-3.webp",
+      "images/books/lucent-gk-4.webp"
     ]
   },
   {
@@ -3196,17 +3202,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "520 pgs",
     "paper": "70 GSM Natural White",
     "photos": [
-      "images/books/wren-martin-1.jpg",
-      "images/books/wren-martin-2.jpg",
-      "images/books/wren-martin-3.jpg",
-      "images/books/wren-martin-4.jpg"
+      "images/books/wren-martin-1.webp",
+      "images/books/wren-martin-2.webp",
+      "images/books/wren-martin-3.webp",
+      "images/books/wren-martin-4.webp"
     ],
-    "dimSvg": "images/books/wren-martin-4.jpg",
+    "dimSvg": "images/books/wren-martin-4.webp",
     "allImages": [
-      "images/books/wren-martin-1.jpg",
-      "images/books/wren-martin-2.jpg",
-      "images/books/wren-martin-3.jpg",
-      "images/books/wren-martin-4.jpg"
+      "images/books/wren-martin-1.webp",
+      "images/books/wren-martin-2.webp",
+      "images/books/wren-martin-3.webp",
+      "images/books/wren-martin-4.webp"
     ]
   }
 ];
@@ -3375,3 +3381,29 @@ function setModalPhoto(idx) {
 function cycleModalPhoto(delta) {
   setModalPhoto(currentModalIndex + delta);
 }
+
+
+// Global Asset Preloader for Store, Cart & Orders
+(function preloadAllCatalogPhotos() {
+  if (typeof window === 'undefined') return;
+  const webpUrls = [
+    'images/ad-3d-scooter.webp', 'images/ad-3d-founder.webp',
+    'images/books/atomic-habits-1.webp', 'images/books/atomic-habits-2.webp', 'images/books/atomic-habits-3.webp', 'images/books/atomic-habits-4.webp',
+    'images/books/psychology-of-money-1.webp', 'images/books/psychology-of-money-2.webp', 'images/books/psychology-of-money-3.webp', 'images/books/psychology-of-money-4.webp',
+    'images/books/deep-work-1.webp', 'images/books/deep-work-2.webp', 'images/books/deep-work-3.webp', 'images/books/deep-work-4.webp',
+    'images/books/the-alchemist-1.webp', 'images/books/the-alchemist-2.webp', 'images/books/the-alchemist-3.webp', 'images/books/the-alchemist-4.webp',
+    'images/books/the-kite-runner-1.webp', 'images/books/the-kite-runner-2.webp', 'images/books/the-kite-runner-3.webp', 'images/books/the-kite-runner-4.webp',
+    'images/books/thousand-splendid-suns-1.webp', 'images/books/thousand-splendid-suns-2.webp', 'images/books/thousand-splendid-suns-3.webp', 'images/books/thousand-splendid-suns-4.webp',
+    'images/books/secrets-of-divine-love-1.webp', 'images/books/secrets-of-divine-love-2.webp', 'images/books/secrets-of-divine-love-3.webp', 'images/books/secrets-of-divine-love-4.webp',
+    'images/books/reclaim-your-heart-1.webp', 'images/books/reclaim-your-heart-2.webp', 'images/books/reclaim-your-heart-3.webp', 'images/books/reclaim-your-heart-4.webp',
+    'images/books/wings-of-fire-1.webp', 'images/books/wings-of-fire-2.webp', 'images/books/wings-of-fire-3.webp', 'images/books/wings-of-fire-4.webp',
+    'images/books/lucent-gk-1.webp', 'images/books/lucent-gk-2.webp', 'images/books/lucent-gk-3.webp', 'images/books/lucent-gk-4.webp',
+    'images/books/wren-martin-1.webp', 'images/books/wren-martin-2.webp', 'images/books/wren-martin-3.webp', 'images/books/wren-martin-4.webp'
+  ];
+  setTimeout(() => {
+    webpUrls.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, 100);
+})();
