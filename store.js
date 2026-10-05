@@ -3259,27 +3259,61 @@ function setCardPhoto(cardId, index, event) {
 }
 
 // Touch swipe support for card carousels
-document.addEventListener('DOMContentLoaded', () => {
-  initCardSwipes();
-});
-
 function initCardSwipes() {
   document.querySelectorAll('.swipe-photo-container').forEach(el => {
     let startX = 0;
-    let endX = 0;
+    let startY = 0;
+    let isSwiping = false;
+    let hasMoved = false;
+
     el.addEventListener('touchstart', e => {
-      startX = e.changedTouches[0].screenX;
+      if (!e.touches || e.touches.length === 0) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isSwiping = true;
+      hasMoved = false;
+    }, { passive: true });
+
+    el.addEventListener('touchmove', e => {
+      if (!isSwiping || !e.touches || e.touches.length === 0) return;
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      if (Math.abs(currentX - startX) > 10) {
+        hasMoved = true;
+      }
     }, { passive: true });
     
     el.addEventListener('touchend', e => {
-      endX = e.changedTouches[0].screenX;
-      const diff = startX - endX;
-      if (Math.abs(diff) > 35) {
-        if (diff > 0) cycleCardPhoto(el.id, 1);
+      if (!isSwiping || !e.changedTouches || e.changedTouches.length === 0) return;
+      isSwiping = false;
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const diffX = startX - endX;
+      const diffY = startY - endY;
+      
+      // Horizontal swipe threshold: 25px, with horizontal travel greater than vertical travel
+      if (Math.abs(diffX) > 25 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) cycleCardPhoto(el.id, 1);
         else cycleCardPhoto(el.id, -1);
       }
     }, { passive: true });
+
+    // Suppress modal open if user was swiping photos
+    el.addEventListener('click', e => {
+      if (hasMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+        hasMoved = false;
+      }
+    }, true);
   });
+}
+
+// Ensure swipe initialization runs whether DOM is already ready or loading
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCardSwipes);
+} else {
+  initCardSwipes();
 }
 
 let currentModalImages = [];
