@@ -1,11 +1,13 @@
-const CACHE_NAME = 'jk-study-hub-v14';
+const CACHE_NAME = 'jk-study-hub-v15';
 const urlsToCache = [
   './',
   './index.html',
   './store.html',
   './account.html',
   './style.css',
-  './store.js'
+  './store.js',
+  './images/ad-3d-scooter.png',
+  './images/ad-3d-founder.png'
 ];
 
 self.addEventListener('install', event => {
@@ -25,26 +27,43 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Network-First Strategy: always get fresh files when online
+// Fast Smooth Strategy: Instant Cache response + Background Network Revalidation
 self.addEventListener('fetch', event => {
-  // Bypass Service Worker for API calls and external domains
   const url = new URL(event.request.url);
-  if (url.origin !== location.origin || url.hostname.includes('google') || url.hostname.includes('firebase')) {
+  
+  // Skip external APIs and Firebase
+  if (url.origin !== location.origin || url.hostname.includes('google') || url.hostname.includes('firebase') || event.request.method !== 'GET') {
     return;
   }
+
+  // HTML pages: Network first with fast cache fallback
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Static Assets (Images, CSS, JS): Instant Cache-First with Background Revalidation
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response && response.status === 200 && event.request.method === 'GET') {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
+    caches.match(event.request).then(cachedResponse => {
+      const fetchPromise = fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+        return networkResponse;
+      }).catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
+    })
   );
 });

@@ -15,9 +15,7 @@
     .store-nav .logo { font-size: 20px; font-weight: 800; color: #1e293b; text-decoration: none; }
     .store-nav .back-btn { background: #f1f5f9; color: #475569; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; }
     
-    .store-hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #1e293b, #0f172a); color: white; margin-bottom: 40px; }
-    .store-hero h1 { font-size: 32px; font-family: 'Outfit', sans-serif; margin-bottom: 10px; }
-    .store-hero p { color: #94a3b8; font-size: 16px; max-width: 600px; margin: 0 auto; }
+    /* Legacy .store-hero rules consolidated into .store-hero-3d-stage below */
 
     .category-title { font-size: 24px; font-weight: 700; color: #1e293b; margin-bottom: 20px; margin-top: 40px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; }
     
@@ -437,48 +435,238 @@
       border-color: #2563eb;
     }
 
-    /* Commercial Hero Advertisement Banners */
-    .commercial-hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-    .commercial-hero-card {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
+    /* 3D Floating Commercial Advertisement Stage */
+    .store-hero-3d-stage {
+      position: relative;
+      background: radial-gradient(circle at 14% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 42%),
+                  radial-gradient(circle at 86% 50%, rgba(16, 185, 129, 0.22) 0%, transparent 42%),
+                  linear-gradient(135deg, #090d16 0%, #111827 50%, #0b1120 100%);
+      color: white;
+      padding: 38px 24px;
+      margin-bottom: 25px;
       overflow: hidden;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      perspective: 1200px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+    .store-hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .store-hero-center {
+      text-align: center;
+      flex: 1 1 500px;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .store-hero-center h1 {
+      font-size: 34px;
+      font-family: 'Outfit', sans-serif;
+      margin: 0 0 10px 0;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .store-hero-center p {
+      color: #94a3b8;
+      font-size: 14.5px;
+      line-height: 1.55;
+      margin: 0 auto 16px auto;
+    }
+    .store-hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(37, 99, 235, 0.18);
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      color: #93c5fd;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      letter-spacing: 0.3px;
+    }
+    .store-hero-highlights {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .store-hero-highlights span {
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* 3D Floating Interactive Ads */
+    .floating-3d-ad {
+      flex: 0 0 190px;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transform-style: preserve-3d;
+      will-change: transform;
+      user-select: none;
+      transition: filter 0.3s ease;
     }
-    .commercial-hero-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    .floating-3d-ad.left {
+      animation: floatLeft3D 4.8s ease-in-out infinite alternate;
     }
-    .commercial-hero-img-box {
+    .floating-3d-ad.right {
+      animation: floatRight3D 5.2s ease-in-out infinite alternate;
+    }
+    .floating-3d-card {
       position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #f8fafc;
-      overflow: hidden;
+      width: 170px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     }
-    .commercial-hero-img-box img {
+    .floating-3d-ad.left .floating-3d-card {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 0 0 26px rgba(37, 99, 235, 0.25);
+    }
+    .floating-3d-ad.right .floating-3d-card {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 0 0 26px rgba(16, 185, 129, 0.25);
+    }
+    .floating-3d-ad:hover .floating-3d-card {
+      transform: scale(1.06) translateZ(15px);
+    }
+    .floating-3d-img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      border-radius: 14px;
       display: block;
-      transition: transform 0.35s ease;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
     }
-    .commercial-hero-card:hover .commercial-hero-img-box img {
-      transform: scale(1.02);
+    .floating-3d-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-top: 10px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(8px);
     }
-    @media (max-width: 768px) {
-      .commercial-hero-grid {
-        grid-template-columns: 1fr;
+    .floating-3d-ad.left .floating-3d-badge {
+      background: rgba(37, 99, 235, 0.92);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+    .floating-3d-ad.right .floating-3d-badge {
+      background: rgba(16, 185, 129, 0.92);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+    .floating-3d-sub {
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    /* 3D Floating Motion Keyframes */
+    @keyframes floatLeft3D {
+      0% {
+        transform: translateY(0px) rotateY(10deg) rotateX(4deg) scale(0.98);
+      }
+      50% {
+        transform: translateY(-10px) rotateY(15deg) rotateX(-2deg) scale(1.02);
+      }
+      100% {
+        transform: translateY(-3px) rotateY(7deg) rotateX(5deg) scale(1);
+      }
+    }
+    @keyframes floatRight3D {
+      0% {
+        transform: translateY(-7px) rotateY(-10deg) rotateX(-3deg) scale(1.01);
+      }
+      50% {
+        transform: translateY(4px) rotateY(-5deg) rotateX(4deg) scale(0.98);
+      }
+      100% {
+        transform: translateY(-12px) rotateY(-14deg) rotateX(-1deg) scale(1.02);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .floating-3d-ad {
+        flex: 0 0 135px;
+      }
+      .floating-3d-card {
+        width: 125px;
+        padding: 6px;
+        border-radius: 16px;
+      }
+      .floating-3d-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+      .store-hero-center h1 {
+        font-size: 26px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .store-hero-3d-stage {
+        padding: 26px 14px;
+      }
+      .store-hero-inner {
+        display: grid;
+        grid-template-areas:
+          "center center"
+          "left right";
+        justify-content: center;
+        justify-items: center;
         gap: 16px;
+      }
+      .store-hero-center {
+        grid-area: center;
+      }
+      .floating-3d-ad.left {
+        grid-area: left;
+        flex: 0 0 135px;
+      }
+      .floating-3d-ad.right {
+        grid-area: right;
+        flex: 0 0 135px;
+      }
+      .floating-3d-card {
+        width: 125px;
+      }
+      .store-hero-center h1 {
+        font-size: 24px;
+      }
+      .store-hero-center p {
+        font-size: 13.5px;
+        margin-bottom: 12px;
       }
     }
 
@@ -713,55 +901,47 @@
     </div>
   </nav>
 
-  <header class="store-hero">
-    <h1>Official Student Store</h1>
-    <p>Premium study materials, exclusive bundles, and reliable digital services right at your fingertips.</p>
+  <header class="store-hero store-hero-3d-stage">
+    <div class="store-hero-inner">
+      <!-- Left 3D Floating Ad: Delivery Scooter -->
+      <div class="floating-3d-ad left" title="Direct Doorstep Delivery in Pattan">
+        <div class="floating-3d-card">
+          <img class="floating-3d-img" src="images/ad-3d-scooter.png" alt="JK Study Hub Scooter Delivery in Pattan" width="340" height="360" loading="eager">
+        </div>
+        <span class="floating-3d-badge">
+          <i class="fa-solid fa-motorcycle"></i> Pattan Express
+        </span>
+        <span class="floating-3d-sub">Doorstep Delivery</span>
+      </div>
+
+      <!-- Center Store Info -->
+      <div class="store-hero-center">
+        <span class="store-hero-pill">
+          <i class="fa-solid fa-shield-halved"></i> 100% Genuine Editions
+        </span>
+        <h1>Official Student Store</h1>
+        <p>Handpicked authentic textbooks, bestselling novels, and study guides with fast doorstep delivery across Pattan.</p>
+        <div class="store-hero-highlights">
+          <span><i class="fa-solid fa-bolt" style="color: #38bdf8;"></i> Same-Day Dispatch</span>
+          <span><i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> Founder Inspected</span>
+          <span><i class="fa-solid fa-rotate-left" style="color: #f472b6;"></i> Easy Replacement</span>
+        </div>
+      </div>
+
+      <!-- Right 3D Floating Ad: Founder Management -->
+      <div class="floating-3d-ad right" title="Store Management: Sahil Zahoor">
+        <div class="floating-3d-card">
+          <img class="floating-3d-img" src="images/ad-3d-founder.png" alt="Store Management: Sahil Zahoor" width="340" height="360" loading="eager">
+        </div>
+        <span class="floating-3d-badge">
+          <i class="fa-solid fa-user-check"></i> Sahil Zahoor
+        </span>
+        <span class="floating-3d-sub">Store Management</span>
+      </div>
+    </div>
   </header>
 
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
-    
-    <!-- Commercial Hero Showcase (Delivery Scooty on Left & Founder Management on Right) -->
-    <div class="commercial-hero-grid" style="margin-top: 25px;">
-      
-      <!-- Left Advertisement: Delivery Scooter -->
-      <div class="commercial-hero-card">
-        <div class="commercial-hero-img-box">
-          <img src="images/banner-delivery-scooter.jpg" alt="JK Study Hub Fast Delivery in Pattan" loading="eager">
-          <span style="position: absolute; top: 14px; left: 14px; background: rgba(37, 99, 235, 0.92); backdrop-filter: blur(4px); color: white; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px;">
-            ⚡ FAST DOORSTEP DELIVERY
-          </span>
-        </div>
-        <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 8px;">
-          <div>
-            <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Direct Home Delivery in Pattan</h3>
-            <p style="font-size: 13px; color: #64748b; margin: 0;">On two wheels — textbooks, notes &amp; stationary delivered within 1–2 days.</p>
-          </div>
-          <span style="background: #eff6ff; color: #2563eb; font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid #bfdbfe; white-space: nowrap;">
-            <i class="fa-solid fa-motorcycle"></i> Pattan Dispatch
-          </span>
-        </div>
-      </div>
-
-      <!-- Right Advertisement: Founder & Store Management -->
-      <div class="commercial-hero-card">
-        <div class="commercial-hero-img-box">
-          <img src="images/banner-founder-studio.jpg" alt="Store Management: Sahil Zahoor" loading="eager">
-          <span style="position: absolute; top: 14px; left: 14px; background: rgba(16, 185, 129, 0.92); backdrop-filter: blur(4px); color: white; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px;">
-            ★ VERIFIED BY FOUNDER
-          </span>
-        </div>
-        <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 8px;">
-          <div>
-            <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Store Management: Sahil Zahoor</h3>
-            <p style="font-size: 13px; color: #64748b; margin: 0;">Personally inspected authentic editions, student-friendly prices &amp; zero defects.</p>
-          </div>
-          <span style="background: #f0fdf4; color: #16a34a; font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid #bbf7d0; white-space: nowrap;">
-            <i class="fa-solid fa-circle-check"></i> 100% Genuine
-          </span>
-        </div>
-      </div>
-
-    </div>
     
     <!-- Bestselling Books & Novels Section -->
     <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 45px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
@@ -1748,15 +1928,7 @@
         appId: "1:544447856590:web:9280ed66e744e6b8cfb59f"
       });
     }
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(registrations => {
-        registrations.forEach(r => r.update());
-      });
-    }
-  </script>
-  <script src="store.js?v=14.0"></script>
+  <script src="store.js?v=15.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
