@@ -437,6 +437,51 @@
       border-color: #2563eb;
     }
 
+    /* Commercial Hero Advertisement Banners */
+    .commercial-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .commercial-hero-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .commercial-hero-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+    .commercial-hero-img-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+    .commercial-hero-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .commercial-hero-card:hover .commercial-hero-img-box img {
+      transform: scale(1.02);
+    }
+    @media (max-width: 768px) {
+      .commercial-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+
     /* Modal Styles */
     .book-details-modal {
       display: none;
@@ -675,10 +720,50 @@
 
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
     
-    <!-- Stationery & Materials -->
+    <!-- Commercial Hero Showcase (Delivery Scooty on Left & Founder Management on Right) -->
+    <div class="commercial-hero-grid" style="margin-top: 25px;">
+      
+      <!-- Left Advertisement: Delivery Scooter -->
+      <div class="commercial-hero-card">
+        <div class="commercial-hero-img-box">
+          <img src="images/banner-delivery-scooter.jpg" alt="JK Study Hub Fast Delivery in Pattan" loading="eager">
+          <span style="position: absolute; top: 14px; left: 14px; background: rgba(37, 99, 235, 0.92); backdrop-filter: blur(4px); color: white; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px;">
+            ⚡ FAST DOORSTEP DELIVERY
+          </span>
+        </div>
+        <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Direct Home Delivery in Pattan</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0;">On two wheels — textbooks, notes &amp; stationary delivered within 1–2 days.</p>
+          </div>
+          <span style="background: #eff6ff; color: #2563eb; font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid #bfdbfe; white-space: nowrap;">
+            <i class="fa-solid fa-motorcycle"></i> Pattan Dispatch
+          </span>
+        </div>
+      </div>
+
+      <!-- Right Advertisement: Founder & Store Management -->
+      <div class="commercial-hero-card">
+        <div class="commercial-hero-img-box">
+          <img src="images/banner-founder-studio.jpg" alt="Store Management: Sahil Zahoor" loading="eager">
+          <span style="position: absolute; top: 14px; left: 14px; background: rgba(16, 185, 129, 0.92); backdrop-filter: blur(4px); color: white; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px;">
+            ★ VERIFIED BY FOUNDER
+          </span>
+        </div>
+        <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Store Management: Sahil Zahoor</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0;">Personally inspected authentic editions, student-friendly prices &amp; zero defects.</p>
+          </div>
+          <span style="background: #f0fdf4; color: #16a34a; font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid #bbf7d0; white-space: nowrap;">
+            <i class="fa-solid fa-circle-check"></i> 100% Genuine
+          </span>
+        </div>
+      </div>
+
+    </div>
     
-    
-            <!-- Bestselling Books & Novels Section -->
+    <!-- Bestselling Books & Novels Section -->
     <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 45px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
       <div>
         <h2 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
@@ -1671,7 +1756,7 @@
       });
     }
   </script>
-  <script src="store.js?v=13.0"></script>
+  <script src="store.js?v=14.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
