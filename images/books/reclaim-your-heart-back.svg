@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 620" width="500" height="620">
+  <defs>
+    <filter id="back_sh_reclaim-your-heart" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="6" dy="14" stdDeviation="14" flood-color="#0f172a" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(60, 30)" filter="url(#back_sh_reclaim-your-heart)">
+    <rect x="10" y="10" width="360" height="520" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    
+    <!-- Top Bar -->
+    <rect x="10" y="10" width="360" height="65" rx="8" fill="#f8fafc"/>
+    <text x="35" y="40" fill="#0f172a" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="800">What Students Learn</text>
+    <text x="35" y="58" fill="#64748b" font-family="-apple-system, sans-serif" font-size="11" font-weight="600">Essential Takeaways &amp; Chapter Highlights</text>
+
+    <!-- Synopsis Box -->
+    <rect x="30" y="90" width="320" height="95" rx="8" fill="#f1f5f9" stroke="#e2e8f0"/>
+    <text x="45" y="115" fill="#334155" font-family="Georgia, serif" font-size="12.5" font-style="italic">
+      "How to protect your heart from life's deepest disapp"
+    </text>
+    <text x="45" y="135" fill="#334155" font-family="Georgia, serif" font-size="12.5" font-style="italic">
+      "ointments and attach only to what is permanent."
+    </text>
+    <text x="45" y="155" fill="#334155" font-family="Georgia, serif" font-size="12.5" font-style="italic">
+      "..."
+    </text>
+
+    <!-- Key Takeaways Checklist -->
+    <g transform="translate(35, 210)">
+      
+      <g transform="translate(0, 0)">
+        <circle cx="12" cy="12" r="10" fill="#eff6ff"/>
+        <text x="12" y="16" fill="#2563eb" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#1e293b" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="600">Freeing from Attachments</text>
+      </g>
+    
+      <g transform="translate(0, 44)">
+        <circle cx="12" cy="12" r="10" fill="#eff6ff"/>
+        <text x="12" y="16" fill="#2563eb" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#1e293b" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="600">Dealing with Heartbreak</text>
+      </g>
+    
+      <g transform="translate(0, 88)">
+        <circle cx="12" cy="12" r="10" fill="#eff6ff"/>
+        <text x="12" y="16" fill="#2563eb" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#1e293b" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="600">Spiritual Resilience</text>
+      </g>
+    
+      <g transform="translate(0, 132)">
+        <circle cx="12" cy="12" r="10" fill="#eff6ff"/>
+        <text x="12" y="16" fill="#2563eb" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#1e293b" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="600">Mindset Shift for Students</text>
+      </g>
+    
+    </g>
+
+    <!-- Quality Assurance Box -->
+    <rect x="30" y="405" width="320" height="55" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+    <text x="45" y="426" fill="#166534" font-family="-apple-system, sans-serif" font-size="12" font-weight="700">✓ Verified Quality Checked</text>
+    <text x="45" y="445" fill="#15803d" font-family="-apple-system, sans-serif" font-size="11">Crisp dark font print • No missing or blurry pages • Sturdy binding</text>
+
+    <!-- Barcode & Stamp -->
+    <g transform="translate(35, 475)">
+      <rect x="0" y="0" width="120" height="40" fill="#f8fafc" stroke="#cbd5e1"/>
+      <!-- Barcode Lines -->
+      <line x1="10" y1="6" x2="10" y2="34" stroke="#000" stroke-width="2"/>
+      <line x1="16" y1="6" x2="16" y2="34" stroke="#000" stroke-width="1"/>
+      <line x1="22" y1="6" x2="22" y2="34" stroke="#000" stroke-width="3"/>
+      <line x1="30" y1="6" x2="30" y2="34" stroke="#000" stroke-width="1.5"/>
+      <line x1="38" y1="6" x2="38" y2="34" stroke="#000" stroke-width="2"/>
+      <line x1="46" y1="6" x2="46" y2="34" stroke="#000" stroke-width="1"/>
+      <line x1="55" y1="6" x2="55" y2="34" stroke="#000" stroke-width="3"/>
+      <line x1="68" y1="6" x2="68" y2="34" stroke="#000" stroke-width="1.5"/>
+      <line x1="78" y1="6" x2="78" y2="34" stroke="#000" stroke-width="2"/>
+      <line x1="88" y1="6" x2="88" y2="34" stroke="#000" stroke-width="1"/>
+      <line x1="98" y1="6" x2="98" y2="34" stroke="#000" stroke-width="2.5"/>
+      <line x1="108" y1="6" x2="108" y2="34" stroke="#000" stroke-width="1"/>
+      
+      <text x="150" y="18" fill="#64748b" font-family="-apple-system, sans-serif" font-size="10" font-weight="700">PRINTED IN INDIA</text>
+      <text x="150" y="34" fill="#0f172a" font-family="-apple-system, sans-serif" font-size="12" font-weight="800">100% Authentic Edition</text>
+    </g>
+  </g>
+</svg>

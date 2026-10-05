@@ -2005,7 +2005,7 @@ const SYLLABUS_PDF_DATA = {
 Thank you, ${name}. Your order for '${combinedProduct}' has been received.
 We will contact you shortly at ${phone} to confirm delivery.`);
         
-        orderSubmitBtn.innerHTML = 'Confirm Order (Cash on Delivery)';
+        orderSubmitBtn.innerHTML = 'Confirm Order';
         orderSubmitBtn.style.opacity = '1';
         orderSubmitBtn.disabled = false;
         closeOrderModalDirect();
@@ -2013,7 +2013,7 @@ We will contact you shortly at ${phone} to confirm delivery.`);
       .catch(error => {
         console.error('Error!', error.message);
         alert("Sorry, there was an error processing your order. Please check your internet connection and try again.");
-        orderSubmitBtn.innerHTML = 'Confirm Order (Cash on Delivery)';
+        orderSubmitBtn.innerHTML = 'Confirm Order';
         orderSubmitBtn.style.opacity = '1';
         orderSubmitBtn.disabled = false;
       });

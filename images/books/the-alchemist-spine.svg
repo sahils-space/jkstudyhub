@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 620" width="500" height="620">
+  <defs>
+    <linearGradient id="spine_grad_the-alchemist" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#172554"/>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="page_lines_the-alchemist" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="angle_sh_the-alchemist" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="12" dy="20" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(80, 40)" filter="url(#angle_sh_the-alchemist)">
+    <!-- Pages Block Depth (Right side perspective) -->
+    <polygon points="120,40 320,10 320,480 120,530" fill="url(#page_lines_the-alchemist)" stroke="#cbd5e1" stroke-width="1"/>
+    
+    <!-- Fine Page Lines -->
+    <line x1="140" y1="42" x2="140" y2="520" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="180" y1="36" x2="180" y2="508" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="220" y1="30" x2="220" y2="498" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="260" y1="22" x2="260" y2="490" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Spine (Left 3D Facing) -->
+    <polygon points="40,60 120,40 120,530 40,555" fill="url(#spine_grad_the-alchemist)" stroke="#cbd5e1" stroke-width="1"/>
+
+    <!-- Spine Title (Rotated 90 degrees) -->
+    <g transform="translate(85, 290) rotate(-90)">
+      <text x="0" y="5" fill="#ffffff" font-family="Georgia, serif" font-size="18" font-weight="bold" text-anchor="middle" letter-spacing="1">
+        THE ALCHEMIST
+      </text>
+      <text x="0" y="24" fill="#ffffff" opacity="0.75" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" text-anchor="middle">
+        Paulo Coelho
+      </text>
+    </g>
+
+    <!-- Spine Badges -->
+    <circle cx="80" cy="90" r="16" fill="#f59e0b"/>
+    <text x="80" y="94" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="10" font-weight="bold" text-anchor="middle">JK</text>
+
+    <!-- Thickness Measurement Callout -->
+    <g transform="translate(0, 565)">
+      <line x1="40" y1="10" x2="120" y2="-5" stroke="#2563eb" stroke-width="2"/>
+      <rect x="50" y="16" width="90" height="28" rx="6" fill="#1e293b"/>
+      <text x="95" y="34" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="12" font-weight="800" text-anchor="middle">Spine: 1.6 cm</text>
+    </g>
+
+    <!-- Pages Callout -->
+    <g transform="translate(230, 240)">
+      <rect x="0" y="0" width="100" height="48" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
+      <text x="50" y="20" fill="#64748b" font-family="-apple-system, sans-serif" font-size="10" font-weight="700" text-anchor="middle">AUTHENTIC</text>
+      <text x="50" y="38" fill="#059669" font-family="-apple-system, sans-serif" font-size="14" font-weight="800" text-anchor="middle">208 pgs</text>
+    </g>
+  </g>
+</svg>
