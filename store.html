@@ -438,6 +438,107 @@
       border-color: #2563eb;
     }
 
+    /* Flipkart / Amazon / Myntra Style Dedicated Search & Filter Bar */
+    .store-search-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin: 10px 0 25px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 65px;
+      z-index: 95;
+      backdrop-filter: blur(10px);
+    }
+    .store-search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .store-search-box .search-icon {
+      position: absolute;
+      left: 15px;
+      color: #94a3b8;
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .store-search-box input {
+      width: 100%;
+      padding: 12px 42px 12px 42px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 14.5px;
+      font-family: inherit;
+      color: #0f172a;
+      background: #f8fafc;
+      outline: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .store-search-box input:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.12);
+    }
+    #storeSearchClear {
+      position: absolute;
+      right: 12px;
+      background: #e2e8f0;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: #475569;
+      line-height: 1;
+    }
+    #storeSearchClear:hover {
+      background: #cbd5e1;
+      color: #0f172a;
+    }
+    .store-category-filter-strip {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .store-category-filter-strip::-webkit-scrollbar {
+      display: none;
+    }
+    .store-filter-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .store-filter-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .store-filter-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.22);
+    }
+
     /* 3D Floating Commercial Advertisement Stage */
     .store-hero-3d-stage {
       position: relative;
@@ -952,8 +1053,50 @@
 
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
     
+    <!-- Dedicated Flipkart/Amazon Style Live Search & Category Bar -->
+    <div class="store-search-container" id="storeSearchContainer">
+      <div class="store-search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="storeSearchInput" placeholder="Search 50+ books, bestselling novels, authors, study kits, stationery..." oninput="handleStoreLiveSearch(this.value)" autocomplete="off">
+        <button id="storeSearchClear" onclick="clearStoreSearch()" style="display: none;" title="Clear Search">&times;</button>
+      </div>
+
+      <div class="store-category-filter-strip">
+        <button type="button" class="store-filter-btn active" data-category="all" onclick="setStoreCategoryFilter('all', this)">
+          <i class="fa-solid fa-border-all"></i> All Items
+        </button>
+        <button type="button" class="store-filter-btn" data-category="novels" onclick="setStoreCategoryFilter('novels', this)">
+          <i class="fa-solid fa-book-open"></i> Novels &amp; Bestsellers (11)
+        </button>
+        <button type="button" class="store-filter-btn" data-category="academic" onclick="setStoreCategoryFilter('academic', this)">
+          <i class="fa-solid fa-graduation-cap"></i> Academic Study Kits
+        </button>
+        <button type="button" class="store-filter-btn" data-category="stationery" onclick="setStoreCategoryFilter('stationery', this)">
+          <i class="fa-solid fa-pencil"></i> Stationery &amp; Tables
+        </button>
+        <button type="button" class="store-filter-btn" data-category="digital" onclick="setStoreCategoryFilter('digital', this)">
+          <i class="fa-solid fa-laptop-code"></i> Digital Services
+        </button>
+      </div>
+
+      <div id="storeSearchFeedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; color: #475569; justify-content: space-between; align-items: center;">
+        <span id="searchResultCountText">Found 0 items</span>
+        <button onclick="clearStoreSearch()" style="background: none; border: none; color: #2563eb; font-weight: 700; cursor: pointer; font-size: 12.5px;">Show All Items</button>
+      </div>
+    </div>
+
+    <!-- Empty State for Search -->
+    <div id="noStoreResults" style="display: none; text-align: center; padding: 45px 20px; background: white; border: 1px solid #e2e8f0; border-radius: 16px; margin: 25px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+      <div style="width: 70px; height: 70px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; color: #64748b;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <h3 style="font-size: 18px; color: #1e293b; font-weight: 800; margin: 0 0 6px;">No items match your search</h3>
+      <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px;">Try checking for typos or searching by author name or category.</p>
+      <button onclick="clearStoreSearch()" style="background: #2563eb; color: white; border: none; padding: 9px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">Show All Items</button>
+    </div>
+
     <!-- Bestselling Books & Novels Section -->
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 45px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
+    <div id="section-novels" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 25px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
       <div>
         <h2 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
           <i class="fa-solid fa-book-open-reader" style="color: #2563eb;"></i> Bestselling Books, Novels &amp; Exam Prep
@@ -1541,7 +1684,7 @@
 
     </div>
 
-    <h2 class="category-title"><i class="fa-solid fa-box"></i> Physical Study Materials & Stationery</h2>
+    <h2 class="category-title" id="section-academic"><i class="fa-solid fa-box"></i> Physical Study Materials & Stationery</h2>
     <div class="product-grid">
       
       <div class="product-card">
@@ -1751,7 +1894,7 @@
     </div>
 
     <!-- Digital Services -->
-    <h2 class="category-title" style="margin-top: 60px;"><i class="fa-solid fa-laptop-code"></i> Digital Services</h2>
+    <h2 class="category-title" id="section-digital" style="margin-top: 60px;"><i class="fa-solid fa-laptop-code"></i> Digital Services</h2>
     <div class="product-grid">
       
       <div class="product-card">

@@ -3441,3 +3441,135 @@ function cycleModalPhoto(delta) {
     });
   }, 100);
 })();
+
+// ==========================================
+// DEDICATED STORE SEARCH & CATEGORY ENGINE
+// ==========================================
+
+let currentStoreCategory = 'all';
+
+function getCardCategoryType(card) {
+  if (!card) return 'all';
+  if (card.classList.contains('book-product-card')) return 'novels';
+  const text = (card.textContent || '').toLowerCase();
+  if (text.includes('pyqs') || text.includes('instant notes') || text.includes('survival kit')) return 'academic';
+  if (text.includes('table') || text.includes('diary') || text.includes('pen') || text.includes('geometry') || text.includes('quran') || text.includes('copies') || text.includes('lamp')) return 'stationery';
+  if (text.includes('form filling') || text.includes('digital') || text.includes('scholarship')) return 'digital';
+  return 'stationery';
+}
+
+function handleStoreLiveSearch(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const clearBtn = document.getElementById('storeSearchClear');
+  const feedback = document.getElementById('storeSearchFeedback');
+  const countText = document.getElementById('searchResultCountText');
+  const emptyState = document.getElementById('noStoreResults');
+
+  if (clearBtn) clearBtn.style.display = q ? 'flex' : 'none';
+
+  const allCards = document.querySelectorAll('.book-product-card, .product-card');
+  let matchCount = 0;
+
+  allCards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const queryMatch = !q || text.includes(q);
+    const cardCat = getCardCategoryType(card);
+    const catMatch = (currentStoreCategory === 'all' || currentStoreCategory === cardCat);
+
+    if (queryMatch && catMatch) {
+      card.style.display = 'flex';
+      matchCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // Section titles visibility
+  const secNovels = document.getElementById('section-novels');
+  const secAcademic = document.getElementById('section-academic');
+  const secDigital = document.getElementById('section-digital');
+
+  if (secNovels) {
+    const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).some(c => c.style.display !== 'none');
+    secNovels.style.display = hasVisibleNovels ? 'flex' : 'none';
+  }
+  if (secAcademic) {
+    const hasVisibleAcademic = Array.from(document.querySelectorAll('.product-card')).some(c => {
+      const cat = getCardCategoryType(c);
+      return (cat === 'academic' || cat === 'stationery') && c.style.display !== 'none';
+    });
+    secAcademic.style.display = hasVisibleAcademic ? 'block' : 'none';
+  }
+  if (secDigital) {
+    const hasVisibleDigital = Array.from(document.querySelectorAll('.product-card')).some(c => {
+      const cat = getCardCategoryType(c);
+      return (cat === 'digital') && c.style.display !== 'none';
+    });
+    secDigital.style.display = hasVisibleDigital ? 'block' : 'none';
+  }
+
+  if (feedback && countText) {
+    if (q) {
+      feedback.style.display = 'flex';
+      countText.innerText = `Found ${matchCount} item${matchCount === 1 ? '' : 's'} matching "${query}"`;
+    } else if (currentStoreCategory !== 'all') {
+      feedback.style.display = 'flex';
+      countText.innerText = `Showing ${currentStoreCategory.toUpperCase()} (${matchCount} items)`;
+    } else {
+      feedback.style.display = 'none';
+    }
+  }
+
+  if (emptyState) {
+    emptyState.style.display = (matchCount === 0) ? 'block' : 'none';
+  }
+}
+
+function setStoreCategoryFilter(cat, btnEl) {
+  currentStoreCategory = cat;
+  document.querySelectorAll('.store-filter-btn').forEach(btn => btn.classList.remove('active'));
+  if (btnEl) {
+    btnEl.classList.add('active');
+  } else {
+    const target = document.querySelector(`.store-filter-btn[data-category="${cat}"]`);
+    if (target) target.classList.add('active');
+  }
+
+  const q = document.getElementById('storeSearchInput') ? document.getElementById('storeSearchInput').value : '';
+  handleStoreLiveSearch(q);
+}
+
+function clearStoreSearch() {
+  const input = document.getElementById('storeSearchInput');
+  if (input) input.value = '';
+  setStoreCategoryFilter('all', document.querySelector('.store-filter-btn[data-category="all"]'));
+}
+
+function handleUrlCategoryHash() {
+  const hash = window.location.hash.replace('#', '').toLowerCase();
+  const params = new URLSearchParams(window.location.search);
+  const catParam = (params.get('category') || hash).toLowerCase();
+
+  if (catParam === 'novels' || catParam === 'books') {
+    setStoreCategoryFilter('novels');
+    const sec = document.getElementById('section-novels') || document.getElementById('storeSearchContainer');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+  } else if (catParam === 'academic' || catParam === 'notes') {
+    setStoreCategoryFilter('academic');
+    const sec = document.getElementById('section-academic');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+  } else if (catParam === 'stationery') {
+    setStoreCategoryFilter('stationery');
+  } else if (catParam === 'digital' || catParam === 'services' || catParam === 'professional') {
+    setStoreCategoryFilter('digital');
+    const sec = document.getElementById('section-digital');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleUrlCategoryHash);
+} else {
+  handleUrlCategoryHash();
+}
+window.addEventListener('hashchange', handleUrlCategoryHash);
