@@ -14,8 +14,8 @@ const PRODUCT_CATALOG = {
     badge: "Bestseller #1",
     rating: "4.9",
     reviews: "1.2k",
-    image: "images/books/atomic-habits-cover.svg",
-    images: ["images/books/atomic-habits-cover.svg", "images/books/atomic-habits-spine.svg", "images/books/atomic-habits-back.svg", "images/books/atomic-habits-dim.svg"],
+    image: "images/books/atomic-habits-1.jpg",
+    images: ["images/books/atomic-habits-1.jpg", "images/books/atomic-habits-2.jpg", "images/books/atomic-habits-3.jpg", "images/books/atomic-habits-4.jpg"],
     desc: "An easy and proven way to build good habits and break bad ones. The #1 self-discipline handbook for students and high achievers.",
     specs: {
       length: "19.8 cm",
@@ -35,8 +35,8 @@ const PRODUCT_CATALOG = {
     badge: "Youth Favorite",
     rating: "4.8",
     reviews: "950",
-    image: "images/books/psychology-of-money-cover.svg",
-    images: ["images/books/psychology-of-money-cover.svg", "images/books/psychology-of-money-spine.svg", "images/books/psychology-of-money-back.svg", "images/books/psychology-of-money-dim.svg"],
+    image: "images/books/psychology-of-money-1.jpg",
+    images: ["images/books/psychology-of-money-1.jpg", "images/books/psychology-of-money-2.jpg", "images/books/psychology-of-money-3.jpg", "images/books/psychology-of-money-4.jpg"],
     desc: "Timeless lessons on wealth, greed, and happiness. Crucial financial wisdom every young student should understand before college.",
     specs: {
       length: "19.8 cm",
@@ -56,8 +56,8 @@ const PRODUCT_CATALOG = {
     badge: "Exam Prep Must-Have",
     rating: "4.8",
     reviews: "820",
-    image: "images/books/deep-work-cover.svg",
-    images: ["images/books/deep-work-cover.svg", "images/books/deep-work-spine.svg", "images/books/deep-work-back.svg", "images/books/deep-work-dim.svg"],
+    image: "images/books/deep-work-1.jpg",
+    images: ["images/books/deep-work-1.jpg", "images/books/deep-work-2.jpg", "images/books/deep-work-3.jpg", "images/books/deep-work-4.jpg"],
     desc: "Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.",
     specs: {
       length: "19.8 cm",
@@ -77,8 +77,8 @@ const PRODUCT_CATALOG = {
     badge: "Inspiring Classic",
     rating: "4.9",
     reviews: "2.1k",
-    image: "images/books/the-alchemist-cover.svg",
-    images: ["images/books/the-alchemist-cover.svg", "images/books/the-alchemist-spine.svg", "images/books/the-alchemist-back.svg", "images/books/the-alchemist-dim.svg"],
+    image: "images/books/the-alchemist-1.jpg",
+    images: ["images/books/the-alchemist-1.jpg", "images/books/the-alchemist-2.jpg", "images/books/the-alchemist-3.jpg", "images/books/the-alchemist-4.jpg"],
     desc: "A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.",
     specs: {
       length: "19.8 cm",
@@ -98,8 +98,8 @@ const PRODUCT_CATALOG = {
     badge: "Epic Masterpiece",
     rating: "4.9",
     reviews: "1.8k",
-    image: "images/books/the-kite-runner-cover.svg",
-    images: ["images/books/the-kite-runner-cover.svg", "images/books/the-kite-runner-spine.svg", "images/books/the-kite-runner-back.svg", "images/books/the-kite-runner-dim.svg"],
+    image: "images/books/the-kite-runner-1.jpg",
+    images: ["images/books/the-kite-runner-1.jpg", "images/books/the-kite-runner-2.jpg", "images/books/the-kite-runner-3.jpg", "images/books/the-kite-runner-4.jpg"],
     desc: "An unforgettable, heartbreaking story of the unlikely friendship between a wealthy boy and the son of his father's servant in Afghanistan.",
     specs: {
       length: "19.8 cm",
@@ -119,8 +119,8 @@ const PRODUCT_CATALOG = {
     badge: "Emotional Journey",
     rating: "4.9",
     reviews: "1.5k",
-    image: "images/books/thousand-splendid-suns-cover.svg",
-    images: ["images/books/thousand-splendid-suns-cover.svg", "images/books/thousand-splendid-suns-spine.svg", "images/books/thousand-splendid-suns-back.svg", "images/books/thousand-splendid-suns-dim.svg"],
+    image: "images/books/thousand-splendid-suns-1.jpg",
+    images: ["images/books/thousand-splendid-suns-1.jpg", "images/books/thousand-splendid-suns-2.jpg", "images/books/thousand-splendid-suns-3.jpg", "images/books/thousand-splendid-suns-4.jpg"],
     desc: "A breathtaking story of two women brought together by war and tragedy in Kabul. Unputdownable modern literature.",
     specs: {
       length: "19.8 cm",
@@ -140,8 +140,8 @@ const PRODUCT_CATALOG = {
     badge: "Spiritual Bestseller",
     rating: "4.9",
     reviews: "1.3k",
-    image: "images/books/secrets-of-divine-love-cover.svg",
-    images: ["images/books/secrets-of-divine-love-cover.svg", "images/books/secrets-of-divine-love-spine.svg", "images/books/secrets-of-divine-love-back.svg", "images/books/secrets-of-divine-love-dim.svg"],
+    image: "images/books/secrets-of-divine-love-1.jpg",
+    images: ["images/books/secrets-of-divine-love-1.jpg", "images/books/secrets-of-divine-love-2.jpg", "images/books/secrets-of-divine-love-3.jpg", "images/books/secrets-of-divine-love-4.jpg"],
     desc: "A heart-centered, practical guide to using the Quran and Islamic spirituality to awaken divine love, peace, and hope.",
     specs: {
       length: "21.6 cm",
@@ -161,8 +161,8 @@ const PRODUCT_CATALOG = {
     badge: "Mental Peace Guide",
     rating: "4.8",
     reviews: "920",
-    image: "images/books/reclaim-your-heart-cover.svg",
-    images: ["images/books/reclaim-your-heart-cover.svg", "images/books/reclaim-your-heart-spine.svg", "images/books/reclaim-your-heart-back.svg", "images/books/reclaim-your-heart-dim.svg"],
+    image: "images/books/reclaim-your-heart-1.jpg",
+    images: ["images/books/reclaim-your-heart-1.jpg", "images/books/reclaim-your-heart-2.jpg", "images/books/reclaim-your-heart-3.jpg", "images/books/reclaim-your-heart-4.jpg"],
     desc: "Manual on freeing the heart from life's attachments, overcoming emotional pain, and staying mentally strong as a student.",
     specs: {
       length: "20.3 cm",
@@ -182,8 +182,8 @@ const PRODUCT_CATALOG = {
     badge: "National Inspiration",
     rating: "4.9",
     reviews: "3.4k",
-    image: "images/books/wings-of-fire-cover.svg",
-    images: ["images/books/wings-of-fire-cover.svg", "images/books/wings-of-fire-spine.svg", "images/books/wings-of-fire-back.svg", "images/books/wings-of-fire-dim.svg"],
+    image: "images/books/wings-of-fire-1.jpg",
+    images: ["images/books/wings-of-fire-1.jpg", "images/books/wings-of-fire-2.jpg", "images/books/wings-of-fire-3.jpg", "images/books/wings-of-fire-4.jpg"],
     desc: "Inspiring autobiography of Dr. Kalam—from a humble boy in Rameswaram to leading India's space and missile programs.",
     specs: {
       length: "19.8 cm",
@@ -203,8 +203,8 @@ const PRODUCT_CATALOG = {
     badge: "Exam Rank Booster",
     rating: "4.7",
     reviews: "4.1k",
-    image: "images/books/lucent-gk-cover.svg",
-    images: ["images/books/lucent-gk-cover.svg", "images/books/lucent-gk-spine.svg", "images/books/lucent-gk-back.svg", "images/books/lucent-gk-dim.svg"],
+    image: "images/books/lucent-gk-1.jpg",
+    images: ["images/books/lucent-gk-1.jpg", "images/books/lucent-gk-2.jpg", "images/books/lucent-gk-3.jpg", "images/books/lucent-gk-4.jpg"],
     desc: "Essential handbook covering Indian History, Polity, Geography, Economy, and General Science. The Bible for JKSSB & SSC exams.",
     specs: {
       length: "24.0 cm",
@@ -224,8 +224,8 @@ const PRODUCT_CATALOG = {
     badge: "Grammar Foundation",
     rating: "4.9",
     reviews: "2.8k",
-    image: "images/books/wren-martin-cover.svg",
-    images: ["images/books/wren-martin-cover.svg", "images/books/wren-martin-spine.svg", "images/books/wren-martin-back.svg", "images/books/wren-martin-dim.svg"],
+    image: "images/books/wren-martin-1.jpg",
+    images: ["images/books/wren-martin-1.jpg", "images/books/wren-martin-2.jpg", "images/books/wren-martin-3.jpg", "images/books/wren-martin-4.jpg"],
     desc: "High School English Grammar and Composition. Comprehensive rules, sentence structures, vocabulary, and writing techniques.",
     specs: {
       length: "24.0 cm",
@@ -2906,17 +2906,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "320 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/atomic-habits-cover.svg",
-      "images/books/atomic-habits-spine.svg",
-      "images/books/atomic-habits-back.svg",
-      "images/books/atomic-habits-dim.svg"
+      "images/books/atomic-habits-1.jpg",
+      "images/books/atomic-habits-2.jpg",
+      "images/books/atomic-habits-3.jpg",
+      "images/books/atomic-habits-4.jpg"
     ],
-    "dimSvg": "images/books/atomic-habits-dim.svg",
+    "dimSvg": "images/books/atomic-habits-4.jpg",
     "allImages": [
-      "images/books/atomic-habits-cover.svg",
-      "images/books/atomic-habits-spine.svg",
-      "images/books/atomic-habits-back.svg",
-      "images/books/atomic-habits-dim.svg"
+      "images/books/atomic-habits-1.jpg",
+      "images/books/atomic-habits-2.jpg",
+      "images/books/atomic-habits-3.jpg",
+      "images/books/atomic-habits-4.jpg"
     ]
   },
   {
@@ -2935,17 +2935,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "256 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/psychology-of-money-cover.svg",
-      "images/books/psychology-of-money-spine.svg",
-      "images/books/psychology-of-money-back.svg",
-      "images/books/psychology-of-money-dim.svg"
+      "images/books/psychology-of-money-1.jpg",
+      "images/books/psychology-of-money-2.jpg",
+      "images/books/psychology-of-money-3.jpg",
+      "images/books/psychology-of-money-4.jpg"
     ],
-    "dimSvg": "images/books/psychology-of-money-dim.svg",
+    "dimSvg": "images/books/psychology-of-money-4.jpg",
     "allImages": [
-      "images/books/psychology-of-money-cover.svg",
-      "images/books/psychology-of-money-spine.svg",
-      "images/books/psychology-of-money-back.svg",
-      "images/books/psychology-of-money-dim.svg"
+      "images/books/psychology-of-money-1.jpg",
+      "images/books/psychology-of-money-2.jpg",
+      "images/books/psychology-of-money-3.jpg",
+      "images/books/psychology-of-money-4.jpg"
     ]
   },
   {
@@ -2964,17 +2964,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "304 pgs",
     "paper": "70 GSM Natural Paper",
     "photos": [
-      "images/books/deep-work-cover.svg",
-      "images/books/deep-work-spine.svg",
-      "images/books/deep-work-back.svg",
-      "images/books/deep-work-dim.svg"
+      "images/books/deep-work-1.jpg",
+      "images/books/deep-work-2.jpg",
+      "images/books/deep-work-3.jpg",
+      "images/books/deep-work-4.jpg"
     ],
-    "dimSvg": "images/books/deep-work-dim.svg",
+    "dimSvg": "images/books/deep-work-4.jpg",
     "allImages": [
-      "images/books/deep-work-cover.svg",
-      "images/books/deep-work-spine.svg",
-      "images/books/deep-work-back.svg",
-      "images/books/deep-work-dim.svg"
+      "images/books/deep-work-1.jpg",
+      "images/books/deep-work-2.jpg",
+      "images/books/deep-work-3.jpg",
+      "images/books/deep-work-4.jpg"
     ]
   },
   {
@@ -2993,17 +2993,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "208 pgs",
     "paper": "70 GSM Soft White",
     "photos": [
-      "images/books/the-alchemist-cover.svg",
-      "images/books/the-alchemist-spine.svg",
-      "images/books/the-alchemist-back.svg",
-      "images/books/the-alchemist-dim.svg"
+      "images/books/the-alchemist-1.jpg",
+      "images/books/the-alchemist-2.jpg",
+      "images/books/the-alchemist-3.jpg",
+      "images/books/the-alchemist-4.jpg"
     ],
-    "dimSvg": "images/books/the-alchemist-dim.svg",
+    "dimSvg": "images/books/the-alchemist-4.jpg",
     "allImages": [
-      "images/books/the-alchemist-cover.svg",
-      "images/books/the-alchemist-spine.svg",
-      "images/books/the-alchemist-back.svg",
-      "images/books/the-alchemist-dim.svg"
+      "images/books/the-alchemist-1.jpg",
+      "images/books/the-alchemist-2.jpg",
+      "images/books/the-alchemist-3.jpg",
+      "images/books/the-alchemist-4.jpg"
     ]
   },
   {
@@ -3022,17 +3022,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "384 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/the-kite-runner-cover.svg",
-      "images/books/the-kite-runner-spine.svg",
-      "images/books/the-kite-runner-back.svg",
-      "images/books/the-kite-runner-dim.svg"
+      "images/books/the-kite-runner-1.jpg",
+      "images/books/the-kite-runner-2.jpg",
+      "images/books/the-kite-runner-3.jpg",
+      "images/books/the-kite-runner-4.jpg"
     ],
-    "dimSvg": "images/books/the-kite-runner-dim.svg",
+    "dimSvg": "images/books/the-kite-runner-4.jpg",
     "allImages": [
-      "images/books/the-kite-runner-cover.svg",
-      "images/books/the-kite-runner-spine.svg",
-      "images/books/the-kite-runner-back.svg",
-      "images/books/the-kite-runner-dim.svg"
+      "images/books/the-kite-runner-1.jpg",
+      "images/books/the-kite-runner-2.jpg",
+      "images/books/the-kite-runner-3.jpg",
+      "images/books/the-kite-runner-4.jpg"
     ]
   },
   {
@@ -3051,17 +3051,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "432 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/thousand-splendid-suns-cover.svg",
-      "images/books/thousand-splendid-suns-spine.svg",
-      "images/books/thousand-splendid-suns-back.svg",
-      "images/books/thousand-splendid-suns-dim.svg"
+      "images/books/thousand-splendid-suns-1.jpg",
+      "images/books/thousand-splendid-suns-2.jpg",
+      "images/books/thousand-splendid-suns-3.jpg",
+      "images/books/thousand-splendid-suns-4.jpg"
     ],
-    "dimSvg": "images/books/thousand-splendid-suns-dim.svg",
+    "dimSvg": "images/books/thousand-splendid-suns-4.jpg",
     "allImages": [
-      "images/books/thousand-splendid-suns-cover.svg",
-      "images/books/thousand-splendid-suns-spine.svg",
-      "images/books/thousand-splendid-suns-back.svg",
-      "images/books/thousand-splendid-suns-dim.svg"
+      "images/books/thousand-splendid-suns-1.jpg",
+      "images/books/thousand-splendid-suns-2.jpg",
+      "images/books/thousand-splendid-suns-3.jpg",
+      "images/books/thousand-splendid-suns-4.jpg"
     ]
   },
   {
@@ -3080,17 +3080,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "400 pgs",
     "paper": "80 GSM Royal White",
     "photos": [
-      "images/books/secrets-of-divine-love-cover.svg",
-      "images/books/secrets-of-divine-love-spine.svg",
-      "images/books/secrets-of-divine-love-back.svg",
-      "images/books/secrets-of-divine-love-dim.svg"
+      "images/books/secrets-of-divine-love-1.jpg",
+      "images/books/secrets-of-divine-love-2.jpg",
+      "images/books/secrets-of-divine-love-3.jpg",
+      "images/books/secrets-of-divine-love-4.jpg"
     ],
-    "dimSvg": "images/books/secrets-of-divine-love-dim.svg",
+    "dimSvg": "images/books/secrets-of-divine-love-4.jpg",
     "allImages": [
-      "images/books/secrets-of-divine-love-cover.svg",
-      "images/books/secrets-of-divine-love-spine.svg",
-      "images/books/secrets-of-divine-love-back.svg",
-      "images/books/secrets-of-divine-love-dim.svg"
+      "images/books/secrets-of-divine-love-1.jpg",
+      "images/books/secrets-of-divine-love-2.jpg",
+      "images/books/secrets-of-divine-love-3.jpg",
+      "images/books/secrets-of-divine-love-4.jpg"
     ]
   },
   {
@@ -3109,17 +3109,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "240 pgs",
     "paper": "70 GSM Cream Paper",
     "photos": [
-      "images/books/reclaim-your-heart-cover.svg",
-      "images/books/reclaim-your-heart-spine.svg",
-      "images/books/reclaim-your-heart-back.svg",
-      "images/books/reclaim-your-heart-dim.svg"
+      "images/books/reclaim-your-heart-1.jpg",
+      "images/books/reclaim-your-heart-2.jpg",
+      "images/books/reclaim-your-heart-3.jpg",
+      "images/books/reclaim-your-heart-4.jpg"
     ],
-    "dimSvg": "images/books/reclaim-your-heart-dim.svg",
+    "dimSvg": "images/books/reclaim-your-heart-4.jpg",
     "allImages": [
-      "images/books/reclaim-your-heart-cover.svg",
-      "images/books/reclaim-your-heart-spine.svg",
-      "images/books/reclaim-your-heart-back.svg",
-      "images/books/reclaim-your-heart-dim.svg"
+      "images/books/reclaim-your-heart-1.jpg",
+      "images/books/reclaim-your-heart-2.jpg",
+      "images/books/reclaim-your-heart-3.jpg",
+      "images/books/reclaim-your-heart-4.jpg"
     ]
   },
   {
@@ -3138,17 +3138,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "180 pgs",
     "paper": "70 GSM Soft White",
     "photos": [
-      "images/books/wings-of-fire-cover.svg",
-      "images/books/wings-of-fire-spine.svg",
-      "images/books/wings-of-fire-back.svg",
-      "images/books/wings-of-fire-dim.svg"
+      "images/books/wings-of-fire-1.jpg",
+      "images/books/wings-of-fire-2.jpg",
+      "images/books/wings-of-fire-3.jpg",
+      "images/books/wings-of-fire-4.jpg"
     ],
-    "dimSvg": "images/books/wings-of-fire-dim.svg",
+    "dimSvg": "images/books/wings-of-fire-4.jpg",
     "allImages": [
-      "images/books/wings-of-fire-cover.svg",
-      "images/books/wings-of-fire-spine.svg",
-      "images/books/wings-of-fire-back.svg",
-      "images/books/wings-of-fire-dim.svg"
+      "images/books/wings-of-fire-1.jpg",
+      "images/books/wings-of-fire-2.jpg",
+      "images/books/wings-of-fire-3.jpg",
+      "images/books/wings-of-fire-4.jpg"
     ]
   },
   {
@@ -3167,17 +3167,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "450 pgs",
     "paper": "65 GSM Crisp White",
     "photos": [
-      "images/books/lucent-gk-cover.svg",
-      "images/books/lucent-gk-spine.svg",
-      "images/books/lucent-gk-back.svg",
-      "images/books/lucent-gk-dim.svg"
+      "images/books/lucent-gk-1.jpg",
+      "images/books/lucent-gk-2.jpg",
+      "images/books/lucent-gk-3.jpg",
+      "images/books/lucent-gk-4.jpg"
     ],
-    "dimSvg": "images/books/lucent-gk-dim.svg",
+    "dimSvg": "images/books/lucent-gk-4.jpg",
     "allImages": [
-      "images/books/lucent-gk-cover.svg",
-      "images/books/lucent-gk-spine.svg",
-      "images/books/lucent-gk-back.svg",
-      "images/books/lucent-gk-dim.svg"
+      "images/books/lucent-gk-1.jpg",
+      "images/books/lucent-gk-2.jpg",
+      "images/books/lucent-gk-3.jpg",
+      "images/books/lucent-gk-4.jpg"
     ]
   },
   {
@@ -3196,17 +3196,17 @@ const BOOK_CATALOG_DATA = [
     "pages": "520 pgs",
     "paper": "70 GSM Natural White",
     "photos": [
-      "images/books/wren-martin-cover.svg",
-      "images/books/wren-martin-spine.svg",
-      "images/books/wren-martin-back.svg",
-      "images/books/wren-martin-dim.svg"
+      "images/books/wren-martin-1.jpg",
+      "images/books/wren-martin-2.jpg",
+      "images/books/wren-martin-3.jpg",
+      "images/books/wren-martin-4.jpg"
     ],
-    "dimSvg": "images/books/wren-martin-dim.svg",
+    "dimSvg": "images/books/wren-martin-4.jpg",
     "allImages": [
-      "images/books/wren-martin-cover.svg",
-      "images/books/wren-martin-spine.svg",
-      "images/books/wren-martin-back.svg",
-      "images/books/wren-martin-dim.svg"
+      "images/books/wren-martin-1.jpg",
+      "images/books/wren-martin-2.jpg",
+      "images/books/wren-martin-3.jpg",
+      "images/books/wren-martin-4.jpg"
     ]
   }
 ];
