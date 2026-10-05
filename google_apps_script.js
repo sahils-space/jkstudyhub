@@ -94,12 +94,56 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
+    // ACTION: Student Inquiry Submission
+    if (p.action === "inquiry") {
+      var inqTime = p.timestamp || new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      var inqName = p.name || "Student";
+      var inqEmail = p.email || "No email";
+      var inqClass = p.class || "General";
+      var inqMessage = p.message || "";
+      
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var inqSheet = ss.getSheetByName("Inquiries");
+      if (!inqSheet) {
+        inqSheet = ss.insertSheet("Inquiries");
+        inqSheet.appendRow(["Timestamp", "Student Name", "Email", "Class", "Message", "Status"]);
+        inqSheet.getRange(1, 1, 1, 6).setFontWeight("bold").setBackground("#e0f2fe");
+      }
+      inqSheet.appendRow([inqTime, inqName, inqEmail, inqClass, inqMessage, "New"]);
+      
+      // Auto-dispatch Email to info.jkstudyhub@gmail.com
+      try {
+        MailApp.sendEmail({
+          to: "info.jkstudyhub@gmail.com",
+          subject: "📩 New Student Inquiry: " + inqName + " (" + inqClass + ")",
+          htmlBody: "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 600px;'>" +
+            "<h2 style='color: #2563eb; margin-top: 0;'>New Student Inquiry - JK Study Hub</h2>" +
+            "<p><strong>Student Name:</strong> " + inqName + "</p>" +
+            "<p><strong>Email:</strong> <a href='mailto:" + inqEmail + "'>" + inqEmail + "</a></p>" +
+            "<p><strong>Class:</strong> " + inqClass + "</p>" +
+            "<p><strong>Received At:</strong> " + inqTime + "</p>" +
+            "<div style='background: #f8fafc; padding: 14px; border-left: 4px solid #2563eb; margin: 15px 0; border-radius: 4px;'>" +
+            "<strong>Student Query:</strong><br><p style='margin: 8px 0 0 0; white-space: pre-wrap;'>" + inqMessage + "</p>" +
+            "</div>" +
+            "<p style='font-size: 12px; color: #64748b;'>Reply directly to student: <a href='mailto:" + inqEmail + "'>" + inqEmail + "</a></p>" +
+            "</div>"
+        });
+      } catch (mailErr) {
+        Logger.log("MailApp error: " + mailErr);
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        message: "Inquiry recorded and email notification dispatched"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     // ACTION: New Order Placement
     var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
     var orderId = p.order_id || ("OD" + Date.now() + Math.floor(Math.random() * 1000));
     var name = p.name || "Customer";
     var phone = p.phone || "";
-    var address = p.address || "Pattan, Baramulla - 193121";
+    var address = p.address || "Baramulla, Jammu & Kashmir - 193121";
     var product = p.product || "";
     var amount = p.amount || "";
     var txnId = p.txn_id || "";
@@ -118,6 +162,27 @@ function doPost(e) {
       status,
       notes
     ]);
+
+    // Auto-dispatch Order Alert Email to info.jkstudyhub@gmail.com
+    try {
+      MailApp.sendEmail({
+        to: "info.jkstudyhub@gmail.com",
+        subject: "🛍️ New Order: " + orderId + " - " + name + " (₹" + amount + ")",
+        htmlBody: "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 600px;'>" +
+          "<h2 style='color: #10b981; margin-top: 0;'>🎉 New Order Placed!</h2>" +
+          "<p><strong>Order ID:</strong> " + orderId + "</p>" +
+          "<p><strong>Customer Name:</strong> " + name + "</p>" +
+          "<p><strong>Phone:</strong> <a href='tel:" + phone + "'>" + phone + "</a></p>" +
+          "<p><strong>Delivery Address:</strong> " + address + "</p>" +
+          "<p><strong>Product Details:</strong> " + product + "</p>" +
+          "<p><strong>Amount Paid:</strong> ₹" + amount + "</p>" +
+          "<p><strong>Razorpay Txn ID:</strong> " + txnId + "</p>" +
+          "<p><strong>Status:</strong> " + status + "</p>" +
+          "</div>"
+      });
+    } catch (orderMailErr) {
+      Logger.log("Order mail error: " + orderMailErr);
+    }
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",

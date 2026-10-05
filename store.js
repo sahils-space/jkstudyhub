@@ -1058,7 +1058,7 @@ function getStatusStepInfo(rawStatus) {
 // --- AUTHORIZED STORE TEAM ROLES ---
 // Sahil's Master Owner Credentials (Auto-detected on login):
 const STORE_OWNER_PHONES = ['9622605714'];
-const STORE_OWNER_EMAILS = ['sahilsspace20@gmail.com', 'admin@jkstudyhub.online'];
+const STORE_OWNER_EMAILS = ['sahilsspace20@gmail.com', 'info.jkstudyhub@gmail.com', 'admin@jkstudyhub.online'];
 
 // Delivery Team Phones (Add your delivery boy numbers here anytime):
 const DELIVERY_BOY_PHONES = [
@@ -1537,8 +1537,8 @@ function printOrderReceipt(orderId) {
           <h2 style="font-size: 20px; font-weight: 800; margin: 0; color: #0f172a; display: flex; align-items: center; gap: 8px;">
             <i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> JK STUDY HUB
           </h2>
-          <p style="margin: 3px 0 0; font-size: 12px; color: #475569;">Pattan, Baramulla, Jammu &amp; Kashmir - 193121</p>
-          <p style="margin: 2px 0 0; font-size: 12px; color: #475569;">Support Contact: +91 9622605714</p>
+          <p style="margin: 3px 0 0; font-size: 12px; color: #475569;">Baramulla, Jammu &amp; Kashmir - 193121</p>
+          <p style="margin: 2px 0 0; font-size: 12px; color: #475569;">Email: info.jkstudyhub@gmail.com | Phone: +91 9622605714</p>
         </div>
         <div style="text-align: right;">
           <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; display: inline-block;">

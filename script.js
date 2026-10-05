@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('scroll', highlightNavOnScroll);
 
-  // Inquiry Contact Form Handling
+  // Inquiry Contact Form Handling (Automated Email & WhatsApp Dispatch)
   const contactForm = document.getElementById('contactForm');
   const formFeedback = document.getElementById('formFeedback');
 
@@ -61,17 +61,74 @@ document.addEventListener('DOMContentLoaded', () => {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const studentName = document.getElementById('name').value;
-      const studentClass = document.getElementById('studentClass').value;
+      const nameInput = document.getElementById('name');
+      const emailInput = document.getElementById('email');
+      const classInput = document.getElementById('studentClass');
+      const messageInput = document.getElementById('message');
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
 
+      const studentName = nameInput ? nameInput.value.trim() : '';
+      const studentEmail = emailInput ? emailInput.value.trim() : '';
+      const studentClass = classInput ? classInput.value : '';
+      const studentMessage = messageInput ? messageInput.value.trim() : '';
+
+      if (!studentName || !studentEmail || !studentClass || !studentMessage) {
+        formFeedback.className = 'form-feedback';
+        formFeedback.style.display = 'block';
+        formFeedback.style.backgroundColor = '#fef2f2';
+        formFeedback.style.color = '#dc2626';
+        formFeedback.style.border = '1px solid #fecaca';
+        formFeedback.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please fill in all fields before sending.';
+        return;
+      }
+
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : 'Send Message';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+      }
+
+      // 1. Dispatch to Google Apps Script (Auto-sends Email to info.jkstudyhub@gmail.com & logs to Sheet)
+      const scriptEndpoint = (typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec');
+      const formData = new FormData();
+      formData.append('action', 'inquiry');
+      formData.append('name', studentName);
+      formData.append('email', studentEmail);
+      formData.append('class', studentClass);
+      formData.append('message', studentMessage);
+      formData.append('timestamp', new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
+
+      fetch(scriptEndpoint, { method: 'POST', body: formData, mode: 'no-cors' })
+        .catch(() => {});
+
+      // 2. Instant WhatsApp Integration (Direct ping to Sahil's WhatsApp +91 96226 05714)
+      const waText = `*📩 New Student Inquiry - JK Study Hub*%0A%0A` +
+        `👤 *Name:* ${encodeURIComponent(studentName)}%0A` +
+        `📧 *Email:* ${encodeURIComponent(studentEmail)}%0A` +
+        `📚 *Class:* ${encodeURIComponent(studentClass)}%0A` +
+        `💬 *Message:*%0A${encodeURIComponent(studentMessage)}`;
+      const waUrl = `https://wa.me/919622605714?text=${waText}`;
+
+      // Open WhatsApp in new tab/app
+      window.open(waUrl, '_blank');
+
+      // 3. UI Confirmation
       formFeedback.className = 'form-feedback success';
-      formFeedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Thank you, <strong>${studentName}</strong>! Your inquiry for <strong>${studentClass}</strong> has been received. Our team will contact you shortly.`;
+      formFeedback.style.display = 'block';
+      formFeedback.style.backgroundColor = '#dcfce7';
+      formFeedback.style.color = '#15803d';
+      formFeedback.style.border = '1px solid #bbf7d0';
+      formFeedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Thank you, <strong>${studentName}</strong>! Your inquiry has been sent to our team via <strong>Email</strong> and <strong>WhatsApp</strong>. We will reply to ${studentEmail} shortly.`;
       
       contactForm.reset();
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+      }
 
       setTimeout(() => {
         formFeedback.style.display = 'none';
-      }, 6000);
+      }, 10000);
     });
   }
 
