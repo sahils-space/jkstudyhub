@@ -1851,11 +1851,11 @@ const SYLLABUS_PDF_DATA = {
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(res => {
         const email = (res.user.email || '').trim().toLowerCase();
-        const isOwner = email.includes('sahilsspace') || email.includes('info.jkstudyhub') || email.includes('sahilzahoor') || email.endsWith('@jkstudyhub.online');
-        if (isOwner) {
+        const isOwner = (email === 'sahilsspace20@gmail.com' || email === 'info.jkstudyhub@gmail.com');
+        if (!isOwner) {
           try {
-            localStorage.setItem('jk_admin_unlocked', 'true');
-            sessionStorage.setItem('jk_admin_unlocked', 'true');
+            localStorage.removeItem('jk_admin_unlocked');
+            sessionStorage.removeItem('jk_admin_unlocked');
           } catch(e) {}
         }
         setLoggedInUser({

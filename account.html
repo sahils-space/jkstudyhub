@@ -160,7 +160,7 @@
 
       <ul class="account-menu">
         <li><a href="#orders" id="menu-orders" onclick="switchTab('orders')"><i class="fa-solid fa-box"></i> My Orders <i class="fa-solid fa-chevron-right float-right"></i></a></li>
-        <li id="menu-item-manage-products" style="display:none;"><a href="#manage-products" id="menu-manage-products" onclick="switchTab('manage-products')" style="background: #eff6ff; color: #1e40af; font-weight: 700; border-left: 3px solid #2563eb;"><i class="fa-solid fa-crown" style="color: #2563eb;"></i> 👑 Manage Products <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+        <li id="menu-item-manage-products" style="display:none !important;"><a href="#manage-products" id="menu-manage-products" onclick="switchTab('manage-products')" style="background: #eff6ff; color: #1e40af; font-weight: 700; border-left: 3px solid #2563eb;"><i class="fa-solid fa-crown" style="color: #2563eb;"></i> 👑 Manage Products <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#addresses" id="menu-addresses" onclick="switchTab('addresses')"><i class="fa-solid fa-location-dot"></i> Addresses <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#wishlist" id="menu-wishlist" onclick="switchTab('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#details" id="menu-details" onclick="switchTab('details')"><i class="fa-regular fa-user"></i> Account details <i class="fa-solid fa-chevron-right float-right"></i></a></li>
@@ -237,24 +237,37 @@
 
       <!-- Owner Manage & Add Products Tab -->
       <div id="tab-manage-products" class="tab-pane">
-        <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(37,99,235,0.06);">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 28px;">👑</span>
-              <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1e3a8a; margin: 0;">Owner Product &amp; Catalog Management</h2>
-                <p style="font-size: 13px; color: #475569; margin: 3px 0 0;">Add new books, notes, or stationery items. Once published, items appear instantly across the whole website for all students.</p>
-              </div>
-            </div>
-            <span style="background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">Owner Authority</span>
-          </div>
+
+        <!-- Unauthorized Gate: Visible to students and logged-out users -->
+        <div id="ownerForbiddenState" style="background: white; border: 1.5px dashed #fca5a5; border-radius: 16px; padding: 45px 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <span style="font-size: 44px; display: block; margin-bottom: 12px;">🔒</span>
+          <h3 style="color: #991b1b; font-size: 18px; font-weight: 800; margin: 0 0 8px;">Owner Authentication Required</h3>
+          <p style="color: #64748b; font-size: 13.5px; max-width: 500px; margin: 0 auto 20px; line-height: 1.5;">This catalog management dashboard is exclusively restricted to the JK Study Hub store owner. Students and general visitors cannot add or modify products. Please log in with your official owner email or phone number to continue.</p>
+          <button type="button" class="yellow-btn" style="width: auto; padding: 10px 28px; display: inline-flex; align-items: center; gap: 8px;" onclick="openPhoneAuthModal()">
+            <i class="fa-solid fa-lock-open"></i> Login as Owner
+          </button>
         </div>
 
-        <!-- Add New Product Form -->
-        <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-          <h3 style="font-size: 16.5px; font-weight: 800; color: #0f172a; margin: 0 0 16px; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-plus-circle" style="color: #2563eb;"></i> Add New Product to Store
-          </h3>
+        <!-- Authorized Content: Hidden until verified store owner logs in -->
+        <div id="ownerAuthorizedContent" style="display: none;">
+          <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(37,99,235,0.06);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 28px;">👑</span>
+                <div>
+                  <h2 style="font-size: 18px; font-weight: 800; color: #1e3a8a; margin: 0;">Owner Product &amp; Catalog Management</h2>
+                  <p style="font-size: 13px; color: #475569; margin: 3px 0 0;">Add new books, notes, or stationery items. Once published, items appear instantly across the whole website for all students.</p>
+                </div>
+              </div>
+              <span style="background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">Owner Authority</span>
+            </div>
+          </div>
+
+          <!-- Add New Product Form -->
+          <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+            <h3 style="font-size: 16.5px; font-weight: 800; color: #0f172a; margin: 0 0 16px; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-plus-circle" style="color: #2563eb;"></i> Add New Product to Store
+            </h3>
 
           <form id="ownerAddProductForm" onsubmit="handleOwnerProductSubmit(event)">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
@@ -373,6 +386,7 @@
             <p style="color: #64748b; font-size: 13px;">Loading published products...</p>
           </div>
         </div>
+        </div>
       </div>
 
     </div>
@@ -422,6 +436,18 @@
   </script>
   <script>
     function switchTab(tabId) {
+      if (tabId === 'manage-products') {
+        const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+        const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
+        if (!isOwner) {
+          tabId = 'orders';
+          window.location.hash = 'orders';
+          if (typeof showToast === 'function') {
+            showToast("🔒 Owner section is strictly restricted to store owners.");
+          }
+        }
+      }
+
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.account-menu a').forEach(el => el.classList.remove('active'));
       
@@ -451,8 +477,19 @@
     }
 
     window.addEventListener('load', () => {
+      if (typeof updateOwnerUIProtection === 'function') {
+        updateOwnerUIProtection();
+      }
+      renderAccountDashboard();
+
       const hash = window.location.hash.replace('#', '');
-      if (hash && document.getElementById('tab-' + hash)) {
+      const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+      const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
+
+      if (hash === 'manage-products' && !isOwner) {
+        window.location.hash = 'orders';
+        switchTab('orders');
+      } else if (hash && document.getElementById('tab-' + hash)) {
         switchTab(hash);
       } else {
         // Default on desktop is orders, on mobile is menu
@@ -461,11 +498,11 @@
         }
       }
       
-      renderAccountDashboard();
       if (typeof renderAccountOrders === 'function') {
         renderAccountOrders();
       }
       setTimeout(() => {
+        if (typeof updateOwnerUIProtection === 'function') updateOwnerUIProtection();
         renderAccountDashboard();
         if (typeof renderAccountOrders === 'function') renderAccountOrders();
       }, 300);

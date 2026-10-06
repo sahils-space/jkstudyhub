@@ -441,6 +441,9 @@ function setCurrentUser(user) {
   } else {
     try { localStorage.removeItem('jk_study_user'); } catch(e) {}
   }
+  if (typeof updateOwnerUIProtection === 'function') {
+    updateOwnerUIProtection();
+  }
   updateAuthUI();
   updateNavBadges();
   if (typeof renderAccountDashboard === 'function') {
@@ -452,25 +455,28 @@ function setCurrentUser(user) {
 function updateNavBadges() {
   const cart = getCart();
   const wishlist = getWishlist();
-  const orders = getOrders();
   const user = getCurrentUser();
-  const role = getUserStoreRole(user);
-  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
   
-  let userOrders = orders;
-  if (!isStaff && user) {
+  let totalOrdersCount = 0;
+  if (isOwner) {
+    totalOrdersCount = getOrders().length;
+  } else if (user) {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
     const uEmail = String(user.email || '').trim().toLowerCase();
-    userOrders = orders.filter(o => {
+    const orders = getOrders();
+    const userOrders = orders.filter(o => {
       const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
-      const oEmail = String(o.userEmail || '').trim().toLowerCase();
+      const oEmail = String(o.userEmail || o.email || '').trim().toLowerCase();
       if (uPhone && oPhone === uPhone) return true;
       if (uEmail && oEmail === uEmail) return true;
       return false;
     });
+    totalOrdersCount = userOrders.length;
+  } else {
+    totalOrdersCount = 0;
   }
-  
-  const totalOrdersCount = isStaff ? orders.length : userOrders.length;
+
   const totalCartQty = cart.reduce((acc, item) => acc + (parseInt(item.qty) || 1), 0);
   const totalWishlistCount = wishlist.length;
 
@@ -591,7 +597,16 @@ function handleStoreSignOut() {
   if (typeof firebase !== 'undefined' && firebase.auth) {
     firebase.auth().signOut().catch(() => {});
   }
+  try {
+    localStorage.removeItem('jk_admin_unlocked');
+    sessionStorage.removeItem('jk_admin_unlocked');
+  } catch(e) {}
   setCurrentUser(null);
+  if (typeof updateOwnerUIProtection === 'function') {
+    updateOwnerUIProtection();
+  }
+  if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
+  if (typeof renderAccountOrders === 'function') renderAccountOrders();
   showToast("You have signed out successfully.");
 }
 
@@ -1057,29 +1072,30 @@ function getStatusStepInfo(rawStatus) {
 
 // --- AUTHORIZED STORE TEAM ROLES ---
 // Master Owner Credentials & Identity Matcher:
-const STORE_OWNER_PHONES = ['9622605714'];
-const STORE_OWNER_EMAILS = [
+const STRICT_STORE_OWNER_PHONES = ['9622605714'];
+const STRICT_STORE_OWNER_EMAILS = [
   'sahilsspace20@gmail.com', 
-  'info.jkstudyhub@gmail.com', 
-  'admin@jkstudyhub.online',
-  'sahilzahoor@gmail.com',
-  'sahilzahoor20@gmail.com'
+  'info.jkstudyhub@gmail.com'
 ];
 
 function isOwnerIdentity(email, phone) {
   const cleanPhone = String(phone || '').replace(/\D/g, '').slice(-10);
   const cleanEmail = String(email || '').trim().toLowerCase();
 
-  if (cleanPhone && (cleanPhone === '9622605714' || STORE_OWNER_PHONES.some(p => p.slice(-10) === cleanPhone))) {
+  if (cleanPhone && STRICT_STORE_OWNER_PHONES.includes(cleanPhone)) {
     return true;
   }
-  if (cleanEmail) {
-    if (STORE_OWNER_EMAILS.includes(cleanEmail)) return true;
-    if (cleanEmail.includes('sahilsspace') || cleanEmail.includes('info.jkstudyhub') || cleanEmail.includes('sahilzahoor') || cleanEmail.endsWith('@jkstudyhub.online')) {
-      return true;
-    }
+  if (cleanEmail && STRICT_STORE_OWNER_EMAILS.includes(cleanEmail)) {
+    return true;
   }
   return false;
+}
+
+function isStrictStoreOwner(user) {
+  if (!user) return false;
+  const phone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+  const email = String(user.email || '').trim().toLowerCase();
+  return isOwnerIdentity(email, phone);
 }
 
 // Delivery Team Phones:
@@ -1088,23 +1104,13 @@ const DELIVERY_BOY_PHONES = [
 ];
 
 function getUserStoreRole(user) {
-  // 1. Check persistent storage flags
-  if (localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true') {
-    return 'owner';
-  }
   if (!user) return 'student';
 
-  const phone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
-  const email = String(user.email || '').trim().toLowerCase();
-
-  if (user.isOwner || isOwnerIdentity(email, phone)) {
-    try {
-      localStorage.setItem('jk_admin_unlocked', 'true');
-      sessionStorage.setItem('jk_admin_unlocked', 'true');
-    } catch(e) {}
+  if (isStrictStoreOwner(user)) {
     return 'owner';
   }
 
+  const phone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
   if (phone && DELIVERY_BOY_PHONES.some(p => p.slice(-10) === phone)) {
     return 'delivery';
   }
@@ -1113,57 +1119,58 @@ function getUserStoreRole(user) {
 
 function isAdminUnlocked() {
   const user = getCurrentUser();
-  const role = getUserStoreRole(user);
-  if (role === 'owner' || role === 'delivery') return true;
-  return localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true';
+  if (!user) return false;
+  return isStrictStoreOwner(user);
 }
 
-let secretAdminClickCount = 0;
-function handleSecretAdminClick() {
-  secretAdminClickCount++;
-  if (secretAdminClickCount >= 3) {
-    secretAdminClickCount = 0;
-    promptAdminLogin();
-  }
-}
-
-function promptAdminLogin() {
-  const pin = prompt("Enter JK Study Hub Admin PIN:", "");
-  if (pin === "9622" || pin === "1234") {
-    localStorage.setItem('jk_admin_unlocked', 'true');
-    sessionStorage.setItem('jk_admin_unlocked', 'true');
-    showToast("👑 Store Owner Admin Mode Unlocked!");
-    if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
-  } else if (pin !== null) {
-    alert("Incorrect Admin PIN.");
-  }
-}
-
-function toggleAdminAccess() {
+function updateOwnerUIProtection() {
   const user = getCurrentUser();
-  const role = getUserStoreRole(user);
-  
-  if (role === 'owner') {
-    showToast("👑 You are signed in as Store Owner (Admin).");
-    return;
-  }
-  if (role === 'delivery') {
-    showToast("🚚 You are signed in as Delivery Partner.");
-    return;
-  }
+  const isOwner = isStrictStoreOwner(user);
 
-  if (isAdminUnlocked()) {
-    if (confirm("Lock Store Admin Mode?")) {
+  // If not owner, purge any lingering admin keys
+  if (!isOwner) {
+    try {
       localStorage.removeItem('jk_admin_unlocked');
       sessionStorage.removeItem('jk_admin_unlocked');
-      showToast("Store Admin Mode locked.");
-      if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
-    }
-    return;
+    } catch(e) {}
   }
-  
-  promptAdminLogin();
+
+  // Sidebar item in account.html
+  const manageMenuEl = document.getElementById('menu-item-manage-products');
+  if (manageMenuEl) {
+    manageMenuEl.style.display = isOwner ? 'block' : 'none';
+  }
+
+  // Forbidden / Authorized state inside tab-manage-products in account.html
+  const forbiddenBox = document.getElementById('ownerForbiddenState');
+  const authorizedBox = document.getElementById('ownerAuthorizedContent');
+  if (forbiddenBox && authorizedBox) {
+    if (isOwner) {
+      forbiddenBox.style.display = 'none';
+      authorizedBox.style.display = 'block';
+    } else {
+      forbiddenBox.style.display = 'block';
+      authorizedBox.style.display = 'none';
+    }
+  }
+
+  // Floating banner on store.html
+  const ownerActionBar = document.getElementById('ownerStoreActionBar');
+  if (ownerActionBar) {
+    ownerActionBar.style.display = isOwner ? 'flex' : 'none';
+  }
 }
+
+// Clean up any stale admin tokens on page startup
+(function enforceAuthIntegrity() {
+  try {
+    const user = getCurrentUser();
+    if (!user || !isStrictStoreOwner(user)) {
+      localStorage.removeItem('jk_admin_unlocked');
+      sessionStorage.removeItem('jk_admin_unlocked');
+    }
+  } catch(e) {}
+})();
 
 function updateOrderStatusByAdmin(orderId, newStatus) {
   let orders = getOrders();
@@ -1290,32 +1297,18 @@ function renderOrdersPage() {
   if (!container) return;
 
   const user = getCurrentUser();
-  const role = getUserStoreRole(user);
-  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
 
   // Update Admin Toggle button state
   const adminBtn = document.getElementById('adminToggleBtn');
   if (adminBtn) {
-    if (role === 'owner') {
+    if (isOwner) {
       adminBtn.style.display = 'inline-flex';
       adminBtn.innerHTML = '<i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Store Owner (Admin)';
       adminBtn.style.background = '#fef3c7';
       adminBtn.style.color = '#b45309';
       adminBtn.style.borderColor = '#fcd34d';
-    } else if (role === 'delivery') {
-      adminBtn.style.display = 'inline-flex';
-      adminBtn.innerHTML = '<i class="fa-solid fa-truck" style="color: #2563eb;"></i> Delivery Partner';
-      adminBtn.style.background = '#eff6ff';
-      adminBtn.style.color = '#1e40af';
-      adminBtn.style.borderColor = '#bfdbfe';
-    } else if (sessionStorage.getItem('jk_admin_unlocked') === 'true') {
-      adminBtn.style.display = 'inline-flex';
-      adminBtn.innerHTML = '<i class="fa-solid fa-lock-open" style="color: #10b981;"></i> Admin Active (Exit)';
-      adminBtn.style.background = '#dcfce7';
-      adminBtn.style.color = '#15803d';
-      adminBtn.style.borderColor = '#86efac';
     } else {
-      // Normal students & visitors: completely HIDE the admin button!
       adminBtn.style.display = 'none';
     }
   }
@@ -1682,12 +1675,11 @@ function syncOrdersWithGoogleSheet() {
   if (!SCRIPT_URL) return;
 
   const user = getCurrentUser();
-  const role = getUserStoreRole(user);
-  const isStaff = (role === 'owner' || role === 'delivery' || localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  if (!user) return; // Don't download orders if not logged in
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
   
   let fetchUrl = SCRIPT_URL + '?action=get_orders';
-  if (!isStaff) {
-    if (!user) return; // Don't download orders if not logged in
+  if (!isOwner) {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
     if (!uPhone) return;
     fetchUrl += '&phone=' + encodeURIComponent(uPhone);
@@ -1699,8 +1691,23 @@ function syncOrdersWithGoogleSheet() {
       .then(res => res.json())
       .then(data => {
         if (data && data.status === 'success' && Array.isArray(data.orders)) {
-          let localOrders = getOrders(); // Never wipe existing local orders
+          let localOrders = getOrders();
           let updated = false;
+
+          // For normal students: purge any foreign orders leaked in previous sessions
+          if (!isOwner) {
+            const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+            const uEmail = String(user.email || '').trim().toLowerCase();
+            const cleaned = localOrders.filter(l => {
+              const lPhone = String(l.phone || '').replace(/\D/g, '').slice(-10);
+              const lEmail = String(l.userEmail || l.email || '').trim().toLowerCase();
+              return (uPhone && lPhone === uPhone) || (uEmail && lEmail === uEmail);
+            });
+            if (cleaned.length !== localOrders.length) {
+              localOrders = cleaned;
+              updated = true;
+            }
+          }
 
           data.orders.forEach(remote => {
             const match = localOrders.find(l => l.orderId === remote.orderId || (l.txnId && l.txnId === remote.txnId));
@@ -2179,9 +2186,13 @@ function initShop() {
     if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   }
 
-  const ownerActionBar = document.getElementById('ownerStoreActionBar');
-  if (ownerActionBar) {
-    ownerActionBar.style.display = (typeof isAdminUnlocked === 'function' && isAdminUnlocked()) ? 'flex' : 'none';
+  if (typeof updateOwnerUIProtection === 'function') {
+    updateOwnerUIProtection();
+  } else {
+    const ownerActionBar = document.getElementById('ownerStoreActionBar');
+    if (ownerActionBar) {
+      ownerActionBar.style.display = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(getCurrentUser())) ? 'flex' : 'none';
+    }
   }
 
   if (typeof syncCustomProductsWithSheet === 'function') {
@@ -2544,7 +2555,7 @@ function handleGooglePopupAuth() {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider).then(res => {
       const email = (res.user.email || '').trim().toLowerCase();
-      const isOwner = isOwnerIdentity(email, res.user.phoneNumber);
+      const isOwner = isStrictStoreOwner({ email: email, phoneNumber: res.user.phoneNumber });
       const user = {
         displayName: res.user.displayName,
         email: res.user.email,
@@ -2553,10 +2564,10 @@ function handleGooglePopupAuth() {
         uid: res.user.uid,
         isOwner: isOwner
       };
-      if (isOwner) {
+      if (!isOwner) {
         try {
-          localStorage.setItem('jk_admin_unlocked', 'true');
-          sessionStorage.setItem('jk_admin_unlocked', 'true');
+          localStorage.removeItem('jk_admin_unlocked');
+          sessionStorage.removeItem('jk_admin_unlocked');
         } catch(e) {}
       }
       setCurrentUser(user);
@@ -2582,7 +2593,7 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
     firebase.auth().onAuthStateChanged(fbUser => {
       if (fbUser) {
         const email = (fbUser.email || '').trim().toLowerCase();
-        const isOwner = isOwnerIdentity(email, fbUser.phoneNumber);
+        const isOwner = isStrictStoreOwner({ email: email, phoneNumber: fbUser.phoneNumber });
         const current = getCurrentUser();
         if (!current || current.email !== fbUser.email) {
           const user = {
@@ -2593,10 +2604,10 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
             uid: fbUser.uid,
             isOwner: isOwner
           };
-          if (isOwner) {
+          if (!isOwner) {
             try {
-              localStorage.setItem('jk_admin_unlocked', 'true');
-              sessionStorage.setItem('jk_admin_unlocked', 'true');
+              localStorage.removeItem('jk_admin_unlocked');
+              sessionStorage.removeItem('jk_admin_unlocked');
             } catch(e) {}
           }
           setCurrentUser(user);
@@ -2642,10 +2653,9 @@ function renderAccountDashboard() {
   const profileCard = document.getElementById('sidebarProfileCard');
   if (!profileCard) return;
 
-  const isOwnerStaff = (typeof isAdminUnlocked === 'function' && isAdminUnlocked());
-  const manageMenuEl = document.getElementById('menu-item-manage-products');
-  if (manageMenuEl) {
-    manageMenuEl.style.display = isOwnerStaff ? 'block' : 'none';
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
+  if (typeof updateOwnerUIProtection === 'function') {
+    updateOwnerUIProtection();
   }
 
   if (user) {
@@ -2653,7 +2663,7 @@ function renderAccountDashboard() {
     const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
     profileCard.innerHTML = `
       <h3 style="font-size: 18px; margin-bottom: 5px;">Hi, ${firstName}!</h3>
-      <p style="margin-bottom: 15px; color: #475569;"><i class="fa-solid fa-mobile-screen"></i> +91 ${phone}</p>
+      <p style="margin-bottom: 15px; color: #475569;"><i class="fa-solid fa-mobile-screen"></i> +91 ${phone || (user.email ? user.email.split('@')[0] : '')}</p>
       <button class="yellow-btn" style="background: #f87171; color: white;" onclick="handleStoreSignOut()">Sign Out</button>
     `;
     
@@ -2662,12 +2672,24 @@ function renderAccountDashboard() {
     if (activeMenu) {
       const tabId = activeMenu.id.replace('menu-', '');
       if (tabId === 'orders') renderAccountOrders();
-      if (tabId === 'manage-products' && typeof renderOwnerProductList === 'function') renderOwnerProductList();
+      if (tabId === 'manage-products') {
+        if (isOwner && typeof renderOwnerProductList === 'function') {
+          renderOwnerProductList();
+        } else if (typeof switchTab === 'function') {
+          switchTab('orders');
+        }
+      }
       if (tabId === 'wishlist') renderAccountWishlist();
       if (tabId === 'addresses') renderAddresses();
       if (tabId === 'details') renderAccountDetails();
     }
   } else {
+    // If guest tries to stay on manage-products tab, bounce to orders
+    const activeMenu = document.querySelector('.account-menu a.active');
+    if (activeMenu && activeMenu.id === 'menu-manage-products') {
+      if (typeof switchTab === 'function') switchTab('orders');
+    }
+
     profileCard.innerHTML = `
       <h3>Login with OTP</h3>
       <p>See your orders and saved addresses on any device.</p>
@@ -2723,11 +2745,10 @@ function renderAccountOrders() {
   if (!container) return;
   
   const allOrders = getOrders();
-  const role = getUserStoreRole(user);
-  const isStaff = (role === 'owner' || role === 'delivery' || localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
   
   let adminBannerHtml = '';
-  if (isStaff) {
+  if (isOwner) {
     adminBannerHtml = `
       <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);">
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -2746,13 +2767,15 @@ function renderAccountOrders() {
     `;
   }
 
-  let userOrders = allOrders;
-  if (!isStaff) {
+  let userOrders = [];
+  if (isOwner) {
+    userOrders = allOrders;
+  } else {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
     const uEmail = String(user.email || '').trim().toLowerCase();
     userOrders = allOrders.filter(o => {
       const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
-      const oEmail = String(o.userEmail || '').trim().toLowerCase();
+      const oEmail = String(o.userEmail || o.email || '').trim().toLowerCase();
       if (uPhone && oPhone === uPhone) return true;
       if (uEmail && oEmail === uEmail) return true;
       return false;
@@ -3959,10 +3982,7 @@ async function handleOwnerProductSubmit(event) {
 
   // Verify Owner Authority
   const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
-  const email = user ? (user.email || '') : '';
-  const phone = user ? (user.phoneNumber || user.phone || '') : '';
-  const isOwner = (typeof isOwnerIdentity === 'function' && isOwnerIdentity(email, phone)) ||
-                  (typeof isAdminUnlocked === 'function' && isAdminUnlocked());
+  const isOwner = (typeof isStrictStoreOwner === 'function') && isStrictStoreOwner(user);
 
   if (!isOwner) {
     if (typeof showToast === 'function') {
@@ -4293,6 +4313,13 @@ function renderOwnerProductList() {
 
 // Delete Product by Owner
 async function deleteProductByOwner(prodId) {
+  const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+  const isOwner = (typeof isStrictStoreOwner === 'function') && isStrictStoreOwner(user);
+  if (!isOwner) {
+    if (typeof showToast === 'function') showToast("⛔ Access restricted.");
+    return;
+  }
+
   if (!confirm("Are you sure you want to remove this product from the live catalog? Students will no longer see it.")) {
     return;
   }
