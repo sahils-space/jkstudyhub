@@ -2330,7 +2330,10 @@ function renderScannedOrderCard(order) {
         <div><strong>Item:</strong> ${order.product} (₹${order.amount || 0})</div>
         <div style="margin-top: 4px;"><strong>Recipient:</strong> ${customerName} (+91 ${customerPhone})</div>
         <div style="margin-top: 4px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
-        ${order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>TXN / Payment:</strong> ${order.txnId}</div>` : ''}
+        ${isCodOrder(order) 
+          ? `<div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: inline-block;">💵 Cash on Delivery (COD) — Collect ₹${order.amount || 0} at Doorstep</div>`
+          : (order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>Paid Online (Razorpay):</strong> ${order.txnId}</div>` : '')
+        }
       </div>
 
       <div style="margin-bottom: 14px;">
@@ -2628,6 +2631,11 @@ function syncOrdersWithGoogleSheet() {
               // If remote has product details and local is generic, sync
               if (remote.product && (!match.product || match.product === 'Study Hub Purchase')) {
                 match.product = remote.product;
+                updated = true;
+              }
+              // If remote has txnId and local is missing or generic
+              if (remote.txnId && (!match.txnId || match.txnId === 'N/A')) {
+                match.txnId = remote.txnId;
                 updated = true;
               }
             } else if (remote.orderId) {
