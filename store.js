@@ -872,12 +872,12 @@ function renderCartPage() {
   let subtotal = 0;
   let totalQty = 0;
   let itemsHtml = `
-    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px;">
       <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #1e40af;">
         <i class="fa-solid fa-location-dot" style="font-size: 16px;"></i>
-        <span>Deliver to: <strong>Pattan, Baramulla - 193121</strong></span>
+        <span>Deliver to: <strong>All Kashmir Districts &amp; Pincodes</strong></span>
       </div>
-      <span style="font-size: 11px; background: #dcfce7; color: #16a34a; font-weight: 700; padding: 3px 8px; border-radius: 20px;">FREE DELIVERY</span>
+      <span style="font-size: 11px; background: #dcfce7; color: #16a34a; font-weight: 800; padding: 4px 10px; border-radius: 20px;"><i class="fa-solid fa-gift"></i> 100% FREE DELIVERY</span>
     </div>
   `;
 
@@ -925,13 +925,13 @@ function renderCartPage() {
   if (subtotalEl) subtotalEl.innerText = '₹' + subtotal;
 
   const totalEl = document.getElementById('summaryTotal');
-  if (totalEl) totalEl.innerText = '₹' + (subtotal + 5);
+  if (totalEl) totalEl.innerText = '₹' + subtotal;
 
   const itemsCountText = document.getElementById('summaryItemsCount');
   if (itemsCountText) itemsCountText.innerText = `Price (${totalQty} items)`;
 
   const checkoutBtn = document.getElementById('proceedCheckoutBtn');
-  if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${subtotal + 5}) ➔`;
+  if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${subtotal}) ➔`;
 }
 
 // --- RENDER DEDICATED WISHLIST PAGE (account.html#wishlist) ---
@@ -1793,7 +1793,7 @@ function setupCheckoutModal(name, price, category) {
   if (priceEl) priceEl.innerText = '₹' + price;
 
   const totalEl = document.getElementById('totalPrice');
-  if (totalEl) totalEl.innerText = '₹' + (price + 5);
+  if (totalEl) totalEl.innerText = '₹' + price;
 
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
@@ -1889,6 +1889,59 @@ function backToStep1() {
   if (p1) p1.classList.add('active-step');
 }
 
+// --- PAYMENT METHOD TOGGLE (ONLINE VS CASH ON DELIVERY) ---
+function togglePaymentMethod(method) {
+  const onlineLabel = document.getElementById('payMethodOnlineLabel');
+  const codLabel = document.getElementById('payMethodCodLabel');
+  const submitBtn = document.getElementById('submitOrderBtn');
+  const note = document.getElementById('checkoutFooterNote');
+
+  if (method === 'cod') {
+    if (onlineLabel) onlineLabel.style.border = '1.5px solid #cbd5e1';
+    if (codLabel) codLabel.style.border = '2px solid #16a34a';
+    if (submitBtn) {
+      submitBtn.innerHTML = '<i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery)';
+      submitBtn.style.backgroundColor = '#16a34a';
+    }
+    if (note) {
+      note.innerHTML = '<i class="fa-solid fa-truck-fast" style="color:#16a34a;"></i> Pay cash or UPI scan at your doorstep when books arrive!';
+    }
+  } else {
+    if (onlineLabel) onlineLabel.style.border = '2px solid #2563eb';
+    if (codLabel) codLabel.style.border = '1.5px solid #cbd5e1';
+    if (submitBtn) {
+      submitBtn.innerHTML = 'Pay Securely Online';
+      submitBtn.style.backgroundColor = '#2563eb';
+    }
+    if (note) {
+      note.innerHTML = '<i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Books • Priority Fast Dispatch via Razorpay';
+    }
+  }
+}
+
+function handlePaymentSubmit() {
+  const method = document.querySelector('input[name="paymentMethod"]:checked') ? document.querySelector('input[name="paymentMethod"]:checked').value : 'online';
+  if (method === 'cod') {
+    processCodOrder();
+  } else {
+    startRazorpayPayment();
+  }
+}
+
+function processCodOrder() {
+  const form = document.getElementById('checkoutForm');
+  if (!form.reportValidity()) return;
+
+  const btn = document.getElementById('submitOrderBtn');
+  if (btn) {
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Confirming COD Order...';
+    btn.disabled = true;
+  }
+
+  const codTxnId = 'COD_' + Date.now().toString(36).toUpperCase();
+  processOrder(codTxnId, 'Confirmed (Cash on Delivery)');
+}
+
 // --- RAZORPAY INTEGRATION ---
 function startRazorpayPayment() {
   const form = document.getElementById('checkoutForm');
@@ -1896,7 +1949,7 @@ function startRazorpayPayment() {
 
   const name = document.getElementById('orderName').value;
   const phone = document.getElementById('orderPhone').value;
-  const totalPaid = currentCheckoutPrice + 5;
+  const totalPaid = currentCheckoutPrice;
 
   const btn = document.getElementById('submitOrderBtn');
   if (btn) {
@@ -1914,7 +1967,7 @@ function startRazorpayPayment() {
     "handler": function (response) {
       const txnId = response.razorpay_payment_id;
       if (btn) btn.innerHTML = 'Verifying & Saving...';
-      processOrder(txnId);
+      processOrder(txnId, 'Confirmed (Paid Online)');
     },
     "prefill": {
       "name": name,
@@ -1926,7 +1979,7 @@ function startRazorpayPayment() {
     "modal": {
       "ondismiss": function() {
         if (btn) {
-          btn.innerHTML = 'Pay Securely';
+          btn.innerHTML = 'Pay Securely Online';
           btn.disabled = false;
         }
       }
@@ -1938,7 +1991,7 @@ function startRazorpayPayment() {
     rzp.on('payment.failed', function (resp) {
       alert("Payment Failed: " + (resp.error.description || "Unknown error"));
       if (btn) {
-        btn.innerHTML = 'Pay Securely';
+        btn.innerHTML = 'Pay Securely Online';
         btn.disabled = false;
       }
     });
@@ -1946,14 +1999,14 @@ function startRazorpayPayment() {
   } catch(e) {
     alert("Razorpay checkout failed to open. Please check your internet connection.");
     if (btn) {
-      btn.innerHTML = 'Pay Securely';
+      btn.innerHTML = 'Pay Securely Online';
       btn.disabled = false;
     }
   }
 }
 
 // --- ORDER COMPLETION & BACKEND LOGGING ---
-function processOrder(txnId) {
+function processOrder(txnId, customStatus) {
   const name = document.getElementById('orderName').value;
   const phone = document.getElementById('orderPhone').value;
 
@@ -1961,10 +2014,10 @@ function processOrder(txnId) {
   let finalProductDesc = currentCheckoutProduct;
 
   if (currentCheckoutCategory === 'notes' || currentCheckoutCategory === 'standard' || currentCheckoutCategory === 'both' || currentCheckoutCategory === 'books') {
-    const pin = document.getElementById('orderPin') ? document.getElementById('orderPin').value : '193121';
-    const city = document.getElementById('orderCity') ? document.getElementById('orderCity').value : 'Pattan';
-    const street = document.getElementById('orderAddress') ? document.getElementById('orderAddress').value : '';
-    finalAddress = `${street}, ${city} - ${pin}`;
+    const pin = document.getElementById('orderPin') ? document.getElementById('orderPin').value.trim() : '193121';
+    const city = document.getElementById('orderCity') ? document.getElementById('orderCity').value : 'Baramulla';
+    const street = document.getElementById('orderAddress') ? document.getElementById('orderAddress').value.trim() : '';
+    finalAddress = `${street}, ${city} - PIN: ${pin}`;
 
     if (currentCheckoutCategory === 'notes' || currentCheckoutCategory === 'both') {
       const cls = document.getElementById('notesClass') ? document.getElementById('notesClass').value : '';
@@ -1979,8 +2032,10 @@ function processOrder(txnId) {
     finalProductDesc += ` [Form: ${formSelected}, Files: ${filesCount}]`;
   }
 
-  const totalPaid = currentCheckoutPrice + 5;
-  const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | TXN: ${txnId}`;
+  const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId.startsWith('COD_');
+  const totalPaid = currentCheckoutPrice;
+  const orderStatus = customStatus || (isCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed');
+  const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | ${isCod ? 'Payment: Pay at Doorstep (COD)' : 'TXN: ' + txnId}`;
 
   // 1. SAVE LOCALLY TO ORDERS HISTORY IMMEDIATELY!
   const user = getCurrentUser();
@@ -1995,7 +2050,7 @@ function processOrder(txnId) {
     product: finalProductDesc,
     amount: totalPaid,
     userEmail: user ? user.email : null,
-    status: 'Confirmed'
+    status: orderStatus
   };
 
   let orders = getOrders();
@@ -2017,11 +2072,24 @@ function processOrder(txnId) {
   formData.append('order_id', orderRecord.orderId);
   formData.append('txn_id', txnId);
   formData.append('amount', totalPaid);
-  formData.append('status', 'Confirmed');
+  formData.append('status', orderStatus);
 
   fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
-      alert(`🎉 ORDER SUCCESSFUL!\n\nOrder ID: ${orderRecord.orderId}\nPayment Verified: ₹${totalPaid}\nTXN ID: ${txnId}\n\nYour order has been recorded in the Orders Section! We will contact you on WhatsApp (${phone}) shortly.`);
+      if (isCod) {
+        alert(`🎉 CASH ON DELIVERY ORDER CONFIRMED!\n\nOrder ID: ${orderRecord.orderId}\nTotal to Pay at Doorstep: ₹${totalPaid}\nDelivery Location: ${finalAddress}\n\nOur team is packing your order! We will message you on WhatsApp (${phone}) before delivery.`);
+        // Instant WhatsApp confirmation ping to Sahil
+        const waText = `*📦 New COD Order - JK Study Hub*%0A%0A` +
+          `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
+          `👤 *Customer:* ${encodeURIComponent(name)}%0A` +
+          `📞 *Phone:* ${encodeURIComponent(phone)}%0A` +
+          `📍 *Address:* ${encodeURIComponent(finalAddress)}%0A` +
+          `📚 *Product:* ${encodeURIComponent(finalProductDesc)}%0A` +
+          `💵 *Amount to Collect:* ₹${totalPaid} (Cash on Delivery)`;
+        window.open(`https://wa.me/919622605714?text=${waText}`, '_blank');
+      } else {
+        alert(`🎉 ORDER SUCCESSFUL!\n\nOrder ID: ${orderRecord.orderId}\nPayment Verified: ₹${totalPaid}\nTXN ID: ${txnId}\n\nYour order has been recorded in the Orders Section! We will contact you on WhatsApp (${phone}) shortly.`);
+      }
 
       if (isCartCheckoutSession) {
         localStorage.removeItem('jk_cart');
@@ -2035,8 +2103,9 @@ function processOrder(txnId) {
       closeCheckout();
       const btn = document.getElementById('submitOrderBtn');
       if (btn) {
-        btn.innerHTML = 'Pay Securely';
+        btn.innerHTML = 'Pay Securely Online';
         btn.disabled = false;
+        btn.style.backgroundColor = '#2563eb';
       }
 
       // If on orders page, re-render
@@ -2045,7 +2114,7 @@ function processOrder(txnId) {
       }
     })
     .catch(err => {
-      alert(`Payment verified (${txnId})! Order ID ${orderRecord.orderId} saved locally. Please contact us on WhatsApp if any issues arise.`);
+      alert(`Order recorded (${orderRecord.orderId})! We will contact you on WhatsApp (${phone}) to confirm delivery.`);
       closeCheckout();
     });
 }

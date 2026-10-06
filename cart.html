@@ -479,31 +479,46 @@
 
             <!-- Delivery Address -->
             <div id="addressFields" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 6px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-gift" style="color:#10b981; font-size:15px;"></i>
+                <span><strong>FREE SHIPPING ACTIVE:</strong> ₹0 Delivery fee for all Kashmir districts!</span>
+              </div>
+
               <h4 style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Delivery Location</h4>
               
-              <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <div style="flex:1;">
-                  <label class="form-label">Pincode (Fixed)</label>
-                  <select id="orderPin" class="form-input" style="background:#e2e8f0; pointer-events: none;">
-                    <option value="193121" selected>193121</option>
+              <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                <div style="flex:1; min-width: 140px;">
+                  <label class="form-label">District / Region</label>
+                  <select id="orderCity" class="form-input">
+                    <option value="Baramulla (Pattan/Sopore/Baramulla)" selected>Baramulla District</option>
+                    <option value="Srinagar">Srinagar District</option>
+                    <option value="Budgam">Budgam District</option>
+                    <option value="Anantnag (Islamabad)">Anantnag District</option>
+                    <option value="Pulwama">Pulwama District</option>
+                    <option value="Kupwara">Kupwara District</option>
+                    <option value="Ganderbal">Ganderbal District</option>
+                    <option value="Bandipora">Bandipora District</option>
+                    <option value="Kulgam">Kulgam District</option>
+                    <option value="Shopian">Shopian District</option>
+                    <option value="Other J&K Location">Other J&K Location</option>
                   </select>
                 </div>
-                <div style="flex:1;">
-                  <label class="form-label">City</label>
-                  <input type="text" id="orderCity" class="form-input" value="Pattan" readonly style="background:#e2e8f0; color:#64748b;">
+                <div style="flex:1; min-width: 120px;">
+                  <label class="form-label">Pincode (Any Kashmir PIN)</label>
+                  <input type="text" id="orderPin" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" required>
                 </div>
               </div>
 
               <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label">Street Name & Landmark <span style="color:red;">*</span></label>
-                <input type="text" id="orderAddress" class="form-input" placeholder="e.g. Near Main Market, House No 12">
+                <label class="form-label">Village / Mohalla, Street &amp; Landmark <span style="color:red;">*</span></label>
+                <input type="text" id="orderAddress" class="form-input" placeholder="e.g. Near Main Market, House No...">
               </div>
             </div>
             
-            <button type="button" class="btn-primary" style="width:100%; margin-top: 10px;" onclick="goToStep2()">Continue to Payment <i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" class="btn-primary" style="width:100%; margin-top: 10px;" onclick="goToStep2()">Continue to Review &amp; Payment <i class="fa-solid fa-arrow-right"></i></button>
           </div>
 
-          <!-- STEP 2: Review & Razorpay -->
+          <!-- STEP 2: Review & Payment Options (Online & Cash on Delivery) -->
           <div id="step2" style="display:none;">
             
             <!-- Invoice Box -->
@@ -513,32 +528,50 @@
                 <span id="itemName">Items</span>
                 <span id="itemPrice">₹0</span>
               </div>
-              <div class="invoice-row">
-                <span>Platform Fee</span>
-                <span>₹5</span>
+              <div class="invoice-row" style="color: #16a34a; font-weight: 700;">
+                <span>Delivery (All Kashmir)</span>
+                <span>FREE (₹0)</span>
+              </div>
+              <div class="invoice-row" style="color: #64748b; font-size: 12.5px;">
+                <span>Platform &amp; Packing Fee</span>
+                <span>FREE (₹0)</span>
               </div>
               <div class="invoice-total">
-                <span>Total to Pay</span>
-                <span id="totalPrice">₹5</span>
+                <span>Total Amount to Pay</span>
+                <span id="totalPrice" style="color: #2563eb;">₹0</span>
               </div>
             </div>
 
-            <div style="text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-              <h4 style="font-size: 14px; font-weight: 700; color: #334155;">Secure Payment</h4>
-              <p style="font-size: 12px; color: #64748b; margin-top: 5px;">You will be securely redirected to Razorpay to complete your payment.</p>
+            <!-- Payment Method Choice (Online vs Cash on Delivery) -->
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 15px;">
+              <h4 style="font-size: 13.5px; font-weight: 700; color: #1e293b; margin-bottom: 10px;">Choose How You Want to Pay:</h4>
               
-              <div class="payment-methods-icons">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-              </div>
+              <label style="display: flex; align-items: center; gap: 12px; padding: 11px; background: white; border: 2px solid #2563eb; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" id="payMethodOnlineLabel">
+                <input type="radio" name="paymentMethod" value="online" checked onchange="togglePaymentMethod('online')">
+                <div style="flex: 1;">
+                  <strong style="font-size: 13.5px; color: #1e293b;">Online Payment (UPI / Cards / NetBanking)</strong>
+                  <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Instant confirmation &amp; priority fast dispatch via Razorpay</p>
+                </div>
+                <div style="display:flex; gap:4px;">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="height:14px;">
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: 12px; padding: 11px; background: white; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer;" id="payMethodCodLabel">
+                <input type="radio" name="paymentMethod" value="cod" onchange="togglePaymentMethod('cod')">
+                <div style="flex: 1;">
+                  <strong style="font-size: 13.5px; color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
+                  <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Pay in cash or UPI scan when delivery boy hands over books</p>
+                </div>
+                <span style="background:#dcfce7; color:#16a34a; font-size:11px; font-weight:800; padding:3px 7px; border-radius:4px;">COD</span>
+              </label>
             </div>
 
             <div class="step-actions">
               <button type="button" class="btn-secondary" onclick="backToStep1()">Back</button>
-              <button type="button" id="submitOrderBtn" class="btn-primary" onclick="startRazorpayPayment()">Pay Securely</button>
+              <button type="button" id="submitOrderBtn" class="btn-primary" onclick="handlePaymentSubmit()">Pay Securely Online</button>
             </div>
-            <p style="text-align:center; font-size:11px; color:#94a3b8; margin-top:10px;"><i class="fa-solid fa-lock"></i> 100% Secure Payments by Razorpay</p>
+            <p id="checkoutFooterNote" style="text-align:center; font-size:11px; color:#64748b; margin-top:10px;"><i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Books • Same-Day Dispatch in Kashmir</p>
           </div>
 
         </form>
