@@ -1187,6 +1187,18 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
 
   if (idx !== -1) {
     const matchedOrderId = orders[idx].orderId;
+    const currentStatus = String(orders[idx].status || '').trim();
+
+    // PERMANENT LOCK: Once Delivered or Cancelled, order cannot be changed again
+    if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
+      if (typeof showToast === 'function') {
+        showToast(`🔒 Order is permanently locked as ${currentStatus} and cannot be modified.`);
+      }
+      if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+      if (typeof renderOrdersPage === 'function') { renderOrdersPage(); }
+      return;
+    }
+
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     
@@ -1539,16 +1551,25 @@ function renderOrdersPage() {
               <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
                 <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status Control:
               </span>
-              <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed & Paid</option>
-                <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
-                <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
-                <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
-                <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
-                <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>Delivered Successfully</option>
-                <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
-              </select>
+              ${(order.status === 'Delivered' || order.status === 'Cancelled') ? `
+                <select disabled style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 700; background: #f1f5f9; color: #64748b; cursor: not-allowed;">
+                  <option selected>${order.status}</option>
+                </select>
+                <span style="font-size: 11px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 4px 8px; border-radius: 6px; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa-solid fa-lock"></i> Locked (${order.status})
+                </span>
+              ` : `
+                <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                  <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed & Paid</option>
+                  <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                  <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
+                  <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
+                  <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
+                  <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
+                  <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                  <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
+                </select>
+              `}
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Amazon/Flipkart-style shipping label">
@@ -1579,10 +1600,50 @@ function renderOrdersPage() {
 }
 
 // --- PRINTABLE TAX INVOICE & RECEIPT MODAL ---
+function ensureReceiptModalExists() {
+  let modal = document.getElementById('orderReceiptModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'orderReceiptModal';
+    modal.className = 'scanner-modal-backdrop';
+    modal.style.cssText = 'position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(4px); z-index:99999; display:none; align-items:center; justify-content:center; padding:16px; box-sizing:border-box;';
+    modal.onclick = function(e) { if(e.target === modal) closeReceiptModal(); };
+    modal.innerHTML = `
+      <div style="background:white; border-radius:16px; max-width:620px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); position:relative; box-sizing:border-box;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px; color:#2563eb;"><i class="fa-solid fa-receipt"></i></span>
+            <h3 style="margin:0; font-size:16px; font-weight:800; color:#0f172a;">Official Order Invoice / Receipt</h3>
+          </div>
+          <button type="button" onclick="closeReceiptModal()" style="background:#f1f5f9; color:#475569; width:32px; height:32px; border-radius:50%; border:none; font-size:20px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
+        </div>
+        <div id="printableReceiptArea"></div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px; border-top:1px solid #f1f5f9; padding-top:14px; flex-wrap:wrap;">
+          <button type="button" onclick="closeReceiptModal()" style="background:#f1f5f9; color:#475569; border:none; padding:9px 16px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">Close</button>
+          <button type="button" onclick="triggerPrintReceipt()" style="background:#2563eb; color:white; border:none; padding:9px 20px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
+            <i class="fa-solid fa-print"></i> Print / Download PDF
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  return modal;
+}
+
 function printOrderReceipt(orderId) {
+  const modal = ensureReceiptModalExists();
   const orders = getOrders();
-  const order = orders.find(o => o.orderId === orderId) || orders[0];
-  if (!order) return;
+  const targetId = String(orderId || '').trim().toUpperCase();
+  const order = orders.find(o => {
+    const oId = String(o.orderId || '').trim().toUpperCase();
+    const tId = String(o.txnId || '').trim().toUpperCase();
+    return oId === targetId || tId === targetId || oId.includes(targetId);
+  }) || orders[0];
+  if (!order) {
+    if (typeof showToast === 'function') showToast("⚠️ Order receipt not found.");
+    return;
+  }
 
   const printableArea = document.getElementById('printableReceiptArea');
   if (!printableArea) return;
@@ -1667,8 +1728,7 @@ function printOrderReceipt(orderId) {
     </div>
   `;
 
-  const modal = document.getElementById('orderReceiptModal');
-  if (modal) modal.style.display = 'flex';
+  modal.style.display = 'flex';
 }
 
 function triggerPrintReceipt() {
@@ -2479,6 +2539,11 @@ function syncOrdersWithGoogleSheet() {
           }
 
           data.orders.forEach(remote => {
+            // Ignore catalog product fallback rows from being treated as customer purchase orders!
+            if (remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT' || (remote.orderId && remote.orderId.startsWith('PRD-'))) {
+              return;
+            }
+
             const match = localOrders.find(l => l.orderId === remote.orderId || (l.txnId && l.txnId === remote.txnId));
             
             // Clean remote phone
@@ -3604,99 +3669,167 @@ function renderAccountOrders() {
   filteredOrders.sort((a,b) => b.timestamp - a.timestamp);
 
   let html = '';
-  filteredOrders.forEach(o => {
-    let statusColor = '#3b82f6';
-    if(o.status === 'Delivered') statusColor = '#10b981';
-    if(o.status === 'Cancelled') statusColor = '#ef4444';
-    
-    let adminControls = '';
-    if (isOwner) {
-      adminControls = `
-        <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
-          <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
-          <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
-          <div style="display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
-            <select class="form-input" style="padding:8px 12px; font-size:13px; flex:1; min-width: 140px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; background-color: #ffffff; cursor: pointer;" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
-              <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-              <option value="Shipped" ${(o.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
-              <option value="Dispatched" ${(o.status === 'Dispatched') ? 'selected' : ''}>Dispatched</option>
-              <option value="On the Way" ${(o.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
-              <option value="Out for Delivery" ${(o.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
-              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-            <button type="button" onclick="openShippingLabelModal('${o.orderId}')" style="background:#0f172a; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;" title="Print Amazon/Flipkart-style shipping label">
-              <i class="fa-solid fa-print"></i> 🖨️ Label
-            </button>
-            <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
-          </div>
-        </div>
-      `;
-    }
+  filteredOrders.forEach((o, index) => {
+    const safeOrderId = o.orderId || ('ORD-' + index);
+    const statusInfo = getStatusStepInfo(o.status);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (TXN: ${o.txnId}) for ${o.product}.`);
+
+    let s1Class = 'completed';
+    let s2Class = statusInfo.step >= 2 ? 'completed' : (statusInfo.step === 1 ? 'active' : '');
+    let s3Class = statusInfo.step >= 3 ? 'completed' : (statusInfo.step === 2 ? 'active' : '');
+    let s4Class = statusInfo.step >= 4 ? 'completed' : (statusInfo.step === 3 ? 'active' : '');
+
+    let s2Desc = statusInfo.step >= 2 ? (o.status === 'Shipped' ? 'Shipped' : 'Packed at Hub') : 'Packed at Hub';
+    let s3Desc = statusInfo.step >= 3 ? (o.status === 'On the Way' ? 'On the Way' : 'Local Delivery') : 'Local Delivery';
+    let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
+
+    const matchedBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA : []).find(b => o.product && o.product.includes(b.name)) || (PRODUCT_CATALOG[o.product] ? { image: PRODUCT_CATALOG[o.product].image } : null);
+    const orderImgSrc = (matchedBook && matchedBook.photos && matchedBook.photos[0]) ? matchedBook.photos[0] : ((matchedBook && matchedBook.image) ? matchedBook.image : (o.image || 'images/logo-app.png'));
+
+    const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
+    const statusLower = String(o.status || '').toLowerCase();
 
     html += `
-      <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-          <div>
-            <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:4px;">ORDER ID</div>
-            <div style="font-size:16px; font-weight:800; color:#1e293b;">${o.orderId}</div>
+      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
+        
+        <!-- Order Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #1e293b; background: #f1f5f9; padding: 5px 12px; border-radius: 6px; letter-spacing: 0.5px; border: 1px solid #e2e8f0;">
+              ${safeOrderId}
+            </span>
+            <span style="font-size: 12.5px; color: #64748b;">
+              <i class="fa-regular fa-calendar"></i> ${o.date}
+            </span>
           </div>
-          <div style="text-align:right;">
-            <span style="background:${statusColor}15; color:${statusColor}; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;">${o.status}</span>
+          
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="background: ${statusInfo.badgeBg}; color: ${statusInfo.badgeColor}; border: 1px solid ${statusInfo.badgeBorder}; font-size: 12.5px; font-weight: 700; padding: 5px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid ${statusInfo.badgeIcon}"></i> ${statusInfo.label}
+            </span>
           </div>
         </div>
-        <div style="font-size:15px; font-weight:600; color:#334155; margin-bottom:10px;">${o.product}</div>
-        
-        ${(() => {
-          let progressWidth = '0%';
-          let s1 = '', s2 = '', s3 = '', s4 = '';
-          let c1 = '', c2 = '', c3 = '', c4 = '';
-          let statusLower = (o.status || 'Confirmed').toLowerCase();
+
+        <!-- FLIPKART / AMAZON LIVE DELIVERY STEPPER -->
+        <div class="delivery-tracker-box">
+          <div class="stepper-header-meta">
+            <span style="font-weight: 700; color: #0f172a; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-route" style="color: #2563eb;"></i> Live Delivery Progress
+            </span>
+            <span style="font-size: 12px; color: #64748b; font-weight: 600;">
+              Destination: <strong style="color: #1e293b;">Pattan (193121)</strong>
+            </span>
+          </div>
+
+          <div class="stepper-track-wrap">
+            <div class="stepper-line-fill" style="width: ${statusInfo.percent}%; ${statusLower === 'cancelled' ? 'background: #ef4444;' : ''}"></div>
+            
+            <!-- Step 1: Confirmed -->
+            <div class="stepper-node ${s1Class}">
+              <div class="node-icon"><i class="fa-solid fa-check"></i></div>
+              <div class="node-title">Confirmed</div>
+              <div class="node-desc">Paid Online</div>
+            </div>
+
+            <!-- Step 2: Shipped -->
+            <div class="stepper-node ${s2Class}">
+              <div class="node-icon"><i class="fa-solid fa-box"></i></div>
+              <div class="node-title">Shipped</div>
+              <div class="node-desc">${s2Desc}</div>
+            </div>
+
+            <!-- Step 3: On the Way -->
+            <div class="stepper-node ${s3Class}">
+              <div class="node-icon"><i class="fa-solid fa-truck-fast"></i></div>
+              <div class="node-title">On the Way</div>
+              <div class="node-desc">${s3Desc}</div>
+            </div>
+
+            <!-- Step 4: Delivered -->
+            <div class="stepper-node ${s4Class}">
+              <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
+              <div class="node-title">${statusLower === 'cancelled' ? 'Cancelled' : 'Delivered'}</div>
+              <div class="node-desc">${s4Desc}</div>
+            </div>
+          </div>
           
-          if (statusLower === 'cancelled') {
-            progressWidth = '100%';
-            s1 = 'active'; s2 = 'active'; s3 = 'active'; s4 = 'active';
-            c1 = c2 = c3 = c4 = 'background: #ef4444; box-shadow: 0 0 0 2px #ef4444;';
-          } else {
-            if (statusLower === 'confirmed' || statusLower === 'processing') {
-              progressWidth = '15%'; s1 = 'active current';
-            } else if (statusLower.includes('ship') || statusLower.includes('dispatch')) {
-              progressWidth = '50%'; s1 = 'active'; s2 = 'active current';
-            } else if (statusLower.includes('way') || statusLower.includes('out') || statusLower.includes('transit')) {
-              progressWidth = '85%'; s1 = 'active'; s2 = 'active'; s3 = 'active current';
-            } else if (statusLower.includes('deliver')) {
-              progressWidth = '100%'; s1 = 'active'; s2 = 'active'; s3 = 'active'; s4 = 'active current';
-            }
-          }
-          
-          return `
-            <div class="order-track" style="margin-top:25px; margin-bottom: 25px;">
-              <div class="track-progress" style="width: ${progressWidth}; ${statusLower === 'cancelled' ? 'background: #ef4444;' : ''}"></div>
-              <div class="track-step ${s1}">
-                <div class="track-icon" style="${c1}"><i class="fa-solid fa-clipboard-check"></i></div>
-                <div class="track-label">Confirmed</div>
+          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-circle-info" style="color: #2563eb;"></i>
+            <span>${statusInfo.summaryText}</span>
+          </div>
+        </div>
+
+        <!-- Order Body -->
+        <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px; flex-wrap: wrap; margin-top: 16px;">
+          <div style="display: flex; gap: 16px; align-items: flex-start; flex: 1; min-width: 250px;">
+            ${orderImgSrc ? `<img src="${orderImgSrc}" alt="${o.product}" style="width: 65px; height: 85px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);" loading="eager">` : ''}
+            <div>
+              <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px;">${o.product}</h4>
+              <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
+                <p style="margin: 0;"><strong>Recipient:</strong> ${(o.name && !o.name.match(/^[6789]\d{9}$/)) ? o.name : 'Student'} (${getValidCustomerPhone(o) || o.phone || 'Contact via WhatsApp'})</p>
+                <p style="margin: 4px 0 0;"><strong>Address:</strong> ${o.address || 'Delivery Address, Pattan 193121'}</p>
               </div>
-              <div class="track-step ${s2}">
-                <div class="track-icon" style="${c2}"><i class="fa-solid fa-box"></i></div>
-                <div class="track-label">${statusLower.includes('ship') ? 'Shipped' : 'Dispatched'}</div>
-              </div>
-              <div class="track-step ${s3}">
-                <div class="track-icon" style="${c3}"><i class="fa-solid fa-truck-fast"></i></div>
-                <div class="track-label">${statusLower.includes('way') ? 'On the Way' : 'Out for Delivery'}</div>
-              </div>
-              <div class="track-step ${s4}">
-                <div class="track-icon" style="${c4}"><i class="${statusLower === 'cancelled' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-house-circle-check'}"></i></div>
-                <div class="track-label" style="${statusLower === 'cancelled' ? 'color:#ef4444;' : ''}">${statusLower === 'cancelled' ? 'Cancelled' : 'Delivered'}</div>
+              <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-block;">
+                <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${o.txnId || 'COD_VERIFIED'}</strong>
               </div>
             </div>
-          `;
-        })()}
-        <div style="display:flex; justify-content:space-between; font-size:14px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:10px;">
-          <span>${o.date}</span>
-          <span style="font-weight:700; color:#1e293b;">₹${o.amount}</span>
+          </div>
+
+          <div style="text-align: right; min-width: 140px;">
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Paid</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${o.amount || 0}</div>
+            <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
+          </div>
         </div>
-        ${adminControls}
+
+        <!-- Admin Controls Bar (Strictly Store Owner Mode) -->
+        ${isOwner ? `
+          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-top: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
+                <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status Control:
+              </span>
+              ${isLocked ? `
+                <select disabled style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 700; background: #f1f5f9; color: #64748b; cursor: not-allowed;">
+                  <option selected>${o.status}</option>
+                </select>
+                <span style="font-size: 11px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 4px 8px; border-radius: 6px; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa-solid fa-lock"></i> Locked (${o.status})
+                </span>
+              ` : `
+                <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value); setTimeout(renderAccountOrders, 300);" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                  <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                  <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                  <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                  <option value="Dispatched" ${o.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+                  <option value="On the Way" ${o.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
+                  <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                  <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                  <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+              `}
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Amazon/Flipkart-style shipping label">
+                <i class="fa-solid fa-print"></i> 🖨️ Label
+              </button>
+              <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${safeOrderId}')" style="background: #25d366; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-brands fa-whatsapp"></i> Send WhatsApp Notice
+              </button>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Order Action Footer (Available for both Owner and Student) -->
+        <div style="border-top: 1px solid #f1f5f9; margin-top: 18px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <button type="button" onclick="printOrderReceipt('${safeOrderId}')" style="background: #f1f5f9; color: #1e293b; border: 1.5px solid #cbd5e1; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+            <i class="fa-solid fa-file-invoice" style="color: #2563eb;"></i> ${isOwner ? 'View &amp; Print Receipt' : 'Download Invoice / View Receipt'}
+          </button>
+          
+          <a href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="background: #25d366; color: white; text-decoration: none; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(37,211,102,0.3);">
+            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Track with WhatsApp Support
+          </a>
+        </div>
       </div>
     `;
   });
@@ -4760,6 +4893,35 @@ function removeOwnerPhoto(event, slotNum) {
   }
 }
 
+// Upload photo to free reliable CDN (freeimage.host) to get real HTTPS URLs
+async function uploadPhotoToCdn(photoDataUrl) {
+  if (!photoDataUrl || !photoDataUrl.startsWith('data:')) {
+    return photoDataUrl; // Already a URL or empty
+  }
+  try {
+    const base64Data = photoDataUrl.split(',')[1];
+    if (!base64Data) return photoDataUrl;
+    
+    const formData = new FormData();
+    formData.append('key', '6d207e02198a847aa98d0a2a901485a5');
+    formData.append('action', 'upload');
+    formData.append('source', base64Data);
+    formData.append('format', 'json');
+
+    const response = await fetch('https://freeimage.host/api/1/upload', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    if (result && result.status_code === 200 && result.image && result.image.url) {
+      return result.image.url;
+    }
+  } catch (err) {
+    console.warn("CDN photo upload error:", err);
+  }
+  return photoDataUrl;
+}
+
 // Handle Add Product Submit
 async function handleOwnerProductSubmit(event) {
   if (event) event.preventDefault();
@@ -4804,11 +4966,24 @@ async function handleOwnerProductSubmit(event) {
   const originalBtnText = btnPublish ? btnPublish.innerHTML : '';
   if (btnPublish) {
     btnPublish.disabled = true;
-    btnPublish.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publishing to Live Store...`;
+    btnPublish.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading Photos & Publishing...`;
   }
 
   const prodId = 'PRD-' + Date.now();
-  const photosArray = ownerUploadedPhotos.filter(p => !!p);
+  
+  // Upload photos to CDN for universal loading across all student devices
+  const rawPhotos = ownerUploadedPhotos.filter(p => !!p);
+  const cdnPhotos = [];
+  for (let i = 0; i < rawPhotos.length; i++) {
+    try {
+      const cdnUrl = await uploadPhotoToCdn(rawPhotos[i]);
+      cdnPhotos.push(cdnUrl);
+    } catch(e) {
+      cdnPhotos.push(rawPhotos[i]);
+    }
+  }
+
+  const photosArray = cdnPhotos.length > 0 ? cdnPhotos : rawPhotos;
 
   const newProduct = {
     id: prodId,
@@ -4843,8 +5018,11 @@ async function handleOwnerProductSubmit(event) {
   renderDynamicStoreProducts();
   renderOwnerProductList();
 
-  // 4. Dispatch to Google Apps Script / Google Sheet
+  // 4. Dispatch to Google Apps Script / Google Sheet (Both dedicated action and universal fallback row)
   try {
+    const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+    
+    // Call 1: Standard add_product
     const postData = new URLSearchParams();
     postData.append('action', 'add_product');
     postData.append('product_id', prodId);
@@ -4859,14 +5037,48 @@ async function handleOwnerProductSubmit(event) {
     postData.append('photo3', photosArray[2] || '');
     postData.append('photo4', photosArray[3] || '');
     postData.append('status', 'Active');
-    postData.append('uploader', email || phone || 'owner');
+    postData.append('uploader', (user && (user.email || user.phoneNumber)) || 'sahilzahoor');
 
-    const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
     fetch(endpoint, {
       method: 'POST',
       body: postData,
       mode: 'no-cors'
-    }).catch(err => console.warn("Background sheet sync:", err));
+    }).catch(err => console.warn("Background product sync:", err));
+
+    // Call 2: Universal Fallback Row in Main Sheet (Guarantees every visitor & browser fetches this immediately!)
+    const catalogMeta = JSON.stringify({
+      id: prodId,
+      productId: prodId,
+      name: title,
+      title: title,
+      category: category,
+      price: price,
+      mrp: mrp,
+      badge: badge,
+      desc: desc,
+      description: desc,
+      photos: photosArray,
+      image: photosArray[0] || 'images/logo-app.png',
+      status: 'Active'
+    });
+
+    const fallbackData = new URLSearchParams();
+    fallbackData.append('order_id', prodId);
+    fallbackData.append('name', title);
+    fallbackData.append('phone', 'CATALOG_PRODUCT');
+    fallbackData.append('address', catalogMeta);
+    fallbackData.append('product', title);
+    fallbackData.append('amount', String(price));
+    fallbackData.append('txn_id', 'CATALOG_PRODUCT');
+    fallbackData.append('status', 'Active');
+    fallbackData.append('notes', 'Owner Catalog Listing');
+
+    fetch(endpoint, {
+      method: 'POST',
+      body: fallbackData,
+      mode: 'no-cors'
+    }).catch(err => console.warn("Fallback sheet row sync:", err));
+
   } catch (err) {
     console.warn("Sheet post error:", err);
   }
@@ -4898,29 +5110,74 @@ async function syncCustomProductsWithSheet() {
   renderOwnerProductList();
 
   try {
+    // 1. Fetch from action=get_products
     const res = await fetch(`${endpoint}?action=get_products&t=${Date.now()}`);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (data && data.status === 'success' && Array.isArray(data.products)) {
-      // Merge with local products
-      const sheetProducts = data.products.map(p => ({
-        id: p.productId || p.id,
-        productId: p.productId || p.id,
-        name: p.name || p.title,
-        title: p.name || p.title,
-        category: p.category || 'books',
-        price: Number(p.price) || 0,
-        mrp: Number(p.mrp) || Math.round(Number(p.price) * 1.35),
-        badge: p.badge || 'Fresh Stock',
-        desc: p.desc || p.description || '',
-        description: p.desc || p.description || '',
-        photos: (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : []),
-        image: (Array.isArray(p.photos) && p.photos[0]) ? p.photos[0] : (p.image || 'images/logo-app.png'),
-        allImages: (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : []),
-        status: p.status || 'Active',
-        timestamp: p.timestamp || ''
-      }));
+    let sheetProducts = [];
+    if (res.ok) {
+      try {
+        const data = await res.json();
+        if (data && data.status === 'success' && Array.isArray(data.products)) {
+          sheetProducts = data.products.map(p => ({
+            id: p.productId || p.id,
+            productId: p.productId || p.id,
+            name: p.name || p.title,
+            title: p.name || p.title,
+            category: p.category || 'books',
+            price: Number(p.price) || 0,
+            mrp: Number(p.mrp) || Math.round(Number(p.price) * 1.35),
+            badge: p.badge || 'Fresh Stock',
+            desc: p.desc || p.description || '',
+            description: p.desc || p.description || '',
+            photos: (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : []),
+            image: (Array.isArray(p.photos) && p.photos[0]) ? p.photos[0] : (p.image || 'images/logo-app.png'),
+            allImages: (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : []),
+            status: p.status || 'Active',
+            timestamp: p.timestamp || ''
+          }));
+        }
+      } catch(e) {}
+    }
 
+    // 2. Fetch from action=get_orders universal catalog fallback
+    try {
+      const ordersRes = await fetch(`${endpoint}?action=get_orders&t=${Date.now()}`);
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        if (ordersData && ordersData.status === 'success' && Array.isArray(ordersData.orders)) {
+          ordersData.orders.forEach(o => {
+            const isCatalogItem = (o.phone === 'CATALOG_PRODUCT' || o.txnId === 'CATALOG_PRODUCT' || (o.orderId && o.orderId.startsWith('PRD-')));
+            if (isCatalogItem) {
+              try {
+                let parsedMeta = null;
+                if (o.address && o.address.startsWith('{')) {
+                  parsedMeta = JSON.parse(o.address);
+                }
+                const prodItem = parsedMeta || {
+                  id: o.orderId,
+                  productId: o.orderId,
+                  name: o.name,
+                  title: o.name,
+                  category: 'books',
+                  price: parseFloat(o.amount) || 0,
+                  mrp: Math.round((parseFloat(o.amount) || 0) * 1.35),
+                  badge: 'Fresh Stock',
+                  desc: o.notes || '',
+                  description: o.notes || '',
+                  photos: ['images/logo-app.png'],
+                  image: 'images/logo-app.png',
+                  status: 'Active'
+                };
+                if (prodItem.id && !sheetProducts.some(sp => sp.id === prodItem.id)) {
+                  sheetProducts.push(prodItem);
+                }
+              } catch(e) {}
+            }
+          });
+        }
+      }
+    } catch(e) {}
+
+    if (sheetProducts.length > 0) {
       // Combine Sheet products with local products (avoid duplicate productIds)
       const mergedMap = new Map();
       sheetProducts.forEach(p => mergedMap.set(p.id, p));
