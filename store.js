@@ -1517,7 +1517,10 @@ function renderOrdersPage() {
                 <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
               </select>
             </div>
-            <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Amazon/Flipkart-style shipping label">
+                <i class="fa-solid fa-print"></i> 🖨️ Label
+              </button>
               <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${safeOrderId}')" style="background: #25d366; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
                 <i class="fa-brands fa-whatsapp"></i> Send WhatsApp Notice
               </button>
@@ -1669,6 +1672,548 @@ function triggerPrintReceipt() {
 function closeReceiptModal() {
   const modal = document.getElementById('orderReceiptModal');
   if (modal) modal.style.display = 'none';
+}
+
+// ============================================================================
+// PARCEL SHIPPING & PACKAGING LABEL SYSTEM (AMAZON / FLIPKART STYLE)
+// Pure Client-Side Code-128 SVG Barcode + Scannable QR Code Generator
+// ============================================================================
+const CODE128_PATTERNS = [
+  "212222", "222122", "222221", "121223", "121322", "131222", "122213", "122312", "132212", "221213",
+  "221312", "231212", "112232", "122132", "122231", "113222", "123122", "123221", "223211", "221132",
+  "221231", "213212", "223112", "312131", "311222", "321122", "321221", "312212", "322112", "322211",
+  "212123", "212321", "232121", "111323", "131123", "131321", "112313", "132113", "132311", "211313",
+  "231113", "231311", "112133", "112331", "132131", "113123", "113321", "133121", "313121", "211331",
+  "231131", "213113", "213311", "213131", "311123", "311321", "331121", "312113", "312311", "332111",
+  "314111", "221411", "431111", "111224", "111422", "121124", "121421", "141122", "141221", "112214",
+  "112412", "122114", "122411", "142112", "142211", "241211", "221114", "413111", "241112", "134111",
+  "111242", "121142", "121241", "114212", "124112", "124211", "411212", "421112", "421211", "212141",
+  "214121", "412121", "111143", "111341", "131141", "114113", "114311", "411113", "411311", "113141",
+  "114131", "311141", "411131", "211412", "211214", "211232", "2331112"
+];
+
+function generateCode128Svg(text, barHeight = 65, moduleWidth = 2) {
+  const safeText = String(text || 'ORD-000000').trim();
+  let codes = [104];
+  let checksum = 104;
+
+  for (let i = 0; i < safeText.length; i++) {
+    let charCode = safeText.charCodeAt(i);
+    let val = charCode - 32;
+    if (val < 0 || val > 95) val = 0;
+    codes.push(val);
+    checksum += val * (i + 1);
+  }
+  codes.push(checksum % 103);
+  codes.push(106);
+
+  const quietZone = 20;
+  let x = quietZone;
+  let rects = [];
+
+  for (let code of codes) {
+    let pattern = CODE128_PATTERNS[code] || CODE128_PATTERNS[0];
+    for (let p = 0; p < pattern.length; p++) {
+      let width = parseInt(pattern[p], 10) * moduleWidth;
+      if (p % 2 === 0) {
+        rects.push(`<rect x="${x}" y="0" width="${width}" height="${barHeight}" fill="#000000" />`);
+      }
+      x += width;
+    }
+  }
+  const totalWidth = x + quietZone;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${barHeight}" width="${totalWidth}" height="${barHeight}" style="max-width:100%; height:auto; display:block; margin:0 auto; shape-rendering:crispEdges;">${rects.join('')}</svg>`;
+}
+
+function renderQrCodeIntoContainer(container, text, size = 75) {
+  if (!container) return;
+  container.innerHTML = '';
+  
+  if (typeof QRCode === 'function') {
+    try {
+      new QRCode(container, {
+        text: text,
+        width: size,
+        height: size,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: (typeof QRCode.CorrectLevel !== 'undefined') ? QRCode.CorrectLevel.M : 0
+      });
+      return;
+    } catch (e) {
+      console.warn("QRCodeJS instance notice:", e);
+    }
+  }
+
+  // Fallback to high-resolution QR service
+  const img = document.createElement('img');
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&margin=1`;
+  img.alt = 'QR Tracking Code';
+  img.style.width = size + 'px';
+  img.style.height = size + 'px';
+  img.style.display = 'block';
+  img.style.objectFit = 'contain';
+  container.appendChild(img);
+}
+
+function openShippingLabelModal(orderId) {
+  const user = getCurrentUser();
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
+  if (!isOwner) {
+    showToast('🔒 Shipping labels can only be generated by the Store Owner.');
+    return;
+  }
+
+  const allOrders = getOrders();
+  const order = allOrders.find(o => o.orderId === orderId);
+  if (!order) {
+    showToast('⚠️ Order not found in store database.');
+    return;
+  }
+
+  const printArea = document.getElementById('shippingLabelPrintArea');
+  const modal = document.getElementById('shippingLabelModal');
+  if (!printArea || !modal) return;
+
+  const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Valued Student';
+  const customerPhone = getValidCustomerPhone(order) || order.phone || '9622605714';
+  const customerAddress = order.address || 'Delivery Address, Pattan Hub, Dist. Baramulla, J&K';
+  
+  const pinMatch = String(customerAddress).match(/\b(19\d{4})\b/);
+  const pincode = pinMatch ? pinMatch[1] : '193121';
+
+  const isCod = (order.paymentMethod === 'cod' || order.txnId === 'COD' || String(order.status).toLowerCase().includes('cod'));
+  const barcodeSvg = generateCode128Svg(order.orderId, 64, 2);
+  const qrUrl = `https://jkstudyhub.online/account.html#orders?id=${encodeURIComponent(order.orderId)}`;
+  const awbNumber = 'JKSH' + (order.txnId ? String(order.txnId).replace(/\D/g,'').slice(-6) : String(order.orderId).replace(/\D/g,'').slice(-6) || '193121');
+  const orderDate = order.date || new Date().toLocaleDateString('en-IN');
+
+  printArea.innerHTML = `
+    <div class="shipping-label-sheet">
+      <!-- Top Bar: Logistics Header -->
+      <div style="border-bottom: 2px solid #000; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">📦</span>
+          <div>
+            <div style="font-size: 15px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">JK STUDY HUB LOGISTICS</div>
+            <div style="font-size: 10px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 13px; font-weight: 900; border: 1.5px solid #000; padding: 2px 8px; display: inline-block;">ROUTE: KMR-193</div>
+          <div style="font-size: 10px; font-weight: 600; margin-top: 2px;">DISPATCH: ${orderDate}</div>
+        </div>
+      </div>
+
+      <!-- Primary Barcode Section -->
+      <div style="border-bottom: 2px solid #000; padding: 12px 10px; text-align: center; background: #fff;">
+        <div style="display: flex; justify-content: center; margin-bottom: 4px;">
+          ${barcodeSvg}
+        </div>
+        <div style="font-family: monospace; font-size: 14px; font-weight: 900; letter-spacing: 2px;">* ${order.orderId} *</div>
+        <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; margin-top: 4px; padding: 0 10px; color: #222;">
+          <span>AWB: ${awbNumber}</span>
+          <span>HUB: BARAMULLA / PATTAN</span>
+        </div>
+      </div>
+
+      <!-- Payment Status Banner (PREPAID vs COD) -->
+      <div style="border-bottom: 2px solid #000; padding: 8px 12px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
+        ${isCod ? `
+          <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
+          <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${order.amount}</div>
+          <div style="font-size: 10px; font-weight: 700; margin-top: 2px; letter-spacing: 0.5px;">⚠️ COLLECT EXACT AMOUNT BEFORE OPENING PACKAGE</div>
+        ` : `
+          <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${order.amount} • VERIFIED ONLINE</div>
+          <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Razorpay TXN: ${order.txnId || 'VERIFIED'}</div>
+        `}
+      </div>
+
+      <!-- Address Section: SHIP TO (Consignee) & SHIP FROM (Shipper) -->
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; border-bottom: 2px solid #000;">
+        <!-- Ship To -->
+        <div style="padding: 10px 12px; border-right: 2px solid #000; background: #fff;">
+          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
+          <div style="font-size: 14px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
+          <div style="font-size: 12px; font-weight: 800; color: #000; margin-top: 3px;">TEL: +91 ${customerPhone}</div>
+          <div style="font-size: 11px; font-weight: 600; color: #111; line-height: 1.4; margin-top: 4px; word-break: break-word;">${customerAddress}</div>
+          <div style="margin-top: 8px; padding-top: 4px; border-top: 1px dashed #000;">
+            <span style="font-size: 11px; font-weight: 900;">PIN: </span>
+            <span style="font-size: 20px; font-weight: 900; letter-spacing: 1px;">${pincode}</span>
+          </div>
+        </div>
+
+        <!-- Ship From -->
+        <div style="padding: 10px 12px; background: #fff;">
+          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">SHIPPER (RETURN TO):</div>
+          <div style="font-size: 12px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB LOGISTICS</div>
+          <div style="font-size: 10.5px; font-weight: 600; color: #222; margin-top: 3px; line-height: 1.3;">
+            Fulfillment Center, Main Market, Pattan, Dist. Baramulla<br>
+            Jammu &amp; Kashmir - 193121
+          </div>
+          <div style="font-size: 11px; font-weight: 800; margin-top: 4px;">HELPLINE: +91 9622605714</div>
+          <div style="margin-top: 8px; font-size: 9px; font-weight: 700; border: 1px solid #000; padding: 2px 4px; display: inline-block;">
+            ORIGIN PIN: 193121
+          </div>
+        </div>
+      </div>
+
+      <!-- Items and Package Contents -->
+      <div style="border-bottom: 2px solid #000; padding: 8px 12px; background: #fff;">
+        <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px;">
+          <span style="flex: 2;">ITEM DESCRIPTION</span>
+          <span style="flex: 0.5; text-align: center;">QTY</span>
+          <span style="flex: 0.8; text-align: right;">TOTAL VALUE</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; line-height: 1.3;">
+          <span style="flex: 2; word-break: break-word;">${order.product}</span>
+          <span style="flex: 0.5; text-align: center;">1</span>
+          <span style="flex: 0.8; text-align: right;">₹${order.amount}</span>
+        </div>
+        <div style="font-size: 9px; font-weight: 700; color: #444; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
+          NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
+        </div>
+      </div>
+
+      <!-- Footer with QR Code and Dispatch Stamp -->
+      <div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div id="shippingLabelQrWrap" style="width: 75px; height: 75px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #000; padding: 2px;">
+          </div>
+          <div>
+            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase;">SCAN FOR REAL-TIME TRACKING</div>
+            <div style="font-size: 8.5px; font-weight: 600; color: #333; line-height: 1.3; max-width: 170px; margin-top: 2px;">
+              Scan with mobile camera or scanner to verify parcel authenticity &amp; update live delivery status.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; border: 1.5px dashed #000; padding: 6px 10px; border-radius: 4px; min-width: 110px;">
+          <div style="font-size: 8.5px; font-weight: 900; letter-spacing: 0.5px;">JK STUDY HUB</div>
+          <div style="font-size: 10px; font-weight: 900; color: #000; margin: 2px 0;">VERIFIED DISPATCH</div>
+          <div style="font-size: 8px; font-weight: 700; color: #555;">AUTH. SIGNATORY</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const qrContainer = document.getElementById('shippingLabelQrWrap');
+    if (qrContainer) {
+      renderQrCodeIntoContainer(qrContainer, qrUrl, 70);
+    }
+  }, 50);
+
+  modal.style.display = 'flex';
+}
+
+function printShippingLabel() {
+  window.print();
+}
+
+function closeShippingLabelModal() {
+  const modal = document.getElementById('shippingLabelModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ============================================================================
+// STORE OWNER IN-APP CAMERA SCANNER
+// Mobile & Desktop Camera Stream • BarcodeDetector & jsQR Fallback • Live Status Actions
+// ============================================================================
+let activeScannerStream = null;
+let activeScannerTrack = null;
+let currentScannerFacingMode = 'environment';
+let isScannerDetecting = false;
+let isTorchActive = false;
+
+function playScanSuccessBeep() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.22);
+  } catch(e) {}
+}
+
+function extractOrderIdFromScan(raw) {
+  if (!raw) return '';
+  const match = String(raw).match(/ORD-[A-Za-z0-9_-]+/i);
+  if (match) return match[0].toUpperCase();
+  return String(raw).trim();
+}
+
+function openAdminCameraScanner() {
+  const user = getCurrentUser();
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
+  if (!isOwner) {
+    showToast('🔒 Camera scanner is strictly restricted to the Store Owner.');
+    return;
+  }
+
+  const modal = document.getElementById('adminCameraScannerModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  const resCard = document.getElementById('adminScannedResultCard');
+  if (resCard) resCard.style.display = 'none';
+  const manualInput = document.getElementById('manualScannerInput');
+  if (manualInput) manualInput.value = '';
+
+  startScannerCamera(currentScannerFacingMode);
+}
+
+function closeAdminCameraScanner() {
+  isScannerDetecting = false;
+  if (activeScannerStream) {
+    activeScannerStream.getTracks().forEach(t => t.stop());
+    activeScannerStream = null;
+    activeScannerTrack = null;
+  }
+  const modal = document.getElementById('adminCameraScannerModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function startScannerCamera(facingMode) {
+  const video = document.getElementById('adminScannerVideo');
+  const statusBadge = document.getElementById('scannerStatusBadge');
+  if (!video) return;
+
+  if (activeScannerStream) {
+    activeScannerStream.getTracks().forEach(t => t.stop());
+    activeScannerStream = null;
+    activeScannerTrack = null;
+  }
+
+  if (statusBadge) {
+    statusBadge.innerHTML = '<span class="live-pulse"></span> Initializing Camera...';
+  }
+
+  navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: { ideal: facingMode },
+      width: { ideal: 1280 },
+      height: { ideal: 720 }
+    },
+    audio: false
+  }).then(stream => {
+    activeScannerStream = stream;
+    activeScannerTrack = stream.getVideoTracks()[0];
+    video.srcObject = stream;
+    video.setAttribute('playsinline', 'true');
+    video.play();
+
+    const torchBtn = document.getElementById('btnToggleTorch');
+    if (torchBtn && activeScannerTrack && activeScannerTrack.getCapabilities) {
+      try {
+        const caps = activeScannerTrack.getCapabilities();
+        if (caps.torch) {
+          torchBtn.style.display = 'flex';
+        } else {
+          torchBtn.style.display = 'none';
+        }
+      } catch(e) {
+        torchBtn.style.display = 'none';
+      }
+    }
+
+    if (statusBadge) {
+      statusBadge.innerHTML = '<span class="live-pulse"></span> Align Barcode inside frame';
+    }
+
+    isScannerDetecting = true;
+    requestAnimationFrame(scanVideoFrameLoop);
+  }).catch(err => {
+    console.warn("Camera access warning:", err);
+    if (statusBadge) {
+      statusBadge.innerHTML = '⚠️ Camera unavailable. Enter Order ID below.';
+    }
+    const manualInput = document.getElementById('manualScannerInput');
+    if (manualInput) manualInput.focus();
+  });
+}
+
+function flipScannerCamera() {
+  currentScannerFacingMode = (currentScannerFacingMode === 'environment') ? 'user' : 'environment';
+  startScannerCamera(currentScannerFacingMode);
+}
+
+function toggleScannerTorch() {
+  if (!activeScannerTrack || !activeScannerTrack.applyConstraints) return;
+  isTorchActive = !isTorchActive;
+  activeScannerTrack.applyConstraints({
+    advanced: [{ torch: isTorchActive }]
+  }).catch(() => {});
+}
+
+function scanVideoFrameLoop() {
+  if (!isScannerDetecting) return;
+  const video = document.getElementById('adminScannerVideo');
+  if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+    requestAnimationFrame(scanVideoFrameLoop);
+    return;
+  }
+
+  if ('BarcodeDetector' in window) {
+    try {
+      const detector = new BarcodeDetector({ formats: ['code_128', 'qr_code', 'code_39', 'ean_13'] });
+      detector.detect(video).then(barcodes => {
+        if (barcodes && barcodes.length > 0) {
+          handleScannedBarcodeValue(barcodes[0].rawValue);
+        } else if (isScannerDetecting) {
+          requestAnimationFrame(scanVideoFrameLoop);
+        }
+      }).catch(() => {
+        if (isScannerDetecting) requestAnimationFrame(scanVideoFrameLoop);
+      });
+      return;
+    } catch(e) {}
+  }
+
+  if (typeof jsQR === 'function') {
+    const canvas = document.getElementById('adminScannerCanvas');
+    if (canvas) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: "dontInvert" });
+      if (code && code.data) {
+        handleScannedBarcodeValue(code.data);
+        return;
+      }
+    }
+  }
+
+  if (isScannerDetecting) {
+    requestAnimationFrame(scanVideoFrameLoop);
+  }
+}
+
+function handleScannedBarcodeValue(raw) {
+  if (!raw) return;
+  isScannerDetecting = false;
+  playScanSuccessBeep();
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+  const orderId = extractOrderIdFromScan(raw);
+  const allOrders = getOrders();
+  const order = allOrders.find(o => String(o.orderId).toUpperCase() === orderId.toUpperCase() || String(o.txnId).toUpperCase() === String(raw).toUpperCase());
+
+  const resCard = document.getElementById('adminScannedResultCard');
+  if (!resCard) return;
+
+  if (!order) {
+    resCard.innerHTML = `
+      <div style="text-align: center; padding: 10px;">
+        <div style="font-size: 32px; margin-bottom: 6px;">🔍</div>
+        <div style="font-size: 15px; font-weight: 800; color: #0f172a;">Order Not Found Locally</div>
+        <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;">Scanned Code: <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${raw}</code></div>
+        <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing Google Sheets orders...'); setTimeout(() => handleScannedBarcodeValue('${raw}'), 800);" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
+            <i class="fa-solid fa-arrows-rotate"></i> Sync from Sheets &amp; Retry
+          </button>
+          <button type="button" onclick="resumeAdminScanner()" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
+            Scan Next
+          </button>
+        </div>
+      </div>
+    `;
+    resCard.style.display = 'block';
+    return;
+  }
+
+  let statusBadgeBg = '#eff6ff';
+  let statusBadgeColor = '#2563eb';
+  if (order.status === 'Delivered') { statusBadgeBg = '#f0fdf4'; statusBadgeColor = '#16a34a'; }
+  if (order.status === 'Cancelled') { statusBadgeBg = '#fef2f2'; statusBadgeColor = '#dc2626'; }
+
+  const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
+  const customerPhone = getValidCustomerPhone(order) || order.phone || 'N/A';
+
+  resCard.innerHTML = `
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+        <div>
+          <span style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">SCANNED PARCEL</span>
+          <div style="font-family: monospace; font-size: 16px; font-weight: 900; color: #0f172a;">${order.orderId}</div>
+        </div>
+        <span style="background: ${statusBadgeBg}; color: ${statusBadgeColor}; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800;">
+          ${order.status}
+        </span>
+      </div>
+
+      <div style="font-size: 13px; color: #334155; margin-bottom: 14px; line-height: 1.5; background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+        <div><strong>Item:</strong> ${order.product} (₹${order.amount})</div>
+        <div style="margin-top: 3px;"><strong>Recipient:</strong> ${customerName} (+91 ${customerPhone})</div>
+        <div style="margin-top: 3px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 6px; text-transform: uppercase;">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> One-Tap Status Update:
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Shipped')" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #bfdbfe; padding: 8px 6px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center;">
+            <i class="fa-solid fa-box"></i> Dispatched
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; padding: 8px 6px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center;">
+            <i class="fa-solid fa-truck-fast"></i> Out for Delivery
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; padding: 8px 6px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center;">
+            <i class="fa-solid fa-house-chimney-check"></i> Delivered
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;">
+        <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${order.orderId}')" style="flex: 1; min-width: 120px; background: #25d366; color: white; border: none; padding: 9px 12px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp Notify
+        </button>
+        <button type="button" onclick="openShippingLabelModal('${order.orderId}')" style="background: #0f172a; color: white; border: none; padding: 9px 12px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-print"></i> 🖨️ Label
+        </button>
+        <button type="button" onclick="resumeAdminScanner()" style="background: #2563eb; color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-rotate-right"></i> Next Parcel
+        </button>
+      </div>
+    </div>
+  `;
+  resCard.style.display = 'block';
+}
+
+function updateOrderStatusFromScanner(orderId, newStatus) {
+  updateOrderStatusByAdmin(orderId, newStatus);
+  showToast(`✅ Order ${orderId} updated to: ${newStatus}`);
+  setTimeout(() => {
+    handleScannedBarcodeValue(orderId);
+  }, 250);
+}
+
+function resumeAdminScanner() {
+  const resCard = document.getElementById('adminScannedResultCard');
+  if (resCard) resCard.style.display = 'none';
+  const manualInput = document.getElementById('manualScannerInput');
+  if (manualInput) manualInput.value = '';
+
+  isScannerDetecting = true;
+  requestAnimationFrame(scanVideoFrameLoop);
+}
+
+function handleManualBarcodeLookup() {
+  const input = document.getElementById('manualScannerInput');
+  if (!input || !input.value.trim()) return;
+  handleScannedBarcodeValue(input.value.trim());
 }
 
 // --- GOOGLE SHEETS LIVE SYNC BACKGROUND WORKER ---
@@ -2767,8 +3312,11 @@ function renderAccountOrders() {
             <div style="font-size: 12.5px; color: #475569;">Viewing all ${allOrders.length} store orders • Live synced with Google Sheets</div>
           </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <button type="button" onclick="openAdminCameraScanner();" style="background: #059669; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
+            <i class="fa-solid fa-camera"></i> 📷 Scan Parcel
+          </button>
+          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-arrows-rotate"></i> Sync Orders
           </button>
         </div>
@@ -2845,8 +3393,8 @@ function renderAccountOrders() {
         <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
           <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
           <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <select ${isLocked ? 'disabled' : ''} class="form-input" style="padding:8px 12px; font-size:13px; flex:1; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; ${isLocked ? 'background-color:#f8fafc; cursor:default; pointer-events:none;' : ''}" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
+            <select ${isLocked ? 'disabled' : ''} class="form-input" style="padding:8px 12px; font-size:13px; flex:1; min-width: 140px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; ${isLocked ? 'background-color:#f8fafc; cursor:default; pointer-events:none;' : ''}" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
               <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
               <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
               <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
@@ -2854,7 +3402,10 @@ function renderAccountOrders() {
               <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
               <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
             </select>
-            <button onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
+            <button type="button" onclick="openShippingLabelModal('${o.orderId}')" style="background:#0f172a; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;" title="Print Amazon/Flipkart-style shipping label">
+              <i class="fa-solid fa-print"></i> 🖨️ Label
+            </button>
+            <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${o.orderId}')" style="background:#25d366; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"><i class="fa-brands fa-whatsapp"></i> Notify</button>
           </div>
         </div>
       `;

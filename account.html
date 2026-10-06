@@ -127,6 +127,179 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     @media (max-width: 768px) { .mobile-bottom-nav { display: flex; } }
+
+    /* =========================================================
+       PARCEL SHIPPING LABEL & CAMERA SCANNER STYLES
+       ========================================================= */
+    .shipping-modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.78); backdrop-filter: blur(4px);
+      z-index: 99999; display: flex; align-items: center; justify-content: center;
+      padding: 15px; box-sizing: border-box; overflow-y: auto;
+    }
+    .shipping-modal-card {
+      background: #ffffff; border-radius: 16px; max-width: 580px; width: 100%;
+      max-height: 92vh; display: flex; flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .shipping-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;
+    }
+    .label-print-btn {
+      background: #0f172a; color: white; border: none; padding: 8px 16px;
+      border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;
+    }
+    .label-print-btn:hover { background: #2563eb; }
+    .label-close-btn {
+      background: none; border: none; font-size: 26px; line-height: 1;
+      color: #64748b; cursor: pointer; padding: 0 4px;
+    }
+    .label-close-btn:hover { color: #0f172a; }
+    .shipping-label-body {
+      padding: 20px; overflow-y: auto; background: #f1f5f9; display: flex;
+      justify-content: center; box-sizing: border-box;
+    }
+    .shipping-label-sheet {
+      background: #ffffff; width: 100%; max-width: 480px; border: 2.5px solid #000000;
+      font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000;
+      box-sizing: border-box; line-height: 1.35;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+
+    /* Print media rules */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #shippingLabelModal, #shippingLabelPrintArea, #shippingLabelPrintArea * {
+        visibility: visible !important;
+      }
+      #shippingLabelModal {
+        position: fixed !important; left: 0 !important; top: 0 !important;
+        width: 100vw !important; height: 100vh !important;
+        background: transparent !important; padding: 0 !important; margin: 0 !important;
+        display: block !important; box-shadow: none !important;
+      }
+      .shipping-modal-card {
+        box-shadow: none !important; border-radius: 0 !important;
+        max-width: 100% !important; max-height: none !important;
+        background: transparent !important; border: none !important;
+      }
+      .label-no-print {
+        display: none !important;
+      }
+      .shipping-label-body {
+        background: transparent !important; padding: 0 !important;
+      }
+      .shipping-label-sheet {
+        box-shadow: none !important; width: 100mm !important; max-width: 100mm !important;
+        margin: 0 auto !important; border: 2px solid #000 !important;
+      }
+      @page {
+        size: 100mm 150mm;
+        margin: 0;
+      }
+    }
+
+    /* In-App Camera Scanner Styles */
+    .scanner-modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(6px);
+      z-index: 99999; display: flex; align-items: center; justify-content: center;
+      padding: 15px; box-sizing: border-box; overflow-y: auto;
+    }
+    .scanner-modal-card {
+      background: #0f172a; border: 1.5px solid #334155; border-radius: 20px;
+      max-width: 500px; width: 100%; overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    .scanner-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid #1e293b; background: #0b1329;
+    }
+    .scanner-close-btn {
+      background: none; border: none; color: #94a3b8; font-size: 26px;
+      cursor: pointer; line-height: 1; padding: 0 4px;
+    }
+    .scanner-close-btn:hover { color: #ffffff; }
+    .scanner-viewfinder-wrap {
+      position: relative; width: 100%; height: 300px; background: #000000;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    #adminScannerVideo {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .scanner-reticle {
+      position: absolute; width: 230px; height: 160px;
+      border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 12px;
+      pointer-events: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+    }
+    .reticle-corner {
+      position: absolute; width: 20px; height: 20px;
+      border-color: #10b981; border-style: solid;
+    }
+    .reticle-corner.top-left { top: -2px; left: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 10px; }
+    .reticle-corner.top-right { top: -2px; right: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 10px; }
+    .reticle-corner.bottom-left { bottom: -2px; left: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 10px; }
+    .reticle-corner.bottom-right { bottom: -2px; right: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 10px; }
+    .scanner-laser-line {
+      position: absolute; left: 0; width: 100%; height: 2.5px;
+      background: linear-gradient(90deg, transparent, #10b981, #34d399, transparent);
+      box-shadow: 0 0 8px #10b981; animation: scannerLaser 2s ease-in-out infinite;
+    }
+    @keyframes scannerLaser {
+      0% { top: 10%; opacity: 0.3; }
+      50% { top: 88%; opacity: 1; }
+      100% { top: 10%; opacity: 0.3; }
+    }
+    .scanner-controls-overlay {
+      position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 5;
+    }
+    .scanner-controls-overlay button {
+      background: rgba(15, 23, 42, 0.75); color: white; border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 36px; height: 36px; border-radius: 50%; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+    .scanner-status-badge {
+      position: absolute; bottom: 10px; background: rgba(15, 23, 42, 0.85);
+      color: #e2e8f0; padding: 5px 12px; border-radius: 20px; font-size: 11.5px;
+      font-weight: 600; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px);
+    }
+    .live-pulse {
+      width: 7px; height: 7px; background: #10b981; border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); animation: pulseGreen 1.5s infinite;
+    }
+    @keyframes pulseGreen {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .scanner-manual-wrap {
+      padding: 10px 16px; background: #1e293b; display: flex; gap: 8px; border-bottom: 1px solid #334155;
+    }
+    .scanner-manual-wrap input {
+      flex: 1; padding: 8px 12px; background: #0f172a; border: 1px solid #334155;
+      border-radius: 8px; color: white; font-size: 12.5px; outline: none;
+    }
+    .scanner-manual-wrap input:focus { border-color: #2563eb; }
+    .scanner-manual-wrap button {
+      background: #2563eb; color: white; border: none; padding: 8px 14px;
+      border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; white-space: nowrap;
+    }
+    .scanned-result-card {
+      padding: 16px; background: #ffffff; border-top: 1px solid #e2e8f0;
+      max-height: 380px; overflow-y: auto; color: #1e293b;
+    }
   </style>
 </head>
 <body id="accountBody">
@@ -392,6 +565,85 @@
     </div>
   </div>
 
+  <!-- =========================================================
+       PARCEL SHIPPING LABEL MODAL (AMAZON / FLIPKART STYLE)
+       ========================================================= -->
+  <div id="shippingLabelModal" class="shipping-modal-backdrop" style="display:none;" onclick="if(event.target===this) closeShippingLabelModal()">
+    <div class="shipping-modal-card">
+      <div class="shipping-modal-header label-no-print">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:20px;">📦</span>
+          <div>
+            <h3 style="margin:0; font-size:15.5px; font-weight:800; color:#0f172a;">Packaging &amp; Shipping Label</h3>
+            <p style="margin:0; font-size:11.5px; color:#64748b;">Ready for Thermal Sticker (4x6 in) or Standard A4 Printing</p>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button type="button" onclick="printShippingLabel()" class="label-print-btn">
+            <i class="fa-solid fa-print"></i> Print Label
+          </button>
+          <button type="button" onclick="closeShippingLabelModal()" class="label-close-btn">&times;</button>
+        </div>
+      </div>
+      <div id="shippingLabelPrintArea" class="shipping-label-body">
+        <!-- Injected dynamically by openShippingLabelModal(orderId) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       STORE OWNER IN-APP CAMERA SCANNER MODAL
+       ========================================================= -->
+  <div id="adminCameraScannerModal" class="scanner-modal-backdrop" style="display:none;" onclick="if(event.target===this) closeAdminCameraScanner()">
+    <div class="scanner-modal-card">
+      <div class="scanner-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:18px; color:#10b981;"><i class="fa-solid fa-camera"></i></span>
+          <div>
+            <h3 style="margin:0; font-size:15px; font-weight:800; color:white;">Scan Parcel Barcode / QR Code</h3>
+            <p style="margin:0; font-size:11px; color:#94a3b8;">Store Owner Mode • Live Parcel Scanner</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminCameraScanner()" class="scanner-close-btn">&times;</button>
+      </div>
+
+      <div class="scanner-viewfinder-wrap">
+        <video id="adminScannerVideo" playsinline autoplay muted></video>
+        <canvas id="adminScannerCanvas" style="display:none;"></canvas>
+
+        <div class="scanner-reticle">
+          <div class="reticle-corner top-left"></div>
+          <div class="reticle-corner top-right"></div>
+          <div class="reticle-corner bottom-left"></div>
+          <div class="reticle-corner bottom-right"></div>
+          <div class="scanner-laser-line"></div>
+        </div>
+
+        <div class="scanner-controls-overlay">
+          <button type="button" id="btnToggleTorch" onclick="toggleScannerTorch()" style="display:none;" title="Toggle Flashlight">
+            <i class="fa-solid fa-bolt"></i>
+          </button>
+          <button type="button" onclick="flipScannerCamera()" title="Switch Camera">
+            <i class="fa-solid fa-camera-rotate"></i>
+          </button>
+        </div>
+
+        <div id="scannerStatusBadge" class="scanner-status-badge">
+          <span class="live-pulse"></span> Align Barcode inside frame
+        </div>
+      </div>
+
+      <!-- Manual Order ID fallback / External barcode gun input -->
+      <div class="scanner-manual-wrap">
+        <input type="text" id="manualScannerInput" placeholder="Enter or scan Order ID (e.g. ORD-123456)..." onkeydown="if(event.key==='Enter') handleManualBarcodeLookup()">
+        <button type="button" onclick="handleManualBarcodeLookup()"><i class="fa-solid fa-magnifying-glass"></i> Lookup</button>
+      </div>
+
+      <!-- Live Scanned Parcel Result Card -->
+      <div id="adminScannedResultCard" class="scanned-result-card" style="display:none;"></div>
+    </div>
+  </div>
+
   <!-- Mobile Bottom Navigation -->
   <div class="mobile-bottom-nav">
     <a href="store.html" class="mobile-nav-item"><i class="fa-solid fa-house"></i> Home</a>
@@ -418,7 +670,10 @@
       });
     }
   </script>
-  <script src="store.js?v=21.0"></script>
+  <!-- Barcode & QR Code client-side generator and scanner libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script src="store.js?v=22.0"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {
