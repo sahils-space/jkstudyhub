@@ -673,7 +673,7 @@
   <!-- Barcode & QR Code client-side generator and scanner libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <script src="store.js?v=22.0"></script>
+  <script src="store.js?v=23.0"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {
@@ -718,7 +718,10 @@
         document.getElementById('mobileBackBtn').style.display = 'inline-flex';
       }
       
-      if (tabId === 'orders' && typeof renderAccountOrders === 'function') renderAccountOrders();
+      if (tabId === 'orders') {
+        if (typeof syncOrdersWithGoogleSheet === 'function') syncOrdersWithGoogleSheet();
+        if (typeof renderAccountOrders === 'function') renderAccountOrders();
+      }
       if (tabId === 'manage-products' && typeof renderOwnerProductList === 'function') renderOwnerProductList();
       if (tabId === 'wishlist' && typeof renderAccountWishlist === 'function') renderAccountWishlist();
       if (tabId === 'addresses' && typeof renderAddresses === 'function') renderAddresses();
@@ -753,12 +756,16 @@
         }
       }
       
+      if (typeof syncOrdersWithGoogleSheet === 'function') {
+        syncOrdersWithGoogleSheet();
+      }
       if (typeof renderAccountOrders === 'function') {
         renderAccountOrders();
       }
       setTimeout(() => {
         if (typeof updateOwnerUIProtection === 'function') updateOwnerUIProtection();
         renderAccountDashboard();
+        if (typeof syncOrdersWithGoogleSheet === 'function') syncOrdersWithGoogleSheet();
         if (typeof renderAccountOrders === 'function') renderAccountOrders();
       }, 300);
     });

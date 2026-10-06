@@ -73,13 +73,17 @@ function doPost(e) {
     // ACTION: Admin Status Update from Website
     if (p.action === "update_status") {
       var targetId = String(p.order_id || "").trim();
+      var targetUpper = targetId.toUpperCase();
       var newStatus = String(p.status || "Confirmed").trim();
       var data = sheet.getDataRange().getValues();
       var updated = false;
       
       for (var i = 1; i < data.length; i++) {
-        var rowOrderId = String(data[i][1] || "").trim();
-        if (rowOrderId === targetId) {
+        var rowOrderId = String(data[i][1] || "").trim().toUpperCase();
+        var rowTxnId = String(data[i][7] || "").trim().toUpperCase();
+        var virtualId = ("ORD-" + (100000 + i)).toUpperCase();
+
+        if (rowOrderId === targetUpper || rowTxnId === targetUpper || virtualId === targetUpper) {
           // Column 9 (I) is Status
           sheet.getRange(i + 1, 9).setValue(newStatus);
           updated = true;
@@ -316,6 +320,34 @@ function doGet(e) {
           message: "Incorrect OTP code. Please enter the valid 6-digit code received on your phone."
         })).setMimeType(ContentService.MimeType.JSON);
       }
+    }
+
+    // ACTION: Admin Status Update from Website (via GET)
+    if (p.action === "update_status") {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      var targetId = String(p.order_id || "").trim();
+      var targetUpper = targetId.toUpperCase();
+      var newStatus = String(p.status || "Confirmed").trim();
+      var data = sheet.getDataRange().getValues();
+      var updated = false;
+      
+      for (var i = 1; i < data.length; i++) {
+        var rowOrderId = String(data[i][1] || "").trim().toUpperCase();
+        var rowTxnId = String(data[i][7] || "").trim().toUpperCase();
+        var virtualId = ("ORD-" + (100000 + i)).toUpperCase();
+
+        if (rowOrderId === targetUpper || rowTxnId === targetUpper || virtualId === targetUpper) {
+          sheet.getRange(i + 1, 9).setValue(newStatus);
+          updated = true;
+          break;
+        }
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        status: updated ? "success" : "not_found",
+        order_id: targetId,
+        new_status: newStatus
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // ACTION: Get Dynamic Products for Students & Storefront

@@ -1175,41 +1175,71 @@ function updateOwnerUIProtection() {
 
 function updateOrderStatusByAdmin(orderId, newStatus) {
   let orders = getOrders();
-  const idx = orders.findIndex(o => o.orderId === orderId);
-  if (idx !== -1) {
-    if (orders[idx].status === 'Delivered' || orders[idx].status === 'Cancelled') {
-      showToast(`⚠️ Order is ${orders[idx].status} and cannot be modified.`);
-      if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
-      return;
-    }
+  const targetId = String(orderId || '').trim();
+  const targetUpper = targetId.toUpperCase();
+  
+  // Find case-insensitive or by orderId/txnId
+  const idx = orders.findIndex(o => {
+    const oId = String(o.orderId || '').trim().toUpperCase();
+    const tId = String(o.txnId || '').trim().toUpperCase();
+    return oId === targetUpper || (tId && tId === targetUpper);
+  });
 
+  if (idx !== -1) {
+    const matchedOrderId = orders[idx].orderId;
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     
-    // Permanently record locked status
-    if (newStatus === 'Delivered' || newStatus === 'Cancelled') {
-      try {
-        let locked = JSON.parse(localStorage.getItem('jk_locked_orders') || '{}');
-        locked[orderId] = newStatus;
-        localStorage.setItem('jk_locked_orders', JSON.stringify(locked));
-      } catch(e) {}
-    }
+    // Update or clear jk_locked_orders so it reflects owner's latest action
+    try {
+      let locked = JSON.parse(localStorage.getItem('jk_locked_orders') || '{}');
+      if (newStatus === 'Delivered' || newStatus === 'Cancelled') {
+        locked[matchedOrderId] = newStatus;
+      } else {
+        delete locked[matchedOrderId];
+      }
+      localStorage.setItem('jk_locked_orders', JSON.stringify(locked));
+    } catch(e) {}
     
     saveOrders(orders);
     
-    // Sync update to Google Apps Script asynchronously
+    // Sync update to Google Apps Script (both query params and body for 100% Apps Script reliability)
     if (SCRIPT_URL) {
       try {
-        const updateData = new FormData();
-        updateData.append('action', 'update_status');
-        updateData.append('order_id', orderId);
-        updateData.append('status', newStatus);
-        fetch(SCRIPT_URL, { method: 'POST', body: updateData, mode: 'no-cors' }).catch(() => {});
+        const params = new URLSearchParams();
+        params.append('action', 'update_status');
+        params.append('order_id', matchedOrderId);
+        params.append('status', newStatus);
+        
+        fetch(SCRIPT_URL + '?' + params.toString(), {
+          method: 'POST',
+          mode: 'no-cors',
+          body: params.toString(),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }).catch(err => console.warn('Status sync notice:', err));
       } catch(e) {}
     }
     
-    showToast(`Status updated to: ${newStatus}`);
+    showToast(`✅ Status updated to: ${newStatus}`);
     if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+    if (typeof renderOrdersPage === 'function') { renderOrdersPage(); }
+  } else {
+    // If order was not in local cache, still update Google Sheets directly!
+    if (SCRIPT_URL) {
+      try {
+        const params = new URLSearchParams();
+        params.append('action', 'update_status');
+        params.append('order_id', targetId);
+        params.append('status', newStatus);
+        fetch(SCRIPT_URL + '?' + params.toString(), {
+          method: 'POST',
+          mode: 'no-cors',
+          body: params.toString(),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }).catch(() => {});
+      } catch(e) {}
+    }
+    showToast(`✅ Status updated to: ${newStatus}`);
   }
 }
 
@@ -1756,6 +1786,29 @@ function renderQrCodeIntoContainer(container, text, size = 75) {
   container.appendChild(img);
 }
 
+function findOrderInStore(rawId) {
+  if (!rawId) return null;
+  const clean = extractOrderIdFromScan(rawId);
+  const cleanUpper = clean.toUpperCase();
+  const rawUpper = String(rawId).trim().toUpperCase();
+  const all = getOrders();
+
+  let match = all.find(o => {
+    const oId = String(o.orderId || '').trim().toUpperCase();
+    const tId = String(o.txnId || '').trim().toUpperCase();
+    return oId === cleanUpper || oId === rawUpper || (tId && (tId === cleanUpper || tId === rawUpper));
+  });
+
+  if (!match) {
+    match = all.find(o => {
+      const oId = String(o.orderId || '').trim().toUpperCase();
+      return (oId && (cleanUpper.includes(oId) || oId.includes(cleanUpper)));
+    });
+  }
+
+  return match || null;
+}
+
 function openShippingLabelModal(orderId) {
   const user = getCurrentUser();
   const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
@@ -1764,8 +1817,7 @@ function openShippingLabelModal(orderId) {
     return;
   }
 
-  const allOrders = getOrders();
-  const order = allOrders.find(o => o.orderId === orderId);
+  const order = findOrderInStore(orderId);
   if (!order) {
     showToast('⚠️ Order not found in store database.');
     return;
@@ -1782,7 +1834,7 @@ function openShippingLabelModal(orderId) {
   const pinMatch = String(customerAddress).match(/\b(19\d{4})\b/);
   const pincode = pinMatch ? pinMatch[1] : '193121';
 
-  const isCod = (order.paymentMethod === 'cod' || order.txnId === 'COD' || String(order.status).toLowerCase().includes('cod'));
+  const isCod = (order.paymentMethod === 'cod' || order.txnId === 'COD' || String(order.status).toLowerCase().includes('cod') || String(order.txnId).startsWith('COD_'));
   const barcodeSvg = generateCode128Svg(order.orderId, 64, 2);
   const qrUrl = `https://jkstudyhub.online/account.html#orders?id=${encodeURIComponent(order.orderId)}`;
   const awbNumber = 'JKSH' + (order.txnId ? String(order.txnId).replace(/\D/g,'').slice(-6) : String(order.orderId).replace(/\D/g,'').slice(-6) || '193121');
@@ -1821,12 +1873,12 @@ function openShippingLabelModal(orderId) {
       <div style="border-bottom: 2px solid #000; padding: 8px 12px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
         ${isCod ? `
           <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
-          <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${order.amount}</div>
+          <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${order.amount || 0}</div>
           <div style="font-size: 10px; font-weight: 700; margin-top: 2px; letter-spacing: 0.5px;">⚠️ COLLECT EXACT AMOUNT BEFORE OPENING PACKAGE</div>
         ` : `
           <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
-          <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${order.amount} • VERIFIED ONLINE</div>
-          <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Razorpay TXN: ${order.txnId || 'VERIFIED'}</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${order.amount || 0} • VERIFIED ONLINE</div>
+          <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Payment ID: ${order.txnId || 'VERIFIED'}</div>
         `}
       </div>
 
@@ -1869,7 +1921,7 @@ function openShippingLabelModal(orderId) {
         <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; line-height: 1.3;">
           <span style="flex: 2; word-break: break-word;">${order.product}</span>
           <span style="flex: 0.5; text-align: center;">1</span>
-          <span style="flex: 0.8; text-align: right;">₹${order.amount}</span>
+          <span style="flex: 0.8; text-align: right;">₹${order.amount || 0}</span>
         </div>
         <div style="font-size: 9px; font-weight: 700; color: #444; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
           NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
@@ -1947,9 +1999,25 @@ function playScanSuccessBeep() {
 
 function extractOrderIdFromScan(raw) {
   if (!raw) return '';
-  const match = String(raw).match(/ORD-[A-Za-z0-9_-]+/i);
-  if (match) return match[0].toUpperCase();
-  return String(raw).trim();
+  let str = String(raw).trim();
+  
+  // 1. If scanned content is a URL with id parameter
+  const urlParamMatch = str.match(/[?&]id=([^&#\s]+)/i);
+  if (urlParamMatch) {
+    str = decodeURIComponent(urlParamMatch[1]).trim();
+  }
+  
+  // 2. Strip bounding asterisks if scanned from barcode text representation: * ORD-123456 *
+  str = str.replace(/^\*+|\*+$/g, '').trim();
+
+  // 3. Extract order ID pattern: OD followed by digits, or ORD- followed by alphanumeric
+  const odMatch = str.match(/\b(OD\d{6,}|ORD[-_]?[A-Za-z0-9]+)\b/i);
+  if (odMatch) {
+    return odMatch[1].toUpperCase();
+  }
+
+  // 4. Return trimmed clean upper string
+  return str.toUpperCase();
 }
 
 function openAdminCameraScanner() {
@@ -1959,6 +2027,9 @@ function openAdminCameraScanner() {
     showToast('🔒 Camera scanner is strictly restricted to the Store Owner.');
     return;
   }
+
+  // Refresh orders from Google Sheets immediately in background so camera has freshest data
+  syncOrdersWithGoogleSheet();
 
   const modal = document.getElementById('adminCameraScannerModal');
   if (!modal) return;
@@ -2100,90 +2171,71 @@ function scanVideoFrameLoop() {
   }
 }
 
-function handleScannedBarcodeValue(raw) {
-  if (!raw) return;
-  isScannerDetecting = false;
-  playScanSuccessBeep();
-  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-  const orderId = extractOrderIdFromScan(raw);
-  const allOrders = getOrders();
-  const order = allOrders.find(o => String(o.orderId).toUpperCase() === orderId.toUpperCase() || String(o.txnId).toUpperCase() === String(raw).toUpperCase());
-
+function renderScannedOrderCard(order) {
   const resCard = document.getElementById('adminScannedResultCard');
-  if (!resCard) return;
+  if (!resCard || !order) return;
 
-  if (!order) {
-    resCard.innerHTML = `
-      <div style="text-align: center; padding: 10px;">
-        <div style="font-size: 32px; margin-bottom: 6px;">🔍</div>
-        <div style="font-size: 15px; font-weight: 800; color: #0f172a;">Order Not Found Locally</div>
-        <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;">Scanned Code: <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${raw}</code></div>
-        <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing Google Sheets orders...'); setTimeout(() => handleScannedBarcodeValue('${raw}'), 800);" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
-            <i class="fa-solid fa-arrows-rotate"></i> Sync from Sheets &amp; Retry
-          </button>
-          <button type="button" onclick="resumeAdminScanner()" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
-            Scan Next
-          </button>
-        </div>
-      </div>
-    `;
-    resCard.style.display = 'block';
-    return;
-  }
-
+  const currentStatus = String(order.status || 'Confirmed').trim();
+  const statusLower = currentStatus.toLowerCase();
+  
   let statusBadgeBg = '#eff6ff';
   let statusBadgeColor = '#2563eb';
-  if (order.status === 'Delivered') { statusBadgeBg = '#f0fdf4'; statusBadgeColor = '#16a34a'; }
-  if (order.status === 'Cancelled') { statusBadgeBg = '#fef2f2'; statusBadgeColor = '#dc2626'; }
+  if (statusLower.includes('deliver')) { statusBadgeBg = '#f0fdf4'; statusBadgeColor = '#16a34a'; }
+  else if (statusLower.includes('cancel')) { statusBadgeBg = '#fef2f2'; statusBadgeColor = '#dc2626'; }
+  else if (statusLower.includes('out')) { statusBadgeBg = '#fefce8'; statusBadgeColor = '#854d0e'; }
+  else if (statusLower.includes('dispatch') || statusLower.includes('ship')) { statusBadgeBg = '#f5f3ff'; statusBadgeColor = '#7c3aed'; }
 
   const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
   const customerPhone = getValidCustomerPhone(order) || order.phone || 'N/A';
+
+  const isDispatched = (statusLower.includes('dispatch') || statusLower.includes('ship'));
+  const isOutForDelivery = statusLower.includes('out');
+  const isDelivered = statusLower.includes('deliver');
 
   resCard.innerHTML = `
     <div>
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
         <div>
-          <span style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">SCANNED PARCEL</span>
+          <span style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">SCANNED PARCEL FOUND</span>
           <div style="font-family: monospace; font-size: 16px; font-weight: 900; color: #0f172a;">${order.orderId}</div>
         </div>
-        <span style="background: ${statusBadgeBg}; color: ${statusBadgeColor}; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800;">
+        <span style="background: ${statusBadgeBg}; color: ${statusBadgeColor}; padding: 4px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 800; border: 1px solid ${statusBadgeColor}30;">
           ${order.status}
         </span>
       </div>
 
-      <div style="font-size: 13px; color: #334155; margin-bottom: 14px; line-height: 1.5; background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-        <div><strong>Item:</strong> ${order.product} (₹${order.amount})</div>
-        <div style="margin-top: 3px;"><strong>Recipient:</strong> ${customerName} (+91 ${customerPhone})</div>
-        <div style="margin-top: 3px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
+      <div style="font-size: 13px; color: #334155; margin-bottom: 14px; line-height: 1.5; background: #f8fafc; padding: 12px 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+        <div><strong>Item:</strong> ${order.product} (₹${order.amount || 0})</div>
+        <div style="margin-top: 4px;"><strong>Recipient:</strong> ${customerName} (+91 ${customerPhone})</div>
+        <div style="margin-top: 4px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
+        ${order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>TXN / Payment:</strong> ${order.txnId}</div>` : ''}
       </div>
 
       <div style="margin-bottom: 12px;">
-        <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 6px; text-transform: uppercase;">
-          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> One-Tap Status Update:
+        <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> One-Tap Delivery Status Update:
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Shipped')" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #bfdbfe; padding: 8px 6px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center;">
-            <i class="fa-solid fa-box"></i> Dispatched
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Dispatched')" style="${isDispatched ? 'background: #2563eb; color: white; border: 2px solid #1d4ed8; font-weight: 800;' : 'background: #eff6ff; color: #1e40af; border: 1.5px solid #bfdbfe; font-weight: 700;'} padding: 10px 4px; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-box"></i> ${isDispatched ? '✓ Dispatched' : 'Dispatched'}
           </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; padding: 8px 6px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center;">
-            <i class="fa-solid fa-truck-fast"></i> Out for Delivery
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 4px; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-truck-fast"></i> ${isOutForDelivery ? '✓ Out for Del.' : 'Out for Del.'}
           </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; padding: 8px 6px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center;">
-            <i class="fa-solid fa-house-chimney-check"></i> Delivered
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 4px; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : 'Delivered'}
           </button>
         </div>
       </div>
 
-      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;">
-        <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${order.orderId}')" style="flex: 1; min-width: 120px; background: #25d366; color: white; border: none; padding: 9px 12px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+        <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${order.orderId}')" style="flex: 1; min-width: 120px; background: #25d366; color: white; border: none; padding: 10px 12px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
           <i class="fa-brands fa-whatsapp"></i> WhatsApp Notify
         </button>
-        <button type="button" onclick="openShippingLabelModal('${order.orderId}')" style="background: #0f172a; color: white; border: none; padding: 9px 12px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+        <button type="button" onclick="openShippingLabelModal('${order.orderId}')" style="background: #0f172a; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-print"></i> 🖨️ Label
         </button>
-        <button type="button" onclick="resumeAdminScanner()" style="background: #2563eb; color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+        <button type="button" onclick="resumeAdminScanner()" style="background: #2563eb; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-rotate-right"></i> Next Parcel
         </button>
       </div>
@@ -2192,12 +2244,113 @@ function handleScannedBarcodeValue(raw) {
   resCard.style.display = 'block';
 }
 
+function renderOrderNotFoundCard(orderId, raw) {
+  const resCard = document.getElementById('adminScannedResultCard');
+  if (!resCard) return;
+  resCard.innerHTML = `
+    <div style="text-align: center; padding: 12px;">
+      <div style="font-size: 32px; margin-bottom: 6px;">🔍</div>
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a;">Order ID Not Found</div>
+      <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;">Scanned: <code style="background: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-weight: 700;">${orderId || raw}</code></div>
+      <p style="font-size: 12px; color: #64748b; margin: 8px 0 14px;">We checked both local storage and Google Sheets, but this Order ID was not recognized.</p>
+      <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+        <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing Google Sheets...'); setTimeout(() => handleScannedBarcodeValue('${raw}'), 800);" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
+          <i class="fa-solid fa-arrows-rotate"></i> Retry Live Sync
+        </button>
+        <button type="button" onclick="resumeAdminScanner()" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
+          Scan Next
+        </button>
+      </div>
+    </div>
+  `;
+  resCard.style.display = 'block';
+}
+
+function handleScannedBarcodeValue(raw) {
+  if (!raw) return;
+  isScannerDetecting = false;
+  playScanSuccessBeep();
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+  const orderId = extractOrderIdFromScan(raw);
+  const order = findOrderInStore(orderId || raw);
+
+  const resCard = document.getElementById('adminScannedResultCard');
+  if (!resCard) return;
+
+  if (order) {
+    renderScannedOrderCard(order);
+    return;
+  }
+
+  // If not found in local memory, immediately query Google Sheets live endpoint
+  resCard.innerHTML = `
+    <div style="text-align: center; padding: 20px;">
+      <div style="font-size: 26px; margin-bottom: 8px;"><i class="fa-solid fa-arrows-rotate" style="color:#2563eb;"></i></div>
+      <div style="font-size: 15px; font-weight: 800; color: #0f172a;">Syncing Live with Google Sheets...</div>
+      <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Looking up order <code>${orderId || raw}</code></div>
+    </div>
+  `;
+  resCard.style.display = 'block';
+
+  if (!SCRIPT_URL) {
+    renderOrderNotFoundCard(orderId, raw);
+    return;
+  }
+
+  fetch(SCRIPT_URL + '?action=get_orders&t=' + Date.now())
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.status === 'success' && Array.isArray(d.orders)) {
+        let currentLocal = getOrders();
+        d.orders.forEach(ro => {
+          const exists = currentLocal.find(cl => String(cl.orderId).toUpperCase() === String(ro.orderId).toUpperCase());
+          if (!exists) {
+            currentLocal.push({
+              orderId: ro.orderId,
+              txnId: ro.txnId || 'N/A',
+              date: ro.timestamp || new Date().toLocaleDateString('en-IN'),
+              timestamp: Date.now(),
+              name: (ro.name && !ro.name.match(/^[6789]\d{9}$/)) ? ro.name : 'Student',
+              phone: ro.phone || '',
+              address: ro.address || 'Baramulla, J&K',
+              product: ro.product || 'Study Hub Purchase',
+              amount: parseFloat(ro.amount) || 0,
+              status: ro.status || 'Confirmed'
+            });
+          } else {
+            exists.status = ro.status || exists.status;
+          }
+        });
+        saveOrders(currentLocal);
+        if (typeof renderAccountOrders === 'function') renderAccountOrders();
+
+        const liveMatch = findOrderInStore(orderId || raw);
+        if (liveMatch) {
+          renderScannedOrderCard(liveMatch);
+        } else {
+          renderOrderNotFoundCard(orderId, raw);
+        }
+      } else {
+        renderOrderNotFoundCard(orderId, raw);
+      }
+    })
+    .catch(() => {
+      renderOrderNotFoundCard(orderId, raw);
+    });
+}
+
 function updateOrderStatusFromScanner(orderId, newStatus) {
   updateOrderStatusByAdmin(orderId, newStatus);
-  showToast(`✅ Order ${orderId} updated to: ${newStatus}`);
+  playScanSuccessBeep();
+  if (navigator.vibrate) navigator.vibrate(80);
+
   setTimeout(() => {
-    handleScannedBarcodeValue(orderId);
-  }, 250);
+    const updated = findOrderInStore(orderId);
+    if (updated) {
+      renderScannedOrderCard(updated);
+    }
+  }, 100);
 }
 
 function resumeAdminScanner() {
@@ -3388,16 +3541,15 @@ function renderAccountOrders() {
     
     let adminControls = '';
     if (isOwner) {
-      const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
       adminControls = `
         <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
           <div style="margin-bottom:8px;"><strong>Customer:</strong> +91 ${o.phone || ''}</div>
           <div style="margin-bottom:12px; line-height: 1.5;"><strong>Address:</strong> ${o.address || 'N/A'}</div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
-            <select ${isLocked ? 'disabled' : ''} class="form-input" style="padding:8px 12px; font-size:13px; flex:1; min-width: 140px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; ${isLocked ? 'background-color:#f8fafc; cursor:default; pointer-events:none;' : ''}" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
+            <select class="form-input" style="padding:8px 12px; font-size:13px; flex:1; min-width: 140px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; background-color: #ffffff; cursor: pointer;" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
               <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
               <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-              <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Dispatched" ${(o.status === 'Dispatched' || o.status === 'Shipped') ? 'selected' : ''}>Dispatched</option>
               <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
               <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
               <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
