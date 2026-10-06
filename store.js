@@ -1207,7 +1207,7 @@ function sendCustomerWhatsAppStatusUpdate(orderId) {
     `Status: *${statusInfo.label}*\n` +
     `Items: ${order.product}\n` +
     `Delivery Location: ${order.address}\n\n` +
-    `Thank you for studying with JK Study Hub, Pattan!`
+    `Thank you for studying with JK Study Hub!`
   );
   
   window.open(`https://wa.me/91${validPhone}?text=${text}`, '_blank');
@@ -2078,7 +2078,7 @@ function processOrder(txnId, customStatus) {
     .then(() => {
       if (isCod) {
         alert(`🎉 CASH ON DELIVERY ORDER CONFIRMED!\n\nOrder ID: ${orderRecord.orderId}\nTotal to Pay at Doorstep: ₹${totalPaid}\nDelivery Location: ${finalAddress}\n\nOur team is packing your order! We will message you on WhatsApp (${phone}) before delivery.`);
-        // Instant WhatsApp confirmation ping to Sahil
+        // Instant WhatsApp confirmation ping to JK Study Hub Support
         const waText = `*📦 New COD Order - JK Study Hub*%0A%0A` +
           `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
           `👤 *Customer:* ${encodeURIComponent(name)}%0A` +

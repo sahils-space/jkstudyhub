@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fetch(scriptEndpoint, { method: 'POST', body: formData, mode: 'no-cors' })
         .catch(() => {});
 
-      // 2. Instant WhatsApp Integration (Direct ping to Sahil's WhatsApp +91 96226 05714)
+      // 2. Instant WhatsApp Integration (Direct ping to JK Study Hub WhatsApp Support +91 96226 05714)
       const waText = `*📩 New Student Inquiry - JK Study Hub*%0A%0A` +
         `👤 *Name:* ${encodeURIComponent(studentName)}%0A` +
         `📧 *Email:* ${encodeURIComponent(studentEmail)}%0A` +
