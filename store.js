@@ -1075,6 +1075,7 @@ function getStatusStepInfo(rawStatus) {
 const STRICT_STORE_OWNER_PHONES = ['9622605714'];
 const STRICT_STORE_OWNER_EMAILS = [
   'sahilsspace20@gmail.com', 
+  'sahilsspace@gmail.com', 
   'info.jkstudyhub@gmail.com'
 ];
 
@@ -1317,7 +1318,7 @@ function renderOrdersPage() {
   
   // For normal logged-in students, only show THEIR orders!
   let baseOrders = allOrders;
-  if (!isStaff && user) {
+  if (!isOwner && user) {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
     const uEmail = String(user.email || '').trim().toLowerCase();
     
@@ -2553,11 +2554,12 @@ function handleGooglePopupAuth() {
   closePhoneAuthModal();
   if (typeof firebase !== 'undefined' && firebase.auth) {
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     firebase.auth().signInWithPopup(provider).then(res => {
       const email = (res.user.email || '').trim().toLowerCase();
       const isOwner = isStrictStoreOwner({ email: email, phoneNumber: res.user.phoneNumber });
       const user = {
-        displayName: res.user.displayName,
+        displayName: res.user.displayName || (isOwner ? 'Sahil' : 'Student'),
         email: res.user.email,
         phoneNumber: res.user.phoneNumber || (isOwner ? '+919622605714' : ''),
         photoURL: res.user.photoURL,
@@ -2580,10 +2582,17 @@ function handleGooglePopupAuth() {
         renderAccountOrders();
       }
     }).catch(err => {
-      fallbackLoginPrompt();
+      console.warn("Google popup error:", err);
+      if (err && err.code === 'auth/popup-blocked') {
+        firebase.auth().signInWithRedirect(provider).catch(e => {
+          showToast("❌ Google popup was blocked. Please allow popups or use phone OTP.");
+        });
+      } else if (err && err.code !== 'auth/popup-closed-by-user') {
+        showToast("❌ " + (err.message || "Google login failed."));
+      }
     });
   } else {
-    fallbackLoginPrompt();
+    showToast("⚠️ Authentication service is loading. Please try again.");
   }
 }
 
@@ -2830,7 +2839,7 @@ function renderAccountOrders() {
     if(o.status === 'Cancelled') statusColor = '#ef4444';
     
     let adminControls = '';
-    if (isStaff) {
+    if (isOwner) {
       const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
       adminControls = `
         <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #cbd5e1; font-size:13px; color:#475569;">
