@@ -93,6 +93,86 @@ function doPost(e) {
         new_status: newStatus
       })).setMimeType(ContentService.MimeType.JSON);
     }
+
+    // ACTION: Add New Product by Owner
+    if (p.action === "add_product") {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var prodSheet = ss.getSheetByName("Products");
+      if (!prodSheet) {
+        prodSheet = ss.insertSheet("Products");
+        prodSheet.appendRow([
+          "Timestamp",
+          "Product ID",
+          "Title",
+          "Category",
+          "Price",
+          "MRP",
+          "Description",
+          "Photo 1",
+          "Photo 2",
+          "Photo 3",
+          "Photo 4",
+          "Status"
+        ]);
+        prodSheet.getRange(1, 1, 1, 12).setFontWeight("bold").setBackground("#fef3c7");
+      }
+
+      var prdId = String(p.product_id || ("PRD-" + Date.now())).trim();
+      var prdTitle = String(p.title || "").trim();
+      var prdCat = String(p.category || "books").trim();
+      var prdPrice = String(p.price || "0").trim();
+      var prdMrp = String(p.mrp || "").trim();
+      var prdDesc = String(p.description || "").trim();
+      var photo1 = String(p.photo1 || "").trim();
+      var photo2 = String(p.photo2 || "").trim();
+      var photo3 = String(p.photo3 || "").trim();
+      var photo4 = String(p.photo4 || "").trim();
+      var status = String(p.status || "Active").trim();
+      var time = p.timestamp || new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+      prodSheet.appendRow([
+        time,
+        prdId,
+        prdTitle,
+        prdCat,
+        prdPrice,
+        prdMrp,
+        prdDesc,
+        photo1,
+        photo2,
+        photo3,
+        photo4,
+        status
+      ]);
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        product_id: prdId,
+        title: prdTitle
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Delete / Remove Product by Owner
+    if (p.action === "delete_product") {
+      var targetPrdId = String(p.product_id || "").trim();
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var prodSheet = ss.getSheetByName("Products");
+      var deleted = false;
+      if (prodSheet) {
+        var pData = prodSheet.getDataRange().getValues();
+        for (var pi = 1; pi < pData.length; pi++) {
+          if (String(pData[pi][1] || "").trim() === targetPrdId) {
+            prodSheet.deleteRow(pi + 1);
+            deleted = true;
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: deleted ? "success" : "not_found",
+        product_id: targetPrdId
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
     
     // ACTION: Student Inquiry Submission
     if (p.action === "inquiry") {
@@ -236,6 +316,45 @@ function doGet(e) {
           message: "Incorrect OTP code. Please enter the valid 6-digit code received on your phone."
         })).setMimeType(ContentService.MimeType.JSON);
       }
+    }
+
+    // ACTION: Get Dynamic Products for Students & Storefront
+    if (p.action === "get_products") {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var prodSheet = ss.getSheetByName("Products");
+      var products = [];
+      if (prodSheet) {
+        var pData = prodSheet.getDataRange().getValues();
+        for (var pj = 1; pj < pData.length; pj++) {
+          var pRow = pData[pj];
+          if (!pRow || pRow.length === 0) continue;
+          var pStatus = String(pRow[11] || "Active").trim();
+          if (pStatus !== "Active") continue;
+
+          var photos = [];
+          if (pRow[7]) photos.push(String(pRow[7]));
+          if (pRow[8]) photos.push(String(pRow[8]));
+          if (pRow[9]) photos.push(String(pRow[9]));
+          if (pRow[10]) photos.push(String(pRow[10]));
+
+          products.push({
+            productId: String(pRow[1] || ""),
+            name: String(pRow[2] || ""),
+            category: String(pRow[3] || "books"),
+            price: parseFloat(pRow[4]) || 0,
+            mrp: parseFloat(pRow[5]) || (parseFloat(pRow[4]) ? Math.round(parseFloat(pRow[4]) * 1.3) : 0),
+            desc: String(pRow[6] || ""),
+            photos: photos,
+            image: photos[0] || "images/logo-app.png",
+            timestamp: pRow[0]
+          });
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        count: products.length,
+        products: products
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();

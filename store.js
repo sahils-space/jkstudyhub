@@ -2178,6 +2178,15 @@ function initShop() {
   if (document.getElementById('ordersListContainer')) {
     if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   }
+
+  const ownerActionBar = document.getElementById('ownerStoreActionBar');
+  if (ownerActionBar) {
+    ownerActionBar.style.display = (typeof isAdminUnlocked === 'function' && isAdminUnlocked()) ? 'flex' : 'none';
+  }
+
+  if (typeof syncCustomProductsWithSheet === 'function') {
+    syncCustomProductsWithSheet();
+  }
 }
 
 if (document.readyState === 'loading') {
@@ -2633,6 +2642,12 @@ function renderAccountDashboard() {
   const profileCard = document.getElementById('sidebarProfileCard');
   if (!profileCard) return;
 
+  const isOwnerStaff = (typeof isAdminUnlocked === 'function' && isAdminUnlocked());
+  const manageMenuEl = document.getElementById('menu-item-manage-products');
+  if (manageMenuEl) {
+    manageMenuEl.style.display = isOwnerStaff ? 'block' : 'none';
+  }
+
   if (user) {
     const firstName = (user.displayName || 'Student').split(' ')[0];
     const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
@@ -2647,6 +2662,7 @@ function renderAccountDashboard() {
     if (activeMenu) {
       const tabId = activeMenu.id.replace('menu-', '');
       if (tabId === 'orders') renderAccountOrders();
+      if (tabId === 'manage-products' && typeof renderOwnerProductList === 'function') renderOwnerProductList();
       if (tabId === 'wishlist') renderAccountWishlist();
       if (tabId === 'addresses') renderAddresses();
       if (tabId === 'details') renderAccountDetails();
@@ -3748,3 +3764,566 @@ if (document.readyState === 'loading') {
   handleUrlCategoryHash();
 }
 window.addEventListener('hashchange', handleUrlCategoryHash);
+
+// =========================================================
+// STORE OWNER PRODUCT CATALOG MANAGEMENT (4-PHOTO UPLOAD & SYNC)
+// =========================================================
+
+let CUSTOM_PRODUCTS = [];
+let ownerUploadedPhotos = [null, null, null, null];
+
+// Initialize and load custom products from cache
+try {
+  const cachedProducts = localStorage.getItem('jk_custom_products');
+  if (cachedProducts) {
+    CUSTOM_PRODUCTS = JSON.parse(cachedProducts);
+    registerAllCustomProducts(CUSTOM_PRODUCTS);
+  }
+} catch (e) {
+  console.warn("Could not parse cached custom products:", e);
+}
+
+function registerAllCustomProducts(products) {
+  if (!Array.isArray(products)) return;
+  products.forEach(p => registerCustomProductInCatalogs(p));
+}
+
+function registerCustomProductInCatalogs(p) {
+  if (!p || !p.name) return;
+  const prodName = p.name;
+  const mainPhoto = (p.photos && p.photos[0]) || p.image || 'images/logo-app.png';
+  const allPhotos = (p.photos && p.photos.length > 0) ? p.photos : [mainPhoto];
+  const price = Number(p.price) || 0;
+  const mrp = Number(p.mrp) || Math.round(price * 1.35);
+
+  // Register in PRODUCT_CATALOG
+  if (typeof PRODUCT_CATALOG !== 'undefined') {
+    PRODUCT_CATALOG[prodName] = {
+      author: p.category === 'books' ? 'JK Study Hub Verified' : 'JK Study Hub Official',
+      mrp: mrp,
+      price: price,
+      category: p.category || 'books',
+      badge: p.badge || 'Fresh Stock',
+      rating: '5.0',
+      reviews: 'New',
+      image: mainPhoto,
+      images: allPhotos,
+      desc: p.desc || p.description || '',
+      specs: {
+        length: 'Authentic Edition',
+        width: 'Verified Paper',
+        thickness: 'Study Ready',
+        pages: 'Complete Set',
+        paper: 'Official Stock',
+        binding: 'Original',
+        language: 'English / Urdu'
+      }
+    };
+  }
+
+  // Register in BOOK_CATALOG_DATA
+  if (typeof BOOK_CATALOG_DATA !== 'undefined') {
+    const existingIdx = BOOK_CATALOG_DATA.findIndex(b => b.name === prodName);
+    const entry = {
+      name: prodName,
+      author: p.category === 'books' ? 'JK Study Hub Verified' : 'JK Study Hub Official',
+      mrp: mrp,
+      price: price,
+      category: p.category || 'books',
+      badge: p.badge || 'Fresh Stock',
+      rating: '5.0',
+      reviews: 'New',
+      desc: p.desc || p.description || '',
+      photos: allPhotos,
+      allImages: allPhotos,
+      dimSvg: allPhotos[allPhotos.length - 1] || mainPhoto,
+      length: 'Authentic Edition',
+      width: 'Verified Paper',
+      thickness: 'Study Ready',
+      pages: 'Complete Set',
+      paper: 'Official Stock'
+    };
+    if (existingIdx >= 0) {
+      BOOK_CATALOG_DATA[existingIdx] = entry;
+    } else {
+      BOOK_CATALOG_DATA.unshift(entry);
+    }
+  }
+}
+
+// Client-side HTML5 Canvas Photo Compression
+function compressOwnerImageFile(file, maxWidth = 800, maxHeight = 1000, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    if (!file) return reject(new Error("No file provided"));
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to lightweight data URL (jpeg at 0.8 quality keeps size < 90KB)
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Handle Photo Selected in slot (1..4)
+async function handleOwnerPhotoSelected(event, slotNum) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    const previewImg = document.getElementById(`slotPreview${slotNum}`);
+    const placeholder = document.getElementById(`slotPlaceholder${slotNum}`);
+    const removeBtn = document.getElementById(`slotRemove${slotNum}`);
+
+    if (placeholder) {
+      placeholder.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="font-size:22px; color:#2563eb;"></i><span style="font-size:11px; color:#2563eb; font-weight:700;">Compressing...</span>`;
+    }
+
+    const compressedDataUrl = await compressOwnerImageFile(file, 800, 1000, 0.8);
+    ownerUploadedPhotos[slotNum - 1] = compressedDataUrl;
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (previewImg) {
+      previewImg.src = compressedDataUrl;
+      previewImg.style.display = 'block';
+    }
+    if (removeBtn) removeBtn.style.display = 'flex';
+
+    if (typeof showToast === 'function') {
+      showToast(`📸 Photo ${slotNum} uploaded and optimized!`);
+    }
+  } catch (err) {
+    console.error("Photo compression failed:", err);
+    if (typeof showToast === 'function') {
+      showToast("❌ Could not process image. Please try another photo.");
+    }
+  }
+}
+
+// Remove Photo from slot
+function removeOwnerPhoto(event, slotNum) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  ownerUploadedPhotos[slotNum - 1] = null;
+
+  const fileInput = document.getElementById(`ownerPhotoInput${slotNum}`);
+  if (fileInput) fileInput.value = '';
+
+  const previewImg = document.getElementById(`slotPreview${slotNum}`);
+  const placeholder = document.getElementById(`slotPlaceholder${slotNum}`);
+  const removeBtn = document.getElementById(`slotRemove${slotNum}`);
+
+  if (previewImg) {
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+  }
+  if (removeBtn) removeBtn.style.display = 'none';
+  if (placeholder) {
+    placeholder.style.display = 'flex';
+    placeholder.innerHTML = `
+      <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
+      <span style="font-size: 11.5px; font-weight: 700; color: #475569;">${slotNum === 1 ? 'Photo 1 (Cover)*' : `Photo ${slotNum}`}</span>
+      <span style="font-size: 10px; color: #94a3b8;">${slotNum === 1 ? 'Click to upload' : 'Optional'}</span>
+    `;
+  }
+}
+
+// Handle Add Product Submit
+async function handleOwnerProductSubmit(event) {
+  if (event) event.preventDefault();
+
+  // Verify Owner Authority
+  const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+  const email = user ? (user.email || '') : '';
+  const phone = user ? (user.phoneNumber || user.phone || '') : '';
+  const isOwner = (typeof isOwnerIdentity === 'function' && isOwnerIdentity(email, phone)) ||
+                  (typeof isAdminUnlocked === 'function' && isAdminUnlocked());
+
+  if (!isOwner) {
+    if (typeof showToast === 'function') {
+      showToast("⛔ Only verified store owners have authority to add products.");
+    }
+    return;
+  }
+
+  // Cover photo required
+  if (!ownerUploadedPhotos[0]) {
+    if (typeof showToast === 'function') {
+      showToast("⚠️ Please upload at least Photo 1 (Front Cover) for the product.");
+    }
+    const slot1 = document.getElementById('slot-1');
+    if (slot1) slot1.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  const title = (document.getElementById('ownerProdTitle')?.value || '').trim();
+  const category = document.getElementById('ownerProdCategory')?.value || 'books';
+  const price = parseFloat(document.getElementById('ownerProdPrice')?.value) || 0;
+  const mrpInput = document.getElementById('ownerProdMrp')?.value;
+  const mrp = mrpInput ? parseFloat(mrpInput) : Math.round(price * 1.35);
+  const badge = (document.getElementById('ownerProdBadge')?.value || '').trim() || 'Fresh Stock';
+  const desc = (document.getElementById('ownerProdDesc')?.value || '').trim();
+
+  if (!title || price <= 0 || !desc) {
+    if (typeof showToast === 'function') {
+      showToast("⚠️ Please fill in all required fields (Title, Price, Description).");
+    }
+    return;
+  }
+
+  const btnPublish = document.getElementById('btnPublishProduct');
+  const originalBtnText = btnPublish ? btnPublish.innerHTML : '';
+  if (btnPublish) {
+    btnPublish.disabled = true;
+    btnPublish.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publishing to Live Store...`;
+  }
+
+  const prodId = 'PRD-' + Date.now();
+  const photosArray = ownerUploadedPhotos.filter(p => !!p);
+
+  const newProduct = {
+    id: prodId,
+    productId: prodId,
+    name: title,
+    title: title,
+    category: category,
+    price: price,
+    mrp: mrp,
+    badge: badge,
+    desc: desc,
+    description: desc,
+    photos: photosArray,
+    image: photosArray[0] || 'images/logo-app.png',
+    allImages: photosArray,
+    status: 'Active',
+    timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+  };
+
+  // 1. Immediately prepend to local state & localStorage so UI is instant
+  CUSTOM_PRODUCTS.unshift(newProduct);
+  try {
+    localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
+  } catch (e) {
+    console.warn("Storage quota warning:", e);
+  }
+
+  // 2. Register into catalog structures
+  registerCustomProductInCatalogs(newProduct);
+
+  // 3. Render in storefront & owner dashboard
+  renderDynamicStoreProducts();
+  renderOwnerProductList();
+
+  // 4. Dispatch to Google Apps Script / Google Sheet
+  try {
+    const postData = new URLSearchParams();
+    postData.append('action', 'add_product');
+    postData.append('product_id', prodId);
+    postData.append('title', title);
+    postData.append('category', category);
+    postData.append('price', String(price));
+    postData.append('mrp', String(mrp));
+    postData.append('badge', badge);
+    postData.append('description', desc);
+    postData.append('photo1', photosArray[0] || '');
+    postData.append('photo2', photosArray[1] || '');
+    postData.append('photo3', photosArray[2] || '');
+    postData.append('photo4', photosArray[3] || '');
+    postData.append('status', 'Active');
+    postData.append('uploader', email || phone || 'owner');
+
+    const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+    fetch(endpoint, {
+      method: 'POST',
+      body: postData,
+      mode: 'no-cors'
+    }).catch(err => console.warn("Background sheet sync:", err));
+  } catch (err) {
+    console.warn("Sheet post error:", err);
+  }
+
+  // 5. Reset form and photo slots
+  const form = document.getElementById('ownerAddProductForm');
+  if (form) form.reset();
+  for (let s = 1; s <= 4; s++) {
+    removeOwnerPhoto(null, s);
+  }
+
+  if (btnPublish) {
+    btnPublish.disabled = false;
+    btnPublish.innerHTML = originalBtnText;
+  }
+
+  if (typeof showToast === 'function') {
+    showToast("🎉 Product published live! All students can now view and order it.");
+  }
+}
+
+// Sync products from Google Sheet for all visitors
+async function syncCustomProductsWithSheet() {
+  const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+  if (!endpoint) return;
+
+  // Render cached first
+  renderDynamicStoreProducts();
+  renderOwnerProductList();
+
+  try {
+    const res = await fetch(`${endpoint}?action=get_products&t=${Date.now()}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data && data.status === 'success' && Array.isArray(data.products)) {
+      // Merge with local products
+      const sheetProducts = data.products.map(p => ({
+        id: p.productId || p.id,
+        productId: p.productId || p.id,
+        name: p.name || p.title,
+        title: p.name || p.title,
+        category: p.category || 'books',
+        price: Number(p.price) || 0,
+        mrp: Number(p.mrp) || Math.round(Number(p.price) * 1.35),
+        badge: p.badge || 'Fresh Stock',
+        desc: p.desc || p.description || '',
+        description: p.desc || p.description || '',
+        photos: (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : []),
+        image: (Array.isArray(p.photos) && p.photos[0]) ? p.photos[0] : (p.image || 'images/logo-app.png'),
+        allImages: (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : []),
+        status: p.status || 'Active',
+        timestamp: p.timestamp || ''
+      }));
+
+      // Combine Sheet products with local products (avoid duplicate productIds)
+      const mergedMap = new Map();
+      sheetProducts.forEach(p => mergedMap.set(p.id, p));
+      CUSTOM_PRODUCTS.forEach(p => {
+        if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
+      });
+
+      CUSTOM_PRODUCTS = Array.from(mergedMap.values());
+      try {
+        localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
+      } catch (e) {}
+
+      registerAllCustomProducts(CUSTOM_PRODUCTS);
+      renderDynamicStoreProducts();
+      renderOwnerProductList();
+    }
+  } catch (err) {
+    console.warn("Could not sync products from sheet:", err);
+  }
+}
+
+// Render dynamic products on Storefront (Fresh Stock grid)
+function renderDynamicStoreProducts() {
+  const container = document.getElementById('dynamicProductsGrid');
+  const section = document.getElementById('dynamicProductsSection');
+  if (!container || !section) return;
+
+  if (!CUSTOM_PRODUCTS || CUSTOM_PRODUCTS.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+
+  let html = '';
+  CUSTOM_PRODUCTS.forEach((prod, index) => {
+    const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
+    const safeCarouselId = `carousel-dyn-${index}`;
+    const safeName = (prod.name || prod.title || 'Product').replace(/'/g, "\\'");
+    const price = Number(prod.price) || 0;
+    const mrp = Number(prod.mrp) || Math.round(price * 1.35);
+    const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+    const badgeText = prod.badge || '✨ Fresh Stock';
+
+    // Photos track
+    let trackHtml = '';
+    photos.forEach((ph, pIdx) => {
+      trackHtml += `<img src="${ph}" alt="${prod.name} - Photo ${pIdx + 1}" class="carousel-img ${pIdx === 0 ? 'active' : ''}" loading="lazy" onclick="openBookDetailsModal('${safeName}')">`;
+    });
+
+    // Carousel dots
+    let dotsHtml = '';
+    if (photos.length > 1) {
+      photos.forEach((_, pIdx) => {
+        dotsHtml += `<span class="carousel-dot ${pIdx === 0 ? 'active' : ''}" onclick="setCardPhoto('${safeCarouselId}', ${pIdx}, event)"></span>`;
+      });
+    }
+
+    html += `
+      <div class="book-product-card" data-category="${prod.category || 'books'}">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, '${safeName}')"><i class="fa-solid fa-heart"></i></button>
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ${badgeText}</span>
+        
+        <!-- Multi-Photo Swipeable Container -->
+        <div class="swipe-photo-container" id="${safeCarouselId}">
+          ${photos.length > 1 ? `
+            <div class="carousel-arrow prev" onclick="cycleCardPhoto('${safeCarouselId}', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+            <div class="carousel-arrow next" onclick="cycleCardPhoto('${safeCarouselId}', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          ` : ''}
+          
+          <div class="carousel-track">
+            ${trackHtml}
+          </div>
+
+          ${photos.length > 1 ? `<div class="carousel-dots">${dotsHtml}</div>` : ''}
+
+          <div class="card-dim-tag" onclick="openBookDetailsModal('${safeName}')" title="Tap to inspect product">
+            <i class="fa-solid fa-images"></i> ${photos.length} Photo${photos.length > 1 ? 's' : ''}
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+            ${(prod.category || 'books').toUpperCase()}
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('${safeName}')">${prod.name || prod.title}</h3>
+          
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 5.0</span>
+            <span style="color:#94a3b8;">(Fresh Arrival)</span>
+            <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+          </div>
+
+          <p class="product-desc">${prod.desc || prod.description || 'Authentic verified student edition from JK Study Hub.'}</p>
+          
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹${price}</span>
+                ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹${mrp}</span>` : ''}
+              </div>
+              ${discount > 0 ? `<span style="color:#10b981; font-size:11.5px; font-weight:800;">Save ${discount}% Today</span>` : ''}
+            </div>
+
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('${safeName}', ${price}, 'physical', '${prod.category || 'books'}')">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart('${safeName}', ${price}, 'physical', '${prod.category || 'books'}')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('${safeName}')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// Render Owner Product List in account.html
+function renderOwnerProductList() {
+  const container = document.getElementById('ownerProductsListContainer');
+  if (!container) return;
+
+  if (!CUSTOM_PRODUCTS || CUSTOM_PRODUCTS.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 14px;">
+        <span style="font-size: 36px; display: block; margin-bottom: 8px;">📦</span>
+        <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px;">No custom products added yet</h4>
+        <p style="font-size: 13px; color: #64748b; margin: 0;">Use the form above to upload your first book, notes, or stationery product.</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = `
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+  `;
+
+  CUSTOM_PRODUCTS.forEach((prod) => {
+    const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
+    const safeId = (prod.id || prod.productId || '').replace(/'/g, "\\'");
+    const price = Number(prod.price) || 0;
+    const mrp = Number(prod.mrp) || Math.round(price * 1.35);
+
+    html += `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; gap: 14px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 14px; min-width: 240px; flex: 1;">
+          <img src="${photos[0]}" alt="${prod.name}" style="width: 58px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div>
+            <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0 0 4px;">${prod.name || prod.title}</h4>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #64748b; flex-wrap: wrap;">
+              <span style="background: #eff6ff; color: #2563eb; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">${(prod.category || 'books').toUpperCase()}</span>
+              <span><strong>₹${price}</strong> (MRP: ₹${mrp})</span>
+              <span><i class="fa-solid fa-camera"></i> ${photos.length} photo${photos.length > 1 ? 's' : ''}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <a href="store.html" target="_blank" style="padding: 7px 12px; font-size: 12.5px; font-weight: 700; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> View in Store
+          </a>
+          <button type="button" onclick="deleteProductByOwner('${safeId}')" style="padding: 7px 12px; font-size: 12.5px; font-weight: 700; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-trash-can"></i> Remove
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+// Delete Product by Owner
+async function deleteProductByOwner(prodId) {
+  if (!confirm("Are you sure you want to remove this product from the live catalog? Students will no longer see it.")) {
+    return;
+  }
+
+  // Remove locally
+  CUSTOM_PRODUCTS = CUSTOM_PRODUCTS.filter(p => (p.id !== prodId && p.productId !== prodId));
+  try {
+    localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
+  } catch (e) {}
+
+  renderDynamicStoreProducts();
+  renderOwnerProductList();
+
+  if (typeof showToast === 'function') {
+    showToast("🗑️ Product removed from store catalog.");
+  }
+
+  // Dispatch delete to sheet
+  try {
+    const postData = new URLSearchParams();
+    postData.append('action', 'delete_product');
+    postData.append('product_id', prodId);
+
+    const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+    fetch(endpoint, {
+      method: 'POST',
+      body: postData,
+      mode: 'no-cors'
+    }).catch(e => console.warn("Delete sheet sync:", e));
+  } catch (e) {
+    console.warn("Delete dispatch error:", e);
+  }
+}
+

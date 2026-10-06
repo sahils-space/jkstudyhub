@@ -74,6 +74,58 @@
     .mobile-nav-item i { font-size: 20px; }
     .mobile-nav-item.active { color: #1e293b; }
     .mobile-nav-item.active i { color: #2563eb; }
+    /* Photo Upload Slot Styles */
+    .photo-upload-slot {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      padding: 8px;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .photo-upload-slot:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    .slot-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+    }
+    .slot-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .slot-remove-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(239, 68, 68, 0.95);
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
     @media (max-width: 768px) { .mobile-bottom-nav { display: flex; } }
   </style>
 </head>
@@ -108,6 +160,7 @@
 
       <ul class="account-menu">
         <li><a href="#orders" id="menu-orders" onclick="switchTab('orders')"><i class="fa-solid fa-box"></i> My Orders <i class="fa-solid fa-chevron-right float-right"></i></a></li>
+        <li id="menu-item-manage-products" style="display:none;"><a href="#manage-products" id="menu-manage-products" onclick="switchTab('manage-products')" style="background: #eff6ff; color: #1e40af; font-weight: 700; border-left: 3px solid #2563eb;"><i class="fa-solid fa-crown" style="color: #2563eb;"></i> 👑 Manage Products <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#addresses" id="menu-addresses" onclick="switchTab('addresses')"><i class="fa-solid fa-location-dot"></i> Addresses <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#wishlist" id="menu-wishlist" onclick="switchTab('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#details" id="menu-details" onclick="switchTab('details')"><i class="fa-regular fa-user"></i> Account details <i class="fa-solid fa-chevron-right float-right"></i></a></li>
@@ -182,6 +235,146 @@
         </div>
       </div>
 
+      <!-- Owner Manage & Add Products Tab -->
+      <div id="tab-manage-products" class="tab-pane">
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(37,99,235,0.06);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 28px;">👑</span>
+              <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #1e3a8a; margin: 0;">Owner Product &amp; Catalog Management</h2>
+                <p style="font-size: 13px; color: #475569; margin: 3px 0 0;">Add new books, notes, or stationery items. Once published, items appear instantly across the whole website for all students.</p>
+              </div>
+            </div>
+            <span style="background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">Owner Authority</span>
+          </div>
+        </div>
+
+        <!-- Add New Product Form -->
+        <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+          <h3 style="font-size: 16.5px; font-weight: 800; color: #0f172a; margin: 0 0 16px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-plus-circle" style="color: #2563eb;"></i> Add New Product to Store
+          </h3>
+
+          <form id="ownerAddProductForm" onsubmit="handleOwnerProductSubmit(event)">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Product Title / Name *</label>
+                <input type="text" id="ownerProdTitle" required placeholder="e.g. JKBOSE Class 10th Solved Guide 2026" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Category *</label>
+                <select id="ownerProdCategory" required style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; background: white; box-sizing: border-box; cursor: pointer;">
+                  <option value="books">Trending Books &amp; Novels</option>
+                  <option value="notes">JKBOSE Class 10th &amp; 11th Notes / Guides</option>
+                  <option value="stationery">Stationery &amp; Study Supplies</option>
+                  <option value="combos">Exam Combos &amp; Kits</option>
+                  <option value="forms">Online Forms &amp; Services</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Selling Price (₹) *</label>
+                <input type="number" id="ownerProdPrice" required min="1" placeholder="e.g. 199" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Original MRP (₹) (Optional for Discount %)</label>
+                <input type="number" id="ownerProdMrp" min="1" placeholder="e.g. 299" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Badge Tag (Optional)</label>
+                <input type="text" id="ownerProdBadge" placeholder="e.g. Bestseller, New, 2026 Edition" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Product Description &amp; Details *</label>
+              <textarea id="ownerProdDesc" required rows="3" placeholder="Provide complete information: syllabus coverage, binding, pages, edition, topics covered, etc." style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 13.5px; outline: none; box-sizing: border-box; resize: vertical;"></textarea>
+            </div>
+
+            <!-- 4 Photos Upload Section -->
+            <div style="margin-bottom: 22px;">
+              <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
+                <i class="fa-solid fa-camera" style="color: #2563eb;"></i> Upload Product Photos (Up to 4 Photos) *
+              </label>
+              <p style="font-size: 12.5px; color: #64748b; margin: 0 0 12px;">Snap from phone camera or select from gallery. Slot 1 is the main front cover; slots 2-4 show back cover, index, and inside pages.</p>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
+                <!-- Photo 1 -->
+                <div class="photo-upload-slot" id="slot-1" onclick="document.getElementById('ownerPhotoInput1').click()">
+                  <input type="file" id="ownerPhotoInput1" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 1)">
+                  <div class="slot-placeholder" id="slotPlaceholder1">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 1 (Cover)*</span>
+                    <span style="font-size: 10px; color: #94a3b8;">Click to upload</span>
+                  </div>
+                  <img id="slotPreview1" class="slot-preview-img" style="display:none;" alt="Preview 1">
+                  <button type="button" class="slot-remove-btn" id="slotRemove1" onclick="removeOwnerPhoto(event, 1)" style="display:none;">&times;</button>
+                </div>
+
+                <!-- Photo 2 -->
+                <div class="photo-upload-slot" id="slot-2" onclick="document.getElementById('ownerPhotoInput2').click()">
+                  <input type="file" id="ownerPhotoInput2" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 2)">
+                  <div class="slot-placeholder" id="slotPlaceholder2">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 2 (Back)</span>
+                    <span style="font-size: 10px; color: #94a3b8;">Optional</span>
+                  </div>
+                  <img id="slotPreview2" class="slot-preview-img" style="display:none;" alt="Preview 2">
+                  <button type="button" class="slot-remove-btn" id="slotRemove2" onclick="removeOwnerPhoto(event, 2)" style="display:none;">&times;</button>
+                </div>
+
+                <!-- Photo 3 -->
+                <div class="photo-upload-slot" id="slot-3" onclick="document.getElementById('ownerPhotoInput3').click()">
+                  <input type="file" id="ownerPhotoInput3" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 3)">
+                  <div class="slot-placeholder" id="slotPlaceholder3">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 3 (Index)</span>
+                    <span style="font-size: 10px; color: #94a3b8;">Optional</span>
+                  </div>
+                  <img id="slotPreview3" class="slot-preview-img" style="display:none;" alt="Preview 3">
+                  <button type="button" class="slot-remove-btn" id="slotRemove3" onclick="removeOwnerPhoto(event, 3)" style="display:none;">&times;</button>
+                </div>
+
+                <!-- Photo 4 -->
+                <div class="photo-upload-slot" id="slot-4" onclick="document.getElementById('ownerPhotoInput4').click()">
+                  <input type="file" id="ownerPhotoInput4" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 4)">
+                  <div class="slot-placeholder" id="slotPlaceholder4">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 4 (Inside)</span>
+                    <span style="font-size: 10px; color: #94a3b8;">Optional</span>
+                  </div>
+                  <img id="slotPreview4" class="slot-preview-img" style="display:none;" alt="Preview 4">
+                  <button type="button" class="slot-remove-btn" id="slotRemove4" onclick="removeOwnerPhoto(event, 4)" style="display:none;">&times;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="btnPublishProduct" style="background: #2563eb; color: white; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Publish Product to Store
+            </button>
+          </form>
+        </div>
+
+        <!-- Currently Published Custom Products -->
+        <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="font-size: 16.5px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-boxes-stacked" style="color: #2563eb;"></i> Published Store Products
+            </h3>
+            <button type="button" onclick="syncCustomProductsWithSheet(true); showToast('🔄 Catalog refreshed!');" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; cursor: pointer; color: #1e293b; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-arrows-rotate"></i> Refresh Catalog
+            </button>
+          </div>
+          <div id="ownerProductsListContainer">
+            <p style="color: #64748b; font-size: 13px;">Loading published products...</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -245,6 +438,7 @@
       }
       
       if (tabId === 'orders' && typeof renderAccountOrders === 'function') renderAccountOrders();
+      if (tabId === 'manage-products' && typeof renderOwnerProductList === 'function') renderOwnerProductList();
       if (tabId === 'wishlist' && typeof renderAccountWishlist === 'function') renderAccountWishlist();
       if (tabId === 'addresses' && typeof renderAddresses === 'function') renderAddresses();
       if (tabId === 'details' && typeof renderAccountDetails === 'function') renderAccountDetails();
