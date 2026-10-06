@@ -673,7 +673,7 @@
   <!-- Barcode & QR Code client-side generator and scanner libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <script src="store.js?v=23.0"></script>
+  <script src="store.js?v=24.0"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {
@@ -740,12 +740,16 @@
       }
       renderAccountDashboard();
 
-      const hash = window.location.hash.replace('#', '');
+      const rawHash = window.location.hash.replace('#', '');
+      const hash = rawHash.split('?')[0].split('&')[0];
       const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
       const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
+      const hasOrderId = (window.location.search.includes('id=') || window.location.hash.includes('id=') || /OD\d{6,}|ORD[-_]?\d+/i.test(window.location.hash));
 
       if (hash === 'manage-products' && !isOwner) {
         window.location.hash = 'orders';
+        switchTab('orders');
+      } else if (hasOrderId) {
         switchTab('orders');
       } else if (hash && document.getElementById('tab-' + hash)) {
         switchTab(hash);
@@ -762,12 +766,29 @@
       if (typeof renderAccountOrders === 'function') {
         renderAccountOrders();
       }
+
+      if (typeof handleUrlScannedOrder === 'function') {
+        setTimeout(handleUrlScannedOrder, 150);
+      }
+
       setTimeout(() => {
         if (typeof updateOwnerUIProtection === 'function') updateOwnerUIProtection();
         renderAccountDashboard();
         if (typeof syncOrdersWithGoogleSheet === 'function') syncOrdersWithGoogleSheet();
         if (typeof renderAccountOrders === 'function') renderAccountOrders();
-      }, 300);
+        if (typeof handleUrlScannedOrder === 'function') handleUrlScannedOrder();
+      }, 350);
+    });
+
+    window.addEventListener('hashchange', () => {
+      const rawHash = window.location.hash.replace('#', '');
+      const hash = rawHash.split('?')[0].split('&')[0];
+      if (hash && document.getElementById('tab-' + hash)) {
+        switchTab(hash);
+      }
+      if (typeof handleUrlScannedOrder === 'function') {
+        handleUrlScannedOrder();
+      }
     });
   </script>
 </body>

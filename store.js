@@ -1032,10 +1032,10 @@ function getStatusStepInfo(rawStatus) {
       summaryText: 'Delivered successfully at customer doorstep in Pattan / Kashmir.'
     };
   }
-  if (s.includes('out') || s.includes('route') || s.includes('pattan')) {
+  if (s.includes('out') || s.includes('route') || s.includes('way') || s.includes('transit') || s.includes('pattan')) {
     return {
       step: 3,
-      label: 'Out for Delivery (Pattan)',
+      label: s.includes('way') ? 'On the Way' : 'Out for Delivery (Pattan)',
       percent: 78,
       badgeBg: '#fef3c7',
       badgeColor: '#b45309',
@@ -1044,16 +1044,16 @@ function getStatusStepInfo(rawStatus) {
       summaryText: 'Our delivery associate is on the way to your delivery address.'
     };
   }
-  if (s.includes('dispatch') || s.includes('transit') || s.includes('ship') || s.includes('pack')) {
+  if (s.includes('dispatch') || s.includes('ship') || s.includes('pack')) {
     return {
       step: 2,
-      label: 'Dispatched from Hub',
+      label: s.includes('ship') ? 'Shipped' : 'Dispatched from Hub',
       percent: 48,
       badgeBg: '#ede9fe',
       badgeColor: '#6d28d9',
       badgeBorder: '#ddd6fe',
       badgeIcon: 'fa-box-open',
-      summaryText: 'Your order has been verified and dispatched from our Pattan Hub.'
+      summaryText: 'Your order has been verified and shipped from our Pattan Hub.'
     };
   }
   
@@ -1541,10 +1541,13 @@ function renderOrdersPage() {
               </span>
               <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
                 <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed & Paid</option>
-                <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched from Hub</option>
-                <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery (Pattan)</option>
-                <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered Successfully</option>
-                <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
+                <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
+                <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
+                <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
+                <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
               </select>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -2182,15 +2185,16 @@ function renderScannedOrderCard(order) {
   let statusBadgeColor = '#2563eb';
   if (statusLower.includes('deliver')) { statusBadgeBg = '#f0fdf4'; statusBadgeColor = '#16a34a'; }
   else if (statusLower.includes('cancel')) { statusBadgeBg = '#fef2f2'; statusBadgeColor = '#dc2626'; }
-  else if (statusLower.includes('out')) { statusBadgeBg = '#fefce8'; statusBadgeColor = '#854d0e'; }
+  else if (statusLower.includes('out') || statusLower.includes('way') || statusLower.includes('transit')) { statusBadgeBg = '#fefce8'; statusBadgeColor = '#854d0e'; }
   else if (statusLower.includes('dispatch') || statusLower.includes('ship')) { statusBadgeBg = '#f5f3ff'; statusBadgeColor = '#7c3aed'; }
 
   const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
   const customerPhone = getValidCustomerPhone(order) || order.phone || 'N/A';
 
-  const isDispatched = (statusLower.includes('dispatch') || statusLower.includes('ship'));
-  const isOutForDelivery = statusLower.includes('out');
-  const isDelivered = statusLower.includes('deliver');
+  const isShipped = (statusLower.includes('ship') || statusLower === 'dispatched');
+  const isOnTheWay = (statusLower.includes('way') || statusLower.includes('transit'));
+  const isOutForDelivery = (statusLower.includes('out'));
+  const isDelivered = (statusLower.includes('deliver'));
 
   resCard.innerHTML = `
     <div>
@@ -2211,20 +2215,37 @@ function renderScannedOrderCard(order) {
         ${order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>TXN / Payment:</strong> ${order.txnId}</div>` : ''}
       </div>
 
-      <div style="margin-bottom: 12px;">
+      <div style="margin-bottom: 14px;">
         <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> One-Tap Delivery Status Update:
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Dispatched')" style="${isDispatched ? 'background: #2563eb; color: white; border: 2px solid #1d4ed8; font-weight: 800;' : 'background: #eff6ff; color: #1e40af; border: 1.5px solid #bfdbfe; font-weight: 700;'} padding: 10px 4px; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-box"></i> ${isDispatched ? '✓ Dispatched' : 'Dispatched'}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Shipped')" style="${isShipped ? 'background: #7c3aed; color: white; border: 2px solid #6d28d9; font-weight: 800;' : 'background: #f5f3ff; color: #6d28d9; border: 1.5px solid #ddd6fe; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-box"></i> ${isShipped ? '✓ Shipped' : '📦 Shipped'}
           </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 4px; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-truck-fast"></i> ${isOutForDelivery ? '✓ Out for Del.' : 'Out for Del.'}
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'On the Way')" style="${isOnTheWay ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-truck-fast"></i> ${isOnTheWay ? '✓ On the Way' : '🚚 On the Way'}
           </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 4px; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : 'Delivered'}
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #0284c7; color: white; border: 2px solid #0369a1; font-weight: 800;' : 'background: #f0f9ff; color: #0369a1; border: 1.5px solid #bae6fd; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-motorcycle"></i> ${isOutForDelivery ? '✓ Out for Del.' : '🛵 Out for Delivery'}
           </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : '✅ Delivered'}
+          </button>
+        </div>
+
+        <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 11.5px; font-weight: 700; color: #64748b; white-space: nowrap;">Or change to:</span>
+          <select onchange="updateOrderStatusFromScanner('${order.orderId}', this.value)" style="flex: 1; padding: 5px 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12px; font-weight: 700; color: #1e293b; background: #fff; cursor: pointer;">
+            <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+            <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+            <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+            <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+            <option value="On the Way" ${order.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
+            <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
         </div>
       </div>
 
@@ -2345,12 +2366,18 @@ function updateOrderStatusFromScanner(orderId, newStatus) {
   playScanSuccessBeep();
   if (navigator.vibrate) navigator.vibrate(80);
 
+  const updated = findOrderInStore(orderId);
+  if (updated) {
+    updated.status = newStatus;
+    renderScannedOrderCard(updated);
+  }
+
   setTimeout(() => {
-    const updated = findOrderInStore(orderId);
-    if (updated) {
-      renderScannedOrderCard(updated);
+    const fresh = findOrderInStore(orderId);
+    if (fresh) {
+      renderScannedOrderCard(fresh);
     }
-  }, 100);
+  }, 120);
 }
 
 function resumeAdminScanner() {
@@ -2367,6 +2394,49 @@ function handleManualBarcodeLookup() {
   const input = document.getElementById('manualScannerInput');
   if (!input || !input.value.trim()) return;
   handleScannedBarcodeValue(input.value.trim());
+}
+
+function handleUrlScannedOrder() {
+  const fullUrl = window.location.href;
+  const match = fullUrl.match(/[?&#]id=([^&#\s]+)/i) || fullUrl.match(/[?&#]order[_-]?id=([^&#\s]+)/i);
+  let rawId = match ? decodeURIComponent(match[1]).trim() : '';
+
+  if (!rawId) {
+    const rawHash = window.location.hash || '';
+    const hashMatch = rawHash.match(/(OD\d{6,}|ORD[-_]?[A-Za-z0-9]+)/i);
+    if (hashMatch) rawId = hashMatch[1];
+  }
+
+  if (!rawId) return;
+  const cleanId = extractOrderIdFromScan(rawId);
+  if (!cleanId) return;
+
+  // 1. Ensure tab is switched to orders
+  if (typeof switchTab === 'function') {
+    switchTab('orders');
+  }
+
+  const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+  const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
+
+  // 2. If Store Owner is logged in, immediately pop up the Scanned Parcel Action Card!
+  if (isOwner) {
+    const modal = document.getElementById('adminCameraScannerModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      handleScannedBarcodeValue(cleanId);
+      if (typeof showToast === 'function') {
+        showToast(`📦 Scanned parcel #${cleanId} opened!`);
+      }
+    }
+  } else {
+    // If student/guest, filter order list to highlight order
+    if (typeof handleOrderSearchInput === 'function') {
+      const input = document.getElementById('orderSearchInput');
+      if (input) input.value = cleanId;
+      handleOrderSearchInput(cleanId);
+    }
+  }
 }
 
 // --- GOOGLE SHEETS LIVE SYNC BACKGROUND WORKER ---
@@ -3549,8 +3619,10 @@ function renderAccountOrders() {
             <select class="form-input" style="padding:8px 12px; font-size:13px; flex:1; min-width: 140px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #1e293b; background-color: #ffffff; cursor: pointer;" onchange="updateOrderStatusByAdmin('${o.orderId}', this.value); setTimeout(renderAccountOrders, 300);">
               <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
               <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-              <option value="Dispatched" ${(o.status === 'Dispatched' || o.status === 'Shipped') ? 'selected' : ''}>Dispatched</option>
-              <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="Shipped" ${(o.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
+              <option value="Dispatched" ${(o.status === 'Dispatched') ? 'selected' : ''}>Dispatched</option>
+              <option value="On the Way" ${(o.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
+              <option value="Out for Delivery" ${(o.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
               <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
               <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
             </select>
@@ -3589,11 +3661,11 @@ function renderAccountOrders() {
           } else {
             if (statusLower === 'confirmed' || statusLower === 'processing') {
               progressWidth = '15%'; s1 = 'active current';
-            } else if (statusLower === 'shipped') {
+            } else if (statusLower.includes('ship') || statusLower.includes('dispatch')) {
               progressWidth = '50%'; s1 = 'active'; s2 = 'active current';
-            } else if (statusLower === 'out for delivery') {
+            } else if (statusLower.includes('way') || statusLower.includes('out') || statusLower.includes('transit')) {
               progressWidth = '85%'; s1 = 'active'; s2 = 'active'; s3 = 'active current';
-            } else if (statusLower === 'delivered') {
+            } else if (statusLower.includes('deliver')) {
               progressWidth = '100%'; s1 = 'active'; s2 = 'active'; s3 = 'active'; s4 = 'active current';
             }
           }
@@ -3607,11 +3679,11 @@ function renderAccountOrders() {
               </div>
               <div class="track-step ${s2}">
                 <div class="track-icon" style="${c2}"><i class="fa-solid fa-box"></i></div>
-                <div class="track-label">Shipped</div>
+                <div class="track-label">${statusLower.includes('ship') ? 'Shipped' : 'Dispatched'}</div>
               </div>
               <div class="track-step ${s3}">
                 <div class="track-icon" style="${c3}"><i class="fa-solid fa-truck-fast"></i></div>
-                <div class="track-label">Out for delivery</div>
+                <div class="track-label">${statusLower.includes('way') ? 'On the Way' : 'Out for Delivery'}</div>
               </div>
               <div class="track-step ${s4}">
                 <div class="track-icon" style="${c4}"><i class="${statusLower === 'cancelled' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-house-circle-check'}"></i></div>
