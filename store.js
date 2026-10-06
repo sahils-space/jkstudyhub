@@ -1005,8 +1005,22 @@ function renderWishlistPage() {
 let currentOrderFilter = 'all'; // 'all', 'active', 'delivered'
 let currentOrderSearchQuery = '';
 
-function getStatusStepInfo(rawStatus) {
+// Universal Helper: Check if an order is Cash on Delivery (COD) vs Paid Online
+function isCodOrder(order) {
+  if (!order) return false;
+  if (order.paymentMethod === 'cod') return true;
+  const txn = String(order.txnId || '').toUpperCase();
+  if (txn.startsWith('COD') || txn === 'COD' || txn === 'CASH_ON_DELIVERY') return true;
+  const st = String(order.status || '').toLowerCase();
+  if (st.includes('cash on delivery') || st.includes('cod')) return true;
+  const prod = String(order.product || '').toLowerCase();
+  if (prod.includes('pay at doorstep') || prod.includes('(cod)')) return true;
+  return false;
+}
+
+function getOrderStatusInfo(rawStatus, orderObj) {
   const s = String(rawStatus || 'Confirmed').trim().toLowerCase();
+  const isCod = orderObj ? isCodOrder(orderObj) : (s.includes('cash on delivery') || s.includes('cod'));
   
   if (s.includes('cancel')) {
     return {
@@ -1023,13 +1037,13 @@ function getStatusStepInfo(rawStatus) {
   if (s.includes('deliver') || s.includes('complete')) {
     return {
       step: 4,
-      label: 'Delivered',
+      label: isCod ? 'Delivered & Cash Collected' : 'Delivered Successfully',
       percent: 100,
       badgeBg: '#dcfce7',
       badgeColor: '#15803d',
       badgeBorder: '#bbf7d0',
       badgeIcon: 'fa-house-circle-check',
-      summaryText: 'Delivered successfully at customer doorstep in Pattan / Kashmir.'
+      summaryText: isCod ? 'Order delivered successfully at customer doorstep. Cash collected.' : 'Delivered successfully at customer doorstep in Pattan / Kashmir.'
     };
   }
   if (s.includes('out') || s.includes('route') || s.includes('way') || s.includes('transit') || s.includes('pattan')) {
@@ -1041,7 +1055,7 @@ function getStatusStepInfo(rawStatus) {
       badgeColor: '#b45309',
       badgeBorder: '#fde68a',
       badgeIcon: 'fa-truck-fast',
-      summaryText: 'Our delivery associate is on the way to your delivery address.'
+      summaryText: isCod ? 'Our delivery associate is on the way. Please keep cash ready at doorstep.' : 'Our delivery associate is on the way to your delivery address.'
     };
   }
   if (s.includes('dispatch') || s.includes('ship') || s.includes('pack')) {
@@ -1057,7 +1071,21 @@ function getStatusStepInfo(rawStatus) {
     };
   }
   
-  // Default: Confirmed & Paid
+  // Step 1: Confirmed
+  if (isCod) {
+    return {
+      step: 1,
+      label: 'Order Placed (COD)',
+      percent: 16,
+      badgeBg: '#fef3c7',
+      badgeColor: '#b45309',
+      badgeBorder: '#fde68a',
+      badgeIcon: 'fa-hand-holding-dollar',
+      summaryText: 'Cash on Delivery order confirmed. Collect cash at doorstep before delivery.'
+    };
+  }
+
+  // Step 1: Paid Online
   return {
     step: 1,
     label: 'Order Confirmed & Paid',
@@ -1279,15 +1307,21 @@ function sendCustomerWhatsAppStatusUpdate(orderId) {
     saveOrders(orders); // Permanently save so you never have to re-enter it!
   }
   
-  const statusInfo = getStatusStepInfo(order.status);
+  const isCod = isCodOrder(order);
+  const statusInfo = getOrderStatusInfo(order.status, order);
   const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
   
+  const paymentLine = isCod 
+    ? `💵 *Payment Mode:* Cash on Delivery (COD)\n💰 *Amount to Pay at Doorstep:* ₹${order.amount || 0}\n⚠️ *Please keep exact cash ready during delivery.*`
+    : `✅ *Payment Mode:* Paid Online (Verified Razorpay)\n💰 *Amount Paid:* ₹${order.amount || 0}`;
+
   const text = encodeURIComponent(
     `Dear ${customerName},\n\n` +
     `🚚 Update on your JK Study Hub Order #${order.orderId}:\n` +
     `Status: *${statusInfo.label}*\n` +
     `Items: ${order.product}\n` +
     `Delivery Location: ${order.address}\n\n` +
+    `${paymentLine}\n\n` +
     `Thank you for studying with JK Study Hub!`
   );
   
@@ -1392,7 +1426,7 @@ function renderOrdersPage() {
 
   // Filter orders according to active tabs & search query
   let filtered = baseOrders.filter(order => {
-    const info = getStatusStepInfo(order.status);
+    const info = getOrderStatusInfo(order.status, order);
     
     // Status filter
     if (currentOrderFilter === 'active' && (info.step === 4 || info.step === -1)) {
@@ -1432,8 +1466,9 @@ function renderOrdersPage() {
   let html = '';
   filtered.forEach((order, index) => {
     const safeOrderId = order.orderId || ('ORD-' + index);
-    const statusInfo = getStatusStepInfo(order.status);
-    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (TXN: ${order.txnId}) for ${order.product}.`);
+    const isCod = isCodOrder(order);
+    const statusInfo = getOrderStatusInfo(order.status, order);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'TXN: ' + order.txnId}) for ${order.product}.`);
     
     // Step classes for Flipkart/Amazon stepper
     let s1Class = 'completed';
@@ -1442,9 +1477,10 @@ function renderOrdersPage() {
     let s4Class = statusInfo.step >= 4 ? 'completed' : (statusInfo.step === 3 ? 'active' : '');
 
     // Step descriptions
+    let s1Desc = isCod ? 'Pay on Delivery' : 'Paid Online';
     let s2Desc = statusInfo.step >= 2 ? 'Dispatched' : 'Packed at Hub';
     let s3Desc = statusInfo.step >= 3 ? 'En Route (Pattan)' : 'Local Delivery';
-    let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
+    let s4Desc = statusInfo.step >= 4 ? (isCod ? 'Delivered & Paid' : 'Delivered') : 'Expected Shortly';
 
     const matchedBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA : []).find(b => order.product && order.product.includes(b.name)) || (PRODUCT_CATALOG[order.product] ? { image: PRODUCT_CATALOG[order.product].image } : null);
     const orderImgSrc = (matchedBook && matchedBook.photos && matchedBook.photos[0]) ? matchedBook.photos[0] : ((matchedBook && matchedBook.image) ? matchedBook.image : (order.image || ''));
@@ -1489,8 +1525,8 @@ function renderOrdersPage() {
             <!-- Step 1: Confirmed -->
             <div class="stepper-node ${s1Class}">
               <div class="node-icon"><i class="fa-solid fa-check"></i></div>
-              <div class="node-title">Confirmed</div>
-              <div class="node-desc">Paid Online</div>
+              <div class="node-title">${isCod ? 'Order Placed' : 'Confirmed'}</div>
+              <div class="node-desc">${s1Desc}</div>
             </div>
 
             <!-- Step 2: Dispatched -->
@@ -1510,13 +1546,13 @@ function renderOrdersPage() {
             <!-- Step 4: Delivered -->
             <div class="stepper-node ${s4Class}">
               <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
-              <div class="node-title">Delivered</div>
+              <div class="node-title">${isCod ? 'Delivered & Paid' : 'Delivered'}</div>
               <div class="node-desc">${s4Desc}</div>
             </div>
           </div>
           
           <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-circle-info" style="color: #2563eb;"></i>
+            <i class="fa-solid fa-circle-info" style="color: ${isCod ? '#b45309' : '#2563eb'};"></i>
             <span>${statusInfo.summaryText}</span>
           </div>
         </div>
@@ -1531,16 +1567,26 @@ function renderOrdersPage() {
               <p style="margin: 0;"><strong>Recipient:</strong> ${(order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student'} (${getValidCustomerPhone(order) || order.phone || 'Contact via WhatsApp'})</p>
               <p style="margin: 4px 0 0;"><strong>Address:</strong> ${order.address}</p>
             </div>
-            <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-block;">
-              <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${order.txnId}</strong>
-            </div>
+            ${isCod ? `
+              <div style="margin-top: 10px; font-size: 11.5px; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                <i class="fa-solid fa-hand-holding-dollar"></i> Payment Method: <strong>Cash on Delivery (Pay at Doorstep)</strong>
+              </div>
+            ` : `
+              <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${order.txnId}</strong>
+              </div>
+            `}
             </div>
           </div>
 
           <div style="text-align: right; min-width: 140px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Paid</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">${isCod ? 'To Collect (COD)' : 'Total Paid'}</div>
             <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${order.amount}</div>
-            <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
+            ${isCod ? `
+              <span style="font-size: 11px; color: #b45309; font-weight: 800; background: #fef3c7; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a;">Cash on Delivery</span>
+            ` : `
+              <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
+            `}
           </div>
         </div>
 
@@ -1560,13 +1606,13 @@ function renderOrdersPage() {
                 </span>
               ` : `
                 <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                  <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed & Paid</option>
+                  <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
                   <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
                   <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
                   <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
                   <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
                   <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
-                  <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                  <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>${isCod ? 'Delivered & Cash Collected' : 'Delivered Successfully'}</option>
                   <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
                 </select>
               `}
@@ -1648,6 +1694,7 @@ function printOrderReceipt(orderId) {
   const printableArea = document.getElementById('printableReceiptArea');
   if (!printableArea) return;
 
+  const isCod = isCodOrder(order);
   const cleanAmount = parseFloat(order.amount) || 0;
   const itemSubtotal = Math.max(0, cleanAmount - 5);
 
@@ -1663,9 +1710,15 @@ function printOrderReceipt(orderId) {
           <p style="margin: 2px 0 0; font-size: 12px; color: #475569;">Email: info.jkstudyhub@gmail.com | Phone: +91 9622605714</p>
         </div>
         <div style="text-align: right;">
-          <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; display: inline-block;">
-            OFFICIAL PAID RECEIPT
-          </span>
+          ${isCod ? `
+            <span style="font-size: 11px; font-weight: 800; background: #fef3c7; color: #b45309; padding: 4px 10px; border-radius: 20px; display: inline-block; border: 1px solid #fde68a;">
+              CASH ON DELIVERY INVOICE
+            </span>
+          ` : `
+            <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; display: inline-block;">
+              OFFICIAL PAID RECEIPT
+            </span>
+          `}
           <p style="margin: 5px 0 0; font-family: monospace; font-size: 14px; font-weight: 800; color: #0f172a;">${order.orderId}</p>
           <p style="margin: 2px 0 0; font-size: 11.5px; color: #64748b;">${order.date}</p>
         </div>
@@ -1681,8 +1734,13 @@ function printOrderReceipt(orderId) {
         </div>
         <div style="text-align: right; min-width: 160px;">
           <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Payment Details:</div>
-          <div style="font-weight: 700; color: #16a34a; margin-top: 3px;">PAID via Razorpay Online</div>
-          <div style="font-family: monospace; font-size: 11px; color: #475569; margin-top: 2px;">TXN ID: ${order.txnId}</div>
+          ${isCod ? `
+            <div style="font-weight: 800; color: #b45309; margin-top: 3px;">💵 Cash on Delivery (COD)</div>
+            <div style="font-size: 12px; font-weight: 700; color: #dc2626; margin-top: 2px;">COLLECT AT DOORSTEP: ₹${order.amount}</div>
+          ` : `
+            <div style="font-weight: 700; color: #16a34a; margin-top: 3px;">PAID via Razorpay Online</div>
+            <div style="font-family: monospace; font-size: 11px; color: #475569; margin-top: 2px;">TXN ID: ${order.txnId}</div>
+          `}
           <div style="font-size: 11.5px; color: #2563eb; font-weight: 600; margin-top: 2px;">Delivery: Pattan (193121)</div>
         </div>
       </div>
@@ -1710,8 +1768,8 @@ function printOrderReceipt(orderId) {
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="2" style="padding: 14px 12px 6px; font-weight: 800; font-size: 15px; text-align: right;">Grand Total:</td>
-            <td style="padding: 14px 12px 6px; font-weight: 800; font-size: 18px; text-align: right; color: #2563eb;">₹${order.amount}</td>
+            <td colspan="2" style="padding: 14px 12px 6px; font-weight: 800; font-size: 15px; text-align: right;">${isCod ? 'Cash to Collect:' : 'Grand Total Paid:'}</td>
+            <td style="padding: 14px 12px 6px; font-weight: 800; font-size: 18px; text-align: right; color: ${isCod ? '#b45309' : '#2563eb'};">₹${order.amount}</td>
           </tr>
         </tfoot>
       </table>
@@ -1721,8 +1779,8 @@ function printOrderReceipt(orderId) {
         <div style="font-size: 11px; color: #64748b; max-width: 320px; line-height: 1.4;">
           This is an electronically generated receipt for your purchase on JK Study Hub. Authorized and verified for Pattan delivery.
         </div>
-        <div style="text-align: center; border: 2px dashed #10b981; padding: 6px 14px; border-radius: 8px; color: #10b981; font-weight: 800; font-size: 11px; transform: rotate(-2deg);">
-          ✓ VERIFIED PAID ORDER<br><span style="font-size: 9px; font-weight: 600; color: #475569;">JK STUDY HUB PATTAN</span>
+        <div style="text-align: center; border: 2px dashed ${isCod ? '#f59e0b' : '#10b981'}; padding: 6px 14px; border-radius: 8px; color: ${isCod ? '#b45309' : '#10b981'}; font-weight: 800; font-size: 11px; transform: rotate(-2deg);">
+          ${isCod ? '💵 CASH ON DELIVERY ORDER<br><span style="font-size: 9px; font-weight: 600; color: #475569;">COLLECT BEFORE HANDOVER</span>' : '✓ VERIFIED PAID ORDER<br><span style="font-size: 9px; font-weight: 600; color: #475569;">JK STUDY HUB PATTAN</span>'}
         </div>
       </div>
     </div>
@@ -2573,9 +2631,10 @@ function syncOrdersWithGoogleSheet() {
                 updated = true;
               }
             } else if (remote.orderId) {
+              const remoteTxn = remote.txnId || (String(remote.status || '').toLowerCase().includes('cash on delivery') ? 'COD' : 'N/A');
               localOrders.push({
                 orderId: remote.orderId,
-                txnId: remote.txnId || 'N/A',
+                txnId: remoteTxn,
                 date: remote.timestamp || new Date().toLocaleDateString('en-IN'),
                 timestamp: Date.now(),
                 name: (remote.name && !remote.name.match(/^[6789]\d{9}$/)) ? remote.name : 'Student',
@@ -3671,17 +3730,19 @@ function renderAccountOrders() {
   let html = '';
   filteredOrders.forEach((o, index) => {
     const safeOrderId = o.orderId || ('ORD-' + index);
-    const statusInfo = getStatusStepInfo(o.status);
-    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (TXN: ${o.txnId}) for ${o.product}.`);
+    const isCod = isCodOrder(o);
+    const statusInfo = getOrderStatusInfo(o.status, o);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'TXN: ' + o.txnId}) for ${o.product}.`);
 
     let s1Class = 'completed';
     let s2Class = statusInfo.step >= 2 ? 'completed' : (statusInfo.step === 1 ? 'active' : '');
     let s3Class = statusInfo.step >= 3 ? 'completed' : (statusInfo.step === 2 ? 'active' : '');
     let s4Class = statusInfo.step >= 4 ? 'completed' : (statusInfo.step === 3 ? 'active' : '');
 
+    let s1Desc = isCod ? 'Pay on Delivery' : 'Paid Online';
     let s2Desc = statusInfo.step >= 2 ? (o.status === 'Shipped' ? 'Shipped' : 'Packed at Hub') : 'Packed at Hub';
     let s3Desc = statusInfo.step >= 3 ? (o.status === 'On the Way' ? 'On the Way' : 'Local Delivery') : 'Local Delivery';
-    let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
+    let s4Desc = statusInfo.step >= 4 ? (isCod ? 'Delivered & Paid' : 'Delivered') : 'Expected Shortly';
 
     const matchedBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA : []).find(b => o.product && o.product.includes(b.name)) || (PRODUCT_CATALOG[o.product] ? { image: PRODUCT_CATALOG[o.product].image } : null);
     const orderImgSrc = (matchedBook && matchedBook.photos && matchedBook.photos[0]) ? matchedBook.photos[0] : ((matchedBook && matchedBook.image) ? matchedBook.image : (o.image || 'images/logo-app.png'));
@@ -3727,8 +3788,8 @@ function renderAccountOrders() {
             <!-- Step 1: Confirmed -->
             <div class="stepper-node ${s1Class}">
               <div class="node-icon"><i class="fa-solid fa-check"></i></div>
-              <div class="node-title">Confirmed</div>
-              <div class="node-desc">Paid Online</div>
+              <div class="node-title">${isCod ? 'Order Placed' : 'Confirmed'}</div>
+              <div class="node-desc">${s1Desc}</div>
             </div>
 
             <!-- Step 2: Shipped -->
@@ -3748,13 +3809,13 @@ function renderAccountOrders() {
             <!-- Step 4: Delivered -->
             <div class="stepper-node ${s4Class}">
               <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
-              <div class="node-title">${statusLower === 'cancelled' ? 'Cancelled' : 'Delivered'}</div>
+              <div class="node-title">${statusLower === 'cancelled' ? 'Cancelled' : (isCod ? 'Delivered & Paid' : 'Delivered')}</div>
               <div class="node-desc">${s4Desc}</div>
             </div>
           </div>
           
           <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-circle-info" style="color: #2563eb;"></i>
+            <i class="fa-solid fa-circle-info" style="color: ${isCod ? '#b45309' : '#2563eb'};"></i>
             <span>${statusInfo.summaryText}</span>
           </div>
         </div>
@@ -3769,16 +3830,26 @@ function renderAccountOrders() {
                 <p style="margin: 0;"><strong>Recipient:</strong> ${(o.name && !o.name.match(/^[6789]\d{9}$/)) ? o.name : 'Student'} (${getValidCustomerPhone(o) || o.phone || 'Contact via WhatsApp'})</p>
                 <p style="margin: 4px 0 0;"><strong>Address:</strong> ${o.address || 'Delivery Address, Pattan 193121'}</p>
               </div>
-              <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-block;">
-                <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${o.txnId || 'COD_VERIFIED'}</strong>
-              </div>
+              ${isCod ? `
+                <div style="margin-top: 10px; font-size: 11.5px; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                  <i class="fa-solid fa-hand-holding-dollar"></i> Payment Method: <strong>Cash on Delivery (Pay at Doorstep)</strong>
+                </div>
+              ` : `
+                <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                  <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${o.txnId || 'COD_VERIFIED'}</strong>
+                </div>
+              `}
             </div>
           </div>
 
           <div style="text-align: right; min-width: 140px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Paid</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">${isCod ? 'To Collect (COD)' : 'Total Paid'}</div>
             <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${o.amount || 0}</div>
-            <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
+            ${isCod ? `
+              <span style="font-size: 11px; color: #b45309; font-weight: 800; background: #fef3c7; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a;">Cash on Delivery</span>
+            ` : `
+              <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
+            `}
           </div>
         </div>
 
@@ -3798,13 +3869,13 @@ function renderAccountOrders() {
                 </span>
               ` : `
                 <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value); setTimeout(renderAccountOrders, 300);" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                  <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                  <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
                   <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
                   <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
                   <option value="Dispatched" ${o.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
                   <option value="On the Way" ${o.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
                   <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                  <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                  <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>${isCod ? 'Delivered & Cash Collected' : 'Delivered'}</option>
                   <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                 </select>
               `}
