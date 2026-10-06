@@ -925,13 +925,13 @@ function renderCartPage() {
   if (subtotalEl) subtotalEl.innerText = '₹' + subtotal;
 
   const totalEl = document.getElementById('summaryTotal');
-  if (totalEl) totalEl.innerText = '₹' + subtotal;
+  if (totalEl) totalEl.innerText = '₹' + (subtotal + 5);
 
   const itemsCountText = document.getElementById('summaryItemsCount');
   if (itemsCountText) itemsCountText.innerText = `Price (${totalQty} items)`;
 
   const checkoutBtn = document.getElementById('proceedCheckoutBtn');
-  if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${subtotal}) ➔`;
+  if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${subtotal + 5}) ➔`;
 }
 
 // --- RENDER DEDICATED WISHLIST PAGE (account.html#wishlist) ---
@@ -1793,7 +1793,7 @@ function setupCheckoutModal(name, price, category) {
   if (priceEl) priceEl.innerText = '₹' + price;
 
   const totalEl = document.getElementById('totalPrice');
-  if (totalEl) totalEl.innerText = '₹' + price;
+  if (totalEl) totalEl.innerText = '₹' + (price + 5);
 
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
@@ -1949,7 +1949,7 @@ function startRazorpayPayment() {
 
   const name = document.getElementById('orderName').value;
   const phone = document.getElementById('orderPhone').value;
-  const totalPaid = currentCheckoutPrice;
+  const totalPaid = currentCheckoutPrice + 5;
 
   const btn = document.getElementById('submitOrderBtn');
   if (btn) {
@@ -2033,7 +2033,7 @@ function processOrder(txnId, customStatus) {
   }
 
   const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId.startsWith('COD_');
-  const totalPaid = currentCheckoutPrice;
+  const totalPaid = currentCheckoutPrice + 5;
   const orderStatus = customStatus || (isCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed');
   const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | ${isCod ? 'Payment: Pay at Doorstep (COD)' : 'TXN: ' + txnId}`;
 
