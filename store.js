@@ -1056,26 +1056,55 @@ function getStatusStepInfo(rawStatus) {
 }
 
 // --- AUTHORIZED STORE TEAM ROLES ---
-// Sahil's Master Owner Credentials (Auto-detected on login):
+// Master Owner Credentials & Identity Matcher:
 const STORE_OWNER_PHONES = ['9622605714'];
-const STORE_OWNER_EMAILS = ['sahilsspace20@gmail.com', 'info.jkstudyhub@gmail.com', 'admin@jkstudyhub.online'];
+const STORE_OWNER_EMAILS = [
+  'sahilsspace20@gmail.com', 
+  'info.jkstudyhub@gmail.com', 
+  'admin@jkstudyhub.online',
+  'sahilzahoor@gmail.com',
+  'sahilzahoor20@gmail.com'
+];
 
-// Delivery Team Phones (Add your delivery boy numbers here anytime):
+function isOwnerIdentity(email, phone) {
+  const cleanPhone = String(phone || '').replace(/\D/g, '').slice(-10);
+  const cleanEmail = String(email || '').trim().toLowerCase();
+
+  if (cleanPhone && (cleanPhone === '9622605714' || STORE_OWNER_PHONES.some(p => p.slice(-10) === cleanPhone))) {
+    return true;
+  }
+  if (cleanEmail) {
+    if (STORE_OWNER_EMAILS.includes(cleanEmail)) return true;
+    if (cleanEmail.includes('sahilsspace') || cleanEmail.includes('info.jkstudyhub') || cleanEmail.includes('sahilzahoor') || cleanEmail.endsWith('@jkstudyhub.online')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Delivery Team Phones:
 const DELIVERY_BOY_PHONES = [
   // '9876543210'
 ];
 
 function getUserStoreRole(user) {
+  // 1. Check persistent storage flags
+  if (localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true') {
+    return 'owner';
+  }
   if (!user) return 'student';
+
   const phone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
   const email = String(user.email || '').trim().toLowerCase();
 
-  if (phone && STORE_OWNER_PHONES.some(p => p.slice(-10) === phone)) {
+  if (user.isOwner || isOwnerIdentity(email, phone)) {
+    try {
+      localStorage.setItem('jk_admin_unlocked', 'true');
+      sessionStorage.setItem('jk_admin_unlocked', 'true');
+    } catch(e) {}
     return 'owner';
   }
-  if (email && STORE_OWNER_EMAILS.includes(email)) {
-    return 'owner';
-  }
+
   if (phone && DELIVERY_BOY_PHONES.some(p => p.slice(-10) === phone)) {
     return 'delivery';
   }
@@ -1086,7 +1115,7 @@ function isAdminUnlocked() {
   const user = getCurrentUser();
   const role = getUserStoreRole(user);
   if (role === 'owner' || role === 'delivery') return true;
-  return sessionStorage.getItem('jk_admin_unlocked') === 'true';
+  return localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true';
 }
 
 let secretAdminClickCount = 0;
@@ -1101,8 +1130,9 @@ function handleSecretAdminClick() {
 function promptAdminLogin() {
   const pin = prompt("Enter JK Study Hub Admin PIN:", "");
   if (pin === "9622" || pin === "1234") {
+    localStorage.setItem('jk_admin_unlocked', 'true');
     sessionStorage.setItem('jk_admin_unlocked', 'true');
-    showToast("✅ Admin Mode Unlocked!");
+    showToast("👑 Store Owner Admin Mode Unlocked!");
     if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
   } else if (pin !== null) {
     alert("Incorrect Admin PIN.");
@@ -1122,8 +1152,9 @@ function toggleAdminAccess() {
     return;
   }
 
-  if (sessionStorage.getItem('jk_admin_unlocked') === 'true') {
+  if (isAdminUnlocked()) {
     if (confirm("Lock Store Admin Mode?")) {
+      localStorage.removeItem('jk_admin_unlocked');
       sessionStorage.removeItem('jk_admin_unlocked');
       showToast("Store Admin Mode locked.");
       if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
@@ -1652,7 +1683,7 @@ function syncOrdersWithGoogleSheet() {
 
   const user = getCurrentUser();
   const role = getUserStoreRole(user);
-  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  const isStaff = (role === 'owner' || role === 'delivery' || localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
   
   let fetchUrl = SCRIPT_URL + '?action=get_orders';
   if (!isStaff) {
@@ -1668,7 +1699,7 @@ function syncOrdersWithGoogleSheet() {
       .then(res => res.json())
       .then(data => {
         if (data && data.status === 'success' && Array.isArray(data.orders)) {
-          let localOrders = isStaff ? getOrders() : []; // If student, strictly mirror the backend array for privacy
+          let localOrders = getOrders(); // Never wipe existing local orders
           let updated = false;
 
           data.orders.forEach(remote => {
@@ -1690,9 +1721,14 @@ function syncOrdersWithGoogleSheet() {
                 match.status = remote.status;
                 updated = true;
               }
-              // If local phone is invalid or pincode, but remote has a valid phone, heal it
-              if (cleanRemotePhone && String(match.phone || '').includes('193121')) {
+              // If local phone is invalid, heal it
+              if (cleanRemotePhone && (!match.phone || String(match.phone).includes('193121'))) {
                 match.phone = cleanRemotePhone;
+                updated = true;
+              }
+              // If remote has product details and local is generic, sync
+              if (remote.product && (!match.product || match.product === 'Study Hub Purchase')) {
+                match.product = remote.product;
                 updated = true;
               }
             } else if (remote.orderId) {
@@ -1703,9 +1739,10 @@ function syncOrdersWithGoogleSheet() {
                 timestamp: Date.now(),
                 name: (remote.name && !remote.name.match(/^[6789]\d{9}$/)) ? remote.name : 'Student',
                 phone: cleanRemotePhone,
-                address: remote.address || 'Pattan - 193121',
+                address: remote.address || 'Baramulla, Jammu & Kashmir',
                 product: remote.product || 'Study Hub Purchase',
                 amount: parseFloat(remote.amount) || 0,
+                userEmail: user ? user.email : null,
                 status: remote.status || 'Confirmed'
               });
               updated = true;
@@ -1715,9 +1752,14 @@ function syncOrdersWithGoogleSheet() {
           if (updated) {
             localStorage.setItem('jk_orders', JSON.stringify(localOrders));
             updateNavBadges();
-            if (typeof renderOrdersPage === 'function') {
-              if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
-            }
+          }
+
+          // Trigger live UI update immediately across store and account pages
+          if (typeof renderAccountOrders === 'function' && document.getElementById('ordersListContainer')) {
+            renderAccountOrders();
+          }
+          if (typeof renderOrdersPage === 'function' && document.getElementById('ordersPageContainer')) {
+            renderOrdersPage();
           }
         }
       })
@@ -2492,18 +2534,30 @@ function handleGooglePopupAuth() {
   if (typeof firebase !== 'undefined' && firebase.auth) {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider).then(res => {
+      const email = (res.user.email || '').trim().toLowerCase();
+      const isOwner = isOwnerIdentity(email, res.user.phoneNumber);
       const user = {
         displayName: res.user.displayName,
         email: res.user.email,
-        phoneNumber: res.user.phoneNumber || '',
+        phoneNumber: res.user.phoneNumber || (isOwner ? '+919622605714' : ''),
         photoURL: res.user.photoURL,
-        uid: res.user.uid
+        uid: res.user.uid,
+        isOwner: isOwner
       };
+      if (isOwner) {
+        try {
+          localStorage.setItem('jk_admin_unlocked', 'true');
+          sessionStorage.setItem('jk_admin_unlocked', 'true');
+        } catch(e) {}
+      }
       setCurrentUser(user);
-      const firstName = (user.displayName || 'Student').split(' ')[0];
-      showToast(`Welcome, ${firstName}!`);
+      const firstName = (user.displayName || (isOwner ? 'Sahil' : 'Student')).split(' ')[0];
+      showToast(isOwner ? `👑 Welcome back, Owner ${firstName}!` : `Welcome, ${firstName}!`);
       if (typeof renderAccountDashboard === 'function') {
         renderAccountDashboard();
+      }
+      if (typeof renderAccountOrders === 'function') {
+        renderAccountOrders();
       }
     }).catch(err => {
       fallbackLoginPrompt();
@@ -2511,6 +2565,38 @@ function handleGooglePopupAuth() {
   } else {
     fallbackLoginPrompt();
   }
+}
+
+// Auto-sync Firebase persistent authentication on page refresh/hard reload
+if (typeof firebase !== 'undefined' && firebase.auth) {
+  try {
+    firebase.auth().onAuthStateChanged(fbUser => {
+      if (fbUser) {
+        const email = (fbUser.email || '').trim().toLowerCase();
+        const isOwner = isOwnerIdentity(email, fbUser.phoneNumber);
+        const current = getCurrentUser();
+        if (!current || current.email !== fbUser.email) {
+          const user = {
+            displayName: fbUser.displayName || (current ? current.displayName : 'User'),
+            email: fbUser.email,
+            phoneNumber: fbUser.phoneNumber || (current ? current.phoneNumber : '') || (isOwner ? '+919622605714' : ''),
+            photoURL: fbUser.photoURL || (current ? current.photoURL : ''),
+            uid: fbUser.uid,
+            isOwner: isOwner
+          };
+          if (isOwner) {
+            try {
+              localStorage.setItem('jk_admin_unlocked', 'true');
+              sessionStorage.setItem('jk_admin_unlocked', 'true');
+            } catch(e) {}
+          }
+          setCurrentUser(user);
+          if (typeof renderAccountDashboard === 'function') renderAccountDashboard();
+          if (typeof renderAccountOrders === 'function') renderAccountOrders();
+        }
+      }
+    });
+  } catch(e) {}
 }
 
 // --- PWA INSTALLATION CONTROLLER ---
@@ -2622,8 +2708,28 @@ function renderAccountOrders() {
   
   const allOrders = getOrders();
   const role = getUserStoreRole(user);
-  const isStaff = (role === 'owner' || role === 'delivery' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
+  const isStaff = (role === 'owner' || role === 'delivery' || localStorage.getItem('jk_admin_unlocked') === 'true' || sessionStorage.getItem('jk_admin_unlocked') === 'true');
   
+  let adminBannerHtml = '';
+  if (isStaff) {
+    adminBannerHtml = `
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">👑</span>
+          <div>
+            <div style="font-weight: 800; color: #1e3a8a; font-size: 14.5px;">Store Owner Mode Active</div>
+            <div style="font-size: 12.5px; color: #475569;">Viewing all ${allOrders.length} store orders • Live synced with Google Sheets</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-arrows-rotate"></i> Sync Orders
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   let userOrders = allOrders;
   if (!isStaff) {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
@@ -2772,7 +2878,7 @@ function renderAccountOrders() {
     `;
   });
   
-  container.innerHTML = html;
+  container.innerHTML = (adminBannerHtml || '') + html;
 }
 
 function renderAccountWishlist() {

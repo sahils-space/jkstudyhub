@@ -608,7 +608,22 @@
     }
   </script>
 
-  <script src="store.js?v=17.0"></script>
+  <script src="store.js?v=20.0"></script>
+  <!-- PWA Service Worker Registration & Live Updates -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          reg.update();
+        });
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.getRegistration().then(reg => { if (reg) reg.update(); });
+        }
+      });
+    }
+  </script>
 
   <!-- Mobile Bottom Navigation -->
   <div class="mobile-bottom-nav">

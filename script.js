@@ -1850,11 +1850,21 @@ const SYLLABUS_PDF_DATA = {
     if (typeof firebase !== 'undefined' && firebase.auth) {
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(res => {
+        const email = (res.user.email || '').trim().toLowerCase();
+        const isOwner = email.includes('sahilsspace') || email.includes('info.jkstudyhub') || email.includes('sahilzahoor') || email.endsWith('@jkstudyhub.online');
+        if (isOwner) {
+          try {
+            localStorage.setItem('jk_admin_unlocked', 'true');
+            sessionStorage.setItem('jk_admin_unlocked', 'true');
+          } catch(e) {}
+        }
         setLoggedInUser({
           displayName: res.user.displayName,
           email: res.user.email,
+          phoneNumber: res.user.phoneNumber || (isOwner ? '+919622605714' : ''),
           photoURL: res.user.photoURL,
-          uid: res.user.uid
+          uid: res.user.uid,
+          isOwner: isOwner
         });
       }).catch(err => {
         console.warn("Google popup auth:", err.message);

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v18';
+const CACHE_NAME = 'jk-study-hub-v25';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const urlsToCache = [
   './account.html',
   './style.css',
   './store.js',
+  './script.js',
   './images/icon-192.png',
   './images/icon-512.png',
   './images/logo-app.png',
@@ -21,57 +22,13 @@ const urlsToCache = [
   './images/pen-stand.webp',
   './images/quran.webp',
   './images/spiral-copies.webp',
-  './images/study-table.webp',
-  './images/books/atomic-habits-1.webp',
-  './images/books/atomic-habits-2.webp',
-  './images/books/atomic-habits-3.webp',
-  './images/books/atomic-habits-4.webp',
-  './images/books/deep-work-1.webp',
-  './images/books/deep-work-2.webp',
-  './images/books/deep-work-3.webp',
-  './images/books/deep-work-4.webp',
-  './images/books/lucent-gk-1.webp',
-  './images/books/lucent-gk-2.webp',
-  './images/books/lucent-gk-3.webp',
-  './images/books/lucent-gk-4.webp',
-  './images/books/psychology-of-money-1.webp',
-  './images/books/psychology-of-money-2.webp',
-  './images/books/psychology-of-money-3.webp',
-  './images/books/psychology-of-money-4.webp',
-  './images/books/reclaim-your-heart-1.webp',
-  './images/books/reclaim-your-heart-2.webp',
-  './images/books/reclaim-your-heart-3.webp',
-  './images/books/reclaim-your-heart-4.webp',
-  './images/books/secrets-of-divine-love-1.webp',
-  './images/books/secrets-of-divine-love-2.webp',
-  './images/books/secrets-of-divine-love-3.webp',
-  './images/books/secrets-of-divine-love-4.webp',
-  './images/books/the-alchemist-1.webp',
-  './images/books/the-alchemist-2.webp',
-  './images/books/the-alchemist-3.webp',
-  './images/books/the-alchemist-4.webp',
-  './images/books/the-kite-runner-1.webp',
-  './images/books/the-kite-runner-2.webp',
-  './images/books/the-kite-runner-3.webp',
-  './images/books/the-kite-runner-4.webp',
-  './images/books/thousand-splendid-suns-1.webp',
-  './images/books/thousand-splendid-suns-2.webp',
-  './images/books/thousand-splendid-suns-3.webp',
-  './images/books/thousand-splendid-suns-4.webp',
-  './images/books/wings-of-fire-1.webp',
-  './images/books/wings-of-fire-2.webp',
-  './images/books/wings-of-fire-3.webp',
-  './images/books/wings-of-fire-4.webp',
-  './images/books/wren-martin-1.webp',
-  './images/books/wren-martin-2.webp',
-  './images/books/wren-martin-3.webp',
-  './images/books/wren-martin-4.webp'
+  './images/study-table.webp'
 ];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).catch(() => {})
   );
 });
 
@@ -85,19 +42,31 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fast Smooth Strategy: Instant Cache response + Background Network Revalidation
+self.addEventListener('message', event => {
+  if (event.data && event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
+// Real-Time Live Update Strategy:
+// 1. Code assets (.html, .js, .css, navigation): Network-First with Cache Fallback
+//    Ensures users and mobile phones always get live code updates without clearing browser cookies/data.
+// 2. Images & media (.webp, .png, .jpg, .svg): Cache-First with Network Fallback for ultra-fast loading.
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // Skip external APIs and Firebase
-  if (url.origin !== location.origin || url.hostname.includes('google') || url.hostname.includes('firebase') || event.request.method !== 'GET') {
+  // Skip external APIs, Google Sheets, Razorpay, and Firebase
+  if (url.origin !== location.origin || url.hostname.includes('google') || url.hostname.includes('firebase') || url.hostname.includes('razorpay') || event.request.method !== 'GET') {
     return;
   }
 
-  // HTML pages: Network first with fast cache fallback
-  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+  const isNavigation = event.request.mode === 'navigate' || event.request.destination === 'document';
+  const isCodeAsset = url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname === '';
+
+  // Network-First for core code & HTML (always fresh updates online)
+  if (isNavigation || isCodeAsset) {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-cache' })
         .then(response => {
           if (response && response.status === 200) {
             const clone = response.clone();
@@ -110,17 +79,17 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static Assets (Images, CSS, JS): Instant Cache-First with Background Revalidation
+  // Cache-First for static media (images, fonts)
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
+    caches.match(event.request).then(cachedResponse => {
+      if (cachedResponse) return cachedResponse;
+      return fetch(event.request).then(networkResponse => {
         if (networkResponse && networkResponse.status === 200) {
           const clone = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return networkResponse;
       });
-      return cachedResponse || fetchPromise;
     })
   );
 });

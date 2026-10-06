@@ -211,7 +211,22 @@
       });
     }
   </script>
-  <script src="store.js?v=17.0"></script>
+  <script src="store.js?v=20.0"></script>
+  <!-- PWA Service Worker Registration & Live Updates -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          reg.update();
+        });
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.getRegistration().then(reg => { if (reg) reg.update(); });
+        }
+      });
+    }
+  </script>
   <script>
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -252,8 +267,14 @@
         }
       }
       
-      // Wait for store.js?v=9.6 to initialize
-      setTimeout(renderAccountDashboard, 500);
+      renderAccountDashboard();
+      if (typeof renderAccountOrders === 'function') {
+        renderAccountOrders();
+      }
+      setTimeout(() => {
+        renderAccountDashboard();
+        if (typeof renderAccountOrders === 'function') renderAccountOrders();
+      }, 300);
     });
   </script>
 </body>
