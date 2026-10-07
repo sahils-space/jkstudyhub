@@ -6041,32 +6041,59 @@ function removeOwnerPhoto(event, slotNum) {
   }
 }
 
-// Upload photo to free reliable CDN (freeimage.host) to get real HTTPS URLs
+// Upload photo to free reliable CDN (ImgBB + FreeImage.host fallback) with timeout
 async function uploadPhotoToCdn(photoDataUrl) {
   if (!photoDataUrl || !photoDataUrl.startsWith('data:')) {
     return photoDataUrl; // Already a URL or empty
   }
+  
+  const base64Data = photoDataUrl.split(',')[1];
+  if (!base64Data) return photoDataUrl;
+
+  // Helper with 6-second timeout
+  const fetchWithTimeout = (url, options, timeout = 6000) => {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timeout')), timeout))
+    ]);
+  };
+
+  // Primary: FreeImage.host
   try {
-    const base64Data = photoDataUrl.split(',')[1];
-    if (!base64Data) return photoDataUrl;
-    
     const formData = new FormData();
     formData.append('key', '6d207e02198a847aa98d0a2a901485a5');
     formData.append('action', 'upload');
     formData.append('source', base64Data);
     formData.append('format', 'json');
 
-    const response = await fetch('https://freeimage.host/api/1/upload', {
+    const response = await fetchWithTimeout('https://freeimage.host/api/1/upload', {
       method: 'POST',
       body: formData
-    });
+    }, 6000);
     const result = await response.json();
     if (result && result.status_code === 200 && result.image && result.image.url) {
       return result.image.url;
     }
   } catch (err) {
-    console.warn("CDN photo upload error:", err);
+    console.warn("Primary CDN photo upload notice:", err);
   }
+
+  // Secondary: ImgBB Public API Fallback
+  try {
+    const bbForm = new FormData();
+    bbForm.append('image', base64Data);
+    const bbRes = await fetchWithTimeout('https://api.imgbb.com/1/upload?key=52bf46960d70b80f74fb060411a0cb79', {
+      method: 'POST',
+      body: bbForm
+    }, 6000);
+    const bbData = await bbRes.json();
+    if (bbData && bbData.data && (bbData.data.url || bbData.data.display_url)) {
+      return bbData.data.url || bbData.data.display_url;
+    }
+  } catch (err) {
+    console.warn("Secondary CDN photo upload notice:", err);
+  }
+
   return photoDataUrl;
 }
 
