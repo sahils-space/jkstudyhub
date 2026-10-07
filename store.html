@@ -2217,6 +2217,11 @@
               <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit Indian number" pattern="[6789][0-9]{9}" title="Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9">
             </div>
 
+            <div class="form-group" id="orderEmailGroup">
+              <label class="form-label">Email Address (for Order Updates &amp; My Orders Tracking)</label>
+              <input type="email" id="orderEmail" required class="form-input" placeholder="e.g. yourname@gmail.com">
+            </div>
+
             <!-- Dynamic Field: Physical Address -->
             <div id="addressFields" style="display:none; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 6px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
@@ -2336,7 +2341,7 @@
       });
     }
   </script>
-  <script src="store.js?v=29.0"></script>
+  <script src="store.js?v=30.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">

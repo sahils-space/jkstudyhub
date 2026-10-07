@@ -1038,6 +1038,8 @@ function renderWishlistPage() {
 
 // --- LIVE DELIVERY TRACKER & ORDERS ENGINE (STEP 2) ---
 let currentOrderFilter = 'all'; // 'all', 'active', 'delivered'
+let currentOrderStatusFilter = 'all'; // 'all', 'in_progress', 'delivered', 'cancelled'
+let currentOwnerOrderView = 'store'; // 'store' (all store orders) vs 'personal' (owner's personal orders)
 let currentOrderSearchQuery = '';
 
 // Universal Helper: Check if an order is Cash on Delivery (COD) vs Paid Online
@@ -1387,8 +1389,9 @@ function resetOrderSearch() {
 }
 
 function setOrderStatusFilter(filter) {
+  currentOrderStatusFilter = filter;
   currentOrderFilter = filter;
-  ['all', 'active', 'delivered'].forEach(f => {
+  ['all', 'active', 'delivered', 'in_progress', 'cancelled'].forEach(f => {
     const el = document.getElementById('filterPill' + f.charAt(0).toUpperCase() + f.slice(1));
     if (el) {
       if (f === filter) el.classList.add('active');
@@ -1396,6 +1399,21 @@ function setOrderStatusFilter(filter) {
     }
   });
   if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+  if (typeof renderOrdersPage === 'function') { renderOrdersPage(); }
+}
+
+function setOwnerOrderView(view) {
+  currentOwnerOrderView = view;
+  if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+  if (typeof renderOrdersPage === 'function') { renderOrdersPage(); }
+}
+
+function cancelOrderByCustomer(orderId) {
+  if (!confirm(`Are you sure you want to cancel order #${orderId}?`)) return;
+  updateOrderStatusByAdmin(orderId, 'Cancelled');
+  if (typeof showToast === 'function') {
+    showToast('❌ Order has been cancelled successfully.');
+  }
 }
 
 // --- RENDER DEDICATED ORDERS PAGE (account.html#orders) ---
@@ -2817,6 +2835,7 @@ function setupCheckoutModal(name, price, category) {
   const citySelect = document.getElementById('orderCity');
   const addrInput = document.getElementById('orderAddress');
 
+  const emailInput = document.getElementById('orderEmail');
   if (nameInput) {
     nameInput.value = (user && user.displayName) ? user.displayName : (savedProfile && savedProfile.name ? savedProfile.name : '');
   }
@@ -2825,6 +2844,13 @@ function setupCheckoutModal(name, price, category) {
       phoneInput.value = String(savedProfile.phone).replace('+91', '').trim();
     } else if (user && user.phoneNumber) {
       phoneInput.value = String(user.phoneNumber).replace('+91', '').trim();
+    }
+  }
+  if (emailInput) {
+    if (user && user.email) {
+      emailInput.value = user.email;
+    } else if (savedProfile && savedProfile.email) {
+      emailInput.value = savedProfile.email;
     }
   }
   if (pinInput && savedProfile && savedProfile.pin) {
@@ -3157,6 +3183,10 @@ function processOrder(txnId, customStatus) {
 
   // 1. SAVE LOCALLY TO ORDERS HISTORY IMMEDIATELY!
   const user = getCurrentUser();
+  const emailInput = document.getElementById('orderEmail');
+  const explicitEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
+  const orderEmail = explicitEmail || (user && user.email ? user.email.toLowerCase() : null);
+
   const orderRecord = {
     orderId: 'OD' + Date.now() + Math.floor(Math.random() * 1000),
     txnId: txnId,
@@ -3164,10 +3194,11 @@ function processOrder(txnId, customStatus) {
     timestamp: Date.now(),
     name: name,
     phone: phone,
+    email: orderEmail,
     address: finalAddress,
     product: finalProductDesc,
     amount: totalPaid,
-    userEmail: user ? user.email : null,
+    userEmail: orderEmail,
     status: orderStatus
   };
 
@@ -3179,6 +3210,9 @@ function processOrder(txnId, customStatus) {
   const formData = new FormData();
   formData.append('name', name);
   formData.append('phone', phone);
+  if (orderEmail) {
+    formData.append('email', orderEmail);
+  }
   formData.append('address', finalAddress);
   formData.append('product', combinedProduct);
   formData.append('order_id', orderRecord.orderId);
@@ -3191,6 +3225,7 @@ function processOrder(txnId, customStatus) {
     const profile = {
       name: name,
       phone: phone,
+      email: orderEmail,
       city: document.getElementById('orderCity') ? document.getElementById('orderCity').value : 'Baramulla (Pattan/Sopore/Baramulla)',
       pin: document.getElementById('orderPin') ? document.getElementById('orderPin').value : '193121',
       address: document.getElementById('orderAddress') ? document.getElementById('orderAddress').value : ''
@@ -3979,35 +4014,18 @@ function renderAccountOrders() {
   const allOrders = getOrders();
   const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
   
-  let adminBannerHtml = '';
-  if (isOwner) {
-    adminBannerHtml = `
-      <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 22px;">👑</span>
-          <div>
-            <div style="font-weight: 800; color: #1e3a8a; font-size: 14.5px;">Store Owner Mode Active</div>
-            <div style="font-size: 12.5px; color: #475569;">Viewing all ${allOrders.length} store orders • Live synced with Google Sheets</div>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <button type="button" onclick="openAdminCameraScanner();" style="background: #059669; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
-            <i class="fa-solid fa-camera"></i> 📷 Scan Parcel
-          </button>
-          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-arrows-rotate"></i> Sync Orders
-          </button>
-          <button type="button" onclick="if(confirm('Are you sure you want to clean all past orders from your dashboard and start fresh?')) { clearAllStoreOrders(false); }" style="background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.25);">
-            <i class="fa-solid fa-trash-can"></i> 🗑️ Clear All Orders
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
+  // Decide which orders to work with
   let userOrders = [];
   if (isOwner) {
-    userOrders = allOrders;
+    if (currentOwnerOrderView === 'personal') {
+      const uEmail = String(user.email || '').trim().toLowerCase();
+      userOrders = allOrders.filter(o => {
+        const oEmail = String(o.userEmail || o.email || '').trim().toLowerCase();
+        return uEmail && oEmail && oEmail === uEmail;
+      });
+    } else {
+      userOrders = allOrders;
+    }
   } else {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
     const uEmail = String(user.email || '').trim().toLowerCase();
@@ -4024,11 +4042,44 @@ function renderAccountOrders() {
     });
   }
 
-  // Filter by search query if user types in search bar
+  // Calculate counts for Flipkart Filter Tabs
+  const totalCount = userOrders.length;
+  const inProgressCount = userOrders.filter(o => {
+    const s = String(o.status || '').toLowerCase();
+    return !s.includes('deliver') && !s.includes('complete') && !s.includes('cancel');
+  }).length;
+  const deliveredCount = userOrders.filter(o => {
+    const s = String(o.status || '').toLowerCase();
+    return s.includes('deliver') || s.includes('complete');
+  }).length;
+  const cancelledCount = userOrders.filter(o => {
+    const s = String(o.status || '').toLowerCase();
+    return s.includes('cancel');
+  }).length;
+
+  // Filter by status tab
   let filteredOrders = userOrders;
+  if (currentOrderStatusFilter === 'in_progress') {
+    filteredOrders = userOrders.filter(o => {
+      const s = String(o.status || '').toLowerCase();
+      return !s.includes('deliver') && !s.includes('complete') && !s.includes('cancel');
+    });
+  } else if (currentOrderStatusFilter === 'delivered') {
+    filteredOrders = userOrders.filter(o => {
+      const s = String(o.status || '').toLowerCase();
+      return s.includes('deliver') || s.includes('complete');
+    });
+  } else if (currentOrderStatusFilter === 'cancelled') {
+    filteredOrders = userOrders.filter(o => {
+      const s = String(o.status || '').toLowerCase();
+      return s.includes('cancel');
+    });
+  }
+
+  // Filter by search query if user types in search bar
   if (currentOrderSearchQuery) {
     const q = currentOrderSearchQuery;
-    filteredOrders = userOrders.filter(o => {
+    filteredOrders = filteredOrders.filter(o => {
       const idMatch = String(o.orderId || '').toLowerCase().includes(q);
       const phoneMatch = String(o.phone || '').toLowerCase().includes(q);
       const nameMatch = String(o.name || '').toLowerCase().includes(q);
@@ -4039,31 +4090,98 @@ function renderAccountOrders() {
     });
   }
 
+  // Build Owner Mode Top Banner & View Switcher (Flipkart Seller Hub style)
+  let ownerControlsHtml = '';
+  if (isOwner) {
+    ownerControlsHtml = `
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">👑</span>
+          <div>
+            <div style="font-weight: 800; color: #1e3a8a; font-size: 14.5px;">Store Owner (Seller Hub)</div>
+            <div style="font-size: 12.5px; color: #475569;">Total ${allOrders.length} store orders • Live synchronized with Google Sheets</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <button type="button" onclick="openAdminCameraScanner();" style="background: #059669; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
+            <i class="fa-solid fa-camera"></i> 📷 Scan Parcel
+          </button>
+          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-arrows-rotate"></i> Sync Orders
+          </button>
+          <button type="button" onclick="if(confirm('Are you sure you want to clean all past orders from your dashboard and start fresh?')) { clearAllStoreOrders(false); }" style="background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.25);">
+            <i class="fa-solid fa-trash-can"></i> 🗑️ Clear All Orders
+          </button>
+        </div>
+      </div>
+
+      <!-- Flipkart Role Toggle: Seller Hub vs Personal Purchases -->
+      <div class="fk-role-toggle">
+        <button type="button" class="fk-role-btn ${currentOwnerOrderView === 'store' ? 'active' : ''}" onclick="setOwnerOrderView('store')">
+          <i class="fa-solid fa-store"></i> Seller Hub (All Orders: ${allOrders.length})
+        </button>
+        <button type="button" class="fk-role-btn ${currentOwnerOrderView === 'personal' ? 'active' : ''}" onclick="setOwnerOrderView('personal')">
+          <i class="fa-solid fa-bag-shopping"></i> My Personal Purchases
+        </button>
+      </div>
+    `;
+  }
+
+  // Flipkart Status Filter Tabs
+  const filterTabsHtml = `
+    <div class="fk-filter-tabs">
+      <button type="button" class="fk-tab-btn ${currentOrderStatusFilter === 'all' ? 'active' : ''}" onclick="setOrderStatusFilter('all')">
+        All (${totalCount})
+      </button>
+      <button type="button" class="fk-tab-btn ${currentOrderStatusFilter === 'in_progress' ? 'active' : ''}" onclick="setOrderStatusFilter('in_progress')">
+        In Progress (${inProgressCount})
+      </button>
+      <button type="button" class="fk-tab-btn ${currentOrderStatusFilter === 'delivered' ? 'active' : ''}" onclick="setOrderStatusFilter('delivered')">
+        Delivered (${deliveredCount})
+      </button>
+      <button type="button" class="fk-tab-btn ${currentOrderStatusFilter === 'cancelled' ? 'active' : ''}" onclick="setOrderStatusFilter('cancelled')">
+        Cancelled (${cancelledCount})
+      </button>
+    </div>
+  `;
+
+  // Empty State if no orders match
   if (filteredOrders.length === 0) {
+    let emptyMsg = '';
     if (currentOrderSearchQuery) {
-      container.innerHTML = `
-        <div class="empty-state" style="padding-top: 40px;">
-          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png" style="width:80px; margin: 0 auto 10px;"></div>
+      emptyMsg = `
+        <div class="empty-state" style="padding-top: 30px;">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png" style="width:70px; margin: 0 auto 10px;"></div>
           <h3>No matching orders</h3>
           <p>No orders matched your search "<strong>${currentOrderSearchQuery}</strong>".</p>
           <button class="yellow-btn" style="width:auto; padding: 8px 24px; margin-top: 10px;" onclick="const el = document.getElementById('orderSearchInput'); if(el) el.value=''; handleOrderSearch('');">Clear Search</button>
         </div>
       `;
+    } else if (currentOrderStatusFilter !== 'all') {
+      emptyMsg = `
+        <div class="empty-state" style="padding-top: 30px;">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:70px; margin: 0 auto 10px;"></div>
+          <h3>No ${currentOrderStatusFilter.replace('_', ' ')} orders</h3>
+          <p>You don't have any orders under this tab right now.</p>
+          <button class="yellow-btn" style="width:auto; padding: 8px 24px; margin-top: 10px;" onclick="setOrderStatusFilter('all')">View All Orders</button>
+        </div>
+      `;
     } else {
-      container.innerHTML = `
-        <div class="empty-state" style="padding-top: 60px;">
-          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:100%; "></div>
-          <h3>No orders found</h3>
-          <p>Looks like you haven't placed any orders yet.</p>
-          <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Keep shopping</a>
+      emptyMsg = `
+        <div class="empty-state" style="padding-top: 40px;">
+          <div class="icon-container"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pensive%20Face.png" style="width:75px; margin: 0 auto 10px;"></div>
+          <h3>No orders placed yet</h3>
+          <p>Looks like you haven't placed any orders yet. Discover our syllabus books, notes, and study supplies!</p>
+          <a href="store.html" class="yellow-btn" style="width:auto; padding: 10px 30px;">Start Shopping</a>
         </div>
       `;
     }
+    container.innerHTML = (ownerControlsHtml || '') + filterTabsHtml + emptyMsg;
     return;
   }
 
   // Reverse sort by timestamp
-  filteredOrders.sort((a,b) => b.timestamp - a.timestamp);
+  filteredOrders.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
 
   let html = '';
   filteredOrders.forEach((o, index) => {
@@ -4089,34 +4207,67 @@ function renderAccountOrders() {
     const statusLower = String(o.status || '').toLowerCase();
 
     html += `
-      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
+      <div class="fk-order-card">
         
-        <!-- Order Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <!-- Flipkart Order Top Bar -->
+        <div class="fk-order-top">
           <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #1e293b; background: #f1f5f9; padding: 5px 12px; border-radius: 6px; letter-spacing: 0.5px; border: 1px solid #e2e8f0;">
-              ${safeOrderId}
-            </span>
+            <span class="fk-order-id-badge">${safeOrderId}</span>
             <span style="font-size: 12.5px; color: #64748b;">
-              <i class="fa-regular fa-calendar"></i> ${o.date}
+              <i class="fa-regular fa-calendar"></i> ${o.date || 'Recent'}
             </span>
           </div>
           
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="background: ${statusInfo.badgeBg}; color: ${statusInfo.badgeColor}; border: 1px solid ${statusInfo.badgeBorder}; font-size: 12.5px; font-weight: 700; padding: 5px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+            <span class="fk-status-pill" style="background: ${statusInfo.badgeBg}; color: ${statusInfo.badgeColor}; border: 1px solid ${statusInfo.badgeBorder};">
               <i class="fa-solid ${statusInfo.badgeIcon}"></i> ${statusInfo.label}
             </span>
           </div>
         </div>
 
-        <!-- FLIPKART / AMAZON LIVE DELIVERY STEPPER -->
-        <div class="delivery-tracker-box">
+        <!-- Flipkart Item Row -->
+        <div class="fk-item-row">
+          ${orderImgSrc ? `<img src="${orderImgSrc}" alt="${o.product}" class="fk-thumb" onerror="this.src='images/logo-app.png'" loading="lazy">` : ''}
+          <div class="fk-item-details">
+            <h4 class="fk-item-title">${o.product}</h4>
+            
+            <!-- Flipkart Delivery Highlight -->
+            <div style="margin-bottom: 8px; font-size: 13.5px; font-weight: 700; color: ${statusLower.includes('cancel') ? '#dc2626' : (statusLower.includes('deliver') ? '#16a34a' : '#2563eb')}; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${statusLower.includes('cancel') ? '#dc2626' : (statusLower.includes('deliver') ? '#16a34a' : '#2563eb')};"></span>
+              ${statusLower.includes('cancel') ? 'Order Cancelled' : (statusLower.includes('deliver') ? 'Delivered at Doorstep' : 'Arriving Soon (Expected in 24-48 hrs)')}
+            </div>
+
+            <div class="fk-item-meta">
+              <p style="margin: 0;"><strong>Recipient:</strong> ${(o.name && !o.name.match(/^[6789]\d{9}$/)) ? o.name : 'Customer'} (${getValidCustomerPhone(o) || o.phone || 'N/A'}${o.userEmail || o.email ? ' • ' + (o.userEmail || o.email) : ''})</p>
+              <p style="margin: 4px 0 0;"><strong>Address:</strong> ${o.address || 'Delivery Address, Pattan 193121'}</p>
+            </div>
+
+            ${isCod ? `
+              <div style="margin-top: 10px; font-size: 11.5px; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                <i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay ₹${o.amount || 0} at Doorstep)
+              </div>
+            ` : `
+              <div style="margin-top: 10px; font-size: 11.5px; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                <i class="fa-solid fa-shield-check"></i> Paid via Razorpay (${o.txnId || 'VERIFIED'})
+              </div>
+            `}
+          </div>
+
+          <div class="fk-price-box">
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">${isCod ? 'To Collect (COD)' : 'Total Paid'}</div>
+            <div class="fk-price-val">₹${o.amount || 0}</div>
+            <span style="font-size: 11px; font-weight: 700; color: ${isCod ? '#b45309' : '#16a34a'};">${isCod ? 'Pay on Delivery' : 'Verified Paid'}</span>
+          </div>
+        </div>
+
+        <!-- FLIPKART LIVE DELIVERY STEPPER -->
+        <div class="delivery-tracker-box" style="margin-top: 16px;">
           <div class="stepper-header-meta">
-            <span style="font-weight: 700; color: #0f172a; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
+            <span style="font-weight: 700; color: #0f172a; font-size: 13px; display: flex; align-items: center; gap: 6px;">
               <i class="fa-solid fa-route" style="color: #2563eb;"></i> Live Delivery Progress
             </span>
             <span style="font-size: 12px; color: #64748b; font-weight: 600;">
-              Destination: <strong style="color: #1e293b;">Pattan (193121)</strong>
+              Hub: <strong style="color: #1e293b;">Pattan (193121)</strong>
             </span>
           </div>
 
@@ -4152,51 +4303,18 @@ function renderAccountOrders() {
             </div>
           </div>
           
-          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
+          <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-circle-info" style="color: ${isCod ? '#b45309' : '#2563eb'};"></i>
             <span>${statusInfo.summaryText}</span>
           </div>
         </div>
 
-        <!-- Order Body -->
-        <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px; flex-wrap: wrap; margin-top: 16px;">
-          <div style="display: flex; gap: 16px; align-items: flex-start; flex: 1; min-width: 250px;">
-            ${orderImgSrc ? `<img src="${orderImgSrc}" alt="${o.product}" style="width: 65px; height: 85px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);" loading="eager">` : ''}
-            <div>
-              <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px;">${o.product}</h4>
-              <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
-                <p style="margin: 0;"><strong>Recipient:</strong> ${(o.name && !o.name.match(/^[6789]\d{9}$/)) ? o.name : 'Student'} (${getValidCustomerPhone(o) || o.phone || 'Contact via WhatsApp'})</p>
-                <p style="margin: 4px 0 0;"><strong>Address:</strong> ${o.address || 'Delivery Address, Pattan 193121'}</p>
-              </div>
-              ${isCod ? `
-                <div style="margin-top: 10px; font-size: 11.5px; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
-                  <i class="fa-solid fa-hand-holding-dollar"></i> Payment Method: <strong>Cash on Delivery (Pay at Doorstep)</strong>
-                </div>
-              ` : `
-                <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
-                  <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${o.txnId || 'COD_VERIFIED'}</strong>
-                </div>
-              `}
-            </div>
-          </div>
-
-          <div style="text-align: right; min-width: 140px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600;">${isCod ? 'To Collect (COD)' : 'Total Paid'}</div>
-            <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 2px;">₹${o.amount || 0}</div>
-            ${isCod ? `
-              <span style="font-size: 11px; color: #b45309; font-weight: 800; background: #fef3c7; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a;">Cash on Delivery</span>
-            ` : `
-              <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
-            `}
-          </div>
-        </div>
-
-        <!-- Admin Controls Bar (Strictly Store Owner Mode) -->
-        ${isOwner ? `
-          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-top: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <!-- Admin Controls Bar (Strictly Store Owner Mode in Seller Hub view) -->
+        ${(isOwner && currentOwnerOrderView === 'store') ? `
+          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-top: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
-                <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status Control:
+                <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status:
               </span>
               ${isLocked ? `
                 <select disabled style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 700; background: #f1f5f9; color: #64748b; cursor: not-allowed;">
@@ -4219,31 +4337,39 @@ function renderAccountOrders() {
               `}
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Amazon/Flipkart-style shipping label">
+              <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Flipkart/Amazon-style shipping label">
                 <i class="fa-solid fa-print"></i> 🖨️ Label
               </button>
               <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${safeOrderId}')" style="background: #25d366; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <i class="fa-brands fa-whatsapp"></i> Send WhatsApp Notice
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp Notice
               </button>
             </div>
           </div>
         ` : ''}
 
-        <!-- Order Action Footer (Available for both Owner and Student) -->
-        <div style="border-top: 1px solid #f1f5f9; margin-top: 18px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <button type="button" onclick="printOrderReceipt('${safeOrderId}')" style="background: #f1f5f9; color: #1e293b; border: 1.5px solid #cbd5e1; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-            <i class="fa-solid fa-file-invoice" style="color: #2563eb;"></i> ${isOwner ? 'View &amp; Print Receipt' : 'Download Invoice / View Receipt'}
-          </button>
+        <!-- Flipkart Order Actions (Invoice, Cancel, WhatsApp) -->
+        <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <button type="button" onclick="printOrderReceipt('${safeOrderId}')" style="background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+              <i class="fa-solid fa-file-invoice" style="color: #2563eb;"></i> Download Invoice / Receipt
+            </button>
+
+            ${(!isLocked) ? `
+              <button type="button" onclick="cancelOrderByCustomer('${safeOrderId}')" style="background: #fff; color: #dc2626; border: 1px solid #fca5a5; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+                <i class="fa-solid fa-xmark"></i> Cancel Order
+              </button>
+            ` : ''}
+          </div>
           
-          <a href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="background: #25d366; color: white; text-decoration: none; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(37,211,102,0.3);">
-            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Track with WhatsApp Support
+          <a href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="background: #25d366; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(37,211,102,0.25);">
+            <i class="fa-brands fa-whatsapp" style="font-size: 15px;"></i> Need Help? (WhatsApp)
           </a>
         </div>
       </div>
     `;
   });
   
-  container.innerHTML = (adminBannerHtml || '') + html;
+  container.innerHTML = (ownerControlsHtml || '') + filterTabsHtml + html;
 }
 
 function renderAccountWishlist() {

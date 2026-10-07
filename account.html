@@ -55,6 +55,141 @@
     
     .content-header { font-size: 20px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
     
+    /* Flipkart Style Order Management */
+    .fk-order-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+    .fk-order-card:hover {
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      border-color: #cbd5e1;
+    }
+    .fk-order-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .fk-order-id-badge {
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: 800;
+      color: #1e293b;
+      background: #f8fafc;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+    .fk-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .fk-item-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .fk-thumb {
+      width: 68px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
+      background: #f8fafc;
+    }
+    .fk-item-details {
+      flex: 1;
+      min-width: 220px;
+    }
+    .fk-item-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 6px 0;
+      line-height: 1.35;
+    }
+    .fk-item-meta {
+      font-size: 12.5px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .fk-price-box {
+      text-align: right;
+      min-width: 120px;
+    }
+    .fk-price-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .fk-filter-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .fk-tab-btn {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .fk-tab-btn.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      box-shadow: 0 2px 6px rgba(37,99,235,0.25);
+    }
+    .fk-role-toggle {
+      display: inline-flex;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 16px;
+      gap: 4px;
+      border: 1px solid #e2e8f0;
+    }
+    .fk-role-btn {
+      border: none;
+      background: transparent;
+      padding: 7px 16px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .fk-role-btn.active {
+      background: white;
+      color: #1e293b;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
     /* Empty States */
     .empty-state { text-align: center; padding: 40px 20px; }
     .empty-state .icon-container { display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 100px; margin-bottom: 20px; }
@@ -696,7 +831,7 @@
   <!-- Barcode & QR Code client-side generator and scanner libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <script src="store.js?v=29.0"></script>
+  <script src="store.js?v=30.0"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {
