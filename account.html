@@ -1000,16 +1000,11 @@
         renderAccountOrders();
       }
 
-      if (typeof handleUrlScannedOrder === 'function') {
-        setTimeout(handleUrlScannedOrder, 150);
-      }
-
       setTimeout(() => {
         if (typeof updateOwnerUIProtection === 'function') updateOwnerUIProtection();
         renderAccountDashboard();
         if (typeof syncOrdersWithGoogleSheet === 'function') syncOrdersWithGoogleSheet();
         if (typeof renderAccountOrders === 'function') renderAccountOrders();
-        if (typeof handleUrlScannedOrder === 'function') handleUrlScannedOrder();
       }, 350);
     });
 
@@ -1018,9 +1013,6 @@
       const hash = rawHash.split('?')[0].split('&')[0];
       if (hash && document.getElementById('tab-' + hash)) {
         switchTab(hash);
-      }
-      if (typeof handleUrlScannedOrder === 'function') {
-        handleUrlScannedOrder();
       }
     });
   </script>

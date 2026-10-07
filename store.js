@@ -1402,16 +1402,6 @@ function updateOrderStatusByAdmin(orderId, newStatus, skipPrompt = false) {
     const matchedOrderId = orders[idx].orderId;
     const currentStatus = String(orders[idx].status || '').trim();
 
-    // PERMANENT LOCK: Once Delivered or Cancelled, order cannot be changed again
-    if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
-      if (typeof showToast === 'function') {
-        showToast(`🔒 Order is permanently locked as ${currentStatus} and cannot be modified.`);
-      }
-      if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
-      if (typeof renderOrdersPage === 'function') { renderOrdersPage(); }
-      return;
-    }
-
     // STRICT OTP VERIFICATION FOR DELIVERED & CANCELLED STATUSES (Wishmaster Security)
     if ((newStatus === 'Delivered' || newStatus === 'Cancelled') && !skipPrompt) {
       if (typeof openDeliveryOtpVerificationModal === 'function') {
@@ -1690,6 +1680,7 @@ function renderOrdersPage() {
   filtered.forEach((order, index) => {
     const safeOrderId = order.orderId || ('ORD-' + index);
     const isCod = isCodOrder(order);
+    const isLocked = (order.status === 'Delivered' || order.status === 'Cancelled');
     const statusInfo = getOrderStatusInfo(order.status, order);
     const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'TXN: ' + order.txnId}) for ${order.product}.`);
     
@@ -1703,7 +1694,7 @@ function renderOrdersPage() {
     let s1Desc = isCod ? 'Pay on Delivery' : 'Paid Online';
     let s2Desc = statusInfo.step >= 2 ? 'Dispatched' : 'Packed at Hub';
     let s3Desc = statusInfo.step >= 3 ? 'En Route (Pattan)' : 'Local Delivery';
-    let s4Desc = statusInfo.step >= 4 ? (isCod ? 'Delivered & Paid' : 'Delivered') : 'Expected Shortly';
+    let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
 
     const matchedBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA : []).find(b => order.product && order.product.includes(b.name)) || (PRODUCT_CATALOG[order.product] ? { image: PRODUCT_CATALOG[order.product].image } : null);
     const orderImgSrc = (matchedBook && matchedBook.photos && matchedBook.photos[0]) ? matchedBook.photos[0] : ((matchedBook && matchedBook.image) ? matchedBook.image : (order.image || ''));
@@ -1769,7 +1760,7 @@ function renderOrdersPage() {
             <!-- Step 4: Delivered -->
             <div class="stepper-node ${s4Class}">
               <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
-              <div class="node-title">${isCod ? 'Delivered & Paid' : 'Delivered'}</div>
+              <div class="node-title">Delivered</div>
               <div class="node-desc">${s4Desc}</div>
             </div>
           </div>
@@ -1799,7 +1790,7 @@ function renderOrdersPage() {
                 <i class="fa-solid fa-circle-check"></i> Payment: <strong>Prepaid Online (${order.txnId || 'PAID'})</strong>
               </div>
             `}
-            ${(!isLocked) ? `
+            ${(!isOwner && !isLocked) ? `
               <div style="margin-top: 8px; font-size: 12px; color: #1e3a8a; background: #eff6ff; border: 1.5px dashed #3b82f6; padding: 5px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
                 <span style="font-size: 14px;">🔐</span>
                 <span>Delivery OTP: <strong style="font-size: 15px; letter-spacing: 2px; color: #1d4ed8; font-family: monospace;">${getOrderDeliveryOtp(order)}</strong> <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">(Share with Wishmaster upon doorstep delivery)</span></span>
@@ -1826,25 +1817,16 @@ function renderOrdersPage() {
               <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
                 <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status Control:
               </span>
-              ${(order.status === 'Delivered' || order.status === 'Cancelled') ? `
-                <select disabled style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 700; background: #f1f5f9; color: #64748b; cursor: not-allowed;">
-                  <option selected>${order.status}</option>
-                </select>
-                <span style="font-size: 11px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 4px 8px; border-radius: 6px; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 4px;">
-                  <i class="fa-solid fa-lock"></i> Locked (${order.status})
-                </span>
-              ` : `
-                <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                  <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
-                  <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                  <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
-                  <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
-                  <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
-                  <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
-                  <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>${isCod ? 'Delivered & Cash Collected' : 'Delivered Successfully'}</option>
-                  <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
-                </select>
-              `}
+              <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
+                <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
+                <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
+                <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
+                <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
+                <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>Delivered (Requires OTP)</option>
+                <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
+              </select>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Amazon/Flipkart-style shipping label">
@@ -2711,7 +2693,8 @@ function renderScannedOrderCard(order) {
   const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
   const customerPhone = getValidCustomerPhone(order) || order.phone || 'N/A';
 
-  const isShipped = (statusLower.includes('ship') || statusLower === 'dispatched');
+  const isDispatched = (statusLower === 'dispatched');
+  const isShipped = (statusLower.includes('ship'));
   const isOnTheWay = (statusLower.includes('way') || statusLower.includes('transit'));
   const isOutForDelivery = (statusLower.includes('out'));
   const isDelivered = (statusLower.includes('deliver'));
@@ -2781,43 +2764,37 @@ function renderScannedOrderCard(order) {
       </div>
 
       <div style="margin-bottom: 14px;">
-        ${(isDelivered || order.status === 'Cancelled') ? `
-          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px 12px; text-align: center; font-size: 12px; font-weight: 800; color: #64748b;">
-            🔒 Order is permanently finalized as <strong>${order.status}</strong> and cannot be altered.
-          </div>
-        ` : `
-          <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Delivery Status Quick-Buttons:
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Shipped')" style="${isShipped ? 'background: #7c3aed; color: white; border: 2px solid #6d28d9; font-weight: 800;' : 'background: #f5f3ff; color: #6d28d9; border: 1.5px solid #ddd6fe; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-              <i class="fa-solid fa-box"></i> ${isShipped ? '✓ Shipped' : '📦 Shipped'}
-            </button>
-            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'On the Way')" style="${isOnTheWay ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-              <i class="fa-solid fa-truck-fast"></i> ${isOnTheWay ? '✓ On the Way' : '🚚 On the Way'}
-            </button>
-            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #0284c7; color: white; border: 2px solid #0369a1; font-weight: 800;' : 'background: #f0f9ff; color: #0369a1; border: 1.5px solid #bae6fd; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-              <i class="fa-solid fa-motorcycle"></i> ${isOutForDelivery ? '✓ Out for Del.' : '🛵 Out for Delivery'}
-            </button>
-            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-              <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : '✅ Delivered'}
-            </button>
-          </div>
+        <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Update Order Status:
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Dispatched')" style="${isDispatched ? 'background: #6366f1; color: white; border: 2px solid #4f46e5; font-weight: 800;' : 'background: #eef2ff; color: #4f46e5; border: 1.5px solid #c7d2fe; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-box"></i> ${isDispatched ? '✓ Dispatched' : '📦 Dispatched'}
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'On the Way')" style="${isOnTheWay ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-truck-fast"></i> ${isOnTheWay ? '✓ On the Way' : '🚚 On the Way'}
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #0284c7; color: white; border: 2px solid #0369a1; font-weight: 800;' : 'background: #f0f9ff; color: #0369a1; border: 1.5px solid #bae6fd; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-motorcycle"></i> ${isOutForDelivery ? '✓ Out for Del.' : '🛵 Out for Delivery'}
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+            <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : '✅ Delivered (OTP)'}
+          </button>
+        </div>
 
-          <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <span style="font-size: 11.5px; font-weight: 700; color: #64748b; white-space: nowrap;">Or change to:</span>
-            <select onchange="updateOrderStatusFromScanner('${order.orderId}', this.value, this)" style="flex: 1; padding: 5px 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12px; font-weight: 700; color: #1e293b; background: #fff; cursor: pointer;">
-              <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
-              <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-              <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-              <option value="On the Way" ${order.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
-              <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-              <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-          </div>
-        `}
+        <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 11.5px; font-weight: 700; color: #64748b; white-space: nowrap;">Or change to:</span>
+          <select onchange="updateOrderStatusFromScanner('${order.orderId}', this.value, this)" style="flex: 1; padding: 5px 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12px; font-weight: 700; color: #1e293b; background: #fff; cursor: pointer;">
+            <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+            <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+            <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+            <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+            <option value="On the Way" ${order.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
+            <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered (Requires OTP)</option>
+            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
+        </div>
       </div>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
@@ -2981,11 +2958,6 @@ function openDeliveryOtpVerificationModal(orderId, targetStatus = 'Delivered', s
   }
 
   const currentStatus = String(order.status || 'Confirmed').trim();
-  if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
-    if (typeof showToast === 'function') showToast(`🔒 Order ${orderId} is permanently locked as ${currentStatus}.`);
-    if (selectEl) selectEl.value = currentStatus;
-    return;
-  }
 
   currentPendingOtpAction = {
     orderId: order.orderId,
@@ -3136,12 +3108,6 @@ function handleAdminStatusSelectChange(orderId, selectEl) {
   const order = findOrderInStore(orderId);
   const currentStatus = order ? String(order.status || '').trim() : '';
 
-  if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
-    showToast(`🔒 Order is permanently locked as ${currentStatus}.`);
-    if (selectEl) selectEl.value = currentStatus;
-    return;
-  }
-
   if (newStatus === 'Delivered' || newStatus === 'Cancelled') {
     openDeliveryOtpVerificationModal(orderId, newStatus, selectEl);
   } else {
@@ -3262,23 +3228,11 @@ function handleUrlScannedOrder() {
   const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
   const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
 
-  // 2. If Store Owner is logged in, immediately pop up the Scanned Parcel Action Card!
-  if (isOwner) {
-    const modal = document.getElementById('adminCameraScannerModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      handleScannedBarcodeValue(cleanId);
-      if (typeof showToast === 'function') {
-        showToast(`📦 Scanned parcel #${cleanId} opened!`);
-      }
-    }
-  } else {
-    // If student/guest, filter order list to highlight order
-    if (typeof handleOrderSearchInput === 'function') {
-      const input = document.getElementById('orderSearchInput');
-      if (input) input.value = cleanId;
-      handleOrderSearchInput(cleanId);
-    }
+  // Filter/highlight the order without auto-opening camera
+  if (typeof handleOrderSearchInput === 'function') {
+    const input = document.getElementById('orderSearchInput') || document.getElementById('accountOrderSearchInput');
+    if (input) input.value = cleanId;
+    handleOrderSearchInput(cleanId);
   }
 }
 
@@ -4059,15 +4013,13 @@ function showOrderConfirmationModal(orderRecord, isCod) {
   }
 
   const delInfo = getEstimatedDeliveryInfo(orderRecord.address);
-  const otpMsg = orderRecord.deliveryOtp ? `%0A🔐 *Delivery OTP:* ${orderRecord.deliveryOtp}` : '';
   const waText = `*📦 New Order Confirmation - JK Study Hub*%0A%0A` +
     `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
     `👤 *Student Name:* ${encodeURIComponent(orderRecord.name)}%0A` +
     `📞 *Phone:* ${encodeURIComponent(orderRecord.phone)}%0A` +
     `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
     `📚 *Product:* ${encodeURIComponent(orderRecord.product)}%0A` +
-    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery' : 'Paid Online'})` +
-    otpMsg + `%0A` +
+    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery' : 'Paid Online'})%0A` +
     `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A%0A` +
     `_Hello JK Study Hub! Please send me live order tracking and dispatch updates._`;
 
@@ -4908,7 +4860,7 @@ function renderAccountOrders() {
     let s1Desc = isCod ? 'Pay on Delivery' : 'Paid Online';
     let s2Desc = statusInfo.step >= 2 ? (o.status === 'Shipped' ? 'Shipped' : 'Packed at Hub') : 'Packed at Hub';
     let s3Desc = statusInfo.step >= 3 ? (o.status === 'On the Way' ? 'On the Way' : 'Local Delivery') : 'Local Delivery';
-    let s4Desc = statusInfo.step >= 4 ? (isCod ? 'Delivered & Paid' : 'Delivered') : 'Expected Shortly';
+    let s4Desc = statusInfo.step >= 4 ? 'Delivered' : 'Expected Shortly';
 
     const matchedBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA : []).find(b => o.product && o.product.includes(b.name)) || (PRODUCT_CATALOG[o.product] ? { image: PRODUCT_CATALOG[o.product].image } : null);
     const orderImgSrc = (matchedBook && matchedBook.photos && matchedBook.photos[0]) ? matchedBook.photos[0] : ((matchedBook && matchedBook.image) ? matchedBook.image : (o.image || 'images/logo-app.png'));
@@ -4962,7 +4914,7 @@ function renderAccountOrders() {
               </div>
             `}
 
-            ${(!isLocked) ? `
+            ${(!isOwner && !isLocked) ? `
               <div style="margin-top: 8px; font-size: 12px; color: #1e3a8a; background: #eff6ff; border: 1.5px dashed #3b82f6; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
                 <span style="font-size: 14px;">🔐</span>
                 <span>Delivery OTP: <strong style="font-size: 15px; letter-spacing: 2px; color: #1d4ed8; font-family: monospace;">${getOrderDeliveryOtp(o)}</strong> <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">(Share with Wishmaster upon doorstep delivery)</span></span>
@@ -5015,7 +4967,7 @@ function renderAccountOrders() {
             <!-- Step 4: Delivered -->
             <div class="stepper-node ${s4Class}">
               <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
-              <div class="node-title">${statusLower === 'cancelled' ? 'Cancelled' : (isCod ? 'Delivered & Paid' : 'Delivered')}</div>
+              <div class="node-title">${statusLower === 'cancelled' ? 'Cancelled' : 'Delivered'}</div>
               <div class="node-desc">${s4Desc}</div>
             </div>
           </div>
@@ -5033,25 +4985,16 @@ function renderAccountOrders() {
               <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
                 <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status:
               </span>
-              ${isLocked ? `
-                <select disabled style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 700; background: #f1f5f9; color: #64748b; cursor: not-allowed;">
-                  <option selected>${o.status}</option>
-                </select>
-                <span style="font-size: 11px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 4px 8px; border-radius: 6px; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 4px;">
-                  <i class="fa-solid fa-lock"></i> Locked (${o.status})
-                </span>
-              ` : `
-                <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                  <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
-                  <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                  <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-                  <option value="Dispatched" ${o.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-                  <option value="On the Way" ${o.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
-                  <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                  <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>${isCod ? 'Delivered & Cash Collected' : 'Delivered'}</option>
-                  <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                </select>
-              `}
+              <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
+                <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="Dispatched" ${o.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+                <option value="On the Way" ${o.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
+                <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered (Requires OTP)</option>
+                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Flipkart/Amazon-style shipping label">
