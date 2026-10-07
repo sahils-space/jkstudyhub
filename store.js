@@ -425,6 +425,41 @@ function saveOrders(orders) {
   updateNavBadges();
 }
 
+// --- PURGE / RESET STORE ORDERS (START FRESH) ---
+function clearAllStoreOrders(silent = false) {
+  try {
+    localStorage.setItem('jk_orders', '[]');
+    localStorage.removeItem('jk_locked_orders');
+    localStorage.removeItem('jk_last_checkout_details');
+    // Store purge epoch so old remote rows from Google Sheets are discarded
+    localStorage.setItem('jk_orders_purge_before', Date.now().toString());
+  } catch(e) {}
+
+  updateNavBadges();
+
+  if (typeof renderAccountOrders === 'function' && document.getElementById('ordersListContainer')) {
+    renderAccountOrders();
+  }
+  if (typeof renderOrdersPage === 'function' && document.getElementById('ordersPageContainer')) {
+    renderOrdersPage();
+  }
+
+  if (!silent && typeof showToast === 'function') {
+    showToast("🧹 All past orders have been cleared! Order section is fresh and clean.");
+  }
+}
+
+// Auto-execute immediate one-time cleanup requested by user
+(function autoPurgeOldOrdersOnce() {
+  try {
+    const purgeKey = 'jk_fresh_start_purge_20261007_v3';
+    if (!localStorage.getItem(purgeKey)) {
+      clearAllStoreOrders(true);
+      localStorage.setItem(purgeKey, 'true');
+    }
+  } catch(e) {}
+})();
+
 function getCurrentUser() {
   if (window.currentUser) return window.currentUser;
   try {
@@ -1099,21 +1134,17 @@ function getOrderStatusInfo(rawStatus, orderObj) {
 }
 
 // --- AUTHORIZED STORE TEAM ROLES ---
-// Master Owner Credentials & Identity Matcher:
-const STRICT_STORE_OWNER_PHONES = ['9622605714'];
+// Master Owner Credentials: Strictly limited to Sahil's verified Owner Google accounts:
 const STRICT_STORE_OWNER_EMAILS = [
   'sahilsspace20@gmail.com', 
   'sahilsspace@gmail.com', 
   'info.jkstudyhub@gmail.com'
 ];
+const STRICT_STORE_OWNER_PHONES = ['9622605714'];
 
 function isOwnerIdentity(email, phone) {
-  const cleanPhone = String(phone || '').replace(/\D/g, '').slice(-10);
   const cleanEmail = String(email || '').trim().toLowerCase();
-
-  if (cleanPhone && STRICT_STORE_OWNER_PHONES.includes(cleanPhone)) {
-    return true;
-  }
+  // Owner permission is ONLY given if authenticated with one of the verified owner emails:
   if (cleanEmail && STRICT_STORE_OWNER_EMAILS.includes(cleanEmail)) {
     return true;
   }
@@ -1122,9 +1153,8 @@ function isOwnerIdentity(email, phone) {
 
 function isStrictStoreOwner(user) {
   if (!user) return false;
-  const phone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
-  const email = String(user.email || '').trim().toLowerCase();
-  return isOwnerIdentity(email, phone);
+  const cleanEmail = String(user.email || '').trim().toLowerCase();
+  return STRICT_STORE_OWNER_EMAILS.includes(cleanEmail);
 }
 
 // Delivery Team Phones:
@@ -2599,10 +2629,20 @@ function syncOrdersWithGoogleSheet() {
             }
           }
 
+          const purgeBefore = parseInt(localStorage.getItem('jk_orders_purge_before') || '0');
+
           data.orders.forEach(remote => {
             // Ignore catalog product fallback rows from being treated as customer purchase orders!
             if (remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT' || (remote.orderId && remote.orderId.startsWith('PRD-'))) {
               return;
+            }
+
+            // If store owner purged past orders, do NOT re-import orders created before that moment!
+            if (purgeBefore > 0) {
+              const remoteTime = remote.timestamp ? new Date(remote.timestamp).getTime() : 0;
+              if (remoteTime > 0 && remoteTime < purgeBefore) return;
+              const tsMatch = String(remote.orderId || '').match(/\d{12,14}/);
+              if (tsMatch && parseInt(tsMatch[0]) < purgeBefore) return;
             }
 
             const match = localOrders.find(l => l.orderId === remote.orderId || (l.txnId && l.txnId === remote.txnId));
@@ -2857,8 +2897,22 @@ function setupCheckoutModal(name, price, category) {
   modal.classList.add('active');
 }
 
-// 1-Click Buy Now (Cash on Delivery)
-function quickOneClickCodCheckout() {
+// Mutex lock to strictly prevent duplicate / triple orders
+let isOrderSubmissionInProgress = false;
+let lastOrderSubmissionTimestamp = 0;
+
+// 1-Click Buy Now (Cash on Delivery) - Frictionless Single Tap
+function quickOneClickCodCheckout(btnEl, evt) {
+  if (evt) {
+    try { evt.preventDefault(); evt.stopPropagation(); } catch(e) {}
+  }
+
+  const now = Date.now();
+  if (isOrderSubmissionInProgress || (now - lastOrderSubmissionTimestamp < 5000)) {
+    console.warn("Order submission already in progress, ignoring duplicate tap.");
+    return;
+  }
+
   const nameInput = document.getElementById('orderName');
   const phoneInput = document.getElementById('orderPhone');
   const addrInput = document.getElementById('orderAddress');
@@ -2876,7 +2930,16 @@ function quickOneClickCodCheckout() {
     }
   }
 
-  processCodOrder();
+  isOrderSubmissionInProgress = true;
+  lastOrderSubmissionTimestamp = now;
+
+  const btn = btnEl || document.querySelector('.btn-1click-cod');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Placing Order...';
+  }
+
+  processCodOrder(true);
 }
 
 function closeCheckout() {
@@ -2960,14 +3023,37 @@ function handlePaymentSubmit() {
   }
 }
 
-function processCodOrder() {
+function processCodOrder(isFromQuick) {
   const form = document.getElementById('checkoutForm');
-  if (!form.reportValidity()) return;
+  if (!form.reportValidity()) {
+    isOrderSubmissionInProgress = false;
+    const btn1 = document.querySelector('.btn-1click-cod');
+    if (btn1) {
+      btn1.disabled = false;
+      btn1.innerHTML = '<i class="fa-solid fa-hand-holding-dollar"></i> 1-Click COD';
+    }
+    return;
+  }
+
+  const now = Date.now();
+  if (!isFromQuick) {
+    if (isOrderSubmissionInProgress || (now - lastOrderSubmissionTimestamp < 5000)) {
+      console.warn("Order already being processed.");
+      return;
+    }
+    isOrderSubmissionInProgress = true;
+    lastOrderSubmissionTimestamp = now;
+  }
 
   const btn = document.getElementById('submitOrderBtn');
   if (btn) {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Confirming COD Order...';
     btn.disabled = true;
+  }
+  const btn1 = document.querySelector('.btn-1click-cod');
+  if (btn1) {
+    btn1.disabled = true;
+    btn1.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Confirming...';
   }
 
   const codTxnId = 'COD_' + Date.now().toString(36).toUpperCase();
@@ -3089,12 +3175,6 @@ function processOrder(txnId, customStatus) {
   orders.unshift(orderRecord);
   saveOrders(orders);
 
-  // Auto-link phone number to Google account session
-  if (user && (!user.phoneNumber || user.phoneNumber === '') && phone) {
-    user.phoneNumber = '+91' + phone;
-    setCurrentUser(user);
-  }
-
   // 2. DISPATCH TO GOOGLE SHEETS WEB APP
   const formData = new FormData();
   formData.append('name', name);
@@ -3137,6 +3217,15 @@ function processOrder(txnId, customStatus) {
         btn.style.backgroundColor = '#2563eb';
       }
 
+      setTimeout(() => {
+        isOrderSubmissionInProgress = false;
+        const oneClickBtn = document.querySelector('.btn-1click-cod');
+        if (oneClickBtn) {
+          oneClickBtn.disabled = false;
+          oneClickBtn.innerHTML = '<i class="fa-solid fa-hand-holding-dollar"></i> 1-Click COD';
+        }
+      }, 2000);
+
       // If on orders page, re-render
       if (typeof renderOrdersPage === 'function') {
         if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
@@ -3146,6 +3235,14 @@ function processOrder(txnId, customStatus) {
     })
     .catch(err => {
       closeCheckout();
+      setTimeout(() => {
+        isOrderSubmissionInProgress = false;
+        const oneClickBtn = document.querySelector('.btn-1click-cod');
+        if (oneClickBtn) {
+          oneClickBtn.disabled = false;
+          oneClickBtn.innerHTML = '<i class="fa-solid fa-hand-holding-dollar"></i> 1-Click COD';
+        }
+      }, 2000);
       showOrderConfirmationModal(orderRecord, isCod);
     });
 }
@@ -3683,7 +3780,7 @@ function handleGooglePopupAuth() {
     provider.setCustomParameters({ prompt: 'select_account' });
     firebase.auth().signInWithPopup(provider).then(res => {
       const email = (res.user.email || '').trim().toLowerCase();
-      const isOwner = isStrictStoreOwner({ email: email, phoneNumber: res.user.phoneNumber });
+      const isOwner = isStrictStoreOwner({ email: email });
       const user = {
         displayName: res.user.displayName || (isOwner ? 'Sahil' : 'Student'),
         email: res.user.email,
@@ -3728,14 +3825,14 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
     firebase.auth().onAuthStateChanged(fbUser => {
       if (fbUser) {
         const email = (fbUser.email || '').trim().toLowerCase();
-        const isOwner = isStrictStoreOwner({ email: email, phoneNumber: fbUser.phoneNumber });
+        const isOwner = isStrictStoreOwner({ email: email });
         const current = getCurrentUser();
-        if (!current || current.email !== fbUser.email) {
+        if (!current || (current.email && current.email.toLowerCase() !== email)) {
           const user = {
-            displayName: fbUser.displayName || (current ? current.displayName : 'User'),
+            displayName: fbUser.displayName || (isOwner ? 'Sahil' : 'Student'),
             email: fbUser.email,
-            phoneNumber: fbUser.phoneNumber || (current ? current.phoneNumber : '') || (isOwner ? '+919622605714' : ''),
-            photoURL: fbUser.photoURL || (current ? current.photoURL : ''),
+            phoneNumber: fbUser.phoneNumber || (isOwner ? '+919622605714' : ''),
+            photoURL: fbUser.photoURL || '',
             uid: fbUser.uid,
             isOwner: isOwner
           };
@@ -3900,6 +3997,9 @@ function renderAccountOrders() {
           <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-arrows-rotate"></i> Sync Orders
           </button>
+          <button type="button" onclick="if(confirm('Are you sure you want to clean all past orders from your dashboard and start fresh?')) { clearAllStoreOrders(false); }" style="background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.25);">
+            <i class="fa-solid fa-trash-can"></i> 🗑️ Clear All Orders
+          </button>
         </div>
       </div>
     `;
@@ -3912,10 +4012,14 @@ function renderAccountOrders() {
     const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
     const uEmail = String(user.email || '').trim().toLowerCase();
     userOrders = allOrders.filter(o => {
-      const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
       const oEmail = String(o.userEmail || o.email || '').trim().toLowerCase();
-      if (uPhone && oPhone === uPhone) return true;
-      if (uEmail && oEmail === uEmail) return true;
+      // Primary match: user authenticated Google email
+      if (uEmail && oEmail && oEmail === uEmail) return true;
+      // Match by phone ONLY if phone is not the owner's store number
+      const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
+      if (uPhone && oPhone && oPhone === uPhone && !STRICT_STORE_OWNER_PHONES.includes(uPhone)) {
+        return true;
+      }
       return false;
     });
   }
