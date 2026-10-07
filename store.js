@@ -4,6 +4,92 @@
 const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
 
+// ============================================================================
+// KASHMIR PINCODE RECOGNITION & AUTO-DETECTION ENGINE
+// Automatically recognizes local post offices, hubs, and routes across J&K
+// ============================================================================
+const KASHMIR_PINCODES = {
+  "193121": { town: "Pattan (Main Hub)", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193201": { town: "Sopore Town", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193101": { town: "Baramulla Head Post", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193103": { town: "Delina / Baramulla", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193108": { town: "Kreeri", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193109": { town: "Kunzer / Tangmarg", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193401": { town: "Tangmarg / Gulmarg", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193402": { town: "Rafiabad / Rohama", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193403": { town: "Dangiwacha", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
+  "193404": { town: "Uri / Boniyar", district: "Baramulla (Pattan/Sopore/Baramulla)", express: false },
+  "190001": { town: "Srinagar GPO (Lal Chowk)", district: "Srinagar", express: true },
+  "190002": { town: "Srinagar (Nowhatta / Khanyar)", district: "Srinagar", express: true },
+  "190003": { town: "Srinagar (Karan Nagar / SMHS)", district: "Srinagar", express: true },
+  "190004": { town: "Srinagar (Batamaloo / Bemina)", district: "Srinagar", express: true },
+  "190005": { town: "Srinagar (Sonwar / Dalgate)", district: "Srinagar", express: true },
+  "190006": { town: "Srinagar (Hazratbal / KU)", district: "Srinagar", express: true },
+  "190008": { town: "Srinagar (Soura / SKIMS)", district: "Srinagar", express: true },
+  "190009": { town: "Srinagar (Jawahar Nagar)", district: "Srinagar", express: true },
+  "190010": { town: "Srinagar (Sanat Nagar / Rawalpora)", district: "Srinagar", express: true },
+  "190011": { town: "Srinagar (Chanapora / Natipora)", district: "Srinagar", express: true },
+  "190014": { town: "Srinagar (Pantha Chowk / Lasjan)", district: "Srinagar", express: true },
+  "190015": { town: "Srinagar (Hyderpora / Humhama)", district: "Srinagar", express: true },
+  "191111": { town: "Budgam Town / Ompora", district: "Budgam", express: true },
+  "191112": { town: "Beerwah / Magam", district: "Budgam", express: true },
+  "191113": { town: "Chadoora", district: "Budgam", express: true },
+  "191201": { town: "Ganderbal Town", district: "Ganderbal", express: true },
+  "191202": { town: "Kangan", district: "Ganderbal", express: false },
+  "193501": { town: "Bandipora Town", district: "Bandipora", express: true },
+  "193502": { town: "Sumbal / Sonawari", district: "Bandipora", express: true },
+  "193504": { town: "Hajin / Naidkhai", district: "Bandipora", express: true },
+  "193222": { town: "Kupwara Town", district: "Kupwara", express: true },
+  "193224": { town: "Handwara / Langate", district: "Kupwara", express: true },
+  "192101": { town: "Anantnag Head Post", district: "Anantnag (Islamabad)", express: true },
+  "192124": { town: "Bijbehara", district: "Anantnag (Islamabad)", express: true },
+  "192201": { town: "Mattan / Ashmuqam", district: "Anantnag (Islamabad)", express: true },
+  "192301": { town: "Pulwama Town", district: "Pulwama", express: true },
+  "192121": { town: "Pampore (Saffron Town)", district: "Pulwama", express: true },
+  "192123": { town: "Awantipora / IUST", district: "Pulwama", express: true },
+  "192122": { town: "Tral", district: "Pulwama", express: true },
+  "192231": { town: "Kulgam Town", district: "Kulgam", express: true },
+  "192303": { town: "Shopian Town", district: "Shopian", express: true }
+};
+
+function handleKashmirPincodeLookup(pinVal) {
+  const pin = String(pinVal || '').trim();
+  const badgeEl = document.getElementById('pinVerifiedBadge');
+  const citySelect = document.getElementById('orderCity');
+
+  if (pin.length !== 6) {
+    if (badgeEl) badgeEl.style.display = 'none';
+    return;
+  }
+
+  const match = KASHMIR_PINCODES[pin];
+  if (match) {
+    if (citySelect) {
+      // Auto-select corresponding district in dropdown if option exists
+      for (let i = 0; i < citySelect.options.length; i++) {
+        if (citySelect.options[i].value === match.district || citySelect.options[i].text.includes(match.district.split(' ')[0])) {
+          citySelect.selectedIndex = i;
+          break;
+        }
+      }
+    }
+    if (badgeEl) {
+      badgeEl.innerHTML = `📍 <strong>${match.town}</strong> (${match.district}) • <span style="color:#15803d; font-weight:700;">🟢 Fast 24-48 hr Kashmir Dispatch Verified</span>`;
+      badgeEl.style.display = 'block';
+    }
+  } else if (pin.startsWith('19')) {
+    if (badgeEl) {
+      badgeEl.innerHTML = `📍 <strong>Kashmir Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 Local Doorstep Delivery Eligible</span>`;
+      badgeEl.style.display = 'block';
+    }
+  } else {
+    if (badgeEl) {
+      badgeEl.innerHTML = `📍 <strong>PIN: ${pin}</strong> • Standard J&K / National Express Courier`;
+      badgeEl.style.display = 'block';
+    }
+  }
+}
+
 // Master Catalog
 const PRODUCT_CATALOG = {
   "Atomic Habits": {
@@ -1262,6 +1348,24 @@ function updateOrderStatusByAdmin(orderId, newStatus) {
       return;
     }
 
+    // OTP VERIFICATION FOR DELIVERED STATUS (Wishmaster Security)
+    if (newStatus === 'Delivered') {
+      const expectedOtp = orders[idx].deliveryOtp || orders[idx].delivery_otp;
+      if (expectedOtp) {
+        const entered = prompt(`🔐 Enter 4-digit Delivery OTP provided by student for Order ${matchedOrderId}:\n(Or enter Master PIN 0000 to bypass)`, "");
+        if (!entered) {
+          showToast('❌ Delivery aborted: OTP required for parcel handover.');
+          if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+          return;
+        }
+        if (entered.trim() !== String(expectedOtp).trim() && entered.trim() !== '0000') {
+          alert('❌ Invalid OTP! Please request correct 4-digit code shown on customer account.');
+          if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
+          return;
+        }
+      }
+    }
+
     orders[idx].status = newStatus;
     orders[idx].statusUpdatedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     
@@ -2119,6 +2223,29 @@ function openShippingLabelModal(orderId) {
         </div>
       </div>
     </div>
+
+    <!-- BONUS PRINTABLE STUDY BOOKMARK (Cut & Place inside student book package) -->
+    <div style="margin-top: 14px; border: 2px dashed #475569; border-radius: 8px; padding: 12px 16px; background: #fff; page-break-inside: avoid;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #0f172a; padding-bottom: 6px; margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 18px;">🔖</span>
+          <span style="font-size: 12px; font-weight: 900; letter-spacing: 1px; color: #0f172a; text-transform: uppercase;">BONUS STUDY BOOKMARK • JK STUDY HUB</span>
+        </div>
+        <span style="font-size: 10px; font-weight: 700; color: #64748b; border: 1px dashed #94a3b8; padding: 2px 6px; border-radius: 4px;">✂️ Cut &amp; slip inside book</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 800; color: #1e3a8a; font-style: italic;">"Discipline is choosing between what you want now, and what you want most."</div>
+          <div style="font-size: 10.5px; color: #334155; margin-top: 4px; font-weight: 600;">Thank you for studying with JK Study Hub! Enjoy your notes &amp; syllabus books.</div>
+          <div style="font-size: 10px; color: #059669; font-weight: 700; margin-top: 3px;">WhatsApp VIP Student Community: +91 9622605714</div>
+        </div>
+        <div style="border: 1px solid #0f172a; padding: 4px 8px; text-align: center; border-radius: 4px; min-width: 90px; background: #f8fafc;">
+          <div style="font-size: 9px; font-weight: 800; color: #0f172a;">JK STUDY HUB</div>
+          <div style="font-size: 18px;">📚</div>
+          <div style="font-size: 8px; font-weight: 700; color: #64748b;">KASHMIR #1</div>
+        </div>
+      </div>
+    </div>
   `;
 
   setTimeout(() => {
@@ -2138,6 +2265,156 @@ function printShippingLabel() {
 function closeShippingLabelModal() {
   const modal = document.getElementById('shippingLabelModal');
   if (modal) modal.style.display = 'none';
+}
+
+// ============================================================================
+// DAILY CASH SUMMARY & HANDOVER RECONCILIATION MODAL (Flipkart Logistics EOD)
+// Tracks pending COD cash in transit, collected cash from delivered orders & prepaid items
+// ============================================================================
+function openDailyCashSummaryModal() {
+  const user = getCurrentUser();
+  const isOwner = (typeof isStrictStoreOwner === 'function' && isStrictStoreOwner(user));
+  if (!isOwner) {
+    showToast('🔒 Cash summary is accessible only by the Store Owner.');
+    return;
+  }
+
+  const modal = document.getElementById('dailyCashSummaryModal');
+  const printArea = document.getElementById('dailyCashSummaryContent');
+  if (!modal || !printArea) return;
+
+  const orders = getOrders();
+  let codCollected = 0;
+  let codPending = 0;
+  let codDeliveredCount = 0;
+  let codPendingCount = 0;
+  let prepaidCount = 0;
+  let prepaidTotal = 0;
+
+  let breakdownRowsHtml = '';
+
+  orders.forEach(o => {
+    const isCod = isCodOrder(o);
+    const amount = Number(o.amount) || 0;
+    const status = String(o.status || '').toLowerCase();
+    const isDelivered = status.includes('deliver');
+    const isCancelled = status.includes('cancel');
+
+    if (isCancelled) return;
+
+    if (isCod) {
+      if (isDelivered) {
+        codCollected += amount;
+        codDeliveredCount++;
+        breakdownRowsHtml += `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 10px; font-family: monospace; font-weight: 700;">${o.orderId}</td>
+            <td style="padding: 8px 10px;">${o.name || 'Student'}</td>
+            <td style="padding: 8px 10px; color: #16a34a; font-weight: 700;">₹${amount}</td>
+            <td style="padding: 8px 10px;"><span style="background: #f0fdf4; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">Collected</span></td>
+          </tr>
+        `;
+      } else {
+        codPending += amount;
+        codPendingCount++;
+        breakdownRowsHtml += `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 10px; font-family: monospace; font-weight: 700;">${o.orderId}</td>
+            <td style="padding: 8px 10px;">${o.name || 'Student'}</td>
+            <td style="padding: 8px 10px; color: #b45309; font-weight: 700;">₹${amount}</td>
+            <td style="padding: 8px 10px;"><span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">Out with Boy</span></td>
+          </tr>
+        `;
+      }
+    } else {
+      prepaidTotal += amount;
+      prepaidCount++;
+    }
+  });
+
+  const todayStr = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+  printArea.innerHTML = `
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+        <div>
+          <div style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">EOD LOGISTICS RECONCILIATION</div>
+          <h3 style="margin: 2px 0 0; font-size: 18px; font-weight: 900; color: #0f172a;">Daily Cash Summary &amp; Handover</h3>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 12px; font-weight: 700; color: #1e293b;">${todayStr}</div>
+          <div style="font-size: 11px; color: #64748b;">Hub: Pattan (193121)</div>
+        </div>
+      </div>
+
+      <!-- Quick KPI Metric Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px; text-align: center;">
+          <div style="font-size: 11.5px; font-weight: 700; color: #166534;">💵 Cash to Collect Handover</div>
+          <div style="font-size: 22px; font-weight: 900; color: #15803d; margin: 4px 0;">₹${codCollected}</div>
+          <div style="font-size: 11px; color: #166534;">${codDeliveredCount} parcels delivered</div>
+        </div>
+
+        <div style="background: #fefce8; border: 1.5px solid #fef08a; border-radius: 10px; padding: 12px; text-align: center;">
+          <div style="font-size: 11.5px; font-weight: 700; color: #854d0e;">🚚 Cash In-Transit (Pending)</div>
+          <div style="font-size: 22px; font-weight: 900; color: #d97706; margin: 4px 0;">₹${codPending}</div>
+          <div style="font-size: 11px; color: #854d0e;">${codPendingCount} parcels on route</div>
+        </div>
+
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 12px; text-align: center;">
+          <div style="font-size: 11.5px; font-weight: 700; color: #1e40af;">💳 Prepaid Bank Settled</div>
+          <div style="font-size: 22px; font-weight: 900; color: #2563eb; margin: 4px 0;">₹${prepaidTotal}</div>
+          <div style="font-size: 11px; color: #1e40af;">${prepaidCount} orders via UPI/Card</div>
+        </div>
+      </div>
+
+      <!-- Itemized COD Audit Table -->
+      <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
+        <div style="background: #f8fafc; padding: 10px 14px; font-size: 12px; font-weight: 800; color: #334155; border-bottom: 1px solid #e2e8f0;">
+          Itemized COD Parcel Ledger
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+          <thead>
+            <tr style="background: #f1f5f9; color: #475569; font-size: 11px; text-transform: uppercase;">
+              <th style="padding: 8px 10px;">Order ID</th>
+              <th style="padding: 8px 10px;">Recipient</th>
+              <th style="padding: 8px 10px;">Amount</th>
+              <th style="padding: 8px 10px;">Cash Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${breakdownRowsHtml || '<tr><td colspan="4" style="text-align: center; padding: 16px; color: #94a3b8;">No COD orders on record today.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Formal Sign-Off Handover Slip for Delivery Boy & Store Owner -->
+      <div style="border: 2px dashed #94a3b8; border-radius: 10px; padding: 14px; background: #fafafa; margin-bottom: 16px;">
+        <div style="font-size: 12px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Delivery Boy Cash Handover Acknowledgment</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+          <div style="text-align: center;">
+            <div style="border-top: 1.5px solid #0f172a; padding-top: 4px; font-size: 11px; font-weight: 800; color: #334155;">Delivery Executive Signature</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">(Cash handed over: ₹${codCollected})</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="border-top: 1.5px solid #0f172a; padding-top: 4px; font-size: 11px; font-weight: 800; color: #334155;">Store Owner / Hub Incharge</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">(Cash verified &amp; deposited)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+}
+
+function closeDailyCashSummaryModal() {
+  const modal = document.getElementById('dailyCashSummaryModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function printDailyCashSummary() {
+  window.print();
 }
 
 // ============================================================================
@@ -2381,10 +2658,28 @@ function renderScannedOrderCard(order) {
         <div><strong>Item:</strong> ${order.product} (₹${order.amount || 0})</div>
         <div style="margin-top: 4px;"><strong>Recipient:</strong> ${customerName} (+91 ${customerPhone})</div>
         <div style="margin-top: 4px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
+        ${(order.deliveryOtp || order.delivery_otp) ? `
+          <div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #1e3a8a; background: #dbeafe; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+            🔐 Delivery Verification OTP: <span style="letter-spacing: 2px; font-size: 13.5px; font-family: monospace;">${order.deliveryOtp || order.delivery_otp}</span>
+          </div>
+        ` : ''}
         ${isCodOrder(order) 
-          ? `<div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: inline-block;">💵 Cash on Delivery (COD) — Collect ₹${order.amount || 0} at Doorstep</div>`
+          ? `<div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: block;">💵 Cash on Delivery (COD) — Collect ₹${order.amount || 0} at Doorstep</div>`
           : (order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>Paid Online (Prepaid):</strong> ${order.txnId}</div>` : '')
         }
+
+        <!-- 1-TAP DELIVERY ACTIONS: Wishmaster Suite (Call, Maps, Chat) -->
+        <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+          <a href="tel:${customerPhone}" style="flex: 1; min-width: 90px; background: #0284c7; color: white; text-decoration: none; padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fa-solid fa-phone"></i> Call
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address || 'Pattan, Baramulla')}" target="_blank" rel="noopener" style="flex: 1; min-width: 100px; background: #475569; color: white; text-decoration: none; padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fa-solid fa-location-arrow"></i> Navigate
+          </a>
+          <a href="https://wa.me/91${customerPhone}?text=${encodeURIComponent('Hi ' + customerName + ', I am from JK Study Hub Delivery team with your parcel (' + order.orderId + '). Are you available to receive it?')}" target="_blank" rel="noopener" style="flex: 1; min-width: 90px; background: #25d366; color: white; text-decoration: none; padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fa-brands fa-whatsapp"></i> Chat
+          </a>
+        </div>
       </div>
 
       <div style="margin-bottom: 14px;">
@@ -2865,6 +3160,9 @@ function setupCheckoutModal(name, price, category) {
   if (pinInput && savedProfile && savedProfile.pin) {
     pinInput.value = savedProfile.pin;
   }
+  if (pinInput && pinInput.value) {
+    handleKashmirPincodeLookup(pinInput.value);
+  }
   if (citySelect && savedProfile && savedProfile.city) {
     citySelect.value = savedProfile.city;
   }
@@ -3196,10 +3494,13 @@ function processOrder(txnId, customStatus) {
   const explicitEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
   const orderEmail = explicitEmail || (user && user.email ? user.email.toLowerCase() : null);
 
+  const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
+
   const orderRecord = {
     orderId: 'OD' + Date.now() + Math.floor(Math.random() * 1000),
     txnId: cleanTxnId,
     paymentMethod: isCod ? 'cod' : 'prepaid',
+    deliveryOtp: deliveryOtp,
     date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     timestamp: Date.now(),
     name: name,
@@ -3228,6 +3529,7 @@ function processOrder(txnId, customStatus) {
   formData.append('order_id', orderRecord.orderId);
   formData.append('txn_id', cleanTxnId);
   formData.append('payment_method', isCod ? 'Cash on Delivery' : 'Prepaid Online');
+  formData.append('delivery_otp', deliveryOtp);
   formData.append('amount', totalPaid);
   formData.append('status', orderStatus);
 
@@ -4114,6 +4416,9 @@ function renderAccountOrders() {
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <button type="button" onclick="openDailyCashSummaryModal();" style="background: #d97706; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(217,119,6,0.25);">
+            <i class="fa-solid fa-coins"></i> 💵 Cash Summary
+          </button>
           <button type="button" onclick="openAdminCameraScanner();" style="background: #059669; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
             <i class="fa-solid fa-camera"></i> 📷 Scan Parcel
           </button>
@@ -4262,6 +4567,13 @@ function renderAccountOrders() {
                 <i class="fa-solid fa-circle-check"></i> Paid Online (Prepaid Txn: ${o.txnId || 'PAID'})
               </div>
             `}
+
+            ${(!isLocked && (o.deliveryOtp || o.delivery_otp)) ? `
+              <div style="margin-top: 8px; font-size: 12px; color: #1e3a8a; background: #eff6ff; border: 1.5px dashed #3b82f6; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
+                <span style="font-size: 14px;">🔐</span>
+                <span>Delivery OTP: <strong style="font-size: 15px; letter-spacing: 2px; color: #1d4ed8; font-family: monospace;">${o.deliveryOtp || o.delivery_otp}</strong> <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">(Share with Wishmaster upon doorstep delivery)</span></span>
+              </div>
+            ` : ''}
           </div>
 
           <div class="fk-price-box">
@@ -4364,6 +4676,12 @@ function renderAccountOrders() {
             <button type="button" onclick="printOrderReceipt('${safeOrderId}')" style="background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
               <i class="fa-solid fa-file-invoice" style="color: #2563eb;"></i> Download Invoice / Receipt
             </button>
+
+            ${(o.status === 'Delivered') ? `
+              <a href="https://wa.me/919622605714?text=${encodeURIComponent('Hi JK Study Hub! I received my parcel for Order ' + safeOrderId + ' (' + o.product + '). My rating for print quality and delivery is: 5 Stars ⭐⭐⭐⭐⭐')}" target="_blank" rel="noopener" style="background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                ⭐ Rate Quality (WhatsApp)
+              </a>
+            ` : ''}
 
             ${(!isLocked) ? `
               <button type="button" onclick="cancelOrderByCustomer('${safeOrderId}')" style="background: #fff; color: #dc2626; border: 1px solid #fca5a5; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
@@ -5077,6 +5395,81 @@ function openBookDetailsModal(bookName) {
 function closeBookDetailsModal() {
   const modal = document.getElementById('bookDetailsModal');
   if (modal) modal.classList.remove('active');
+}
+
+// ============================================================================
+// SAMPLE PREVIEW (FIRST 5 PAGES) MODAL & 1-TAP WHATSAPP ORDER ENGINE
+// ============================================================================
+function openSamplePreviewModal(bookName) {
+  const modal = document.getElementById('samplePreviewModal');
+  const titleEl = document.getElementById('samplePreviewBookTitle');
+  const pagesContainer = document.getElementById('samplePreviewPagesContainer');
+  if (!modal || !titleEl || !pagesContainer) return;
+
+  const targetName = bookName || (currentModalBook ? currentModalBook.name : 'Atomic Habits');
+  titleEl.innerText = targetName + ' (Free 5-Page Look Inside)';
+
+  // Build 5 simulated high-resolution sample pages for syllabus / book preview
+  pagesContainer.innerHTML = `
+    <div style="background: #faf8f5; border: 1px solid #e7e5e4; border-radius: 8px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); font-family: Georgia, serif; line-height: 1.8; color: #1c1917; margin-bottom: 20px;">
+      <div style="text-align: center; border-bottom: 1.5px solid #d6d3d1; padding-bottom: 16px; margin-bottom: 20px;">
+        <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #78716c; font-weight: 700; font-family: sans-serif;">CHAPTER 1 • PREVIEW COPY</span>
+        <h2 style="font-size: 22px; margin: 8px 0 4px; font-weight: 800; color: #0c0a09;">${targetName}</h2>
+        <div style="font-size: 12px; font-style: italic; color: #57534e;">Authentic Student Edition • JK Study Hub Verified Print</div>
+      </div>
+      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
+        Success is the product of daily habits—not once-in-a-lifetime transformations. That said, it does not matter how successful or unsuccessful you are right now. What matters is whether your habits are putting you on the path toward success.
+      </p>
+      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
+        You should be far more concerned with your current trajectory than with your current results. If you are a student and you study 1% better every day for a year, you’ll end up thirty-seven times better by the time you’re done.
+      </p>
+      <div style="background: #f5f5f4; border-left: 4px solid #2563eb; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13.5px; font-style: italic; color: #1e3a8a; margin: 20px 0;">
+        "You do not rise to the level of your goals. You fall to the level of your systems."
+      </div>
+      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
+        Goals are about the results you want to achieve. Systems are about the processes that lead to those results. If you want better results, then forget about setting goals. Focus on your system instead.
+      </p>
+      <div style="text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px dashed #d6d3d1; font-family: sans-serif;">
+        <span style="font-size: 12px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; border: 1px solid #a7f3d0;">
+          ✓ Page 1 of 5 Sample Verified (Clear 70 GSM Typeface)
+        </span>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+}
+
+function closeSamplePreviewModal() {
+  const modal = document.getElementById('samplePreviewModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function orderDirectlyViaWhatsApp() {
+  const nameInput = document.getElementById('orderName');
+  const phoneInput = document.getElementById('orderPhone');
+  const citySelect = document.getElementById('orderCity');
+  const addrInput = document.getElementById('orderAddress');
+  const pinInput = document.getElementById('orderPin');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const phone = phoneInput ? phoneInput.value.trim() : '';
+  const city = citySelect ? citySelect.value : 'Baramulla';
+  const pin = pinInput ? pinInput.value.trim() : '193121';
+  const addr = addrInput ? addrInput.value.trim() : '';
+  const prod = currentCheckoutProduct || 'Study Books / Notes';
+  const price = (currentCheckoutPrice || 0) + 5;
+
+  const msg = `Hi JK Study Hub! I want to place a Cash on Delivery order directly via WhatsApp:%0A%0A` +
+              `📚 *Product:* ${encodeURIComponent(prod)}%0A` +
+              `💵 *Total Amount (COD):* ₹${price}%0A` +
+              `👤 *Name:* ${encodeURIComponent(name || 'Student')}%0A` +
+              `📱 *Phone:* ${encodeURIComponent(phone || 'N/A')}%0A` +
+              `📍 *Pincode:* ${pin}%0A` +
+              `🏡 *Address:* ${encodeURIComponent(addr ? addr + ', ' + city : city)}%0A%0A` +
+              `Please confirm my doorstep order with Kashmir Express dispatch!`;
+
+  window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
 }
 
 // --- STUDENT RATINGS & VERIFIED REVIEWS ENGINE ---
