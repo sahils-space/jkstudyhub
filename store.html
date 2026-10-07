@@ -441,6 +441,102 @@
       border-color: #2563eb;
     }
 
+    /* Dynamic Delivery & Student Reviews Styling */
+    .delivery-estimate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #f0fdf4;
+      color: #15803d;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #bbf7d0;
+      margin-bottom: 6px;
+      width: fit-content;
+    }
+    .student-trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid #bfdbfe;
+    }
+    .quick-checkout-banner {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 1.5px solid #86efac;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .btn-1click-cod {
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-1click-cod:hover {
+      background: #15803d;
+      transform: translateY(-1px);
+    }
+    .student-review-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 12px;
+    }
+    .student-review-card .rev-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .student-review-card .rev-author {
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .student-review-card .rev-stars {
+      color: #f59e0b;
+      font-size: 11px;
+    }
+    .student-review-card .rev-comment {
+      color: #475569;
+      line-height: 1.4;
+      margin: 0;
+    }
+    .student-review-card .rev-tag {
+      font-size: 10px;
+      color: #16a34a;
+      background: #dcfce7;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
     /* Flipkart / Amazon / Myntra Style Dedicated Search & Filter Bar */
     .store-search-container {
       background: #ffffff;
@@ -2051,6 +2147,24 @@
           
           <!-- STEP 1: Details & Address -->
           <div id="step1">
+            <!-- ⚡ 1-Click Buy Now (For Students with Saved Address) -->
+            <div id="quickOneClickCodBox" style="display:none;" class="quick-checkout-banner">
+              <div>
+                <div style="font-size:11px; color:#166534; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">
+                  <i class="fa-solid fa-bolt" style="color:#eab308;"></i> Fast 1-Click Checkout
+                </div>
+                <div style="font-size:13px; font-weight:700; color:#065f46;" id="quickOneClickAddressSummary">
+                  Saved Address: Baramulla (193121)
+                </div>
+                <div style="font-size:11.5px; color:#15803d;" id="quickOneClickNameSummary">
+                  Recipient: Sahil Lone
+                </div>
+              </div>
+              <button type="button" class="btn-1click-cod" onclick="quickOneClickCodCheckout()">
+                <i class="fa-solid fa-hand-holding-dollar"></i> 1-Click COD
+              </button>
+            </div>
+
             <!-- Dynamic Field: Notes & PYQs -->
             <div id="notesSpecificFields" style="display:none; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 15px;">
               <h4 style="font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">Select Class & Subject Details</h4>
@@ -2222,7 +2336,7 @@
       });
     }
   </script>
-  <script src="store.js?v=27.0"></script>
+  <script src="store.js?v=28.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
@@ -2292,10 +2406,42 @@
           <h2 id="modalBookTitle" style="font-size:24px; font-weight:800; color:#1e293b; margin-bottom:4px; line-height:1.3;"></h2>
           <div id="modalBookAuthor" style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:14px;"></div>
 
-          <div style="display:flex; align-items:baseline; gap:10px; padding:12px 16px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:18px;">
+          <div style="display:flex; align-items:baseline; gap:10px; padding:12px 16px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <span id="modalBookPrice" style="font-size:28px; font-weight:800; color:#0f172a;"></span>
             <span id="modalBookMrp" style="font-size:15px; color:#94a3b8; text-decoration:line-through; font-weight:600;"></span>
-            <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;"><i class="fa-solid fa-truck-fast"></i> Fast Delivery in Pattan (1-2 Days)</span>
+            <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;" id="modalPriceDeliveryBadge"><i class="fa-solid fa-truck-fast"></i> Kashmir Express Delivery</span>
+          </div>
+
+          <!-- Live District Delivery Estimator -->
+          <div class="modal-delivery-checker" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:10px 14px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+              <div style="font-size:12.5px; color:#15803d; font-weight:700;" id="modalDeliveryEstimateText">
+                <i class="fa-solid fa-truck-fast"></i> Delivery by <strong>Tomorrow</strong> in Pattan / Baramulla
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:11px; color:#166534; font-weight:700;">Check District:</label>
+                <select id="modalDistrictPicker" onchange="updateModalDeliveryEstimate(this.value)" style="font-size:11.5px; padding:3px 8px; border-radius:5px; border:1px solid #86efac; background:white; color:#15803d; font-weight:700; cursor:pointer;">
+                  <option value="Pattan">Pattan / Baramulla</option>
+                  <option value="Srinagar">Srinagar</option>
+                  <option value="Sopore">Sopore</option>
+                  <option value="Budgam">Budgam</option>
+                  <option value="Anantnag">Anantnag</option>
+                  <option value="Pulwama">Pulwama</option>
+                  <option value="Kupwara">Kupwara</option>
+                  <option value="Ganderbal">Ganderbal</option>
+                </select>
+              </div>
+            </div>
+            <div style="font-size:11px; color:#16a34a; margin-top:4px; font-weight:600;" id="modalDeliveryCountdown">
+              Order within 4 hrs for same-day dispatch from Baramulla Hub
+            </div>
+          </div>
+
+          <!-- Student Trust Badges Strip -->
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; font-size:11.5px;">
+            <span class="student-trust-badge" style="background:#f0fdf4; color:#166534; border-color:#bbf7d0;"><i class="fa-solid fa-shield-check"></i> 100% Genuine Edition</span>
+            <span class="student-trust-badge"><i class="fa-solid fa-bolt"></i> Same-Day Kashmir Dispatch</span>
+            <span class="student-trust-badge" style="background:#fef3c7; color:#b45309; border-color:#fde68a;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery</span>
           </div>
 
           <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin-bottom:8px;">📏 Physical Dimensions &amp; Specifications</h4>
@@ -2323,7 +2469,41 @@
           </div>
 
           <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin:16px 0 6px;">Synopsis &amp; What You'll Learn</h4>
-          <p id="modalBookDesc" style="font-size:13.5px; color:#475569; line-height:1.6; margin-bottom:20px;"></p>
+          <p id="modalBookDesc" style="font-size:13.5px; color:#475569; line-height:1.6; margin-bottom:14px;"></p>
+
+          <!-- Verified Student Reviews Section -->
+          <div class="modal-reviews-section" style="margin-top:10px; margin-bottom:18px; border-top:1px solid #e2e8f0; padding-top:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <h4 style="font-size:13.5px; font-weight:700; color:#1e293b; margin:0; display:flex; align-items:center; gap:6px;">
+                ⭐ Student Reviews &amp; Ratings <span id="modalRatingAvg" style="font-size:12px; color:#f59e0b; font-weight:800;">4.9 ★</span>
+              </h4>
+              <button type="button" onclick="toggleReviewForm()" style="font-size:11.5px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; padding:4px 10px; border-radius:6px; font-weight:700; cursor:pointer;">
+                <i class="fa-solid fa-pen"></i> Write Review
+              </button>
+            </div>
+
+            <!-- Add Review Form (Collapsible) -->
+            <div id="addReviewFormBox" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:12px;">
+              <div style="display:flex; gap:8px; margin-bottom:8px;">
+                <input type="text" id="newReviewerName" placeholder="Your Name (e.g. Aaqib, Class 12)" style="flex:1; padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:6px;">
+                <select id="newReviewRating" style="padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:6px;">
+                  <option value="5">★★★★★ 5 Stars</option>
+                  <option value="4">★★★★☆ 4 Stars</option>
+                  <option value="3">★★★☆☆ 3 Stars</option>
+                </select>
+              </div>
+              <textarea id="newReviewText" placeholder="Write your honest review about print quality, packaging & delivery..." rows="2" style="width:100%; box-sizing:border-box; padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:6px; margin-bottom:8px;"></textarea>
+              <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button type="button" onclick="toggleReviewForm()" style="background:#f1f5f9; border:none; padding:5px 12px; border-radius:6px; font-size:11.5px; cursor:pointer;">Cancel</button>
+                <button type="button" onclick="submitStudentReview()" style="background:#2563eb; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">Post Review</button>
+              </div>
+            </div>
+
+            <!-- Reviews List Container -->
+            <div id="modalReviewsList" style="max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding-right:4px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
 
           <div style="display:flex; gap:12px; margin-top:auto;">
             <button id="modalBuyBtn" class="yellow-btn" style="flex:2; background:#2563eb; color:white; padding:14px; font-size:16px; font-weight:700; border-radius:10px; box-shadow:0 4px 14px rgba(37,99,235,0.25);">

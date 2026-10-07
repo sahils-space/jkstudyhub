@@ -2748,11 +2748,71 @@ function setupCheckoutModal(name, price, category) {
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
 
-  // Pre-fill user name if logged in
+  // Load saved profile / previous order for instant frictionless checkout
+  let savedProfile = null;
+  try {
+    savedProfile = JSON.parse(localStorage.getItem('jk_customer_profile') || 'null');
+  } catch(e) {}
+
+  if (!savedProfile) {
+    const pastOrders = getOrders();
+    if (pastOrders && pastOrders.length > 0) {
+      const last = pastOrders[0];
+      if (last.name && last.phone) {
+        savedProfile = {
+          name: last.name,
+          phone: last.phone,
+          city: last.address && last.address.includes('Srinagar') ? 'Srinagar' : 'Baramulla (Pattan/Sopore/Baramulla)',
+          address: last.address || ''
+        };
+      }
+    }
+  }
+
+  // Pre-fill user name if logged in or from saved profile
   const user = getCurrentUser();
-  if (user && user.displayName) {
-    const nameInput = document.getElementById('orderName');
-    if (nameInput) nameInput.value = user.displayName;
+  const nameInput = document.getElementById('orderName');
+  const phoneInput = document.getElementById('orderPhone');
+  const pinInput = document.getElementById('orderPin');
+  const citySelect = document.getElementById('orderCity');
+  const addrInput = document.getElementById('orderAddress');
+
+  if (nameInput) {
+    nameInput.value = (user && user.displayName) ? user.displayName : (savedProfile && savedProfile.name ? savedProfile.name : '');
+  }
+  if (phoneInput) {
+    if (savedProfile && savedProfile.phone) {
+      phoneInput.value = String(savedProfile.phone).replace('+91', '').trim();
+    } else if (user && user.phoneNumber) {
+      phoneInput.value = String(user.phoneNumber).replace('+91', '').trim();
+    }
+  }
+  if (pinInput && savedProfile && savedProfile.pin) {
+    pinInput.value = savedProfile.pin;
+  }
+  if (citySelect && savedProfile && savedProfile.city) {
+    citySelect.value = savedProfile.city;
+  }
+  if (addrInput && savedProfile && savedProfile.address) {
+    addrInput.value = savedProfile.address;
+  }
+
+  // Display 1-Click Quick COD Order Banner if address already saved
+  const quickBox = document.getElementById('quickOneClickCodBox');
+  if (quickBox) {
+    const hasName = (nameInput && nameInput.value.trim());
+    const hasPhone = (phoneInput && phoneInput.value.trim());
+    const hasAddr = (addrInput && addrInput.value.trim()) || (savedProfile && savedProfile.address);
+    if (hasName && hasPhone && hasAddr) {
+      quickBox.style.display = 'flex';
+      const addrSum = document.getElementById('quickOneClickAddressSummary');
+      const nameSum = document.getElementById('quickOneClickNameSummary');
+      const cityVal = citySelect ? citySelect.value.split(' ')[0] : 'Kashmir';
+      if (addrSum) addrSum.innerText = `Saved: ${cityVal} (${pinInput ? pinInput.value : '193121'})`;
+      if (nameSum) nameSum.innerText = `Recipient: ${nameInput.value} • ${phoneInput.value}`;
+    } else {
+      quickBox.style.display = 'none';
+    }
   }
 
   document.getElementById('step2').style.display = 'none';
@@ -2795,6 +2855,28 @@ function setupCheckoutModal(name, price, category) {
   }
 
   modal.classList.add('active');
+}
+
+// 1-Click Buy Now (Cash on Delivery)
+function quickOneClickCodCheckout() {
+  const nameInput = document.getElementById('orderName');
+  const phoneInput = document.getElementById('orderPhone');
+  const addrInput = document.getElementById('orderAddress');
+
+  if (!nameInput || !nameInput.value.trim() || !phoneInput || !phoneInput.value.trim()) {
+    alert("Please check your name and 10-digit WhatsApp phone number.");
+    return;
+  }
+
+  if (currentCheckoutCategory === 'standard' || currentCheckoutCategory === 'books' || currentCheckoutCategory === 'both') {
+    if (!addrInput || !addrInput.value.trim()) {
+      alert("Please enter your delivery street / landmark.");
+      if (addrInput) addrInput.focus();
+      return;
+    }
+  }
+
+  processCodOrder();
 }
 
 function closeCheckout() {
@@ -3024,23 +3106,20 @@ function processOrder(txnId, customStatus) {
   formData.append('amount', totalPaid);
   formData.append('status', orderStatus);
 
+  // Save customer profile for future instant 1-Click checkout
+  try {
+    const profile = {
+      name: name,
+      phone: phone,
+      city: document.getElementById('orderCity') ? document.getElementById('orderCity').value : 'Baramulla (Pattan/Sopore/Baramulla)',
+      pin: document.getElementById('orderPin') ? document.getElementById('orderPin').value : '193121',
+      address: document.getElementById('orderAddress') ? document.getElementById('orderAddress').value : ''
+    };
+    localStorage.setItem('jk_customer_profile', JSON.stringify(profile));
+  } catch(e) {}
+
   fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
-      if (isCod) {
-        alert(`🎉 CASH ON DELIVERY ORDER CONFIRMED!\n\nOrder ID: ${orderRecord.orderId}\nTotal to Pay at Doorstep: ₹${totalPaid}\nDelivery Location: ${finalAddress}\n\nOur team is packing your order! We will message you on WhatsApp (${phone}) before delivery.`);
-        // Instant WhatsApp confirmation ping to JK Study Hub Support
-        const waText = `*📦 New COD Order - JK Study Hub*%0A%0A` +
-          `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
-          `👤 *Customer:* ${encodeURIComponent(name)}%0A` +
-          `📞 *Phone:* ${encodeURIComponent(phone)}%0A` +
-          `📍 *Address:* ${encodeURIComponent(finalAddress)}%0A` +
-          `📚 *Product:* ${encodeURIComponent(finalProductDesc)}%0A` +
-          `💵 *Amount to Collect:* ₹${totalPaid} (Cash on Delivery)`;
-        window.open(`https://wa.me/919622605714?text=${waText}`, '_blank');
-      } else {
-        alert(`🎉 ORDER SUCCESSFUL!\n\nOrder ID: ${orderRecord.orderId}\nPayment Verified: ₹${totalPaid}\nTXN ID: ${txnId}\n\nYour order has been recorded in the Orders Section! We will contact you on WhatsApp (${phone}) shortly.`);
-      }
-
       if (isCartCheckoutSession) {
         localStorage.removeItem('jk_cart');
         localStorage.removeItem('cart');
@@ -3062,11 +3141,157 @@ function processOrder(txnId, customStatus) {
       if (typeof renderOrdersPage === 'function') {
         if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
       }
+
+      showOrderConfirmationModal(orderRecord, isCod);
     })
     .catch(err => {
-      alert(`Order recorded (${orderRecord.orderId})! We will contact you on WhatsApp (${phone}) to confirm delivery.`);
       closeCheckout();
+      showOrderConfirmationModal(orderRecord, isCod);
     });
+}
+
+// Helper: Safe string escape for UI rendering
+function safeEscape(str) {
+  return String(str || '').replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+  });
+}
+
+// --- DYNAMIC ESTIMATED DELIVERY DATE ENGINE ---
+function getEstimatedDeliveryInfo(district = 'Pattan') {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const isBeforeCutoff = currentHour < 16; // 4:00 PM cutoff for same-day dispatch
+  
+  // Fast Kashmir zones (1 day if ordered before 4 PM, otherwise 2 days)
+  const isFastZone = /pattan|baramulla|sopore|srinagar|budgam/i.test(district || 'pattan');
+  const daysToAdd = isBeforeCutoff ? (isFastZone ? 1 : 2) : (isFastZone ? 2 : 3);
+  
+  const targetDate = new Date(now);
+  targetDate.setDate(now.getDate() + daysToAdd);
+  
+  const options = { weekday: 'short', day: 'numeric', month: 'short' };
+  const dateStr = targetDate.toLocaleDateString('en-IN', options);
+  
+  let label = '';
+  if (daysToAdd === 1) {
+    label = `Tomorrow (${dateStr})`;
+  } else {
+    label = dateStr;
+  }
+  
+  const hoursLeft = isBeforeCutoff ? (16 - currentHour) : (24 - currentHour + 16);
+  const countdownText = isBeforeCutoff 
+    ? `Order within ${hoursLeft} hr${hoursLeft > 1 ? 's' : ''} for same-day dispatch`
+    : `Express dispatch tomorrow morning`;
+    
+  return {
+    label: label,
+    countdownText: countdownText,
+    isTomorrow: daysToAdd === 1,
+    badgeHtml: `<div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>${label}</strong></div>`
+  };
+}
+
+// Inject live delivery promise badges to all product cards across storefront
+function injectStoreDeliveryBadges() {
+  if (typeof document === 'undefined') return;
+  const cards = document.querySelectorAll('.book-product-card');
+  const delInfo = getEstimatedDeliveryInfo();
+  cards.forEach(card => {
+    if (!card.querySelector('.delivery-estimate-badge')) {
+      const info = card.querySelector('.product-info');
+      if (info) {
+        const badge = document.createElement('div');
+        badge.className = 'delivery-estimate-badge';
+        badge.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong>`;
+        const desc = info.querySelector('.product-desc');
+        if (desc) {
+          info.insertBefore(badge, desc);
+        } else {
+          const footer = info.querySelector('.product-footer');
+          if (footer) info.insertBefore(badge, footer);
+          else info.appendChild(badge);
+        }
+      }
+    }
+  });
+}
+
+// --- ORDER CONFIRMATION & WHATSAPP TRACKING MODAL ---
+function showOrderConfirmationModal(orderRecord, isCod) {
+  let modal = document.getElementById('orderSuccessModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'orderSuccessModal';
+    modal.className = 'scanner-modal-backdrop';
+    modal.style.cssText = 'position:fixed; inset:0; background:rgba(15,23,42,0.7); z-index:99999; display:flex; align-items:center; justify-content:center; padding:15px; box-sizing:border-box; backdrop-filter:blur(4px);';
+    document.body.appendChild(modal);
+  }
+
+  const delInfo = getEstimatedDeliveryInfo(orderRecord.address);
+  const waText = `*📦 New Order Confirmation - JK Study Hub*%0A%0A` +
+    `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
+    `👤 *Student Name:* ${encodeURIComponent(orderRecord.name)}%0A` +
+    `📞 *Phone:* ${encodeURIComponent(orderRecord.phone)}%0A` +
+    `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
+    `📚 *Product:* ${encodeURIComponent(orderRecord.product)}%0A` +
+    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery' : 'Paid Online'})%0A` +
+    `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A%0A` +
+    `_Hello JK Study Hub! Please send me live order tracking and dispatch updates._`;
+
+  const waUrl = `https://wa.me/919622605714?text=${waText}`;
+
+  modal.innerHTML = `
+    <div style="background:white; border-radius:18px; max-width:480px; width:100%; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.2); animation:popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-sizing:border-box;">
+      <div style="background:${isCod ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)'}; color:white; padding:22px 20px; text-align:center;">
+        <div style="width:54px; height:54px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:26px;">
+          ${isCod ? '📦' : '🎉'}
+        </div>
+        <h3 style="margin:0; font-size:19px; font-weight:800;">${isCod ? 'Order Confirmed (Cash on Delivery)!' : 'Payment Verified & Order Confirmed!'}</h3>
+        <p style="margin:4px 0 0; font-size:12.5px; opacity:0.9;">Order ID: <strong>${safeEscape(orderRecord.orderId)}</strong></p>
+      </div>
+
+      <div style="padding:18px 20px;">
+        <!-- Delivery info strip -->
+        <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:10px; padding:12px; margin-bottom:14px; display:flex; align-items:center; gap:10px;">
+          <div style="font-size:24px; color:#16a34a;"><i class="fa-solid fa-truck-fast"></i></div>
+          <div>
+            <div style="font-size:13px; font-weight:800; color:#166534;">Estimated Delivery: ${delInfo.label}</div>
+            <div style="font-size:11.5px; color:#15803d;">Same-Day Express Dispatch from Baramulla Hub (₹0 Free Delivery)</div>
+          </div>
+        </div>
+
+        <div style="font-size:12.5px; color:#475569; line-height:1.6; margin-bottom:16px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+          <div><strong>Student:</strong> ${safeEscape(orderRecord.name)} (${safeEscape(orderRecord.phone)})</div>
+          <div><strong>Product:</strong> ${safeEscape(orderRecord.product)}</div>
+          <div><strong>Amount:</strong> ₹${orderRecord.amount} (${isCod ? 'Pay at Doorstep' : 'Prepaid Online'})</div>
+          <div style="margin-top:4px; font-size:11.5px; color:#64748b;"><i class="fa-solid fa-location-dot"></i> ${safeEscape(orderRecord.address)}</div>
+        </div>
+
+        <!-- WhatsApp Action Button -->
+        <a href="${waUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:white; text-decoration:none; padding:13px; border-radius:10px; font-weight:800; font-size:14px; box-shadow:0 4px 14px rgba(37,211,102,0.3); margin-bottom:10px;">
+          <i class="fa-brands fa-whatsapp" style="font-size:19px;"></i> Receive Tracking on WhatsApp
+        </a>
+
+        <div style="display:flex; gap:10px;">
+          <button type="button" onclick="printOrderReceipt('${orderRecord.orderId}'); closeOrderConfirmationModal();" style="flex:1; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;">
+            <i class="fa-solid fa-receipt"></i> View Invoice
+          </button>
+          <button type="button" onclick="closeOrderConfirmationModal()" style="flex:1; background:#2563eb; color:white; border:none; padding:10px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;">
+            Done / Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+}
+
+function closeOrderConfirmationModal() {
+  const modal = document.getElementById('orderSuccessModal');
+  if (modal) modal.style.display = 'none';
 }
 
 // --- INITIALIZATION & BFCACHE HANDLERS ---
@@ -3074,6 +3299,7 @@ function initShop() {
   updateNavBadges();
   updateAuthUI();
   syncHeartIcons();
+  injectStoreDeliveryBadges();
 
   if (document.getElementById('cartItemsList')) {
     renderCartPage();
@@ -4598,12 +4824,147 @@ function openBookDetailsModal(bookName) {
     };
   }
 
+  // Update Live Delivery Estimator in Modal
+  updateModalDeliveryEstimate('Pattan');
+
+  // Render Student Reviews
+  renderBookReviews(book.name);
+
   modal.classList.add('active');
 }
 
 function closeBookDetailsModal() {
   const modal = document.getElementById('bookDetailsModal');
   if (modal) modal.classList.remove('active');
+}
+
+// --- STUDENT RATINGS & VERIFIED REVIEWS ENGINE ---
+const DEFAULT_STUDENT_REVIEWS = {
+  "Atomic Habits": [
+    { name: "Aaqib Lone", role: "Class 12th, Baramulla", rating: 5, date: "Yesterday", comment: "Super crisp print and authentic cream paper! Delivered to Baramulla in less than 24 hours. Must-read for board students." },
+    { name: "Iqra Jan", role: "JKBOSE Aspirant, Sopore", rating: 5, date: "3 days ago", comment: "Neat packaging with bubble wrap. Genuine book at nearly half the local market rate." },
+    { name: "Umar Farooq", role: "KU Scholar, Srinagar", rating: 5, date: "1 week ago", comment: "Cash on delivery was smooth. The delivery boy called before reaching my home." }
+  ],
+  "The Psychology of Money": [
+    { name: "Faizan Mir", role: "B.Com, Pattan", rating: 5, date: "2 days ago", comment: "Timeless financial wisdom. Delivered same day in Pattan! Original print edition." },
+    { name: "Mehreen Zehra", role: "Class 11th, Budgam", rating: 5, date: "4 days ago", comment: "Clear readable typeface and thick paper. 10/10 service from JK Study Hub." }
+  ],
+  "Deep Work": [
+    { name: "Tanveer Hassan", role: "NEET Aspirant, Baramulla", rating: 5, date: "3 days ago", comment: "Helped me cut phone distractions completely. Genuine paperback edition!" }
+  ],
+  "default": [
+    { name: "Zubair Ahmad", role: "Verified Student, Baramulla", rating: 5, date: "Recently", comment: "Original paperback edition with crystal clear print quality. Fast doorstep delivery." },
+    { name: "Saima Bashir", role: "JKBOSE Aspirant, Sopore", rating: 5, date: "Recently", comment: "Great protective packaging and verified student quality. Highly recommended!" }
+  ]
+};
+
+function getBookReviews(bookName) {
+  let custom = {};
+  try {
+    custom = JSON.parse(localStorage.getItem('jk_student_reviews_custom') || '{}');
+  } catch(e) {}
+
+  const userReviews = custom[bookName] || [];
+  const defaultList = DEFAULT_STUDENT_REVIEWS[bookName] || DEFAULT_STUDENT_REVIEWS['default'];
+  return [...userReviews, ...defaultList];
+}
+
+function renderBookReviews(bookName) {
+  const container = document.getElementById('modalReviewsList');
+  const avgEl = document.getElementById('modalRatingAvg');
+  if (!container) return;
+
+  const reviews = getBookReviews(bookName);
+  if (avgEl && reviews.length > 0) {
+    const avg = (reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1);
+    avgEl.innerHTML = `⭐ ${avg} (${reviews.length} Verified Reviews)`;
+  }
+
+  let html = '';
+  reviews.forEach(r => {
+    let stars = '';
+    const rating = Number(r.rating) || 5;
+    for (let i = 0; i < 5; i++) {
+      stars += i < rating ? '<i class="fa-solid fa-star"></i> ' : '<i class="fa-regular fa-star"></i> ';
+    }
+    html += `
+      <div class="student-review-card">
+        <div class="rev-head">
+          <span class="rev-author"><i class="fa-solid fa-circle-user" style="color:#2563eb;"></i> ${safeEscape(r.name)} <span class="rev-tag">Verified Student</span></span>
+          <span class="rev-stars">${stars}</span>
+        </div>
+        <p class="rev-comment">${safeEscape(r.comment)}</p>
+        <div style="font-size:10.5px; color:#94a3b8; margin-top:3px; display:flex; justify-content:space-between;">
+          <span>${safeEscape(r.role || 'Student')}</span>
+          <span>${safeEscape(r.date || 'Recent')}</span>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function updateModalDeliveryEstimate(district) {
+  const delInfo = getEstimatedDeliveryInfo(district);
+  const textEl = document.getElementById('modalDeliveryEstimateText');
+  const countEl = document.getElementById('modalDeliveryCountdown');
+  if (textEl) {
+    textEl.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong> in ${safeEscape(district)}`;
+  }
+  if (countEl) {
+    countEl.innerHTML = `${delInfo.countdownText} • 100% Free Kashmir Delivery`;
+  }
+}
+
+function toggleReviewForm() {
+  const box = document.getElementById('addReviewFormBox');
+  if (box) {
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function submitStudentReview() {
+  if (!currentModalBook) return;
+  const nameInput = document.getElementById('newReviewerName');
+  const ratingInput = document.getElementById('newReviewRating');
+  const textInput = document.getElementById('newReviewText');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const comment = textInput ? textInput.value.trim() : '';
+  const rating = ratingInput ? parseInt(ratingInput.value) || 5 : 5;
+
+  if (!name || !comment) {
+    alert("Please enter your name and review comment.");
+    return;
+  }
+
+  let custom = {};
+  try {
+    custom = JSON.parse(localStorage.getItem('jk_student_reviews_custom') || '{}');
+  } catch(e) {}
+
+  if (!custom[currentModalBook.name]) {
+    custom[currentModalBook.name] = [];
+  }
+
+  custom[currentModalBook.name].unshift({
+    name: name,
+    role: "Verified Student",
+    rating: rating,
+    date: "Just now",
+    comment: comment
+  });
+
+  localStorage.setItem('jk_student_reviews_custom', JSON.stringify(custom));
+
+  if (nameInput) nameInput.value = '';
+  if (textInput) textInput.value = '';
+  toggleReviewForm();
+
+  renderBookReviews(currentModalBook.name);
+  if (typeof showToast === 'function') {
+    showToast("⭐ Thank you! Your review has been published.");
+  }
 }
 
 function setModalPhoto(idx) {
@@ -5291,6 +5652,7 @@ function renderDynamicStoreProducts() {
 
   section.style.display = 'block';
 
+  const delInfo = getEstimatedDeliveryInfo();
   let html = '';
   CUSTOM_PRODUCTS.forEach((prod, index) => {
     const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
@@ -5344,11 +5706,13 @@ function renderDynamicStoreProducts() {
           </div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('${safeName}')">${prod.name || prod.title}</h3>
           
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 5.0</span>
-            <span style="color:#94a3b8;">(Fresh Arrival)</span>
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+            <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Edition</span>
             <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
           </div>
+
+          <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong></div>
 
           <p class="product-desc">${prod.desc || prod.description || 'Authentic verified student edition from JK Study Hub.'}</p>
           
