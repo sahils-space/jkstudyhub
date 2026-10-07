@@ -3675,13 +3675,15 @@ function showOrderConfirmationModal(orderRecord, isCod) {
   }
 
   const delInfo = getEstimatedDeliveryInfo(orderRecord.address);
+  const otpMsg = orderRecord.deliveryOtp ? `%0A🔐 *Delivery OTP:* ${orderRecord.deliveryOtp}` : '';
   const waText = `*📦 New Order Confirmation - JK Study Hub*%0A%0A` +
     `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
     `👤 *Student Name:* ${encodeURIComponent(orderRecord.name)}%0A` +
     `📞 *Phone:* ${encodeURIComponent(orderRecord.phone)}%0A` +
     `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
     `📚 *Product:* ${encodeURIComponent(orderRecord.product)}%0A` +
-    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery' : 'Paid Online'})%0A` +
+    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery' : 'Paid Online'})` +
+    otpMsg + `%0A` +
     `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A%0A` +
     `_Hello JK Study Hub! Please send me live order tracking and dispatch updates._`;
 
@@ -3707,12 +3709,20 @@ function showOrderConfirmationModal(orderRecord, isCod) {
           </div>
         </div>
 
-        <div style="font-size:12.5px; color:#475569; line-height:1.6; margin-bottom:16px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="font-size:12.5px; color:#475569; line-height:1.6; margin-bottom:14px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
           <div><strong>Student:</strong> ${safeEscape(orderRecord.name)} (${safeEscape(orderRecord.phone)})</div>
           <div><strong>Product:</strong> ${safeEscape(orderRecord.product)}</div>
           <div><strong>Amount:</strong> ₹${orderRecord.amount} (${isCod ? 'Pay at Doorstep' : 'Prepaid Online'})</div>
           <div style="margin-top:4px; font-size:11.5px; color:#64748b;"><i class="fa-solid fa-location-dot"></i> ${safeEscape(orderRecord.address)}</div>
         </div>
+
+        ${orderRecord.deliveryOtp ? `
+          <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px dashed #2563eb; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; text-align: center;">
+            <div style="font-size: 11px; font-weight: 800; color: #1e40af; text-transform: uppercase; letter-spacing: 1px;">🔐 Doorstep Delivery Verification OTP</div>
+            <div style="font-size: 26px; font-weight: 900; letter-spacing: 6px; color: #1d4ed8; font-family: monospace; margin: 4px 0;">${orderRecord.deliveryOtp}</div>
+            <div style="font-size: 11px; color: #475569; font-weight: 600;">Share this 4-digit code with the delivery executive only when you receive your parcel.</div>
+          </div>
+        ` : ''}
 
         <!-- WhatsApp Action Button -->
         <a href="${waUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:white; text-decoration:none; padding:13px; border-radius:10px; font-weight:800; font-size:14px; box-shadow:0 4px 14px rgba(37,211,102,0.3); margin-bottom:10px;">
