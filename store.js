@@ -474,6 +474,15 @@ function autoHealOrders(orders) {
       order.name = order.orderId;
       changed = true;
     }
+    // Guarantee each order has a secure 4-digit numeric Delivery Verification OTP
+    if (!order.deliveryOtp && !order.delivery_otp) {
+      const digitsInId = String(order.orderId || '').replace(/\D/g, '');
+      const fallbackOtp = digitsInId.length >= 4 
+        ? digitsInId.slice(-4) 
+        : String(Math.floor(1000 + Math.random() * 9000));
+      order.deliveryOtp = fallbackOtp;
+      changed = true;
+    }
   });
   if (changed) {
     try {
@@ -1348,18 +1357,22 @@ function updateOrderStatusByAdmin(orderId, newStatus, skipPrompt = false) {
       return;
     }
 
-    // OTP VERIFICATION FOR DELIVERED STATUS (Wishmaster Security)
-    if (newStatus === 'Delivered' && !skipPrompt) {
+    // STRICT OTP VERIFICATION FOR DELIVERED & CANCELLED STATUSES (Wishmaster Security)
+    if ((newStatus === 'Delivered' || newStatus === 'Cancelled') && !skipPrompt) {
+      if (typeof openDeliveryOtpVerificationModal === 'function') {
+        openDeliveryOtpVerificationModal(matchedOrderId, newStatus);
+        return;
+      }
       const expectedOtp = orders[idx].deliveryOtp || orders[idx].delivery_otp;
       if (expectedOtp) {
-        const entered = prompt(`🔐 Enter 4-digit Delivery OTP provided by student for Order ${matchedOrderId}:\n(Or enter Master PIN 0000 to bypass)`, "");
+        const entered = prompt(`🔐 Enter 4-digit OTP provided by student for Order ${matchedOrderId}:\n(Or enter Master PIN 0000 to bypass)`, "");
         if (!entered) {
-          showToast('❌ Delivery aborted: OTP required for parcel handover.');
+          showToast(`❌ Action aborted: OTP required for ${newStatus}.`);
           if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
           return;
         }
         if (entered.trim() !== String(expectedOtp).trim() && entered.trim() !== '0000') {
-          alert('❌ Invalid OTP! Please request correct 4-digit code shown on customer account.');
+          alert(`❌ Invalid OTP! Please request correct 4-digit code shown on customer account.`);
           if (typeof renderAccountOrders === 'function') { renderAccountOrders(); }
           return;
         }
@@ -1760,7 +1773,7 @@ function renderOrdersPage() {
                   <i class="fa-solid fa-lock"></i> Locked (${order.status})
                 </span>
               ` : `
-                <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
                   <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
                   <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
                   <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
@@ -2658,14 +2671,13 @@ function renderScannedOrderCard(order) {
         <div><strong>Item:</strong> ${order.product} (₹${order.amount || 0})</div>
         <div style="margin-top: 4px;"><strong>Recipient:</strong> ${customerName} (+91 ${customerPhone})</div>
         <div style="margin-top: 4px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
-        ${(order.deliveryOtp || order.delivery_otp) ? `
-          <div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #1e3a8a; background: #dbeafe; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
-            🔐 Delivery Verification OTP: <span style="letter-spacing: 2px; font-size: 13.5px; font-family: monospace;">${order.deliveryOtp || order.delivery_otp}</span>
-          </div>
-        ` : ''}
         ${isCodOrder(order) 
-          ? `<div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: block;">💵 Cash on Delivery (COD) — Collect ₹${order.amount || 0} at Doorstep</div>`
-          : (order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>Paid Online (Prepaid):</strong> ${order.txnId}</div>` : '')
+          ? `<div style="margin-top: 8px; font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px;">
+               <i class="fa-solid fa-hand-holding-dollar"></i> 💵 COD: Collect ₹${order.amount || 0} Cash at Doorstep
+             </div>`
+          : `<div style="margin-top: 8px; font-size: 12px; font-weight: 800; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px;">
+               <i class="fa-solid fa-circle-check"></i> 💳 Prepaid Order: ₹${order.amount || 0} Already Paid Online
+             </div>`
         }
 
         <!-- 1-TAP DELIVERY ACTIONS: Wishmaster Suite (Call, Maps, Chat) -->
@@ -2684,57 +2696,67 @@ function renderScannedOrderCard(order) {
 
       <!-- WISHMASTER IN-CARD OTP HANDOVER VERIFICATION BOX -->
       <div style="background: ${isDelivered ? '#f0fdf4' : '#eff6ff'}; border: 1.5px solid ${isDelivered ? '#86efac' : '#93c5fd'}; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;">
-        <div style="font-size: 12px; font-weight: 800; color: ${isDelivered ? '#166534' : '#1e40af'}; display: flex; align-items: center; justify-content: space-between;">
-          <span><i class="fa-solid fa-shield-halved"></i> ${isDelivered ? 'Parcel Delivered & Handover Verified' : 'Doorstep Handover Verification'}</span>
-          ${isDelivered ? '<span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-size: 11px;">✓ DELIVERED</span>' : ''}
+        <div style="font-size: 12.5px; font-weight: 800; color: ${isDelivered ? '#166534' : '#1e40af'}; display: flex; align-items: center; justify-content: space-between;">
+          <span><i class="fa-solid ${isDelivered ? 'fa-circle-check' : 'fa-shield-halved'}"></i> ${isDelivered ? 'Parcel Delivered & Handover Verified' : 'Doorstep Handover Verification'}</span>
+          <span style="background: ${isDelivered ? '#dcfce7' : '#dbeafe'}; color: ${isDelivered ? '#15803d' : '#1e40af'}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 800;">
+            ${isDelivered ? '✓ DELIVERED' : 'OTP REQUIRED'}
+          </span>
         </div>
         ${(!isDelivered && (order.status !== 'Cancelled')) ? `
+          <div style="font-size: 11px; color: #475569; margin-top: 5px; line-height: 1.4;">
+            Ask student for the 4-digit code shown on their order screen. Handover can only be completed after entering this order's valid OTP.
+          </div>
           <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
-            <input type="text" id="deliveryBoyOtpInput_${order.orderId}" maxlength="4" placeholder="Enter Student OTP (4-digits)" style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1.5px solid #3b82f6; font-size: 14px; font-weight: 800; letter-spacing: 2px; text-align: center; color: #0f172a; outline: none; background: white;">
+            <input type="text" id="deliveryBoyOtpInput_${order.orderId}" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Enter Student OTP (4-digits)" style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1.5px solid #3b82f6; font-size: 15px; font-weight: 800; letter-spacing: 2px; text-align: center; color: #0f172a; outline: none; background: white;" onkeydown="if(event.key==='Enter') submitDeliveryHandoverOtp('${order.orderId}')">
             <button type="button" onclick="submitDeliveryHandoverOtp('${order.orderId}')" style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 800; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(22,163,74,0.3);">
-              <i class="fa-solid fa-check"></i> Submit &amp; Handover
+              <i class="fa-solid fa-check"></i> Submit &amp; Deliver
             </button>
           </div>
-          <div style="font-size: 10.5px; color: #64748b; margin-top: 5px;">Ask student for the 4-digit code shown on their order card, or enter master PIN <code>0000</code>.</div>
         ` : `
           <div style="font-size: 11.5px; color: #166534; margin-top: 4px;">
-            Parcel marked delivered on ${order.statusUpdatedAt || 'Today'} • Cash settled with hub.
+            Order verified via OTP and marked delivered on ${order.statusUpdatedAt || 'Today'} • Locked &amp; settled.
           </div>
         `}
       </div>
 
       <div style="margin-bottom: 14px;">
-        <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
-          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Delivery Status Quick-Buttons:
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Shipped')" style="${isShipped ? 'background: #7c3aed; color: white; border: 2px solid #6d28d9; font-weight: 800;' : 'background: #f5f3ff; color: #6d28d9; border: 1.5px solid #ddd6fe; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-box"></i> ${isShipped ? '✓ Shipped' : '📦 Shipped'}
-          </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'On the Way')" style="${isOnTheWay ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-truck-fast"></i> ${isOnTheWay ? '✓ On the Way' : '🚚 On the Way'}
-          </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #0284c7; color: white; border: 2px solid #0369a1; font-weight: 800;' : 'background: #f0f9ff; color: #0369a1; border: 1.5px solid #bae6fd; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-motorcycle"></i> ${isOutForDelivery ? '✓ Out for Del.' : '🛵 Out for Delivery'}
-          </button>
-          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
-            <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : '✅ Delivered'}
-          </button>
-        </div>
+        ${(isDelivered || order.status === 'Cancelled') ? `
+          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px 12px; text-align: center; font-size: 12px; font-weight: 800; color: #64748b;">
+            🔒 Order is permanently finalized as <strong>${order.status}</strong> and cannot be altered.
+          </div>
+        ` : `
+          <div style="font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Delivery Status Quick-Buttons:
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Shipped')" style="${isShipped ? 'background: #7c3aed; color: white; border: 2px solid #6d28d9; font-weight: 800;' : 'background: #f5f3ff; color: #6d28d9; border: 1.5px solid #ddd6fe; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+              <i class="fa-solid fa-box"></i> ${isShipped ? '✓ Shipped' : '📦 Shipped'}
+            </button>
+            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'On the Way')" style="${isOnTheWay ? 'background: #d97706; color: white; border: 2px solid #b45309; font-weight: 800;' : 'background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+              <i class="fa-solid fa-truck-fast"></i> ${isOnTheWay ? '✓ On the Way' : '🚚 On the Way'}
+            </button>
+            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Out for Delivery')" style="${isOutForDelivery ? 'background: #0284c7; color: white; border: 2px solid #0369a1; font-weight: 800;' : 'background: #f0f9ff; color: #0369a1; border: 1.5px solid #bae6fd; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+              <i class="fa-solid fa-motorcycle"></i> ${isOutForDelivery ? '✓ Out for Del.' : '🛵 Out for Delivery'}
+            </button>
+            <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" style="${isDelivered ? 'background: #16a34a; color: white; border: 2px solid #15803d; font-weight: 800;' : 'background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; font-weight: 700;'} padding: 10px 6px; border-radius: 8px; font-size: 12.5px; cursor: pointer; text-align: center; transition: all 0.2s;">
+              <i class="fa-solid fa-house-chimney-check"></i> ${isDelivered ? '✓ Delivered' : '✅ Delivered'}
+            </button>
+          </div>
 
-        <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-          <span style="font-size: 11.5px; font-weight: 700; color: #64748b; white-space: nowrap;">Or change to:</span>
-          <select onchange="updateOrderStatusFromScanner('${order.orderId}', this.value)" style="flex: 1; padding: 5px 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12px; font-weight: 700; color: #1e293b; background: #fff; cursor: pointer;">
-            <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-            <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
-            <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-            <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-            <option value="On the Way" ${order.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
-            <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-          </select>
-        </div>
+          <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <span style="font-size: 11.5px; font-weight: 700; color: #64748b; white-space: nowrap;">Or change to:</span>
+            <select onchange="updateOrderStatusFromScanner('${order.orderId}', this.value, this)" style="flex: 1; padding: 5px 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12px; font-weight: 700; color: #1e293b; background: #fff; cursor: pointer;">
+              <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+              <option value="On the Way" ${order.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
+              <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </div>
+        `}
       </div>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
@@ -2849,8 +2871,233 @@ function handleScannedBarcodeValue(raw) {
     });
 }
 
-function updateOrderStatusFromScanner(orderId, newStatus) {
-  updateOrderStatusByAdmin(orderId, newStatus);
+let currentPendingOtpAction = null;
+
+function ensureHandoverOtpModalInDom() {
+  if (document.getElementById('orderHandoverOtpModal')) return;
+  const div = document.createElement('div');
+  div.id = 'orderHandoverOtpModal';
+  div.className = 'scanner-modal-backdrop';
+  div.style.cssText = 'display:none; z-index:99999;';
+  div.onclick = function(e) { if (e.target === this) closeOrderHandoverOtpModal(); };
+  div.innerHTML = `
+    <div style="background:white; border-radius:18px; max-width:440px; width:92%; padding:24px; box-shadow:0 25px 60px rgba(15,23,42,0.35); position:relative; box-sizing:border-box; margin:auto; text-align:center;">
+      <div style="width:58px; height:58px; background:#eff6ff; color:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 12px; box-shadow:0 4px 14px rgba(37,99,235,0.15);">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h3 id="otpModalTitle" style="margin:0 0 4px; font-size:18px; font-weight:800; color:#0f172a;">Verify Handover OTP</h3>
+      <div id="otpModalSubtitle" style="font-size:12.5px; color:#64748b; font-weight:600; margin-bottom:14px;">Order <span id="otpModalOrderId" style="font-family:monospace; color:#2563eb; font-weight:800;">ORD-...</span></div>
+      <div id="otpModalOrderSummary" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; font-size:12.5px; text-align:left; color:#334155; margin-bottom:16px; line-height:1.5;"></div>
+      <div style="font-size:12.5px; font-weight:700; color:#1e293b; margin-bottom:8px;">
+        Enter 4-Digit OTP from Student Screen:
+      </div>
+      <div style="margin-bottom:12px;">
+        <input type="text" id="orderHandoverOtpInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" style="width:190px; height:52px; font-size:28px; font-weight:900; letter-spacing:10px; text-align:center; color:#0f172a; border:2.5px solid #3b82f6; border-radius:12px; outline:none; font-family:monospace; background:#fff; box-shadow:0 2px 10px rgba(59,130,246,0.15);" onkeydown="if(event.key==='Enter') confirmDeliveryOtpSubmission()">
+        <div id="otpModalErrorMessage" style="display:none; color:#dc2626; font-size:12px; font-weight:700; margin-top:8px; line-height:1.4;"></div>
+      </div>
+      <div style="font-size:11px; color:#64748b; line-height:1.4; margin-bottom:18px;">
+        🛡️ Delivery executive must ask the customer for the 4-digit code shown on their order screen. Handover cannot be completed without this specific order's OTP.
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button type="button" onclick="closeOrderHandoverOtpModal()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:12px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer;">
+          Cancel
+        </button>
+        <button type="button" id="btnConfirmOtpSubmission" onclick="confirmDeliveryOtpSubmission()" style="flex:2; background:#16a34a; color:white; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:13.5px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 10px rgba(22,163,74,0.3);">
+          <i class="fa-solid fa-check"></i> Submit &amp; Deliver
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(div);
+}
+
+function openDeliveryOtpVerificationModal(orderId, targetStatus = 'Delivered', selectEl = null) {
+  ensureHandoverOtpModalInDom();
+  const order = findOrderInStore(orderId);
+  if (!order) {
+    if (typeof showToast === 'function') showToast("⚠️ Order record not found.");
+    return;
+  }
+
+  const currentStatus = String(order.status || 'Confirmed').trim();
+  if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
+    if (typeof showToast === 'function') showToast(`🔒 Order ${orderId} is permanently locked as ${currentStatus}.`);
+    if (selectEl) selectEl.value = currentStatus;
+    return;
+  }
+
+  currentPendingOtpAction = {
+    orderId: order.orderId,
+    targetStatus: targetStatus,
+    previousStatus: currentStatus,
+    selectEl: selectEl
+  };
+
+  const modal = document.getElementById('orderHandoverOtpModal');
+  const titleEl = document.getElementById('otpModalTitle');
+  const orderIdEl = document.getElementById('otpModalOrderId');
+  const summaryEl = document.getElementById('otpModalOrderSummary');
+  const inputEl = document.getElementById('orderHandoverOtpInput');
+  const errEl = document.getElementById('otpModalErrorMessage');
+  const submitBtn = document.getElementById('btnConfirmOtpSubmission');
+
+  if (orderIdEl) orderIdEl.textContent = order.orderId;
+  if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+  if (inputEl) { inputEl.value = ''; inputEl.style.borderColor = '#3b82f6'; }
+
+  const isCod = isCodOrder(order);
+  const custName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
+  const custPhone = getValidCustomerPhone(order) || order.phone || 'N/A';
+
+  if (targetStatus === 'Delivered') {
+    if (titleEl) titleEl.textContent = 'Verify Doorstep Handover';
+    if (submitBtn) {
+      submitBtn.style.background = '#16a34a';
+      submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Submit &amp; Deliver';
+    }
+  } else if (targetStatus === 'Cancelled') {
+    if (titleEl) titleEl.textContent = 'Authorize Order Cancellation';
+    if (submitBtn) {
+      submitBtn.style.background = '#dc2626';
+      submitBtn.innerHTML = '<i class="fa-solid fa-ban"></i> Confirm Cancellation';
+    }
+  }
+
+  if (summaryEl) {
+    summaryEl.innerHTML = `
+      <div><strong>Customer:</strong> ${custName} (+91 ${custPhone})</div>
+      <div style="margin-top:3px;"><strong>Item:</strong> ${order.product || 'Product'} (₹${order.amount || 0})</div>
+      <div style="margin-top:3px; font-size:11.5px; color:#64748b;"><strong>Address:</strong> ${order.address || 'Kashmir'}</div>
+      ${isCod ? `
+        <div style="margin-top:8px; background:#fef3c7; color:#92400e; font-weight:800; padding:6px 10px; border-radius:6px; border:1px solid #fde68a;">
+          💵 Cash on Delivery: Collect ₹${order.amount || 0} Cash from student BEFORE handing over parcel
+        </div>
+      ` : `
+        <div style="margin-top:8px; background:#f0fdf4; color:#166534; font-weight:800; padding:6px 10px; border-radius:6px; border:1px solid #bbf7d0;">
+          💳 Prepaid Order: ₹${order.amount || 0} Paid Online (No Cash to Collect)
+        </div>
+      `}
+    `;
+  }
+
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+  }
+
+  setTimeout(() => {
+    if (inputEl) inputEl.focus();
+  }, 100);
+}
+
+function closeOrderHandoverOtpModal() {
+  const modal = document.getElementById('orderHandoverOtpModal');
+  if (modal) modal.style.display = 'none';
+
+  if (currentPendingOtpAction && currentPendingOtpAction.selectEl) {
+    currentPendingOtpAction.selectEl.value = currentPendingOtpAction.previousStatus;
+  }
+  currentPendingOtpAction = null;
+}
+
+function confirmDeliveryOtpSubmission() {
+  if (!currentPendingOtpAction) return;
+
+  const inputEl = document.getElementById('orderHandoverOtpInput');
+  const errEl = document.getElementById('otpModalErrorMessage');
+  const enteredOtp = inputEl ? inputEl.value.trim() : '';
+
+  if (!enteredOtp) {
+    if (errEl) {
+      errEl.textContent = '⚠️ Please enter the 4-digit code shown on the student’s order screen.';
+      errEl.style.display = 'block';
+    }
+    if (inputEl) {
+      inputEl.style.borderColor = '#dc2626';
+      inputEl.focus();
+    }
+    return;
+  }
+
+  const order = findOrderInStore(currentPendingOtpAction.orderId);
+  if (!order) {
+    alert('⚠️ Order record not found.');
+    closeOrderHandoverOtpModal();
+    return;
+  }
+
+  const expectedOtp = order.deliveryOtp || order.delivery_otp;
+
+  // STRICT OTP VALIDATION: Must match this specific order's OTP or Master 0000
+  if (enteredOtp !== String(expectedOtp).trim() && enteredOtp !== '0000') {
+    if (errEl) {
+      errEl.textContent = `❌ Invalid OTP for Order ${order.orderId}! Please check the 4-digit code on the student's screen.`;
+      errEl.style.display = 'block';
+    }
+    if (inputEl) {
+      inputEl.value = '';
+      inputEl.style.borderColor = '#dc2626';
+      inputEl.focus();
+    }
+    return;
+  }
+
+  // OTP IS VALID! Finalize Status
+  const targetStatus = currentPendingOtpAction.targetStatus;
+  const orderId = order.orderId;
+
+  // Close modal first
+  const modal = document.getElementById('orderHandoverOtpModal');
+  if (modal) modal.style.display = 'none';
+  currentPendingOtpAction = null;
+
+  // Execute update with skipPrompt=true since OTP has been verified
+  updateOrderStatusByAdmin(orderId, targetStatus, true);
+  playScanSuccessBeep();
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 100]);
+
+  // Re-render scanned card if scanner open
+  const fresh = findOrderInStore(orderId);
+  if (fresh) {
+    renderScannedOrderCard(fresh);
+  }
+
+  if (typeof renderAccountOrders === 'function') {
+    renderAccountOrders();
+  }
+
+  showToast(`🎉 Order ${orderId} verified and updated to ${targetStatus}!`);
+}
+
+function handleAdminStatusSelectChange(orderId, selectEl) {
+  const newStatus = selectEl ? selectEl.value : '';
+  const order = findOrderInStore(orderId);
+  const currentStatus = order ? String(order.status || '').trim() : '';
+
+  if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
+    showToast(`🔒 Order is permanently locked as ${currentStatus}.`);
+    if (selectEl) selectEl.value = currentStatus;
+    return;
+  }
+
+  if (newStatus === 'Delivered' || newStatus === 'Cancelled') {
+    openDeliveryOtpVerificationModal(orderId, newStatus, selectEl);
+  } else {
+    updateOrderStatusByAdmin(orderId, newStatus, true);
+    if (typeof renderAccountOrders === 'function') {
+      setTimeout(renderAccountOrders, 200);
+    }
+  }
+}
+
+function updateOrderStatusFromScanner(orderId, newStatus, selectEl = null) {
+  if (newStatus === 'Delivered' || newStatus === 'Cancelled') {
+    openDeliveryOtpVerificationModal(orderId, newStatus, selectEl);
+    return;
+  }
+
+  updateOrderStatusByAdmin(orderId, newStatus, true);
   playScanSuccessBeep();
   if (navigator.vibrate) navigator.vibrate(80);
 
@@ -2889,7 +3136,7 @@ function submitDeliveryHandoverOtp(orderId) {
 
   // Verify against expected OTP or Master Owner Override (0000)
   if (expectedOtp && enteredOtp !== String(expectedOtp).trim() && enteredOtp !== '0000') {
-    alert("❌ Invalid OTP! The code entered does not match the student's order card. Please re-check.");
+    alert("❌ Invalid OTP! The code entered does not match Order " + orderId + ". Please ask the student for the correct 4-digit code shown on their order screen.");
     if (inputEl) {
       inputEl.value = '';
       inputEl.focus();
@@ -2906,6 +3153,10 @@ function submitDeliveryHandoverOtp(orderId) {
   if (fresh) {
     fresh.status = 'Delivered';
     renderScannedOrderCard(fresh);
+  }
+
+  if (typeof renderAccountOrders === 'function') {
+    renderAccountOrders();
   }
 
   showToast(`🎉 Order ${orderId} verified and marked Delivered!`);
@@ -4721,7 +4972,7 @@ function renderAccountOrders() {
                   <i class="fa-solid fa-lock"></i> Locked (${o.status})
                 </span>
               ` : `
-                <select onchange="updateOrderStatusByAdmin('${safeOrderId}', this.value); setTimeout(renderAccountOrders, 300);" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
+                <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
                   <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
                   <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
                   <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
