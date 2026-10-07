@@ -456,6 +456,64 @@ function getValidCustomerPhone(order) {
   return '';
 }
 
+// Deterministic & Persistent 4-Digit Delivery Verification OTP Engine
+function getDeterministicOrderOtp(orderId) {
+  const str = String(orderId || '').trim();
+  if (!str) return '1234';
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const num = (Math.abs(hash) % 9000) + 1000;
+  return String(num);
+}
+
+function saveOrderOtpToRegistry(orderId, otp) {
+  if (!orderId || !otp) return;
+  try {
+    const reg = JSON.parse(localStorage.getItem('jk_order_otps') || '{}');
+    if (reg[orderId] !== otp) {
+      reg[orderId] = otp;
+      localStorage.setItem('jk_order_otps', JSON.stringify(reg));
+    }
+  } catch(e) {}
+}
+
+function getOrderDeliveryOtp(order) {
+  if (!order) return '';
+  const orderId = String(order.orderId || order.order_id || (typeof order === 'string' ? order : '')).trim();
+  if (!orderId) return '';
+
+  // 1. If order object already has a valid 4-digit numeric OTP, preserve and record it
+  const existing = (typeof order === 'object') ? (order.deliveryOtp || order.delivery_otp) : null;
+  if (existing && String(existing).trim().match(/^\d{4}$/)) {
+    const validOtp = String(existing).trim();
+    saveOrderOtpToRegistry(orderId, validOtp);
+    return validOtp;
+  }
+
+  // 2. Check local persistent registry
+  try {
+    const reg = JSON.parse(localStorage.getItem('jk_order_otps') || '{}');
+    if (reg[orderId] && String(reg[orderId]).trim().match(/^\d{4}$/)) {
+      const regOtp = String(reg[orderId]).trim();
+      if (typeof order === 'object') {
+        order.deliveryOtp = regOtp;
+      }
+      return regOtp;
+    }
+  } catch(e) {}
+
+  // 3. Strictly deterministic 4-digit code based on unique Order ID (guarantees identical OTP forever)
+  const deterministicOtp = getDeterministicOrderOtp(orderId);
+  saveOrderOtpToRegistry(orderId, deterministicOtp);
+  if (typeof order === 'object') {
+    order.deliveryOtp = deterministicOtp;
+  }
+  return deterministicOtp;
+}
+
 function autoHealOrders(orders) {
   if (!Array.isArray(orders)) return [];
   let changed = false;
@@ -474,13 +532,10 @@ function autoHealOrders(orders) {
       order.name = order.orderId;
       changed = true;
     }
-    // Guarantee each order has a secure 4-digit numeric Delivery Verification OTP
-    if (!order.deliveryOtp && !order.delivery_otp) {
-      const digitsInId = String(order.orderId || '').replace(/\D/g, '');
-      const fallbackOtp = digitsInId.length >= 4 
-        ? digitsInId.slice(-4) 
-        : String(Math.floor(1000 + Math.random() * 9000));
-      order.deliveryOtp = fallbackOtp;
+    // Guarantee 100% identical Delivery Verification OTP across all views
+    const consistentOtp = getOrderDeliveryOtp(order);
+    if (order.deliveryOtp !== consistentOtp) {
+      order.deliveryOtp = consistentOtp;
       changed = true;
     }
   });
@@ -1363,7 +1418,7 @@ function updateOrderStatusByAdmin(orderId, newStatus, skipPrompt = false) {
         openDeliveryOtpVerificationModal(matchedOrderId, newStatus);
         return;
       }
-      const expectedOtp = orders[idx].deliveryOtp || orders[idx].delivery_otp;
+      const expectedOtp = getOrderDeliveryOtp(orders[idx]);
       if (expectedOtp) {
         const entered = prompt(`🔐 Enter 4-digit OTP provided by student for Order ${matchedOrderId}:\n(Or enter Master PIN 0000 to bypass)`, "");
         if (!entered) {
@@ -1744,6 +1799,12 @@ function renderOrdersPage() {
                 <i class="fa-solid fa-circle-check"></i> Payment: <strong>Prepaid Online (${order.txnId || 'PAID'})</strong>
               </div>
             `}
+            ${(!isLocked) ? `
+              <div style="margin-top: 8px; font-size: 12px; color: #1e3a8a; background: #eff6ff; border: 1.5px dashed #3b82f6; padding: 5px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
+                <span style="font-size: 14px;">🔐</span>
+                <span>Delivery OTP: <strong style="font-size: 15px; letter-spacing: 2px; color: #1d4ed8; font-family: monospace;">${getOrderDeliveryOtp(order)}</strong> <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">(Share with Wishmaster upon doorstep delivery)</span></span>
+              </div>
+            ` : ''}
             </div>
           </div>
 
@@ -3027,7 +3088,7 @@ function confirmDeliveryOtpSubmission() {
     return;
   }
 
-  const expectedOtp = order.deliveryOtp || order.delivery_otp;
+  const expectedOtp = getOrderDeliveryOtp(order);
 
   // STRICT OTP VALIDATION: Must match this specific order's OTP or Master 0000
   if (enteredOtp !== String(expectedOtp).trim() && enteredOtp !== '0000') {
@@ -3132,7 +3193,7 @@ function submitDeliveryHandoverOtp(orderId) {
     return;
   }
 
-  const expectedOtp = order.deliveryOtp || order.delivery_otp;
+  const expectedOtp = getOrderDeliveryOtp(order);
 
   // Verify against expected OTP or Master Owner Override (0000)
   if (expectedOtp && enteredOtp !== String(expectedOtp).trim() && enteredOtp !== '0000') {
@@ -3289,6 +3350,11 @@ function syncOrdersWithGoogleSheet() {
             }
 
             if (match) {
+              const consistentOtp = getOrderDeliveryOtp(match);
+              if (match.deliveryOtp !== consistentOtp) {
+                match.deliveryOtp = consistentOtp;
+                updated = true;
+              }
               const isLocallyLocked = (match.status === 'Delivered' || match.status === 'Cancelled');
               if (!isLocallyLocked && remote.status && remote.status !== match.status) {
                 match.status = remote.status;
@@ -3316,10 +3382,12 @@ function syncOrdersWithGoogleSheet() {
                                   String(remote.txnId || '').toUpperCase().includes('COD') ||
                                   String(remote.txnId || '').toUpperCase().includes('CASH');
               const cleanRemoteTxn = isRemoteCod ? 'Cash on Delivery' : (remote.txnId || 'Prepaid Online');
+              const remoteOtp = getOrderDeliveryOtp(remote);
               localOrders.push({
                 orderId: remote.orderId,
                 txnId: cleanRemoteTxn,
                 paymentMethod: isRemoteCod ? 'cod' : 'prepaid',
+                deliveryOtp: remoteOtp,
                 date: remote.timestamp || new Date().toLocaleDateString('en-IN'),
                 timestamp: Date.now(),
                 name: (remote.name && !remote.name.match(/^[6789]\d{9}$/)) ? remote.name : 'Student',
@@ -3809,10 +3877,11 @@ function processOrder(txnId, customStatus) {
   const explicitEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
   const orderEmail = explicitEmail || (user && user.email ? user.email.toLowerCase() : null);
 
-  const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
+  const newOrderId = 'OD' + Date.now() + Math.floor(Math.random() * 1000);
+  const deliveryOtp = getOrderDeliveryOtp({ orderId: newOrderId });
 
   const orderRecord = {
-    orderId: 'OD' + Date.now() + Math.floor(Math.random() * 1000),
+    orderId: newOrderId,
     txnId: cleanTxnId,
     paymentMethod: isCod ? 'cod' : 'prepaid',
     deliveryOtp: deliveryOtp,
@@ -4893,10 +4962,10 @@ function renderAccountOrders() {
               </div>
             `}
 
-            ${(!isLocked && (o.deliveryOtp || o.delivery_otp)) ? `
+            ${(!isLocked) ? `
               <div style="margin-top: 8px; font-size: 12px; color: #1e3a8a; background: #eff6ff; border: 1.5px dashed #3b82f6; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
                 <span style="font-size: 14px;">🔐</span>
-                <span>Delivery OTP: <strong style="font-size: 15px; letter-spacing: 2px; color: #1d4ed8; font-family: monospace;">${o.deliveryOtp || o.delivery_otp}</strong> <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">(Share with Wishmaster upon doorstep delivery)</span></span>
+                <span>Delivery OTP: <strong style="font-size: 15px; letter-spacing: 2px; color: #1d4ed8; font-family: monospace;">${getOrderDeliveryOtp(o)}</strong> <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">(Share with Wishmaster upon doorstep delivery)</span></span>
               </div>
             ` : ''}
           </div>
