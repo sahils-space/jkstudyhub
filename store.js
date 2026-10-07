@@ -1046,12 +1046,15 @@ let currentOrderSearchQuery = '';
 function isCodOrder(order) {
   if (!order) return false;
   if (order.paymentMethod === 'cod') return true;
-  const txn = String(order.txnId || '').toUpperCase();
-  if (txn.startsWith('COD') || txn === 'COD' || txn === 'CASH_ON_DELIVERY') return true;
+  if (order.paymentMethod === 'prepaid' || order.paymentMethod === 'online') return false;
+  const txn = String(order.txnId || '').trim().toUpperCase();
+  if (txn.startsWith('COD') || txn === 'CASH_ON_DELIVERY' || txn === 'CASH ON DELIVERY' || txn === 'N/A' || txn === '-') return true;
   const st = String(order.status || '').toLowerCase();
-  if (st.includes('cash on delivery') || st.includes('cod')) return true;
+  if (st.includes('cash on delivery') || st.includes('cod') || st.includes('pay on delivery') || st.includes('doorstep')) return true;
   const prod = String(order.product || '').toLowerCase();
-  if (prod.includes('pay at doorstep') || prod.includes('(cod)')) return true;
+  if (prod.includes('cash on delivery') || prod.includes('(cod)') || prod.includes('pay at doorstep')) return true;
+  // Real Razorpay payment IDs start with 'pay_' or 'rzp_'
+  if (!txn.startsWith('PAY_') && !txn.startsWith('RZP_') && (!txn || txn.length < 5)) return true;
   return false;
 }
 
@@ -1125,13 +1128,13 @@ function getOrderStatusInfo(rawStatus, orderObj) {
   // Step 1: Paid Online
   return {
     step: 1,
-    label: 'Order Confirmed & Paid',
+    label: 'Order Confirmed (Prepaid)',
     percent: 16,
     badgeBg: '#e0f2fe',
     badgeColor: '#0369a1',
     badgeBorder: '#bae6fd',
     badgeIcon: 'fa-circle-check',
-    summaryText: 'Order confirmed and payment verified via Razorpay.'
+    summaryText: 'Prepaid order confirmed and payment received online.'
   };
 }
 
@@ -1345,7 +1348,7 @@ function sendCustomerWhatsAppStatusUpdate(orderId) {
   
   const paymentLine = isCod 
     ? `💵 *Payment Mode:* Cash on Delivery (COD)\n💰 *Amount to Pay at Doorstep:* ₹${order.amount || 0}\n⚠️ *Please keep exact cash ready during delivery.*`
-    : `✅ *Payment Mode:* Paid Online (Verified Razorpay)\n💰 *Amount Paid:* ₹${order.amount || 0}`;
+    : `✅ *Payment Mode:* Paid Online (Prepaid)\n💰 *Amount Paid:* ₹${order.amount || 0}`;
 
   const text = encodeURIComponent(
     `Dear ${customerName},\n\n` +
@@ -1621,7 +1624,7 @@ function renderOrdersPage() {
               </div>
             ` : `
               <div style="margin-top: 10px; font-size: 11.5px; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
-                <i class="fa-solid fa-shield-halved"></i> Razorpay Payment ID: <strong>${order.txnId}</strong>
+                <i class="fa-solid fa-circle-check"></i> Payment: <strong>Prepaid Online (${order.txnId || 'PAID'})</strong>
               </div>
             `}
             </div>
@@ -1633,7 +1636,7 @@ function renderOrdersPage() {
             ${isCod ? `
               <span style="font-size: 11px; color: #b45309; font-weight: 800; background: #fef3c7; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a;">Cash on Delivery</span>
             ` : `
-              <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Verified Razorpay</span>
+              <span style="font-size: 11px; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">Prepaid Online</span>
             `}
           </div>
         </div>
@@ -1786,7 +1789,7 @@ function printOrderReceipt(orderId) {
             <div style="font-weight: 800; color: #b45309; margin-top: 3px;">💵 Cash on Delivery (COD)</div>
             <div style="font-size: 12px; font-weight: 700; color: #dc2626; margin-top: 2px;">COLLECT AT DOORSTEP: ₹${order.amount}</div>
           ` : `
-            <div style="font-weight: 700; color: #16a34a; margin-top: 3px;">PAID via Razorpay Online</div>
+            <div style="font-weight: 700; color: #16a34a; margin-top: 3px;">PAID ONLINE (PREPAID)</div>
             <div style="font-family: monospace; font-size: 11px; color: #475569; margin-top: 2px;">TXN ID: ${order.txnId}</div>
           `}
           <div style="font-size: 11.5px; color: #2563eb; font-weight: 600; margin-top: 2px;">Delivery: Pattan (193121)</div>
@@ -2003,10 +2006,10 @@ function openShippingLabelModal(orderId) {
   const pinMatch = String(customerAddress).match(/\b(19\d{4})\b/);
   const pincode = pinMatch ? pinMatch[1] : '193121';
 
-  const isCod = (order.paymentMethod === 'cod' || order.txnId === 'COD' || String(order.status).toLowerCase().includes('cod') || String(order.txnId).startsWith('COD_'));
+  const isCod = isCodOrder(order);
   const barcodeSvg = generateCode128Svg(order.orderId, 64, 2);
   const qrUrl = `https://jkstudyhub.online/account.html#orders?id=${encodeURIComponent(order.orderId)}`;
-  const awbNumber = 'JKSH' + (order.txnId ? String(order.txnId).replace(/\D/g,'').slice(-6) : String(order.orderId).replace(/\D/g,'').slice(-6) || '193121');
+  const awbNumber = 'JKSH' + (String(order.orderId).replace(/\D/g,'').slice(-6) || '193121');
   const orderDate = order.date || new Date().toLocaleDateString('en-IN');
 
   printArea.innerHTML = `
@@ -2380,7 +2383,7 @@ function renderScannedOrderCard(order) {
         <div style="margin-top: 4px; font-size: 12px; color: #64748b;"><strong>Address:</strong> ${order.address}</div>
         ${isCodOrder(order) 
           ? `<div style="margin-top: 6px; font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: inline-block;">💵 Cash on Delivery (COD) — Collect ₹${order.amount || 0} at Doorstep</div>`
-          : (order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>Paid Online (Razorpay):</strong> ${order.txnId}</div>` : '')
+          : (order.txnId ? `<div style="margin-top: 4px; font-size: 11.5px; color: #2563eb;"><strong>Paid Online (Prepaid):</strong> ${order.txnId}</div>` : '')
         }
       </div>
 
@@ -2697,10 +2700,16 @@ function syncOrdersWithGoogleSheet() {
                 updated = true;
               }
             } else if (remote.orderId) {
-              const remoteTxn = remote.txnId || (String(remote.status || '').toLowerCase().includes('cash on delivery') ? 'COD' : 'N/A');
+              const isRemoteCod = String(remote.status || '').toLowerCase().includes('cash on delivery') || 
+                                  String(remote.status || '').toLowerCase().includes('cod') ||
+                                  String(remote.product || '').toLowerCase().includes('doorstep') ||
+                                  String(remote.txnId || '').toUpperCase().includes('COD') ||
+                                  String(remote.txnId || '').toUpperCase().includes('CASH');
+              const cleanRemoteTxn = isRemoteCod ? 'Cash on Delivery' : (remote.txnId || 'Prepaid Online');
               localOrders.push({
                 orderId: remote.orderId,
-                txnId: remoteTxn,
+                txnId: cleanRemoteTxn,
+                paymentMethod: isRemoteCod ? 'cod' : 'prepaid',
                 date: remote.timestamp || new Date().toLocaleDateString('en-IN'),
                 timestamp: Date.now(),
                 name: (remote.name && !remote.name.match(/^[6789]\d{9}$/)) ? remote.name : 'Student',
@@ -2709,7 +2718,7 @@ function syncOrdersWithGoogleSheet() {
                 product: remote.product || 'Study Hub Purchase',
                 amount: parseFloat(remote.amount) || 0,
                 userEmail: user ? user.email : null,
-                status: remote.status || 'Confirmed'
+                status: remote.status || (isRemoteCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed')
               });
               updated = true;
             }
@@ -3035,7 +3044,7 @@ function togglePaymentMethod(method) {
       submitBtn.style.backgroundColor = '#2563eb';
     }
     if (note) {
-      note.innerHTML = '<i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Books • Priority Fast Dispatch via Razorpay';
+      note.innerHTML = '<i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Books • Priority Fast Dispatch';
     }
   }
 }
@@ -3082,8 +3091,7 @@ function processCodOrder(isFromQuick) {
     btn1.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Confirming...';
   }
 
-  const codTxnId = 'COD_' + Date.now().toString(36).toUpperCase();
-  processOrder(codTxnId, 'Confirmed (Cash on Delivery)');
+  processOrder('Cash on Delivery', 'Confirmed (Cash on Delivery)');
 }
 
 // --- RAZORPAY INTEGRATION ---
@@ -3176,10 +3184,11 @@ function processOrder(txnId, customStatus) {
     finalProductDesc += ` [Form: ${formSelected}, Files: ${filesCount}]`;
   }
 
-  const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId.startsWith('COD_');
+  const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId === 'Cash on Delivery' || String(txnId).startsWith('COD') || String(txnId).toUpperCase().includes('CASH');
+  const cleanTxnId = isCod ? 'Cash on Delivery' : txnId;
   const totalPaid = currentCheckoutPrice + 5;
   const orderStatus = customStatus || (isCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed');
-  const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | ${isCod ? 'Payment: Pay at Doorstep (COD)' : 'TXN: ' + txnId}`;
+  const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | ${isCod ? 'Payment: Cash on Delivery (Pay at Doorstep)' : 'TXN: ' + cleanTxnId}`;
 
   // 1. SAVE LOCALLY TO ORDERS HISTORY IMMEDIATELY!
   const user = getCurrentUser();
@@ -3189,7 +3198,8 @@ function processOrder(txnId, customStatus) {
 
   const orderRecord = {
     orderId: 'OD' + Date.now() + Math.floor(Math.random() * 1000),
-    txnId: txnId,
+    txnId: cleanTxnId,
+    paymentMethod: isCod ? 'cod' : 'prepaid',
     date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     timestamp: Date.now(),
     name: name,
@@ -3216,7 +3226,8 @@ function processOrder(txnId, customStatus) {
   formData.append('address', finalAddress);
   formData.append('product', combinedProduct);
   formData.append('order_id', orderRecord.orderId);
-  formData.append('txn_id', txnId);
+  formData.append('txn_id', cleanTxnId);
+  formData.append('payment_method', isCod ? 'Cash on Delivery' : 'Prepaid Online');
   formData.append('amount', totalPaid);
   formData.append('status', orderStatus);
 
@@ -4188,7 +4199,7 @@ function renderAccountOrders() {
     const safeOrderId = o.orderId || ('ORD-' + index);
     const isCod = isCodOrder(o);
     const statusInfo = getOrderStatusInfo(o.status, o);
-    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'TXN: ' + o.txnId}) for ${o.product}.`);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'Prepaid Online'}) for ${o.product}.`);
 
     let s1Class = 'completed';
     let s2Class = statusInfo.step >= 2 ? 'completed' : (statusInfo.step === 1 ? 'active' : '');
@@ -4248,7 +4259,7 @@ function renderAccountOrders() {
               </div>
             ` : `
               <div style="margin-top: 10px; font-size: 11.5px; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
-                <i class="fa-solid fa-shield-check"></i> Paid via Razorpay (${o.txnId || 'VERIFIED'})
+                <i class="fa-solid fa-circle-check"></i> Paid Online (Prepaid Txn: ${o.txnId || 'PAID'})
               </div>
             `}
           </div>
@@ -4256,7 +4267,7 @@ function renderAccountOrders() {
           <div class="fk-price-box">
             <div style="font-size: 12px; color: #64748b; font-weight: 600;">${isCod ? 'To Collect (COD)' : 'Total Paid'}</div>
             <div class="fk-price-val">₹${o.amount || 0}</div>
-            <span style="font-size: 11px; font-weight: 700; color: ${isCod ? '#b45309' : '#16a34a'};">${isCod ? 'Pay on Delivery' : 'Verified Paid'}</span>
+            <span style="font-size: 11px; font-weight: 700; color: ${isCod ? '#b45309' : '#16a34a'};">${isCod ? 'Pay on Doorstep (COD)' : 'Prepaid Online'}</span>
           </div>
         </div>
 

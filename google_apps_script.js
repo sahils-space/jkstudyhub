@@ -24,7 +24,7 @@ function doPost(e) {
         "Delivery Address",
         "Product Details",
         "Amount (INR)",
-        "Payment ID (Razorpay)",
+        "Payment Mode / Txn ID",
         "Status",
         "Admin Notes"
       ]);
@@ -229,10 +229,14 @@ function doPost(e) {
     var phone = p.phone || "";
     var address = p.address || "Baramulla, Jammu & Kashmir - 193121";
     var product = p.product || "";
-    var amount = p.amount || "";
     var txnId = p.txn_id || "";
     var status = p.status || "Confirmed";
     var notes = p.notes || "";
+    
+    var isCod = (status && status.toLowerCase().indexOf("cash on delivery") !== -1) || 
+                (txnId && (txnId.indexOf("COD") !== -1 || txnId.indexOf("Cash on Delivery") !== -1 || txnId === "N/A" || txnId === "-")) ||
+                (p.payment_method && p.payment_method.indexOf("Cash on Delivery") !== -1);
+    var paymentModeCol = isCod ? "Cash on Delivery" : (txnId || "Prepaid Online");
     
     sheet.appendRow([
       timestamp,
@@ -242,7 +246,7 @@ function doPost(e) {
       address,
       product,
       amount,
-      txnId,
+      paymentModeCol,
       status,
       notes
     ]);
@@ -259,8 +263,9 @@ function doPost(e) {
           "<p><strong>Phone:</strong> <a href='tel:" + phone + "'>" + phone + "</a></p>" +
           "<p><strong>Delivery Address:</strong> " + address + "</p>" +
           "<p><strong>Product Details:</strong> " + product + "</p>" +
-          "<p><strong>Amount Paid:</strong> ₹" + amount + "</p>" +
-          "<p><strong>Razorpay Txn ID:</strong> " + txnId + "</p>" +
+          "<p><strong>Amount:</strong> ₹" + amount + "</p>" +
+          "<p><strong>Payment Mode:</strong> " + (isCod ? "Cash on Delivery (Collect at Doorstep)" : "Prepaid Online") + "</p>" +
+          (!isCod && txnId ? "<p><strong>Payment Txn ID:</strong> " + txnId + "</p>" : "") +
           "<p><strong>Status:</strong> " + status + "</p>" +
           "</div>"
       });
