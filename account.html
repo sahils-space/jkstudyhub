@@ -18,22 +18,27 @@
   <style>
     body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding-bottom: 70px; }
     
-    /* Zapvi Top Announcement Bar */
+    /* Zapvi Top Announcement Bar (Deep Sapphire Gradient with Golden Highlights) */
     .zapvi-top-bar {
-      background: #f59e0b;
-      color: #0f172a;
+      background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 35%, #2563eb 70%, #0f172a 100%);
+      color: #ffffff;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 700;
       text-align: center;
-      padding: 8px 16px;
-      letter-spacing: 0.2px;
+      padding: 9px 16px;
+      letter-spacing: 0.3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       box-sizing: border-box;
       width: 100%;
       font-family: 'Outfit', sans-serif;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+    }
+    .zapvi-top-bar span strong {
+      color: #fbbf24;
+      font-weight: 800;
     }
 
     /* Zapvi Store Navigation Bar */
@@ -61,6 +66,30 @@
       color: #334155; font-size: 14.5px; font-weight: 700; text-decoration: none;
       display: inline-flex; align-items: center; gap: 6px;
     }
+    .zapvi-dropdown:hover .zapvi-dropdown-menu,
+    .zapvi-dropdown.open .zapvi-dropdown-menu {
+      display: block;
+      animation: zapviFadeDown 0.18s ease-out;
+    }
+    .zapvi-dropdown:hover .zapvi-arrow,
+    .zapvi-dropdown.open .zapvi-arrow {
+      transform: rotate(180deg);
+    }
+    .zapvi-dropdown-menu {
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: #ffffff; border-radius: 14px; box-shadow: 0 16px 40px rgba(15,23,42,0.14);
+      border: 1px solid #f1f5f9; padding: 8px 0; min-width: 250px; z-index: 99999; display: none;
+    }
+    @keyframes zapviFadeDown {
+      from { opacity: 0; transform: translate(-50%, -6px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .zapvi-menu-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 18px; color: #334155; font-size: 13.5px; font-weight: 600; text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .zapvi-menu-item:hover { background: #f8fafc; color: #0f172a; }
     .zapvi-pill-new {
       background: #0f172a; color: #ffffff; font-size: 9.5px; font-weight: 800;
       padding: 2px 7px; border-radius: 6px;
@@ -553,11 +582,11 @@
 </head>
 <body id="accountBody">
 
-  <!-- Zapvi Top Yellow Announcement Bar -->
+  <!-- Zapvi Top Announcement Bar (Deep Sapphire & Amber Accent) -->
   <div class="zapvi-top-bar">
-    <i class="fa-solid fa-sparkles" style="font-size: 11px;"></i>
-    <span>Your Books. Your Choice. Your JK Study Hub.</span>
-    <i class="fa-solid fa-sparkles" style="font-size: 11px;"></i>
+    <i class="fa-solid fa-sparkles" style="color: #fbbf24; font-size: 11px;"></i>
+    <span>Your Books. Your Choice. <strong>Your JK Study Hub.</strong> &middot; Fast Kashmir Delivery</span>
+    <i class="fa-solid fa-sparkles" style="color: #fbbf24; font-size: 11px;"></i>
   </div>
 
   <!-- Zapvi Store Navigation Bar -->
@@ -571,6 +600,44 @@
 
     <div class="zapvi-nav-center">
       <a href="store.html" class="zapvi-nav-link">Books &amp; Syllabus</a>
+      
+      <!-- "More ⌵" Dropdown -->
+      <div class="zapvi-dropdown" id="zapviMoreDropdown" style="position: relative;">
+        <button type="button" class="zapvi-nav-link zapvi-dropdown-trigger" onclick="toggleZapviDropdown(event)" style="background:none; border:none; cursor:pointer; font-family:inherit;">
+          More <i class="fa-solid fa-chevron-down zapvi-arrow"></i>
+        </button>
+        <div class="zapvi-dropdown-menu" id="zapviDropdownMenu">
+          <a href="store.html?category=academic&q=10th" class="zapvi-menu-item">
+            <span>JKBOSE Class 10th &amp; 12th</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="store.html?category=academic&q=College" class="zapvi-menu-item">
+            <span>College &amp; University Guides</span>
+          </a>
+          <a href="store.html?category=academic&q=PYQs" class="zapvi-menu-item">
+            <span>PYQs &amp; Solved Papers</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="store.html?category=novels" class="zapvi-menu-item">
+            <span>Novels &amp; Bestsellers</span>
+          </a>
+          <a href="store.html?category=stationery" class="zapvi-menu-item">
+            <span>Stationery &amp; Desk Accessories</span>
+          </a>
+          <a href="store.html?category=stationery&q=Lamp" class="zapvi-menu-item">
+            <span>LED Study Lamps &amp; Tables</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="store.html?category=digital" class="zapvi-menu-item">
+            <span>Form Filling &amp; Digital Services</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="account.html#support" class="zapvi-menu-item">
+            <span>Help &amp; Support Helpline</span>
+          </a>
+        </div>
+      </div>
+
       <a href="store.html#offers" class="zapvi-nav-link">Offer <span class="zapvi-pill-new dark">NEW</span></a>
     </div>
 

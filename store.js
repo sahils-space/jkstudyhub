@@ -6220,21 +6220,28 @@ function handleUrlCategoryHash() {
   const hash = window.location.hash.replace('#', '').toLowerCase();
   const params = new URLSearchParams(window.location.search);
   const catParam = (params.get('category') || hash).toLowerCase();
+  const queryParam = params.get('q') || '';
 
-  if (catParam === 'novels' || catParam === 'books') {
-    setStoreCategoryFilter('novels');
-    const sec = document.getElementById('section-novels') || document.getElementById('storeSearchContainer');
-    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-  } else if (catParam === 'academic' || catParam === 'notes') {
-    setStoreCategoryFilter('academic');
-    const sec = document.getElementById('section-academic');
-    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-  } else if (catParam === 'stationery') {
-    setStoreCategoryFilter('stationery');
-  } else if (catParam === 'digital' || catParam === 'services' || catParam === 'professional') {
-    setStoreCategoryFilter('digital');
-    const sec = document.getElementById('section-digital');
-    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+  if (catParam) {
+    if (typeof openStoreCategorySection === 'function') {
+      openStoreCategorySection(catParam, queryParam);
+    } else {
+      if (catParam === 'novels' || catParam === 'books') {
+        setStoreCategoryFilter('novels');
+      } else if (catParam === 'academic' || catParam === 'notes') {
+        setStoreCategoryFilter('academic');
+      } else if (catParam === 'stationery') {
+        setStoreCategoryFilter('stationery');
+      } else if (catParam === 'digital' || catParam === 'services') {
+        setStoreCategoryFilter('digital');
+      }
+    }
+  } else if (queryParam) {
+    const searchInput = document.getElementById('storeSearchInput');
+    if (searchInput) {
+      searchInput.value = queryParam;
+      handleStoreLiveSearch(queryParam);
+    }
   }
 }
 
@@ -7048,4 +7055,49 @@ function focusStoreSearch() {
     searchInput.focus();
   }
 }
+
+// Open and filter to specific category section smoothly
+function openStoreCategorySection(catName, specificQuery) {
+  closeZapviDropdown();
+  
+  if (typeof setStoreCategoryFilter === 'function') {
+    setStoreCategoryFilter(catName);
+  }
+  
+  const searchInput = document.getElementById('storeSearchInput');
+  if (specificQuery && searchInput) {
+    searchInput.value = specificQuery;
+    handleStoreLiveSearch(specificQuery);
+  } else if (!specificQuery && searchInput && searchInput.value) {
+    searchInput.value = '';
+    handleStoreLiveSearch('');
+  }
+
+  // Scroll smoothly to target section or store search container
+  setTimeout(() => {
+    let target = null;
+    if (catName === 'novels') {
+      target = document.getElementById('section-novels') || document.getElementById('storeSearchContainer');
+    } else if (catName === 'academic') {
+      target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
+    } else if (catName === 'stationery') {
+      target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
+    } else if (catName === 'digital') {
+      target = document.getElementById('section-digital') || document.getElementById('storeSearchContainer');
+    } else {
+      target = document.getElementById('storeSearchContainer');
+    }
+
+    if (target) {
+      const topOffset = 70; // offset for sticky nav
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - topOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  }, 100);
+}
+window.openStoreCategorySection = openStoreCategorySection;
 
