@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meesho | Supplier Panel - Sahils Store</title>
+  <title>JK Study Hub | Supplier &amp; Operations Panel</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -21,8 +21,8 @@
       <div class="seller-lock-icon">
         <i class="fa-solid fa-shield-halved"></i>
       </div>
-      <h2 class="seller-lock-title">Supplier Hub Access</h2>
-      <p class="seller-lock-sub">This fulfillment &amp; business center is strictly restricted to Sahils Store administrators.</p>
+      <h2 class="seller-lock-title">JK Study Hub Panel</h2>
+      <p class="seller-lock-sub">Store fulfillment, dispatch &amp; order management strictly for authorized JK Study Hub administrators.</p>
 
       <div id="sellerAuthErrorMessage" style="display:none; background:#fee2e2; color:#b91c1c; font-size:12.5px; font-weight:700; padding:10px 14px; border-radius:8px; margin-bottom:14px; text-align:left;">
         <i class="fa-solid fa-circle-exclamation"></i> Access Denied: Unauthorized account.
@@ -42,14 +42,14 @@
 
         <div style="text-align: center; margin: 14px 0; display: flex; align-items: center; gap: 10px;">
           <span style="flex: 1; height: 1px; background: #e2e8f0;"></span>
-          <span style="font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">OR VIA PASSCODE</span>
+          <span style="font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">OR VIA SECRET PASSCODE</span>
           <span style="flex: 1; height: 1px; background: #e2e8f0;"></span>
         </div>
 
         <input type="text" id="sellerLoginIdInput" class="seller-lock-input" placeholder="Owner Email or Mobile Number" autocomplete="username">
         <input type="password" id="sellerPinInput" class="seller-lock-input" placeholder="Secret Owner PIN / Passcode" autocomplete="current-password">
         <button type="button" class="seller-lock-btn" onclick="verifySellerOwnerCredentials()">
-          <i class="fa-solid fa-lock-open"></i> Unlock Supplier Panel
+          <i class="fa-solid fa-lock-open"></i> Unlock JK Study Hub Panel
         </button>
       </div>
 
@@ -62,24 +62,24 @@
   </div>
 
   <!-- =========================================================
-       2. MEESHO SUPPLIER PANEL APP SHELL
+       2. JK STUDY HUB SUPPLIER PANEL APP SHELL
        ========================================================= -->
   <div class="supplier-app-shell" id="sellerAppShell" style="display: none;">
 
-    <!-- LEFT SIDEBAR (Screenshot 1 & 2) -->
+    <!-- LEFT SIDEBAR -->
     <aside class="supplier-sidebar" id="sellerSidebar">
       <!-- Store Header with Dropdown -->
-      <div class="sidebar-store-picker" onclick="alert('Store: Sahils Store\nHub: JK Study Hub Pattan 193121\nGST: Unregistered Small Enterprise\nStatus: Active')">
+      <div class="sidebar-store-picker" onclick="alert('Store: JK Study Hub Official Store\nHub: Main Logistics Hub, Pattan 193121\nStatus: Online & Synced')">
         <div class="store-picker-left">
           <div class="store-avatar-badge">
-            <i class="fa-solid fa-store"></i>
+            <i class="fa-solid fa-graduation-cap"></i>
           </div>
           <div>
-            <div class="store-title-text">Sahils Store</div>
+            <div class="store-title-text">JK Study Hub</div>
             <div class="store-sub-text">Pattan Hub (193121)</div>
           </div>
         </div>
-        <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: #94a3b8;"></i>
+        <i class="fa-solid fa-circle-check" style="font-size: 13px; color: #10b981;"></i>
       </div>
 
       <!-- Quick Notices & Support Bar -->
@@ -107,7 +107,7 @@
         <a href="javascript:void(0)" class="sidebar-nav-link active" id="nav-link-orders" onclick="switchSellerView('orders')">
           <i class="fa-solid fa-box-archive"></i>
           <span>Orders</span>
-          <span class="nav-pill-badge pink">NEW</span>
+          <span class="nav-pill-badge pink">LIVE</span>
         </a>
 
         <a href="javascript:void(0)" class="sidebar-nav-link" id="nav-link-returns" onclick="switchSellerView('returns')">
@@ -141,7 +141,7 @@
         </a>
       </div>
 
-      <!-- Navigation Group: Performance (Screenshot 2) -->
+      <!-- Navigation Group: Performance -->
       <div class="sidebar-nav-group">
         <div class="nav-group-title">Performance</div>
         <a href="javascript:void(0)" class="sidebar-nav-link" id="nav-link-dashboard" onclick="switchSellerView('dashboard')">
@@ -152,8 +152,8 @@
 
       <!-- Bottom Credit -->
       <div class="sidebar-bottom-credit">
-        <i class="fa-solid fa-bolt" style="color: #803882;"></i>
-        <span><strong>meesho</strong> Supplier Hub</span>
+        <i class="fa-solid fa-bolt" style="color: #2563eb;"></i>
+        <span><strong>JK Study Hub</strong> Operations</span>
       </div>
     </aside>
 
@@ -162,7 +162,7 @@
       <!-- Top Sticky Bar -->
       <header class="supplier-top-navbar">
         <div style="display: flex; align-items: center; gap: 14px;">
-          <button type="button" class="btn-meesho-secondary" id="sidebarToggleBtn" onclick="toggleSellerMobileSidebar()" style="display: none; padding: 6px 10px;">
+          <button type="button" class="btn-hub-secondary" id="sidebarToggleBtn" onclick="toggleSellerMobileSidebar()" style="display: none; padding: 6px 10px;">
             <i class="fa-solid fa-bars"></i>
           </button>
           <h1 class="top-navbar-title" id="sellerPageTitle">Orders</h1>
@@ -174,15 +174,15 @@
             <span>Google Sheets Synced</span>
           </div>
 
-          <button type="button" class="btn-meesho-secondary" onclick="exportOrdersToCSV()">
+          <button type="button" class="btn-hub-secondary" onclick="exportOrdersToCSV()">
             <i class="fa-solid fa-file-arrow-down"></i> Download Orders Data ⌵
           </button>
 
-          <button type="button" class="btn-meesho-primary" onclick="syncSellerWithGoogleSheets(true)">
+          <button type="button" class="btn-hub-primary" onclick="syncSellerWithGoogleSheets(true)">
             <i class="fa-solid fa-rotate"></i> Sync Live
           </button>
 
-          <button type="button" class="btn-meesho-secondary" onclick="handleSellerSignOut()" title="Sign out of Supplier Panel" style="color: #dc2626;">
+          <button type="button" class="btn-hub-secondary" onclick="handleSellerSignOut()" title="Sign out of Supplier Panel" style="color: #dc2626;">
             <i class="fa-solid fa-right-from-bracket"></i>
           </button>
         </div>
@@ -192,27 +192,27 @@
       <div class="supplier-page-body">
 
         <!-- =======================================================
-             VIEW 1: ORDERS FULFILLMENT (Screenshot 1)
+             VIEW 1: ORDERS FULFILLMENT
              ======================================================= -->
         <section class="seller-view-pane active" id="view-orders">
           
           <!-- Notice Card 1: Retry Download -->
-          <div class="meesho-notice-card">
+          <div class="hub-notice-card">
             <div class="notice-left">
               <img src="images/ad-3d-scooter.png" class="notice-package-icon" alt="Packaging">
               <div>
-                <div class="notice-title">❌ Label download failed? ✅ Meesho will retry automatically</div>
-                <div class="notice-desc">We will notify you once it's ready for download. Don't worry! Your orders will not be blocked or lose visibility.</div>
+                <div class="notice-title">📦 JK Study Hub Fast Dispatch Engine Active</div>
+                <div class="notice-desc">All customer orders received are synchronized with Google Sheets and ready for dispatch.</div>
               </div>
             </div>
             <button type="button" class="notice-action-btn" onclick="openBulkLabelModal()">Download Labels</button>
           </div>
 
           <!-- Notice Card 2: Packaging Policy -->
-          <div class="meesho-policy-strip">
+          <div class="hub-policy-strip">
             <div style="display: flex; align-items: center; gap: 10px;">
               <i class="fa-solid fa-box-open" style="font-size: 16px;"></i>
-              <span><strong>Packaging Policy:</strong> Transparent Barcoded Packaging is standard for all student book deliveries across Kashmir.</span>
+              <span><strong>Packaging Policy:</strong> Sealed Barcoded Packaging is standard for all student book deliveries across Kashmir.</span>
             </div>
             <div style="display: flex; gap: 8px;">
               <button type="button" class="notice-action-btn" style="padding: 4px 12px; font-size: 12px;" onclick="openBarcodeScannerModal()">Scan Barcoded Packets</button>
@@ -220,31 +220,31 @@
           </div>
 
           <!-- Fulfillment Tabs Strip -->
-          <div class="meesho-tabs-strip">
-            <button type="button" class="meesho-tab-btn" data-status="on_hold" onclick="setFulfillmentTab('on_hold', this)">
+          <div class="hub-tabs-strip">
+            <button type="button" class="hub-tab-btn" data-status="on_hold" onclick="setFulfillmentTab('on_hold', this)">
               On Hold
             </button>
-            <button type="button" class="meesho-tab-btn active" data-status="pending" onclick="setFulfillmentTab('pending', this)">
+            <button type="button" class="hub-tab-btn active" data-status="pending" onclick="setFulfillmentTab('pending', this)">
               Pending (<span id="countTabPending">0</span>)
             </button>
-            <button type="button" class="meesho-tab-btn" data-status="ready_to_ship" onclick="setFulfillmentTab('ready_to_ship', this)">
+            <button type="button" class="hub-tab-btn" data-status="ready_to_ship" onclick="setFulfillmentTab('ready_to_ship', this)">
               Ready to Ship (<span id="countTabReady">0</span>)
             </button>
-            <button type="button" class="meesho-tab-btn" data-status="shipped" onclick="setFulfillmentTab('shipped', this)">
+            <button type="button" class="hub-tab-btn" data-status="shipped" onclick="setFulfillmentTab('shipped', this)">
               Shipped (<span id="countTabShipped">0</span>)
             </button>
-            <button type="button" class="meesho-tab-btn" data-status="cancelled" onclick="setFulfillmentTab('cancelled', this)">
+            <button type="button" class="hub-tab-btn" data-status="cancelled" onclick="setFulfillmentTab('cancelled', this)">
               Cancelled
             </button>
           </div>
 
           <!-- Filter Bar -->
-          <div class="meesho-filter-bar">
+          <div class="hub-filter-bar">
             <div class="filter-left-group">
               <span class="filter-label">Filter by :</span>
               <select class="filter-select" id="filterSLA" onchange="renderSellerOrdersTable()">
                 <option value="all">SLA Status (All)</option>
-                <option value="urgent">Urgent (< 24 hrs)</option>
+                <option value="urgent">Urgent (&lt; 24 hrs)</option>
                 <option value="normal">Normal</option>
               </select>
 
@@ -273,8 +273,8 @@
           </div>
 
           <!-- Table Container -->
-          <div class="meesho-table-card">
-            <table class="meesho-table" id="sellerOrdersTable">
+          <div class="hub-table-card">
+            <table class="hub-table" id="sellerOrdersTable">
               <thead>
                 <tr>
                   <th>Order ID</th>
@@ -296,13 +296,13 @@
 
 
         <!-- =======================================================
-             VIEW 2: BUSINESS DASHBOARD (Screenshot 2)
+             VIEW 2: BUSINESS DASHBOARD
              ======================================================= -->
         <section class="seller-view-pane" id="view-dashboard" style="display: none;">
           <div class="dashboard-header-bar">
             <div>
               <h2 class="dashboard-heading">Business Overview</h2>
-              <p style="font-size: 13px; color: #64748b; margin-top: 3px;" id="dashDateSubtitle">Live Statistics &middot; JK Study Hub Hub Operations</p>
+              <p style="font-size: 13px; color: #64748b; margin-top: 3px;" id="dashDateSubtitle">Live Statistics &middot; JK Study Hub Operations</p>
             </div>
 
             <div class="timeframe-pill-group">
@@ -332,7 +332,7 @@
             </div>
           </div>
 
-          <!-- 6 Core KPI Metric Cards Strip (Screenshot 2) -->
+          <!-- 6 Core KPI Metric Cards Strip -->
           <div class="kpi-cards-grid">
             <div class="kpi-card-box">
               <div class="kpi-title">Total Views <i class="fa-solid fa-circle-info" style="font-size: 10px;"></i></div>
@@ -371,7 +371,7 @@
             </div>
           </div>
 
-          <!-- Product Performance Table Section (Screenshot 2) -->
+          <!-- Product Performance Table Section -->
           <div class="product-performance-section">
             <div class="perf-section-head">
               <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">Product Performance</h3>
@@ -388,8 +388,8 @@
               <button type="button" class="perf-tab-item" onclick="setPerfFilterTab('high_returns', this)">High Returns (0)</button>
             </div>
 
-            <div class="meesho-table-card" style="border: 1px solid var(--meesho-border); border-radius: 8px;">
-              <table class="meesho-table">
+            <div class="hub-table-card" style="border: 1px solid var(--hub-border); border-radius: 8px;">
+              <table class="hub-table">
                 <thead>
                   <tr>
                     <th>Product Details</th>
@@ -415,7 +415,7 @@
              VIEW 3: INVENTORY & CATALOG UPLOADS
              ======================================================= -->
         <section class="seller-view-pane" id="view-catalog" style="display: none;">
-          <div style="background: white; border: 1px solid var(--meesho-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+          <div style="background: white; border: 1px solid var(--hub-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
             <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Upload New Catalog Product</h2>
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Add syllabus textbooks, notes, and stationery. Will publish to the store and synchronize with Google Sheets automatically.</p>
 
@@ -458,7 +458,7 @@
               </div>
 
               <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                <button type="submit" class="btn-meesho-primary" style="padding: 10px 24px; font-size: 14px;">
+                <button type="submit" class="btn-hub-primary" style="padding: 10px 24px; font-size: 14px;">
                   <i class="fa-solid fa-cloud-arrow-up"></i> Publish to Store &amp; Google Sheets
                 </button>
               </div>
@@ -471,7 +471,7 @@
              VIEW 4: PAYMENTS & COD RECONCILIATION
              ======================================================= -->
         <section class="seller-view-pane" id="view-payments" style="display: none;">
-          <div style="background: white; border: 1px solid var(--meesho-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+          <div style="background: white; border: 1px solid var(--hub-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
             <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Payments &amp; Doorstep Collections</h2>
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Cash on Delivery (COD) reconciliations vs online prepaid payments.</p>
 
@@ -502,7 +502,7 @@
   </div>
 
   <!-- =========================================================
-       MODAL 1: MEESHO/FLIPKART THERMAL SHIPPING LABEL
+       MODAL 1: THERMAL SHIPPING LABEL
        ========================================================= -->
   <div class="seller-modal-backdrop" id="sellerShippingLabelModal">
     <div class="seller-modal-card" style="max-width: 500px;">
@@ -516,8 +516,8 @@
         </div>
       </div>
       <div style="padding: 14px 20px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" class="btn-meesho-secondary" onclick="closeSellerModal('sellerShippingLabelModal')">Close</button>
-        <button type="button" class="btn-meesho-primary" onclick="printSellerShippingLabel()">
+        <button type="button" class="btn-hub-secondary" onclick="closeSellerModal('sellerShippingLabelModal')">Close</button>
+        <button type="button" class="btn-hub-primary" onclick="printSellerShippingLabel()">
           <i class="fa-solid fa-print"></i> Print Label
         </button>
       </div>
@@ -536,7 +536,7 @@
       <div class="seller-modal-body" style="text-align: center;">
         <p style="font-size: 13.5px; color: #475569; margin-bottom: 16px;">Type or scan the order barcode on the packet to verify parcel:</p>
         <input type="text" id="manualBarcodeScanInput" class="seller-lock-input" placeholder="Scan or enter Order ID (e.g. ORD-12345)" style="text-align: center; font-size: 16px;">
-        <button type="button" class="btn-meesho-primary" onclick="processScannedPacketBarcode()" style="width: 100%; justify-content: center; padding: 12px;">
+        <button type="button" class="btn-hub-primary" onclick="processScannedPacketBarcode()" style="width: 100%; justify-content: center; padding: 12px;">
           <i class="fa-solid fa-barcode"></i> Verify &amp; Mark Ready for Pickup
         </button>
       </div>

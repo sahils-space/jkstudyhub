@@ -1,5 +1,5 @@
 // =========================================================
-// MEESHO-STYLE SUPPLIER HUB CONTROLLER (seller.js)
+// JK STUDY HUB SUPPLIER & OPERATIONS PANEL (seller.js)
 // Standalone Order Management & Business Analytics Engine
 // =========================================================
 
@@ -113,7 +113,7 @@ function unlockSellerPanel() {
 }
 
 function handleSellerSignOut() {
-  if (confirm("Are you sure you want to lock the Supplier Panel?")) {
+  if (confirm("Are you sure you want to lock the JK Study Hub Supplier Panel?")) {
     try {
       localStorage.removeItem('jk_seller_hub_unlocked');
       localStorage.removeItem('jk_seller_hub_phone');
@@ -216,7 +216,7 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
 }
 
 // =========================================================
-// 3. MEESHO VIEWS & TABS CONTROLLERS
+// 3. VIEWS & TABS CONTROLLERS
 // =========================================================
 
 function switchSellerView(viewName) {
@@ -256,7 +256,7 @@ function switchSellerView(viewName) {
 
 function setFulfillmentTab(tabName, btnEl) {
   currentFulfillmentTab = tabName;
-  document.querySelectorAll('.meesho-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.hub-tab-btn').forEach(b => b.classList.remove('active'));
   if (btnEl) btnEl.classList.add('active');
   renderSellerOrdersTable();
 }
@@ -368,7 +368,7 @@ function renderSellerOrdersTable() {
         </td>
         <td>
           <div style="font-weight: 700; color: #1e293b;">${o.date || 'Today'}</div>
-          <div style="font-size: 11.5px; color: #64748b;">Pattan Standard</div>
+          <div style="font-size: 11.5px; color: #64748b;">Pattan Express</div>
         </td>
         <td>
           <div class="product-item-cell">
@@ -405,7 +405,7 @@ function renderSellerOrdersTable() {
         </td>
         <td>
           <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <button type="button" class="btn-meesho-secondary" style="padding: 5px 9px; font-size: 11.5px;" onclick="openSellerShippingLabelModal('${safeOrderId}')" title="Print Meesho/Flipkart Thermal Label">
+            <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px;" onclick="openSellerShippingLabelModal('${safeOrderId}')" title="Print JK Study Hub Thermal Label">
               <i class="fa-solid fa-print"></i> Label
             </button>
             <select onchange="updateOrderStatusFromSeller('${safeOrderId}', this.value)" style="padding: 5px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11.5px; font-weight: 700; background: white; cursor: pointer;">
@@ -418,7 +418,7 @@ function renderSellerOrdersTable() {
               <option value="Delivered">Delivered (Doorstep)</option>
               <option value="Cancelled">Cancelled</option>
             </select>
-            <a href="https://wa.me/91${String(o.phone || '').replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent('Hi ' + (o.name || 'Student') + '! Your order ' + safeOrderId + ' from JK Study Hub is ' + (o.status || 'being processed') + '.')}" target="_blank" rel="noopener" class="btn-meesho-secondary" style="padding: 5px 8px; color: #16a34a;" title="WhatsApp Notice">
+            <a href="https://wa.me/91${String(o.phone || '').replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent('Hi ' + (o.name || 'Student') + '! Your order ' + safeOrderId + ' from JK Study Hub is ' + (o.status || 'being processed') + '.')}" target="_blank" rel="noopener" class="btn-hub-secondary" style="padding: 5px 8px; color: #16a34a;" title="WhatsApp Notice">
               <i class="fa-brands fa-whatsapp"></i>
             </a>
           </div>
@@ -455,7 +455,7 @@ function updateOrderStatusFromSeller(orderId, newStatus) {
 }
 
 // =========================================================
-// 5. BUSINESS ANALYTICS & METRICS ENGINE (Screenshot 2)
+// 5. BUSINESS ANALYTICS & METRICS ENGINE
 // =========================================================
 
 function calculateBusinessMetrics() {
@@ -612,8 +612,8 @@ function openSellerShippingLabelModal(orderId) {
     sheet.innerHTML = `
       <div style="border-bottom: 2px solid black; padding-bottom: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <div style="font-size: 16px; font-weight: 900;">MEESHO / JK STUDY HUB</div>
-          <div style="font-size: 10px;">STANDARD SURFACE LOGISTICS</div>
+          <div style="font-size: 16px; font-weight: 900;">JK STUDY HUB LOGISTICS</div>
+          <div style="font-size: 10px;">STANDARD SURFACE DELIVERY &middot; KASHMIR</div>
         </div>
         <div style="font-size: 20px; font-weight: 900;">${o.paymentMethod === 'cod' ? 'COD' : 'PREPAID'}</div>
       </div>
@@ -636,7 +636,7 @@ function openSellerShippingLabelModal(orderId) {
       </div>
 
       <div style="border-top: 1px solid black; padding-top: 6px; font-size: 9.5px; color: #444;">
-        Sold By: Sahils Store (JK Study Hub), Near Pattan Hub, Kashmir. Return within 7 days.
+        Sold By: JK Study Hub, Pattan Hub, Kashmir 193121. Contact: info.jkstudyhub@gmail.com
       </div>
     `;
   }
