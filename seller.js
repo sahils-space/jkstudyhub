@@ -12,6 +12,7 @@ const AUTHORIZED_OWNER_EMAILS = [
   'sahilsspace@gmail.com',
   'info.jkstudyhub@gmail.com'
 ];
+// Secret master passcodes known only to owner
 const MASTER_OWNER_PASSCODES = ['9622605714', 'sahil123', 'admin786'];
 
 let currentFulfillmentTab = 'pending';
@@ -20,16 +21,26 @@ let currentChartMode = 'orders';
 let activePrintingOrderId = null;
 
 // =========================================================
-// 1. SECURITY LOCK & OWNER-ONLY GATE
+// 1. WATERTIGHT SECURITY LOCK & OWNER-ONLY GATE
 // =========================================================
 
 function isSellerUnlocked() {
   try {
     const isUnlocked = localStorage.getItem('jk_seller_hub_unlocked') === 'true';
-    const unlockedPhone = localStorage.getItem('jk_seller_hub_phone');
-    if (isUnlocked && unlockedPhone && AUTHORIZED_OWNER_PHONES.includes(unlockedPhone)) {
+    const unlockedIdentifier = String(localStorage.getItem('jk_seller_hub_phone') || '').trim().toLowerCase();
+    
+    // Strict validation: must have true flag AND identifier must match authorized list
+    const isPhoneMatched = AUTHORIZED_OWNER_PHONES.includes(unlockedIdentifier.replace(/\D/g, '').slice(-10));
+    const isEmailMatched = AUTHORIZED_OWNER_EMAILS.includes(unlockedIdentifier);
+    
+    if (isUnlocked && (isPhoneMatched || isEmailMatched)) {
       return true;
     }
+  } catch(e) {}
+  // Purge any corrupted or unverified state
+  try {
+    localStorage.removeItem('jk_seller_hub_unlocked');
+    localStorage.removeItem('jk_seller_hub_phone');
   } catch(e) {}
   return false;
 }
@@ -44,25 +55,33 @@ function verifySellerOwnerCredentials() {
   const cleanPhone = rawId.replace(/\D/g, '').slice(-10);
   const pin = String(pinInput ? pinInput.value : '').trim();
 
-  // Flexible authentication:
-  // 1. PIN matches master passcodes
-  // 2. OR Email matches verified owner emails
-  // 3. OR Phone matches verified owner phones
-  const isPinValid = MASTER_OWNER_PASSCODES.includes(pin);
-  const isEmailValid = AUTHORIZED_OWNER_EMAILS.includes(cleanEmail);
-  const isPhoneValid = (cleanPhone && AUTHORIZED_OWNER_PHONES.includes(cleanPhone));
+  // STRICT REQUIREMENT:
+  // 1. The ID must be an authorized owner phone OR an authorized owner email
+  // 2. AND the PIN must match a valid master passcode
+  const isEmailMatch = AUTHORIZED_OWNER_EMAILS.includes(cleanEmail);
+  const isPhoneMatch = (cleanPhone.length === 10 && AUTHORIZED_OWNER_PHONES.includes(cleanPhone));
+  const isPinMatch = MASTER_OWNER_PASSCODES.includes(pin);
 
-  if (isPinValid || (isEmailValid && pin) || (isPhoneValid && pin)) {
+  if ((isEmailMatch || isPhoneMatch) && isPinMatch) {
     try {
       localStorage.setItem('jk_seller_hub_unlocked', 'true');
-      localStorage.setItem('jk_seller_hub_phone', cleanPhone || '9622605714');
+      localStorage.setItem('jk_seller_hub_phone', isPhoneMatch ? cleanPhone : cleanEmail);
       localStorage.setItem('jk_admin_unlocked', 'true');
     } catch(e) {}
     if (errBox) errBox.style.display = 'none';
     unlockSellerPanel();
   } else {
+    // REJECT IMMEDIATELY & WIPE
+    try {
+      localStorage.removeItem('jk_seller_hub_unlocked');
+      localStorage.removeItem('jk_seller_hub_phone');
+    } catch(e) {}
     if (errBox) {
-      errBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Invalid owner credentials or secret passcode.';
+      if (!isEmailMatch && !isPhoneMatch) {
+        errBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Phone number or Email is not registered as JK Study Hub store owner.';
+      } else {
+        errBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Incorrect secret PIN / passcode for store owner.';
+      }
       errBox.style.display = 'block';
     }
   }
@@ -597,55 +616,274 @@ function calculatePaymentsSummary() {
 }
 
 // =========================================================
-// 6. SHIPPING LABEL GENERATOR & MODAL
+// 6. SHIPPING LABEL GENERATOR & MODAL (AMAZON / FLIPKART STYLE)
+// Pure Client-Side Code-128 SVG Barcode + Scannable QR Code Generator
 // =========================================================
+
+const CODE128_PATTERNS = [
+  "212222", "222122", "222221", "121223", "121322", "131222", "122213", "122312", "132212", "221213",
+  "221312", "231212", "112232", "122132", "122231", "113222", "123122", "123221", "223211", "221132",
+  "221231", "213212", "223112", "312131", "311222", "321122", "321221", "312212", "322112", "322211",
+  "212123", "212321", "232121", "111323", "131123", "131321", "112313", "132113", "132311", "211313",
+  "231113", "231311", "112133", "112331", "132131", "113123", "113321", "133121", "313121", "211331",
+  "231131", "213113", "213311", "213131", "311123", "311321", "331121", "312113", "312311", "332111",
+  "314111", "221411", "431111", "111224", "111422", "121124", "121421", "141122", "141221", "112214",
+  "112412", "122114", "122411", "142112", "142211", "241211", "221114", "413111", "241112", "134111",
+  "111242", "121142", "121241", "114212", "124112", "124211", "411212", "421112", "421211", "212141",
+  "214121", "412121", "111143", "111341", "131141", "114113", "114311", "411113", "411311", "113141",
+  "114131", "311141", "411131", "211412", "211214", "211232", "2331112"
+];
+
+function generateCode128Svg(text, barHeight = 55, moduleWidth = 2) {
+  const safeText = String(text || 'ORD-000000').trim();
+  let codes = [104];
+  let checksum = 104;
+
+  for (let i = 0; i < safeText.length; i++) {
+    let charCode = safeText.charCodeAt(i);
+    let val = charCode - 32;
+    if (val < 0 || val > 95) val = 0;
+    codes.push(val);
+    checksum += val * (i + 1);
+  }
+  codes.push(checksum % 103);
+  codes.push(106);
+
+  const quietZone = 16;
+  let x = quietZone;
+  let rects = [];
+
+  for (let code of codes) {
+    let pattern = CODE128_PATTERNS[code] || CODE128_PATTERNS[0];
+    for (let p = 0; p < pattern.length; p++) {
+      let width = parseInt(pattern[p], 10) * moduleWidth;
+      if (p % 2 === 0) {
+        rects.push(`<rect x="${x}" y="0" width="${width}" height="${barHeight}" fill="#000000" />`);
+      }
+      x += width;
+    }
+  }
+  const totalWidth = x + quietZone;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${barHeight}" width="${totalWidth}" height="${barHeight}" style="max-width:100%; height:auto; display:block; margin:0 auto; shape-rendering:crispEdges;">${rects.join('')}</svg>`;
+}
+
+function renderQrCodeIntoContainer(container, text, size = 70) {
+  if (!container) return;
+  container.innerHTML = '';
+  
+  if (typeof QRCode === 'function') {
+    try {
+      new QRCode(container, {
+        text: text,
+        width: size,
+        height: size,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: (typeof QRCode.CorrectLevel !== 'undefined') ? QRCode.CorrectLevel.M : 0
+      });
+      return;
+    } catch (e) {
+      console.warn("QRCodeJS instance notice:", e);
+    }
+  }
+
+  // Fallback to high-resolution QR service
+  const img = document.createElement('img');
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&margin=1`;
+  img.alt = 'QR Tracking Code';
+  img.style.width = size + 'px';
+  img.style.height = size + 'px';
+  img.style.display = 'block';
+  img.style.objectFit = 'contain';
+  container.appendChild(img);
+}
 
 function openSellerShippingLabelModal(orderId) {
   activePrintingOrderId = orderId;
   const orders = getSellerOrders();
-  const o = orders.find(ord => String(ord.orderId) === String(orderId)) || { orderId, product: 'Textbook', amount: 199, date: 'Today' };
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase()) || { 
+    orderId, 
+    product: 'Syllabus & Textbook Pack', 
+    amount: 199, 
+    name: 'Student Consignee',
+    phone: '9622605714',
+    address: 'Delivery Address, Pattan Hub, Kashmir 193121',
+    date: new Date().toLocaleDateString('en-IN')
+  };
 
   const modal = document.getElementById('sellerShippingLabelModal');
   const sheet = document.getElementById('sellerShippingLabelSheet');
+  if (!sheet) return;
 
-  if (sheet) {
-    sheet.innerHTML = `
-      <div style="border-bottom: 2px solid black; padding-bottom: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-size: 16px; font-weight: 900;">JK STUDY HUB LOGISTICS</div>
-          <div style="font-size: 10px;">STANDARD SURFACE DELIVERY &middot; KASHMIR</div>
+  const customerName = (o.name && !o.name.match(/^[6789]\d{9}$/)) ? o.name : 'Valued Student';
+  const customerPhone = o.phone || '9622605714';
+  const customerAddress = o.address || 'Delivery Address, Pattan Hub, Dist. Baramulla, J&K';
+  
+  const pinMatch = String(customerAddress).match(/\b(19\d{4})\b/);
+  const pincode = pinMatch ? pinMatch[1] : '193121';
+
+  const isCod = (o.paymentMethod === 'cod' || !o.txnId || o.txnId === 'COD');
+  const barcodeSvg = generateCode128Svg(o.orderId, 55, 2);
+  const qrUrl = `https://jkstudyhub.online/account.html#orders?id=${encodeURIComponent(o.orderId)}`;
+  const awbNumber = 'JKSH' + (String(o.orderId).replace(/\D/g,'').slice(-6) || '193121');
+  const orderDate = o.date || new Date().toLocaleDateString('en-IN');
+
+  sheet.innerHTML = `
+    <div class="shipping-label-sheet" style="border: 2.5px solid #000; background: #fff; color: #000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: left; line-height: 1.35;">
+      <!-- Top Bar: Logistics Header -->
+      <div style="border-bottom: 2px solid #000; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">📦</span>
+          <div>
+            <div style="font-size: 15px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">JK STUDY HUB LOGISTICS</div>
+            <div style="font-size: 10px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
+          </div>
         </div>
-        <div style="font-size: 20px; font-weight: 900;">${o.paymentMethod === 'cod' ? 'COD' : 'PREPAID'}</div>
+        <div style="text-align: right;">
+          <div style="font-size: 12px; font-weight: 900; border: 1.5px solid #000; padding: 2px 8px; display: inline-block;">ROUTE: KMR-193</div>
+          <div style="font-size: 10px; font-weight: 600; margin-top: 2px;">DISPATCH: ${orderDate}</div>
+        </div>
       </div>
 
-      <div style="margin-bottom: 12px; text-align: center;">
-        <div style="font-family: monospace; letter-spacing: 5px; font-size: 22px; font-weight: 900;">*${o.orderId}*</div>
-        <div style="font-size: 11px; letter-spacing: 2px;">AWB: JK-${o.orderId.replace(/\D/g, '') || '962260'}</div>
+      <!-- Primary Barcode Section -->
+      <div style="border-bottom: 2px solid #000; padding: 12px 10px; text-align: center; background: #fff;">
+        <div style="display: flex; justify-content: center; margin-bottom: 4px;">
+          ${barcodeSvg}
+        </div>
+        <div style="font-family: monospace; font-size: 14px; font-weight: 900; letter-spacing: 2px;">* ${o.orderId} *</div>
+        <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; margin-top: 4px; padding: 0 10px; color: #222;">
+          <span>AWB: ${awbNumber}</span>
+          <span>HUB: BARAMULLA / PATTAN</span>
+        </div>
       </div>
 
-      <div style="border-top: 1px dashed black; border-bottom: 1px dashed black; padding: 8px 0; margin-bottom: 8px; font-size: 11px;">
-        <div><strong>SHIP TO:</strong></div>
-        <div style="font-weight: 800; font-size: 13px;">${o.name || 'Customer'}</div>
-        <div>${o.address || 'Pattan Hub, Kashmir 193121'}</div>
-        <div>TEL: ${o.phone || '9622605714'}</div>
+      <!-- Payment Status Banner (PREPAID vs COD) -->
+      <div style="border-bottom: 2px solid #000; padding: 8px 12px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
+        ${isCod ? `
+          <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
+          <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${o.amount || 0}</div>
+          <div style="font-size: 10px; font-weight: 700; margin-top: 2px; letter-spacing: 0.5px;">⚠️ COLLECT EXACT CASH BEFORE OPENING PARCEL</div>
+        ` : `
+          <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${o.amount || 0} • VERIFIED ONLINE</div>
+          <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Payment ID: ${o.txnId || 'PREPAID_VERIFIED'}</div>
+        `}
       </div>
 
-      <div style="font-size: 10.5px; margin-bottom: 8px;">
-        <div><strong>PRODUCT:</strong> ${o.product || 'Academic Study Guide'}</div>
-        <div><strong>COLLECT COD AMOUNT:</strong> ₹${o.amount || 0}</div>
+      <!-- Address Section: SHIP TO (Consignee) & SHIP FROM (Shipper) -->
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; border-bottom: 2px solid #000;">
+        <!-- Ship To -->
+        <div style="padding: 10px 12px; border-right: 2px solid #000; background: #fff;">
+          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
+          <div style="font-size: 14px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
+          <div style="font-size: 12px; font-weight: 800; color: #000; margin-top: 3px;">TEL: +91 ${customerPhone}</div>
+          <div style="font-size: 11px; font-weight: 600; color: #111; line-height: 1.4; margin-top: 4px; word-break: break-word;">${customerAddress}</div>
+          <div style="margin-top: 8px; padding-top: 4px; border-top: 1px dashed #000;">
+            <span style="font-size: 11px; font-weight: 900;">PIN: </span>
+            <span style="font-size: 20px; font-weight: 900; letter-spacing: 1px;">${pincode}</span>
+          </div>
+        </div>
+
+        <!-- Ship From -->
+        <div style="padding: 10px 12px; background: #fff;">
+          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">SHIPPER (RETURN TO):</div>
+          <div style="font-size: 12px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB LOGISTICS</div>
+          <div style="font-size: 10.5px; font-weight: 600; color: #222; margin-top: 3px; line-height: 1.3;">
+            Fulfillment Center, Main Market, Pattan, Dist. Baramulla<br>
+            Jammu &amp; Kashmir - 193121
+          </div>
+          <div style="font-size: 11px; font-weight: 800; margin-top: 4px;">HELPLINE: +91 9622605714</div>
+          <div style="margin-top: 8px; font-size: 9px; font-weight: 700; border: 1px solid #000; padding: 2px 4px; display: inline-block;">
+            ORIGIN PIN: 193121
+          </div>
+        </div>
       </div>
 
-      <div style="border-top: 1px solid black; padding-top: 6px; font-size: 9.5px; color: #444;">
-        Sold By: JK Study Hub, Pattan Hub, Kashmir 193121. Contact: info.jkstudyhub@gmail.com
+      <!-- Items and Package Contents -->
+      <div style="border-bottom: 2px solid #000; padding: 8px 12px; background: #fff;">
+        <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px;">
+          <span style="flex: 2;">ITEM DESCRIPTION</span>
+          <span style="flex: 0.5; text-align: center;">QTY</span>
+          <span style="flex: 0.8; text-align: right;">TOTAL VALUE</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; line-height: 1.3;">
+          <span style="flex: 2; word-break: break-word;">${o.product || 'Study Material / Textbook'}</span>
+          <span style="flex: 0.5; text-align: center;">1</span>
+          <span style="flex: 0.8; text-align: right;">₹${o.amount || 0}</span>
+        </div>
+        <div style="font-size: 9px; font-weight: 700; color: #444; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
+          NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
+        </div>
       </div>
-    `;
-  }
+
+      <!-- Footer with QR Code and Dispatch Stamp -->
+      <div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div id="sellerShippingLabelQrWrap" style="width: 70px; height: 70px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #000; padding: 2px;">
+          </div>
+          <div>
+            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase;">SCAN FOR REAL-TIME TRACKING</div>
+            <div style="font-size: 8.5px; font-weight: 600; color: #333; line-height: 1.3; max-width: 170px; margin-top: 2px;">
+              Scan with mobile camera or scanner to verify parcel authenticity &amp; live delivery status.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; border: 1.5px dashed #000; padding: 6px 10px; border-radius: 4px; min-width: 110px;">
+          <div style="font-size: 8.5px; font-weight: 900; letter-spacing: 0.5px;">JK STUDY HUB</div>
+          <div style="font-size: 10px; font-weight: 900; color: #000; margin: 2px 0;">VERIFIED DISPATCH</div>
+          <div style="font-size: 8px; font-weight: 700; color: #555;">AUTH. SIGNATORY</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const qrContainer = document.getElementById('sellerShippingLabelQrWrap');
+    if (qrContainer) {
+      renderQrCodeIntoContainer(qrContainer, qrUrl, 68);
+    }
+  }, 40);
 
   if (modal) modal.classList.add('open');
 }
 
 function printSellerShippingLabel() {
-  window.print();
+  const printContent = document.getElementById('sellerShippingLabelSheet');
+  if (!printContent) {
+    window.print();
+    return;
+  }
+  const printWindow = window.open('', '_blank', 'width=800,height=900');
+  if (!printWindow) {
+    window.print();
+    return;
+  }
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Shipping Label - JK Study Hub</title>
+      <meta charset="utf-8">
+      <style>
+        body { margin: 0; padding: 15px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; background: #fff; }
+        .shipping-label-sheet { width: 100mm; max-width: 100mm; margin: 0 auto; border: 2.5px solid #000; }
+        @media print {
+          body { padding: 0; }
+          .shipping-label-sheet { width: 100mm !important; max-width: 100mm !important; margin: 0 auto !important; }
+          @page { size: 100mm 150mm; margin: 0; }
+        }
+      </style>
+    </head>
+    <body>
+      ${printContent.innerHTML}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+  }, 400);
 }
 
 function closeSellerModal(modalId) {
