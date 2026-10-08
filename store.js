@@ -1357,7 +1357,12 @@ function updateOwnerUIProtection() {
     } catch(e) {}
   }
 
-  // Sidebar item in account.html
+  // Sidebar items in account.html
+  const supplierHubEl = document.getElementById('menu-item-supplier-hub');
+  if (supplierHubEl) {
+    supplierHubEl.style.display = isOwner ? 'block' : 'none';
+  }
+
   const manageMenuEl = document.getElementById('menu-item-manage-products');
   if (manageMenuEl) {
     manageMenuEl.style.display = isOwner ? 'block' : 'none';

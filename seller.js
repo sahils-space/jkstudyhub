@@ -68,6 +68,39 @@ function verifySellerOwnerCredentials() {
   }
 }
 
+// 1-Click Google Sign In for Store Owner
+function handleSellerGoogleAuth() {
+  const errBox = document.getElementById('sellerAuthErrorMessage');
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    firebase.auth().signInWithPopup(provider).then(res => {
+      const email = (res.user.email || '').trim().toLowerCase();
+      if (AUTHORIZED_OWNER_EMAILS.includes(email)) {
+        try {
+          localStorage.setItem('jk_seller_hub_unlocked', 'true');
+          localStorage.setItem('jk_seller_hub_phone', '9622605714');
+          localStorage.setItem('jk_admin_unlocked', 'true');
+        } catch(e) {}
+        if (errBox) errBox.style.display = 'none';
+        unlockSellerPanel();
+      } else {
+        if (errBox) {
+          errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Google account (${email}) is not authorized as store owner.`;
+          errBox.style.display = 'block';
+        }
+      }
+    }).catch(err => {
+      if (errBox && err && err.code !== 'auth/popup-closed-by-user') {
+        errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Google Sign-in Error: ${err.message || 'Popup was closed or blocked.'}`;
+        errBox.style.display = 'block';
+      }
+    });
+  } else {
+    alert("Firebase Auth service is connecting. Please try again in 2 seconds.");
+  }
+}
+
 function unlockSellerPanel() {
   const lockScreen = document.getElementById('sellerAuthLockScreen');
   const appShell = document.getElementById('sellerAppShell');
