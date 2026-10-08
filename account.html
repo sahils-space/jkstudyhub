@@ -676,8 +676,6 @@
 
       <ul class="account-menu">
         <li><a href="#orders" id="menu-orders" onclick="switchTab('orders')"><i class="fa-solid fa-box"></i> My Orders <i class="fa-solid fa-chevron-right float-right"></i></a></li>
-        <li id="menu-item-supplier-hub" style="display:none;"><a href="seller.html" style="background: #eff6ff; color: #1e40af; font-weight: 800; border-left: 3px solid #2563eb;"><i class="fa-solid fa-store" style="color: #2563eb;"></i> 🛍️ JK Study Hub Supplier Panel <i class="fa-solid fa-arrow-up-right-from-square float-right" style="font-size:11px;"></i></a></li>
-        <li id="menu-item-manage-products" style="display:none !important;"><a href="#manage-products" id="menu-manage-products" onclick="switchTab('manage-products')" style="background: #eff6ff; color: #1e40af; font-weight: 700; border-left: 3px solid #2563eb;"><i class="fa-solid fa-crown" style="color: #2563eb;"></i> 👑 Manage Products <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#addresses" id="menu-addresses" onclick="switchTab('addresses')"><i class="fa-solid fa-location-dot"></i> Addresses <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#wishlist" id="menu-wishlist" onclick="switchTab('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist <i class="fa-solid fa-chevron-right float-right"></i></a></li>
         <li><a href="#details" id="menu-details" onclick="switchTab('details')"><i class="fa-regular fa-user"></i> Account details <i class="fa-solid fa-chevron-right float-right"></i></a></li>
@@ -752,265 +750,6 @@
         </div>
       </div>
 
-      <!-- Owner Manage & Add Products Tab -->
-      <div id="tab-manage-products" class="tab-pane">
-
-        <!-- Unauthorized Gate: Visible to students and logged-out users -->
-        <div id="ownerForbiddenState" style="background: white; border: 1.5px dashed #fca5a5; border-radius: 16px; padding: 45px 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-          <span style="font-size: 44px; display: block; margin-bottom: 12px;">🔒</span>
-          <h3 style="color: #991b1b; font-size: 18px; font-weight: 800; margin: 0 0 8px;">Owner Authentication Required</h3>
-          <p style="color: #64748b; font-size: 13.5px; max-width: 500px; margin: 0 auto 20px; line-height: 1.5;">This catalog management dashboard is exclusively restricted to the JK Study Hub store owner. Students and general visitors cannot add or modify products. Please log in with your official owner email or phone number to continue.</p>
-          <button type="button" class="yellow-btn" style="width: auto; padding: 10px 28px; display: inline-flex; align-items: center; gap: 8px;" onclick="openPhoneAuthModal()">
-            <i class="fa-solid fa-lock-open"></i> Login as Owner
-          </button>
-        </div>
-
-        <!-- Authorized Content: Hidden until verified store owner logs in -->
-        <div id="ownerAuthorizedContent" style="display: none;">
-          <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(37,99,235,0.06);">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 28px;">👑</span>
-                <div>
-                  <h2 style="font-size: 18px; font-weight: 800; color: #1e3a8a; margin: 0;">Owner Product &amp; Catalog Management</h2>
-                  <p style="font-size: 13px; color: #475569; margin: 3px 0 0;">Add new books, notes, or stationery items. Once published, items appear instantly across the whole website for all students.</p>
-                </div>
-              </div>
-              <span style="background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">Owner Authority</span>
-            </div>
-          </div>
-
-          <!-- Add New Product Form -->
-          <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-            <h3 style="font-size: 16.5px; font-weight: 800; color: #0f172a; margin: 0 0 16px; display: flex; align-items: center; gap: 8px;">
-              <i class="fa-solid fa-plus-circle" style="color: #2563eb;"></i> Add New Product to Store
-            </h3>
-
-          <form id="ownerAddProductForm" onsubmit="handleOwnerProductSubmit(event)">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Product Title / Name *</label>
-                <input type="text" id="ownerProdTitle" required placeholder="e.g. JKBOSE Class 10th Solved Guide 2026" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Category *</label>
-                <select id="ownerProdCategory" required style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; background: white; box-sizing: border-box; cursor: pointer;">
-                  <option value="books">Trending Books &amp; Novels</option>
-                  <option value="notes">JKBOSE Class 10th &amp; 11th Notes / Guides</option>
-                  <option value="stationery">Stationery &amp; Study Supplies</option>
-                  <option value="combos">Exam Combos &amp; Kits</option>
-                  <option value="forms">Online Forms &amp; Services</option>
-                </select>
-              </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Selling Price (₹) *</label>
-                <input type="number" id="ownerProdPrice" required min="1" placeholder="e.g. 199" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Original MRP (₹) (Optional for Discount %)</label>
-                <input type="number" id="ownerProdMrp" min="1" placeholder="e.g. 299" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Badge Tag (Optional)</label>
-                <input type="text" id="ownerProdBadge" placeholder="e.g. Bestseller, New, 2026 Edition" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
-              </div>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Product Description &amp; Details *</label>
-              <textarea id="ownerProdDesc" required rows="3" placeholder="Provide complete information: syllabus coverage, binding, pages, edition, topics covered, etc." style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 13.5px; outline: none; box-sizing: border-box; resize: vertical;"></textarea>
-            </div>
-
-            <!-- 4 Photos Upload Section -->
-            <div style="margin-bottom: 22px;">
-              <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
-                <i class="fa-solid fa-camera" style="color: #2563eb;"></i> Upload Product Photos (Up to 4 Photos) *
-              </label>
-              <p style="font-size: 12.5px; color: #64748b; margin: 0 0 12px;">Snap from phone camera or select from gallery. Slot 1 is the main front cover; slots 2-4 show back cover, index, and inside pages.</p>
-              
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
-                <!-- Photo 1 -->
-                <div class="photo-upload-slot" id="slot-1" onclick="document.getElementById('ownerPhotoInput1').click()">
-                  <input type="file" id="ownerPhotoInput1" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 1)">
-                  <div class="slot-placeholder" id="slotPlaceholder1">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 1 (Cover)*</span>
-                    <span style="font-size: 10px; color: #94a3b8;">Click to upload</span>
-                  </div>
-                  <img id="slotPreview1" class="slot-preview-img" style="display:none;" alt="Preview 1">
-                  <button type="button" class="slot-remove-btn" id="slotRemove1" onclick="removeOwnerPhoto(event, 1)" style="display:none;">&times;</button>
-                </div>
-
-                <!-- Photo 2 -->
-                <div class="photo-upload-slot" id="slot-2" onclick="document.getElementById('ownerPhotoInput2').click()">
-                  <input type="file" id="ownerPhotoInput2" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 2)">
-                  <div class="slot-placeholder" id="slotPlaceholder2">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 2 (Back)</span>
-                    <span style="font-size: 10px; color: #94a3b8;">Optional</span>
-                  </div>
-                  <img id="slotPreview2" class="slot-preview-img" style="display:none;" alt="Preview 2">
-                  <button type="button" class="slot-remove-btn" id="slotRemove2" onclick="removeOwnerPhoto(event, 2)" style="display:none;">&times;</button>
-                </div>
-
-                <!-- Photo 3 -->
-                <div class="photo-upload-slot" id="slot-3" onclick="document.getElementById('ownerPhotoInput3').click()">
-                  <input type="file" id="ownerPhotoInput3" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 3)">
-                  <div class="slot-placeholder" id="slotPlaceholder3">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 3 (Index)</span>
-                    <span style="font-size: 10px; color: #94a3b8;">Optional</span>
-                  </div>
-                  <img id="slotPreview3" class="slot-preview-img" style="display:none;" alt="Preview 3">
-                  <button type="button" class="slot-remove-btn" id="slotRemove3" onclick="removeOwnerPhoto(event, 3)" style="display:none;">&times;</button>
-                </div>
-
-                <!-- Photo 4 -->
-                <div class="photo-upload-slot" id="slot-4" onclick="document.getElementById('ownerPhotoInput4').click()">
-                  <input type="file" id="ownerPhotoInput4" accept="image/*" style="display: none;" onchange="handleOwnerPhotoSelected(event, 4)">
-                  <div class="slot-placeholder" id="slotPlaceholder4">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px;"></i>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #475569;">Photo 4 (Inside)</span>
-                    <span style="font-size: 10px; color: #94a3b8;">Optional</span>
-                  </div>
-                  <img id="slotPreview4" class="slot-preview-img" style="display:none;" alt="Preview 4">
-                  <button type="button" class="slot-remove-btn" id="slotRemove4" onclick="removeOwnerPhoto(event, 4)" style="display:none;">&times;</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" id="btnPublishProduct" style="background: #2563eb; color: white; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Publish Product to Store
-            </button>
-          </form>
-        </div>
-
-        <!-- Currently Published Custom Products -->
-        <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-            <h3 style="font-size: 16.5px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px;">
-              <i class="fa-solid fa-boxes-stacked" style="color: #2563eb;"></i> Published Store Products
-            </h3>
-            <button type="button" onclick="syncCustomProductsWithSheet(true); showToast('🔄 Catalog refreshed!');" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; cursor: pointer; color: #1e293b; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-arrows-rotate"></i> Refresh Catalog
-            </button>
-          </div>
-          <div id="ownerProductsListContainer">
-            <p style="color: #64748b; font-size: 13px;">Loading published products...</p>
-          </div>
-        </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- =========================================================
-       DAILY CASH SUMMARY & HANDOVER MODAL (FLIPKART LOGISTICS EOD)
-       ========================================================= -->
-  <div id="dailyCashSummaryModal" class="shipping-modal-backdrop" style="display:none;" onclick="if(event.target===this) closeDailyCashSummaryModal()">
-    <div class="shipping-modal-card" style="max-width: 650px;">
-      <div class="shipping-modal-header label-no-print">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:20px;">💵</span>
-          <div>
-            <h3 style="margin:0; font-size:15.5px; font-weight:800; color:#0f172a;">Daily Cash Summary &amp; Handover</h3>
-            <p style="margin:0; font-size:11.5px; color:#64748b;">Wishmaster COD Settlement • End of Day Audit</p>
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <button type="button" onclick="printDailyCashSummary()" class="label-print-btn" style="background:#d97706;">
-            <i class="fa-solid fa-print"></i> Print Slip
-          </button>
-          <button type="button" onclick="closeDailyCashSummaryModal()" class="label-close-btn">&times;</button>
-        </div>
-      </div>
-      <div id="dailyCashSummaryContent" style="padding: 20px; background: white; max-height: 80vh; overflow-y: auto;">
-        <!-- Injected dynamically by openDailyCashSummaryModal() -->
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================
-       PARCEL SHIPPING LABEL MODAL (AMAZON / FLIPKART STYLE)
-       ========================================================= -->
-  <div id="shippingLabelModal" class="shipping-modal-backdrop" style="display:none;" onclick="if(event.target===this) closeShippingLabelModal()">
-    <div class="shipping-modal-card">
-      <div class="shipping-modal-header label-no-print">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:20px;">📦</span>
-          <div>
-            <h3 style="margin:0; font-size:15.5px; font-weight:800; color:#0f172a;">Packaging &amp; Shipping Label</h3>
-            <p style="margin:0; font-size:11.5px; color:#64748b;">Ready for Thermal Sticker (4x6 in) or Standard A4 Printing</p>
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <button type="button" onclick="printShippingLabel()" class="label-print-btn">
-            <i class="fa-solid fa-print"></i> Print Label
-          </button>
-          <button type="button" onclick="closeShippingLabelModal()" class="label-close-btn">&times;</button>
-        </div>
-      </div>
-      <div id="shippingLabelPrintArea" class="shipping-label-body">
-        <!-- Injected dynamically by openShippingLabelModal(orderId) -->
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================
-       STORE OWNER IN-APP CAMERA SCANNER MODAL
-       ========================================================= -->
-  <div id="adminCameraScannerModal" class="scanner-modal-backdrop" style="display:none;" onclick="if(event.target===this) closeAdminCameraScanner()">
-    <div class="scanner-modal-card">
-      <div class="scanner-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:18px; color:#10b981;"><i class="fa-solid fa-camera"></i></span>
-          <div>
-            <h3 style="margin:0; font-size:15px; font-weight:800; color:white;">Scan Parcel Barcode / QR Code</h3>
-            <p style="margin:0; font-size:11px; color:#94a3b8;">Store Owner Mode • Live Parcel Scanner</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeAdminCameraScanner()" class="scanner-close-btn">&times;</button>
-      </div>
-
-      <div class="scanner-viewfinder-wrap">
-        <video id="adminScannerVideo" playsinline autoplay muted></video>
-        <canvas id="adminScannerCanvas" style="display:none;"></canvas>
-
-        <div class="scanner-reticle">
-          <div class="reticle-corner top-left"></div>
-          <div class="reticle-corner top-right"></div>
-          <div class="reticle-corner bottom-left"></div>
-          <div class="reticle-corner bottom-right"></div>
-          <div class="scanner-laser-line"></div>
-        </div>
-
-        <div class="scanner-controls-overlay">
-          <button type="button" id="btnToggleTorch" onclick="toggleScannerTorch()" style="display:none;" title="Toggle Flashlight">
-            <i class="fa-solid fa-bolt"></i>
-          </button>
-          <button type="button" onclick="flipScannerCamera()" title="Switch Camera">
-            <i class="fa-solid fa-camera-rotate"></i>
-          </button>
-        </div>
-
-        <div id="scannerStatusBadge" class="scanner-status-badge">
-          <span class="live-pulse"></span> Align Barcode inside frame
-        </div>
-      </div>
-
-      <!-- Manual Order ID fallback / External barcode gun input -->
-      <div class="scanner-manual-wrap">
-        <input type="text" id="manualScannerInput" placeholder="Enter or scan Order ID (e.g. ORD-123456)..." onkeydown="if(event.key==='Enter') handleManualBarcodeLookup()">
-        <button type="button" onclick="handleManualBarcodeLookup()"><i class="fa-solid fa-magnifying-glass"></i> Lookup</button>
-      </div>
-
-      <!-- Live Scanned Parcel Result Card -->
-      <div id="adminScannedResultCard" class="scanned-result-card" style="display:none;"></div>
     </div>
   </div>
 
@@ -1034,47 +773,6 @@
     </div>
   </div>
 
-  <!-- =========================================================
-       DOORSTEP HANDOVER OTP VERIFICATION MODAL (FLIPKART/AMAZON STYLE)
-       ========================================================= -->
-  <div id="orderHandoverOtpModal" class="scanner-modal-backdrop" style="display:none; z-index:99999;" onclick="if(event.target===this) closeOrderHandoverOtpModal()">
-    <div style="background:white; border-radius:18px; max-width:440px; width:92%; padding:24px; box-shadow:0 25px 60px rgba(15,23,42,0.35); position:relative; box-sizing:border-box; margin:auto; text-align:center;">
-      
-      <div style="width:58px; height:58px; background:#eff6ff; color:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 12px; box-shadow:0 4px 14px rgba(37,99,235,0.15);">
-        <i class="fa-solid fa-shield-halved"></i>
-      </div>
-
-      <h3 id="otpModalTitle" style="margin:0 0 4px; font-size:18px; font-weight:800; color:#0f172a;">Verify Handover OTP</h3>
-      <div id="otpModalSubtitle" style="font-size:12.5px; color:#64748b; font-weight:600; margin-bottom:14px;">Order <span id="otpModalOrderId" style="font-family:monospace; color:#2563eb; font-weight:800;">ORD-...</span></div>
-
-      <!-- Customer & Payment Summary -->
-      <div id="otpModalOrderSummary" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; font-size:12.5px; text-align:left; color:#334155; margin-bottom:16px; line-height:1.5;">
-        <!-- Filled dynamically -->
-      </div>
-
-      <div style="font-size:12.5px; font-weight:700; color:#1e293b; margin-bottom:8px;">
-        Enter 4-Digit OTP from Student Screen:
-      </div>
-
-      <div style="margin-bottom:12px;">
-        <input type="text" id="orderHandoverOtpInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" style="width:190px; height:52px; font-size:28px; font-weight:900; letter-spacing:10px; text-align:center; color:#0f172a; border:2.5px solid #3b82f6; border-radius:12px; outline:none; font-family:monospace; background:#fff; box-shadow:0 2px 10px rgba(59,130,246,0.15);" onkeydown="if(event.key==='Enter') confirmDeliveryOtpSubmission()">
-        <div id="otpModalErrorMessage" style="display:none; color:#dc2626; font-size:12px; font-weight:700; margin-top:8px; line-height:1.4;"></div>
-      </div>
-
-      <div style="font-size:11px; color:#64748b; line-height:1.4; margin-bottom:18px;">
-        🛡️ Delivery executive must ask the customer for the 4-digit code shown on their order screen. Handover cannot be completed without this specific order's OTP.
-      </div>
-
-      <div style="display:flex; gap:10px;">
-        <button type="button" onclick="closeOrderHandoverOtpModal()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:12px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer;">
-          Cancel
-        </button>
-        <button type="button" id="btnConfirmOtpSubmission" onclick="confirmDeliveryOtpSubmission()" style="flex:2; background:#16a34a; color:white; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:13.5px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 10px rgba(22,163,74,0.3);">
-          <i class="fa-solid fa-check"></i> Submit &amp; Deliver
-        </button>
-      </div>
-
-    </div>
   </div>
 
   <!-- Mobile Bottom Navigation -->
@@ -1182,9 +880,14 @@
       const isOwner = (typeof isStrictStoreOwner === 'function') ? isStrictStoreOwner(user) : false;
       const hasOrderId = (window.location.search.includes('id=') || window.location.hash.includes('id=') || /OD\d{6,}|ORD[-_]?\d+/i.test(window.location.hash));
 
-      if (hash === 'manage-products' && !isOwner) {
-        window.location.hash = 'orders';
-        switchTab('orders');
+      if (hash === 'manage-products' || hash === 'supplier-hub') {
+        if (isOwner) {
+          window.location.href = 'seller.html';
+          return;
+        } else {
+          window.location.hash = 'orders';
+          switchTab('orders');
+        }
       } else if (hasOrderId) {
         switchTab('orders');
       } else if (hash && document.getElementById('tab-' + hash)) {

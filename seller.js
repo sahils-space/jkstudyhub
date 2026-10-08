@@ -214,7 +214,16 @@ function isCodOrder(order) {
 
 function getSellerStatusOverrides() {
   try {
-    return JSON.parse(localStorage.getItem('jk_order_status_overrides') || '{}');
+    const raw = JSON.parse(localStorage.getItem('jk_order_status_overrides') || '{}');
+    const locked = JSON.parse(localStorage.getItem('jk_locked_orders') || '{}');
+    const res = { ...raw };
+    for (const [k, v] of Object.entries(locked)) {
+      const up = String(k).trim().toUpperCase();
+      if (!res[up] || String(v).toLowerCase().includes('cancel')) {
+        res[up] = { status: v, timestamp: Date.now() };
+      }
+    }
+    return res;
   } catch(e) {
     return {};
   }
@@ -222,12 +231,18 @@ function getSellerStatusOverrides() {
 
 function setSellerStatusOverride(orderId, status) {
   try {
-    const ov = getSellerStatusOverrides();
-    ov[String(orderId).trim().toUpperCase()] = {
+    const cleanKey = String(orderId || '').trim().toUpperCase();
+    const ov = JSON.parse(localStorage.getItem('jk_order_status_overrides') || '{}');
+    ov[cleanKey] = {
       status: status,
       timestamp: Date.now()
     };
     localStorage.setItem('jk_order_status_overrides', JSON.stringify(ov));
+
+    let locked = JSON.parse(localStorage.getItem('jk_locked_orders') || '{}');
+    locked[cleanKey] = status;
+    locked[orderId] = status;
+    localStorage.setItem('jk_locked_orders', JSON.stringify(locked));
   } catch(e) {}
 }
 
@@ -314,31 +329,31 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
 
           // Check if seller explicitly set a status override (e.g. Cancelled)
           const ov = overrides[remoteUpperId];
-          if (ov && ov.status) {
-            remote.status = ov.status;
-            if (remote.status !== ov.status) {
-              pushStatusUpdateToGoogleSheet(remote.orderId, ov.status);
-            }
-          }
-
           const idx = localOrders.findIndex(l => String(l.orderId).trim().toUpperCase() === remoteUpperId);
-          if (idx >= 0) {
+
+          // If local order exists and was cancelled, or override is Cancelled:
+          const isLocalCancelled = (idx >= 0 && String(localOrders[idx].status || '').toLowerCase().includes('cancel'));
+          const isOvCancelled = (ov && String(ov.status || '').toLowerCase().includes('cancel'));
+
+          if (isLocalCancelled || isOvCancelled) {
+            remote.status = 'Cancelled';
+            if (idx >= 0) {
+              localOrders[idx].status = 'Cancelled';
+            }
+            setSellerStatusOverride(remote.orderId, 'Cancelled');
+            pushStatusUpdateToGoogleSheet(remote.orderId, 'Cancelled');
+            updated = true;
+          } else if (ov && ov.status) {
+            remote.status = ov.status;
+            if (idx >= 0) {
+              localOrders[idx].status = ov.status;
+            }
+            updated = true;
+          } else if (idx >= 0) {
             if (isRemoteCod || isCodOrder(localOrders[idx])) {
               localOrders[idx].paymentMethod = 'cod';
             }
-
-            // CRITICAL: NEVER overwrite "Cancelled" with an older "Confirmed" from Google Sheets!
-            const localStatus = localOrders[idx].status || '';
-            const isLocalCancelled = localStatus.toLowerCase().includes('cancel');
-            const isRemoteCancelled = String(remote.status || '').toLowerCase().includes('cancel');
-
-            if (isLocalCancelled && !isRemoteCancelled) {
-              remote.status = localStatus;
-              pushStatusUpdateToGoogleSheet(localOrders[idx].orderId, localStatus);
-            } else if (ov && ov.status) {
-              localOrders[idx].status = ov.status;
-              updated = true;
-            } else if (remote.status && remote.status !== localOrders[idx].status) {
+            if (remote.status && remote.status !== localOrders[idx].status) {
               localOrders[idx].status = remote.status;
               updated = true;
             }
@@ -564,8 +579,13 @@ function renderSellerOrdersTable() {
             <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px;" onclick="openSellerShippingLabelModal('${safeOrderId}')" title="Print JK Study Hub Thermal Label">
               <i class="fa-solid fa-print"></i> Label
             </button>
+            ${!statusLower.includes('cancel') ? `
+              <button type="button" class="btn-hub-secondary" style="padding: 5px 8px; font-size: 11.5px; color: #dc2626; border-color: #fecaca; background: #fef2f2;" onclick="if(confirm('Are you sure you want to cancel order ${safeOrderId}?')) updateOrderStatusFromSeller('${safeOrderId}', 'Cancelled');" title="Cancel this Order">
+                <i class="fa-solid fa-xmark"></i> Cancel
+              </button>
+            ` : ''}
             <select onchange="updateOrderStatusFromSeller('${safeOrderId}', this.value)" style="padding: 5px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11.5px; font-weight: 700; background: white; cursor: pointer;">
-              <option value="" disabled selected>Update</option>
+              <option value="" disabled selected>Update Status</option>
               <option value="Confirmed">Confirmed</option>
               <option value="Processing">Processing</option>
               <option value="Ready to Ship">Ready to Ship</option>

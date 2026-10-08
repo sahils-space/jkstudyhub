@@ -1386,36 +1386,6 @@ function updateOwnerUIProtection() {
       sessionStorage.removeItem('jk_admin_unlocked');
     } catch(e) {}
   }
-
-  // Sidebar items in account.html
-  const supplierHubEl = document.getElementById('menu-item-supplier-hub');
-  if (supplierHubEl) {
-    supplierHubEl.style.display = isOwner ? 'block' : 'none';
-  }
-
-  const manageMenuEl = document.getElementById('menu-item-manage-products');
-  if (manageMenuEl) {
-    manageMenuEl.style.display = isOwner ? 'block' : 'none';
-  }
-
-  // Forbidden / Authorized state inside tab-manage-products in account.html
-  const forbiddenBox = document.getElementById('ownerForbiddenState');
-  const authorizedBox = document.getElementById('ownerAuthorizedContent');
-  if (forbiddenBox && authorizedBox) {
-    if (isOwner) {
-      forbiddenBox.style.display = 'none';
-      authorizedBox.style.display = 'block';
-    } else {
-      forbiddenBox.style.display = 'block';
-      authorizedBox.style.display = 'none';
-    }
-  }
-
-  // Floating banner on store.html
-  const ownerActionBar = document.getElementById('ownerStoreActionBar');
-  if (ownerActionBar) {
-    ownerActionBar.style.display = isOwner ? 'flex' : 'none';
-  }
 }
 
 // Clean up any stale admin tokens on page startup
@@ -1426,6 +1396,48 @@ function updateOwnerUIProtection() {
       localStorage.removeItem('jk_admin_unlocked');
       sessionStorage.removeItem('jk_admin_unlocked');
     }
+  } catch(e) {}
+})();
+
+// --- DISCREET OWNER SHORTCUT TO SELLER PANEL (100% hidden from customers) ---
+// 1. Keyboard Shortcut: Ctrl+Shift+S or Cmd+Shift+S
+// 2. URL Query/Hash trigger: ?seller or #seller
+// 3. Hidden triple-click / tap on any footer or copyright text
+(function initSecretSellerAccess() {
+  try {
+    // URL trigger (e.g., store.html?seller or account.html#seller)
+    if (window.location.search.includes('seller') || window.location.hash.toLowerCase().includes('seller')) {
+      window.location.href = 'seller.html';
+      return;
+    }
+
+    // Keyboard shortcut (Ctrl+Shift+S or Cmd+Shift+S)
+    window.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'S' || e.key === 's')) {
+        e.preventDefault();
+        window.location.href = 'seller.html';
+      }
+    });
+
+    // Hidden triple-click / tap on footer copyright
+    let clickCount = 0;
+    let clickTimer = null;
+    document.addEventListener('click', function(e) {
+      const target = e.target;
+      if (!target) return;
+      const text = (target.innerText || target.textContent || '').toLowerCase();
+      const isFooterOrCopy = target.closest('footer') || text.includes('jk study hub') || text.includes('rights reserved') || text.includes('2026');
+      if (isFooterOrCopy) {
+        clickCount++;
+        clearTimeout(clickTimer);
+        if (clickCount >= 3) {
+          clickCount = 0;
+          window.location.href = 'seller.html';
+        } else {
+          clickTimer = setTimeout(function() { clickCount = 0; }, 1200);
+        }
+      }
+    });
   } catch(e) {}
 })();
 
@@ -1853,35 +1865,6 @@ function renderOrdersPage() {
             `}
           </div>
         </div>
-
-        <!-- Admin Controls Bar (Active if Admin Mode Unlocked) -->
-        ${isAdminUnlocked() ? `
-          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-top: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
-                <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status Control:
-              </span>
-              <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
-                <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                <option value="Shipped" ${(order.status === 'Shipped') ? 'selected' : ''}>Shipped</option>
-                <option value="Dispatched" ${(order.status === 'Dispatched') ? 'selected' : ''}>Dispatched from Hub</option>
-                <option value="On the Way" ${(order.status === 'On the Way') ? 'selected' : ''}>On the Way</option>
-                <option value="Out for Delivery" ${(order.status === 'Out for Delivery') ? 'selected' : ''}>Out for Delivery (Pattan)</option>
-                <option value="Delivered" ${(order.status === 'Delivered') ? 'selected' : ''}>Delivered (Requires OTP)</option>
-                <option value="Cancelled" ${(order.status === 'Cancelled') ? 'selected' : ''}>Cancelled</option>
-              </select>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Amazon/Flipkart-style shipping label">
-                <i class="fa-solid fa-print"></i> 🖨️ Label
-              </button>
-              <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${safeOrderId}')" style="background: #25d366; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <i class="fa-brands fa-whatsapp"></i> Send WhatsApp Notice
-              </button>
-            </div>
-          </div>
-        ` : ''}
 
         <!-- Order Action Footer -->
         <div style="border-top: 1px solid #f1f5f9; margin-top: 18px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -4815,15 +4798,14 @@ function renderAccountOrders() {
   // Decide which orders to work with
   let userOrders = [];
   if (isOwner) {
-    if (currentOwnerOrderView === 'personal') {
-      const uEmail = String(user.email || '').trim().toLowerCase();
-      const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
-      userOrders = allOrders.filter(o => {
-        const oEmail = String(o.userEmail || o.email || '').trim().toLowerCase();
-        const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
-        return (uEmail && oEmail && oEmail === uEmail) || (uPhone && oPhone && oPhone === uPhone) || oPhone === '6006730787';
-      });
-    } else {
+    const uEmail = String(user.email || '').trim().toLowerCase();
+    const uPhone = String(user.phoneNumber || user.phone || '').replace(/\D/g, '').slice(-10);
+    userOrders = allOrders.filter(o => {
+      const oEmail = String(o.userEmail || o.email || '').trim().toLowerCase();
+      const oPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
+      return (uEmail && oEmail && oEmail === uEmail) || (uPhone && oPhone && oPhone === uPhone) || oPhone === '6006730787';
+    });
+    if (userOrders.length === 0) {
       userOrders = allOrders;
     }
   } else if (user) {
@@ -4918,46 +4900,6 @@ function renderAccountOrders() {
     });
   }
 
-  // Build Owner Mode Top Banner & View Switcher (Flipkart Seller Hub style)
-  let ownerControlsHtml = '';
-  if (isOwner) {
-    ownerControlsHtml = `
-      <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 22px;">👑</span>
-          <div>
-            <div style="font-weight: 800; color: #1e3a8a; font-size: 14.5px;">Store Owner (Seller Hub)</div>
-            <div style="font-size: 12.5px; color: #475569;">Total ${allOrders.length} store orders • Live synchronized with Google Sheets</div>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <button type="button" onclick="openDailyCashSummaryModal();" style="background: #d97706; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(217,119,6,0.25);">
-            <i class="fa-solid fa-coins"></i> 💵 Cash Summary
-          </button>
-          <button type="button" onclick="openAdminCameraScanner();" style="background: #059669; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
-            <i class="fa-solid fa-camera"></i> 📷 Scan Parcel
-          </button>
-          <button type="button" onclick="syncOrdersWithGoogleSheet(); showToast('🔄 Refreshing orders from Google Sheets...'); setTimeout(renderAccountOrders, 500);" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-arrows-rotate"></i> Sync Orders
-          </button>
-          <button type="button" onclick="if(confirm('Are you sure you want to clean all past orders from your dashboard and start fresh?')) { clearAllStoreOrders(false); }" style="background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.25);">
-            <i class="fa-solid fa-trash-can"></i> 🗑️ Clear All Orders
-          </button>
-        </div>
-      </div>
-
-      <!-- Flipkart Role Toggle: Seller Hub vs Personal Purchases -->
-      <div class="fk-role-toggle">
-        <button type="button" class="fk-role-btn ${currentOwnerOrderView === 'store' ? 'active' : ''}" onclick="setOwnerOrderView('store')">
-          <i class="fa-solid fa-store"></i> Seller Hub (All Orders: ${allOrders.length})
-        </button>
-        <button type="button" class="fk-role-btn ${currentOwnerOrderView === 'personal' ? 'active' : ''}" onclick="setOwnerOrderView('personal')">
-          <i class="fa-solid fa-bag-shopping"></i> My Personal Purchases
-        </button>
-      </div>
-    `;
-  }
-
   // Flipkart Status Filter Tabs
   const filterTabsHtml = `
     <div class="fk-filter-tabs">
@@ -5007,7 +4949,7 @@ function renderAccountOrders() {
         </div>
       `;
     }
-    container.innerHTML = (ownerControlsHtml || '') + filterTabsHtml + emptyMsg;
+    container.innerHTML = filterTabsHtml + emptyMsg;
     return;
   }
 
@@ -5146,35 +5088,6 @@ function renderAccountOrders() {
           </div>
         </div>
 
-        <!-- Admin Controls Bar (Strictly Store Owner Mode in Seller Hub view) -->
-        ${(isOwner && currentOwnerOrderView === 'store') ? `
-          <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-top: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span style="font-size: 12px; font-weight: 800; color: #1e293b;">
-                <i class="fa-solid fa-user-shield" style="color: #2563eb;"></i> Admin Status:
-              </span>
-              <select onchange="handleAdminStatusSelectChange('${safeOrderId}', this)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 12.5px; font-weight: 600; background: white; color: #0f172a; cursor: pointer;">
-                <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>${isCod ? 'Confirmed (COD)' : 'Confirmed & Paid'}</option>
-                <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-                <option value="Dispatched" ${o.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-                <option value="On the Way" ${o.status === 'On the Way' ? 'selected' : ''}>On the Way</option>
-                <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered (Requires OTP)</option>
-                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-              </select>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" onclick="openShippingLabelModal('${safeOrderId}')" style="background: #0f172a; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Print Flipkart/Amazon-style shipping label">
-                <i class="fa-solid fa-print"></i> 🖨️ Label
-              </button>
-              <button type="button" onclick="sendCustomerWhatsAppStatusUpdate('${safeOrderId}')" style="background: #25d366; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <i class="fa-brands fa-whatsapp"></i> WhatsApp Notice
-              </button>
-            </div>
-          </div>
-        ` : ''}
-
         <!-- Zapvi Order Secondary Actions (Cancel, WhatsApp) -->
         <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -5199,7 +5112,7 @@ function renderAccountOrders() {
     `;
   });
   
-  container.innerHTML = (ownerControlsHtml || '') + filterTabsHtml + html;
+  container.innerHTML = filterTabsHtml + html;
 }
 
 function renderAccountWishlist() {
