@@ -18,35 +18,146 @@
   <style>
     body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding-bottom: 70px; }
     
-    /* Top Navbar */
-    .store-nav {
-      background: #ffffff; padding: 12px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center;
+    /* Zapvi Top Announcement Bar */
+    .zapvi-top-bar {
+      background: #f59e0b;
+      color: #0f172a;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      padding: 8px 16px;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-sizing: border-box;
+      width: 100%;
+      font-family: 'Outfit', sans-serif;
     }
-    .store-nav .logo { font-size: 18px; font-weight: 800; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; }
-    .store-nav-links { display: flex; align-items: center; gap: 15px; }
-    .nav-icon-btn { color: #334155; font-size: 20px; text-decoration: none; position: relative; }
-    .nav-badge-count { background: #ef4444; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; position: absolute; top: -5px; right: -8px; font-weight: 800; }
 
-    /* Account Layout */
+    /* Zapvi Store Navigation Bar */
+    .zapvi-store-nav {
+      background: #ffffff;
+      padding: 12px 28px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .zapvi-nav-left { display: flex; align-items: center; gap: 12px; }
+    .zapvi-logo {
+      font-size: 22px; font-weight: 900; color: #0f172a; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px; font-family: 'Outfit', sans-serif;
+    }
+    .zapvi-logo-bolt { color: #f59e0b; font-size: 20px; }
+    .zapvi-nav-center { display: flex; align-items: center; gap: 24px; }
+    .zapvi-nav-link {
+      color: #334155; font-size: 14.5px; font-weight: 700; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .zapvi-pill-new {
+      background: #0f172a; color: #ffffff; font-size: 9.5px; font-weight: 800;
+      padding: 2px 7px; border-radius: 6px;
+    }
+    .zapvi-nav-right { display: flex; align-items: center; gap: 16px; }
+    .zapvi-icon-btn {
+      background: none; border: none; color: #1e293b; font-size: 19px; cursor: pointer;
+      position: relative; text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .nav-badge-count {
+      background: #ef4444; color: white; font-size: 10px; padding: 2px 5px;
+      border-radius: 10px; position: absolute; top: -5px; right: -8px; font-weight: 800;
+    }
+
+    /* Zapvi Account Layout & Sidebar */
     .account-wrapper { max-width: 1100px; margin: 30px auto; padding: 0 20px; display: flex; gap: 30px; align-items: flex-start; }
-    
-    /* Sidebar */
     .account-sidebar { width: 300px; flex-shrink: 0; }
-    .user-profile-card { background: #fffbeb; border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #fef3c7; }
-    .user-profile-card h3 { margin: 0 0 5px; font-size: 16px; font-weight: 700; color: #1e293b; }
-    .user-profile-card p { margin: 0 0 15px; font-size: 13px; color: #64748b; }
-    .yellow-btn { background: #facc15; color: #1e293b; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer; width: 100%; transition: background 0.2s; text-align: center; display: inline-block; text-decoration: none; box-sizing: border-box; }
-    .yellow-btn:hover { background: #eab308; }
     
-    .account-menu { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); list-style: none; padding: 0; margin: 0; border: 1px solid #e2e8f0; }
-    .account-menu li { border-bottom: 1px solid #f1f5f9; }
-    .account-menu li:last-child { border-bottom: none; }
-    .account-menu a { display: flex; align-items: center; padding: 16px 20px; text-decoration: none; color: #334155; font-weight: 600; font-size: 15px; transition: background 0.2s; }
-    .account-menu a:hover, .account-menu a.active { background: #f8fafc; color: #2563eb; }
-    .account-menu a i.fa-solid, .account-menu a i.fa-regular { width: 24px; color: #64748b; font-size: 18px; margin-right: 12px; text-align: center; }
-    .account-menu a:hover i, .account-menu a.active i { color: #2563eb; }
+    /* Zapvi Avatar Profile Card (Media 1) */
+    .user-profile-card {
+      background: #ffffff; border-radius: 16px; padding: 18px 20px; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); border: 1px solid #e2e8f0;
+    }
+    .zapvi-avatar-circle {
+      width: 48px; height: 48px; border-radius: 50%; background: #f59e0b; color: #ffffff;
+      font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-family: 'Outfit', sans-serif;
+    }
+    .zapvi-profile-meta h3 { margin: 0 0 3px; font-size: 16px; font-weight: 800; color: #0f172a; }
+    .zapvi-profile-meta p { margin: 0; font-size: 13px; color: #64748b; font-weight: 500; }
+    .yellow-btn { background: #f59e0b; color: #0f172a; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; font-size: 13.5px; cursor: pointer; width: 100%; transition: background 0.2s; text-align: center; display: inline-block; text-decoration: none; box-sizing: border-box; }
+    .yellow-btn:hover { background: #d97706; color: white; }
+    
+    /* Zapvi Account Menu (Media 1) */
+    .account-menu { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); list-style: none; padding: 6px; margin: 0; border: 1px solid #e2e8f0; }
+    .account-menu li { margin-bottom: 2px; }
+    .account-menu a { display: flex; align-items: center; padding: 13px 16px; text-decoration: none; color: #334155; font-weight: 600; font-size: 14.5px; border-radius: 10px; transition: all 0.15s ease; }
+    .account-menu a:hover { background: #f8fafc; color: #0f172a; }
+    .account-menu a.active { background: #fef3c7; color: #b45309; font-weight: 800; }
+    .account-menu a i.fa-solid, .account-menu a i.fa-regular { width: 22px; color: #64748b; font-size: 17px; margin-right: 12px; text-align: center; }
+    .account-menu a.active i { color: #d97706; }
     .account-menu a .float-right { margin-left: auto; font-size: 12px; color: #cbd5e1; margin-right: 0; }
+
+    /* Zapvi Breadcrumbs & Order Details (Media 1) */
+    .zapvi-breadcrumbs {
+      font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .zapvi-breadcrumbs a { color: #64748b; text-decoration: none; }
+    .zapvi-breadcrumbs a:hover { color: #2563eb; }
+    .zapvi-order-heading {
+      font-size: 26px; font-weight: 900; color: #0f172a; margin: 0 0 6px; font-family: 'Outfit', sans-serif; letter-spacing: -0.5px;
+    }
+    .zapvi-order-submeta {
+      font-size: 13.5px; color: #64748b; font-weight: 500; margin-bottom: 12px;
+    }
+    .zapvi-status-badge {
+      display: inline-block; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px;
+    }
+    .zapvi-status-badge.delivered { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .zapvi-status-badge.in-progress { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .zapvi-status-badge.cancelled { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    /* Zapvi TRACKING Card (Media 1) */
+    .zapvi-tracking-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 24px;
+    }
+    .zapvi-tracking-title {
+      font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 20px 0;
+    }
+    .zapvi-timeline {
+      position: relative; padding-left: 32px; display: flex; flex-direction: column; gap: 24px;
+    }
+    .zapvi-timeline::before {
+      content: ''; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2.5px; background: #0f172a; z-index: 1;
+    }
+    .zapvi-timeline-node {
+      position: relative; display: flex; align-items: baseline; gap: 12px; z-index: 2;
+    }
+    .zapvi-timeline-dot {
+      position: absolute; left: -32px; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; font-size: 9px;
+    }
+    .zapvi-timeline-label {
+      font-size: 14.5px; font-weight: 800; color: #0f172a;
+    }
+    .zapvi-timeline-date {
+      font-size: 13px; color: #64748b; font-weight: 500;
+    }
+    .zapvi-tracking-pill-bar {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; margin-top: 22px; flex-wrap: wrap; gap: 10px;
+    }
+    .zapvi-track-btn {
+      background: #0f172a; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .zapvi-invoice-btn {
+      background: white; color: #0f172a; border: 1.5px solid #cbd5e1; padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
 
     /* Content Area */
     .account-content { flex-grow: 1; background: white; border-radius: 16px; min-height: 400px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
@@ -442,18 +553,45 @@
 </head>
 <body id="accountBody">
 
-  <nav class="store-nav">
-    <a href="store.html" class="logo" style="display:flex; align-items:center; gap:8px;">
-      <img src="images/logo-app.png" alt="JK Study Hub Logo" style="width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-      <span>JK STUDY HUB</span>
-    </a>
-    
-    <div class="store-nav-links">
-      <a href="store.html" class="nav-icon-btn"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="#" class="nav-icon-btn"><i class="fa-regular fa-bell"></i></a>
-      <a href="cart.html" class="nav-icon-btn">
+  <!-- Zapvi Top Yellow Announcement Bar -->
+  <div class="zapvi-top-bar">
+    <i class="fa-solid fa-sparkles" style="font-size: 11px;"></i>
+    <span>Your Books. Your Choice. Your JK Study Hub.</span>
+    <i class="fa-solid fa-sparkles" style="font-size: 11px;"></i>
+  </div>
+
+  <!-- Zapvi Store Navigation Bar -->
+  <nav class="zapvi-store-nav">
+    <div class="zapvi-nav-left">
+      <a href="store.html" class="zapvi-logo">
+        <span>JK STUDY HUB</span>
+        <span class="zapvi-logo-bolt"><i class="fa-solid fa-bolt"></i></span>
+      </a>
+    </div>
+
+    <div class="zapvi-nav-center">
+      <a href="store.html" class="zapvi-nav-link">Books &amp; Syllabus</a>
+      <a href="store.html#offers" class="zapvi-nav-link">Offer <span class="zapvi-pill-new dark">NEW</span></a>
+    </div>
+
+    <div class="zapvi-nav-right">
+      <a href="store.html" class="zapvi-icon-btn" title="Search books">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </a>
+      <a href="account.html#wishlist" class="zapvi-icon-btn" title="Wishlist">
+        <i class="fa-regular fa-heart"></i>
+        <span id="wishlistCount" class="nav-badge-count" style="display:none;">0</span>
+      </a>
+      <a href="cart.html" class="zapvi-icon-btn" title="Cart">
         <i class="fa-solid fa-bag-shopping"></i>
         <span id="cartCount" class="nav-badge-count" style="display:none;">0</span>
+      </a>
+      <a href="account.html#orders" class="zapvi-icon-btn" title="My Account" style="color: #2563eb;">
+        <i class="fa-regular fa-user"></i>
+        <span id="ordersCount" class="nav-badge-count" style="display:none; background:#10b981 !important;">0</span>
+      </a>
+      <a href="store.html" class="back-btn-pill" style="margin-left:4px; text-decoration:none; color:#475569; font-weight:600; font-size:13px; padding:6px 12px; background:#f1f5f9; border-radius:8px;">
+        <i class="fa-solid fa-store"></i> Store
       </a>
     </div>
   </nav>

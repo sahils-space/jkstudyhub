@@ -1919,89 +1919,136 @@ function printOrderReceipt(orderId) {
   const itemSubtotal = Math.max(0, cleanAmount - 5);
 
   printableArea.innerHTML = `
-    <div style="font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; line-height: 1.5;">
-      <!-- Header -->
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 18px;">
+    <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000; line-height: 1.35; padding: 14px; background: white; box-sizing: border-box;">
+      <!-- Top Title & Logo Row -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 12px;">
+        <h1 style="font-size: 26px; font-weight: 900; margin: 0; letter-spacing: -0.5px; color: #000;">TAX INVOICE</h1>
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 22px; font-weight: 900; color: #000;">
+          <span>JK STUDY HUB</span>
+          <span style="color: #f59e0b;"><i class="fa-solid fa-bolt"></i></span>
+        </div>
+      </div>
+
+      <!-- 3-Column Meta Block -->
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 12px; font-size: 11px; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 12px;">
+        <!-- Left: Supplier Info -->
+        <div style="border-right: 1px solid #cbd5e1; padding-right: 10px;">
+          <p style="margin: 0 0 3px;"><strong>Supplier Name:</strong> JK STUDY HUB ENTERPRISES</p>
+          <p style="margin: 0 0 3px;"><strong>Address:</strong> Main Hub, Khamday Mohalla, Pattan, Baramulla, Jammu & Kashmir – 193121</p>
+          <p style="margin: 0 0 3px;"><strong>State Code:</strong> JAMMU & KASHMIR, 01</p>
+          <p style="margin: 0 0 3px;"><strong>Phone No.:</strong> 9622605714</p>
+          <p style="margin: 0 0 3px;"><strong>GSTIN No.:</strong> 01AABCS9622K1Z9</p>
+          <p style="margin: 0 0 3px;"><strong>Website:</strong> jkstudyhub.online</p>
+          <p style="margin: 0;"><strong>Email:</strong> info.jkstudyhub@gmail.com</p>
+        </div>
+
+        <!-- Middle: Invoice Details -->
+        <div style="border-right: 1px solid #cbd5e1; padding-right: 10px;">
+          <p style="margin: 0 0 4px;"><strong>Invoice No. :</strong> JK/26-27/${order.orderId ? order.orderId.slice(-6) : '397276'}</p>
+          <p style="margin: 0 0 4px;"><strong>Invoice Date :</strong> ${order.date || 'Today'}</p>
+          <p style="margin: 0 0 4px;"><strong>Order No. :</strong> ${order.orderId}</p>
+          <p style="margin: 0 0 4px;"><strong>Order Date :</strong> ${order.date || 'Today'}</p>
+          <p style="margin: 0;"><strong>Payment Method :</strong> ${isCod ? 'Cash on Delivery' : 'Prepaid Online'}</p>
+        </div>
+
+        <!-- Right: Customer Details -->
         <div>
-          <h2 style="font-size: 20px; font-weight: 800; margin: 0; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> JK STUDY HUB
-          </h2>
-          <p style="margin: 3px 0 0; font-size: 12px; color: #475569;">Baramulla, Jammu &amp; Kashmir - 193121</p>
-          <p style="margin: 2px 0 0; font-size: 12px; color: #475569;">Email: info.jkstudyhub@gmail.com | Phone: +91 9622605714</p>
-        </div>
-        <div style="text-align: right;">
-          ${isCod ? `
-            <span style="font-size: 11px; font-weight: 800; background: #fef3c7; color: #b45309; padding: 4px 10px; border-radius: 20px; display: inline-block; border: 1px solid #fde68a;">
-              CASH ON DELIVERY INVOICE
-            </span>
-          ` : `
-            <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; display: inline-block;">
-              OFFICIAL PAID RECEIPT
-            </span>
-          `}
-          <p style="margin: 5px 0 0; font-family: monospace; font-size: 14px; font-weight: 800; color: #0f172a;">${order.orderId}</p>
-          <p style="margin: 2px 0 0; font-size: 11.5px; color: #64748b;">${order.date}</p>
+          <p style="margin: 0 0 3px;"><strong>Customer Name:</strong> ${order.name || 'Student'}</p>
+          <p style="margin: 0 0 3px;"><strong>Billing/Shipping Address:</strong> ${order.address || 'Baramulla, Jammu and Kashmir'}</p>
+          <p style="margin: 0 0 3px;"><strong>Customer Pincode:</strong> 193121</p>
+          <p style="margin: 0 0 3px;"><strong>Customer Phone No.:</strong> +91 ${order.phone || 'N/A'}</p>
+          <p style="margin: 0;"><strong>Place of Supply:</strong> Jammu and Kashmir, 01</p>
         </div>
       </div>
 
-      <!-- Customer & Delivery Meta -->
-      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; background: #f8fafc; padding: 14px 16px; border-radius: 8px; border: 1px solid #e2e8f0; gap: 15px; flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 200px;">
-          <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Student / Recipient:</div>
-          <div style="font-weight: 700; font-size: 14px; margin-top: 3px; color: #0f172a;">${order.name}</div>
-          <div style="color: #475569; margin-top: 2px;">Phone: +91 ${order.phone}</div>
-          <div style="color: #475569; margin-top: 2px;">Location: ${order.address}</div>
-        </div>
-        <div style="text-align: right; min-width: 160px;">
-          <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Payment Details:</div>
-          ${isCod ? `
-            <div style="font-weight: 800; color: #b45309; margin-top: 3px;">💵 Cash on Delivery (COD)</div>
-            <div style="font-size: 12px; font-weight: 700; color: #dc2626; margin-top: 2px;">COLLECT AT DOORSTEP: ₹${order.amount}</div>
-          ` : `
-            <div style="font-weight: 700; color: #16a34a; margin-top: 3px;">PAID ONLINE (PREPAID)</div>
-            <div style="font-family: monospace; font-size: 11px; color: #475569; margin-top: 2px;">TXN ID: ${order.txnId}</div>
-          `}
-          <div style="font-size: 11.5px; color: #2563eb; font-weight: 600; margin-top: 2px;">Delivery: Pattan (193121)</div>
-        </div>
-      </div>
-
-      <!-- Items Table -->
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+      <!-- Line Items Table -->
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 12px;">
         <thead>
-          <tr style="background: #0f172a; color: white;">
-            <th style="padding: 9px 12px; text-align: left; border-radius: 6px 0 0 6px;">Item Description</th>
-            <th style="padding: 9px 12px; text-align: center;">Qty</th>
-            <th style="padding: 9px 12px; text-align: right; border-radius: 0 6px 6px 0;">Amount (INR)</th>
+          <tr style="border-bottom: 1.5px solid #000; border-top: 1.5px solid #000;">
+            <th style="padding: 6px 4px; text-align: left;">Product Description</th>
+            <th style="padding: 6px 4px; text-align: right;">Gross Amount</th>
+            <th style="padding: 6px 4px; text-align: center;">Qty</th>
+            <th style="padding: 6px 4px; text-align: right;">Discount</th>
+            <th style="padding: 6px 4px; text-align: right;">Net Amount</th>
+            <th style="padding: 6px 4px; text-align: center;">Tax Rate</th>
+            <th style="padding: 6px 4px; text-align: center;">Tax Type</th>
+            <th style="padding: 6px 4px; text-align: right;">Tax Amount</th>
+            <th style="padding: 6px 4px; text-align: right;">Total</th>
           </tr>
         </thead>
         <tbody>
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 12px; font-weight: 600; color: #1e293b;">${order.product}</td>
-            <td style="padding: 12px; text-align: center;">1</td>
-            <td style="padding: 12px; text-align: right; font-weight: 700;">₹${itemSubtotal}</td>
+            <td style="padding: 8px 4px; font-weight: 600;">
+              ${order.product}
+              <div style="font-size: 9.5px; color: #64748b; font-weight: normal;">SKU: JK-STU-${order.orderId ? order.orderId.slice(-4) : '2026'} | HSN: 49011010</div>
+            </td>
+            <td style="padding: 8px 4px; text-align: right;">${itemSubtotal.toFixed(2)}</td>
+            <td style="padding: 8px 4px; text-align: center;">1</td>
+            <td style="padding: 8px 4px; text-align: right;">0.00</td>
+            <td style="padding: 8px 4px; text-align: right;">${itemSubtotal.toFixed(2)}</td>
+            <td style="padding: 8px 4px; text-align: center;">0%</td>
+            <td style="padding: 8px 4px; text-align: center;">IGST</td>
+            <td style="padding: 8px 4px; text-align: right;">0.00</td>
+            <td style="padding: 8px 4px; text-align: right; font-weight: 700;">${itemSubtotal.toFixed(2)}</td>
           </tr>
-          <tr style="border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 12px;">
-            <td style="padding: 8px 12px;">Local Pattan Handling &amp; Verification Fee</td>
-            <td style="padding: 8px 12px; text-align: center;">1</td>
-            <td style="padding: 8px 12px; text-align: right; font-weight: 600;">₹5</td>
+          <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #475569;">
+            <td style="padding: 6px 4px;">
+              Kashmir Express Doorstep Handling &amp; Verification
+              <div style="font-size: 9.5px; color: #64748b;">HSN: 996812</div>
+            </td>
+            <td style="padding: 6px 4px; text-align: right;">${(cleanAmount > itemSubtotal ? (cleanAmount - itemSubtotal) : 0).toFixed(2)}</td>
+            <td style="padding: 6px 4px; text-align: center;">1</td>
+            <td style="padding: 6px 4px; text-align: right;">0.00</td>
+            <td style="padding: 6px 4px; text-align: right;">${(cleanAmount > itemSubtotal ? (cleanAmount - itemSubtotal) : 0).toFixed(2)}</td>
+            <td style="padding: 6px 4px; text-align: center;">0%</td>
+            <td style="padding: 6px 4px; text-align: center;">IGST</td>
+            <td style="padding: 6px 4px; text-align: right;">0.00</td>
+            <td style="padding: 6px 4px; text-align: right; font-weight: 700;">${(cleanAmount > itemSubtotal ? (cleanAmount - itemSubtotal) : 0).toFixed(2)}</td>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="padding: 14px 12px 6px; font-weight: 800; font-size: 15px; text-align: right;">${isCod ? 'Cash to Collect:' : 'Grand Total Paid:'}</td>
-            <td style="padding: 14px 12px 6px; font-weight: 800; font-size: 18px; text-align: right; color: ${isCod ? '#b45309' : '#2563eb'};">₹${order.amount}</td>
-          </tr>
-        </tfoot>
       </table>
 
-      <!-- Footer Seal & Disclaimer -->
-      <div style="border-top: 1px dashed #cbd5e1; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div style="font-size: 11px; color: #64748b; max-width: 320px; line-height: 1.4;">
-          This is an electronically generated receipt for your purchase on JK Study Hub. Authorized and verified for Pattan delivery.
+      <!-- Totals Block -->
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+        <div style="width: 240px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+            <span>Sub Total :</span>
+            <span style="font-weight: 600;">Rs ${order.amount}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+            <span>IGST :</span>
+            <span style="font-weight: 600;">Rs 0.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-top: 1.5px solid #000; font-size: 15px; font-weight: 900;">
+            <span>Grand Total :</span>
+            <span>Rs ${order.amount}</span>
+          </div>
         </div>
-        <div style="text-align: center; border: 2px dashed ${isCod ? '#f59e0b' : '#10b981'}; padding: 6px 14px; border-radius: 8px; color: ${isCod ? '#b45309' : '#10b981'}; font-weight: 800; font-size: 11px; transform: rotate(-2deg);">
-          ${isCod ? '💵 CASH ON DELIVERY ORDER<br><span style="font-size: 9px; font-weight: 600; color: #475569;">COLLECT BEFORE HANDOVER</span>' : '✓ VERIFIED PAID ORDER<br><span style="font-size: 9px; font-weight: 600; color: #475569;">JK STUDY HUB PATTAN</span>'}
+      </div>
+
+      <!-- Legal Disclaimer & Terms -->
+      <div style="font-size: 9.5px; color: #334155; line-height: 1.45; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 14px;">
+        <p style="margin: 0 0 2px;">a) Please retain this invoice and the Manufacturer Box / Parcel for your records.</p>
+        <p style="margin: 0 0 2px;">b) The products included in this shipment are intended for student and academic use and should not be used for unauthorized resale.</p>
+        <p style="margin: 0 0 2px;">c) Our student policy allows 24-48 hr replacements for any print defect. Contact info.jkstudyhub@gmail.com.</p>
+        <p style="margin: 0;">d) Your feedback and queries are important to us. Reach out to our Pattan desk at +91 9622605714.</p>
+      </div>
+
+      <!-- Invoicing Company Signature Block -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+        <div style="font-size: 11px;">
+          <span style="font-weight: 700;">This is a computer generated Invoice</span>
         </div>
+        <div style="text-align: right; font-size: 11px;">
+          <div style="font-weight: 700; margin-bottom: 25px;">Invoicing Company<br>JK STUDY HUB ENTERPRISES</div>
+          <div style="border-top: 1px solid #000; padding-top: 4px; font-weight: 800;">Authorized Signature</div>
+        </div>
+      </div>
+
+      <!-- Got Questions Footer Bar -->
+      <div style="border: 1px solid #000; display: flex; font-size: 11.5px; font-weight: 700;">
+        <div style="flex: 1; padding: 6px 12px; border-right: 1px solid #000; text-align: center;">Got questions?</div>
+        <div style="flex: 1; padding: 6px 12px; text-align: center;">info.jkstudyhub@gmail.com</div>
       </div>
     </div>
   `;
@@ -4630,12 +4677,16 @@ function renderAccountDashboard() {
   }
 
   if (user) {
-    const firstName = (user.displayName || 'Student').split(' ')[0];
-    const phone = String(user.phoneNumber || user.phone || '').replace('+91', '');
+    const initial = (firstName || 'S').charAt(0).toUpperCase();
     profileCard.innerHTML = `
-      <h3 style="font-size: 18px; margin-bottom: 5px;">Hi, ${firstName}!</h3>
-      <p style="margin-bottom: 15px; color: #475569;"><i class="fa-solid fa-mobile-screen"></i> +91 ${phone || (user.email ? user.email.split('@')[0] : '')}</p>
-      <button class="yellow-btn" style="background: #f87171; color: white;" onclick="handleStoreSignOut()">Sign Out</button>
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+        <div class="zapvi-avatar-circle">${initial}</div>
+        <div class="zapvi-profile-meta">
+          <h3>${user.displayName || 'JK Student'}</h3>
+          <p><i class="fa-solid fa-mobile-screen"></i> +91 ${phone || (user.email ? user.email.split('@')[0] : '9622605714')}</p>
+        </div>
+      </div>
+      <button class="yellow-btn" style="background: #f87171; color: white; padding: 8px 18px; border-radius: 20px;" onclick="handleStoreSignOut()">Sign Out</button>
     `;
     
     // Auto-render current active tab if logged in
@@ -4951,37 +5002,85 @@ function renderAccountOrders() {
     const isLocked = (o.status === 'Delivered' || o.status === 'Cancelled');
     const statusLower = String(o.status || '').toLowerCase();
 
+    const zapviBadgeClass = statusLower.includes('cancel') ? 'cancelled' : (statusLower.includes('deliver') ? 'delivered' : 'in-progress');
+    const zapviBadgeLabel = statusLower.includes('cancel') ? 'Cancelled' : (statusLower.includes('deliver') ? 'Delivered' : 'In Progress');
+    const orderDateFormatted = o.date || 'Recent';
+
     html += `
-      <div class="fk-order-card">
+      <div class="fk-order-card" style="border-radius: 18px; padding: 22px 24px; margin-bottom: 24px; border: 1.5px solid #e2e8f0;">
         
-        <!-- Flipkart Order Top Bar -->
-        <div class="fk-order-top">
-          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span class="fk-order-id-badge">${safeOrderId}</span>
-            <span style="font-size: 12.5px; color: #64748b;">
-              <i class="fa-regular fa-calendar"></i> ${o.date || 'Recent'}
-            </span>
+        <!-- Zapvi Breadcrumbs & Header (Media 1) -->
+        <div class="zapvi-breadcrumbs">
+          <a href="store.html">Home</a> <span>/</span> <span>My Orders</span> <span>/</span> <span style="color: #0f172a;">Order #${safeOrderId}</span>
+        </div>
+        <div class="zapvi-order-heading">Order #${safeOrderId}</div>
+        <div class="zapvi-order-submeta">Placed ${orderDateFormatted} · ${isCod ? 'Cash on Delivery' : 'Paid Online'}</div>
+        <span class="zapvi-status-badge ${zapviBadgeClass}">${zapviBadgeLabel}</span>
+
+        <!-- Zapvi TRACKING Card (Media 1) -->
+        <div class="zapvi-tracking-card" style="margin-top: 10px; margin-bottom: 20px; background: #fafafa; border: 1.5px solid #e2e8f0;">
+          <div class="zapvi-tracking-title">TRACKING</div>
+          <div class="zapvi-timeline">
+            <div class="zapvi-timeline-node">
+              <div class="zapvi-timeline-dot"><i class="fa-solid fa-check"></i></div>
+              <div class="zapvi-timeline-label">Order confirmed</div>
+              <div class="zapvi-timeline-date">${orderDateFormatted}</div>
+            </div>
+            <div class="zapvi-timeline-node">
+              <div class="zapvi-timeline-dot" style="${statusInfo.step >= 2 ? '' : 'background: #cbd5e1;'}">
+                ${statusInfo.step >= 2 ? '<i class="fa-solid fa-check"></i>' : ''}
+              </div>
+              <div class="zapvi-timeline-label" style="${statusInfo.step >= 2 ? '' : 'color: #94a3b8; font-weight: 600;'}">Shipped</div>
+              <div class="zapvi-timeline-date">${statusInfo.step >= 2 ? 'Hub Dispatched' : 'Pending'}</div>
+            </div>
+            <div class="zapvi-timeline-node">
+              <div class="zapvi-timeline-dot" style="${statusInfo.step >= 3 ? '' : 'background: #cbd5e1;'}">
+                ${statusInfo.step >= 3 ? '<i class="fa-solid fa-check"></i>' : ''}
+              </div>
+              <div class="zapvi-timeline-label" style="${statusInfo.step >= 3 ? '' : 'color: #94a3b8; font-weight: 600;'}">Out for delivery</div>
+              <div class="zapvi-timeline-date">${statusInfo.step >= 3 ? 'Arriving today' : 'Pending'}</div>
+            </div>
+            <div class="zapvi-timeline-node">
+              <div class="zapvi-timeline-dot" style="${statusInfo.step >= 4 ? '' : 'background: #cbd5e1;'}">
+                ${statusInfo.step >= 4 ? '<i class="fa-solid fa-check"></i>' : ''}
+              </div>
+              <div class="zapvi-timeline-label" style="${statusInfo.step >= 4 ? '' : 'color: #94a3b8; font-weight: 600;'}">Delivered</div>
+              <div class="zapvi-timeline-date">${statusInfo.step >= 4 ? 'Doorstep Handover' : 'Expected soon'}</div>
+            </div>
           </div>
           
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="fk-status-pill" style="background: ${statusInfo.badgeBg}; color: ${statusInfo.badgeColor}; border: 1px solid ${statusInfo.badgeBorder};">
-              <i class="fa-solid ${statusInfo.badgeIcon}"></i> ${statusInfo.label}
+          <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <a href="javascript:void(0)" onclick="alert('Tracking Status:\\n• Order: #${safeOrderId}\\n• Hub: Pattan 193121\\n• Status: ${statusInfo.label}\\n• Notes: ${statusInfo.summaryText}')" style="font-size: 13px; font-weight: 700; color: #0f172a; text-decoration: underline; cursor: pointer;">
+              See all updates ⌵
+            </a>
+            <span style="font-size: 12px; color: #64748b; font-weight: 600;">
+              Carrier: <strong>JK Express Delivery (Pattan Hub)</strong>
             </span>
+          </div>
+
+          <!-- Zapvi Pill Bar (Media 1) -->
+          <div class="zapvi-tracking-pill-bar">
+            <div style="font-size: 13.5px; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-truck-fast" style="color: #f59e0b;"></i>
+              <span>Standard Delivery</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <button type="button" class="zapvi-track-btn" onclick="alert('Live Parcel Status:\\nOrder #${safeOrderId}\\nCurrent State: ${statusInfo.label}\\nEstimated: 24-48 Hours')">
+                <i class="fa-solid fa-location-crosshairs"></i> Track parcel
+              </button>
+              <button type="button" class="zapvi-invoice-btn" onclick="printOrderReceipt('${safeOrderId}')">
+                <i class="fa-solid fa-file-invoice"></i> Tax Invoice
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Flipkart Item Row -->
-        <div class="fk-item-row">
+        <!-- Product Summary Row -->
+        <div class="fk-item-row" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
           ${orderImgSrc ? `<img src="${orderImgSrc}" alt="${o.product}" class="fk-thumb" onerror="this.src='images/logo-app.png'" loading="lazy">` : ''}
           <div class="fk-item-details">
             <h4 class="fk-item-title">${o.product}</h4>
             
-            <!-- Flipkart Delivery Highlight -->
-            <div style="margin-bottom: 8px; font-size: 13.5px; font-weight: 700; color: ${statusLower.includes('cancel') ? '#dc2626' : (statusLower.includes('deliver') ? '#16a34a' : '#2563eb')}; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${statusLower.includes('cancel') ? '#dc2626' : (statusLower.includes('deliver') ? '#16a34a' : '#2563eb')};"></span>
-              ${statusLower.includes('cancel') ? 'Order Cancelled' : (statusLower.includes('deliver') ? 'Delivered at Doorstep' : 'Arriving Soon (Expected in 24-48 hrs)')}
-            </div>
-
             <div class="fk-item-meta">
               <p style="margin: 0;"><strong>Recipient:</strong> ${(o.name && !o.name.match(/^[6789]\d{9}$/)) ? o.name : 'Customer'} (${getValidCustomerPhone(o) || o.phone || 'N/A'}${o.userEmail || o.email ? ' • ' + (o.userEmail || o.email) : ''})</p>
               <p style="margin: 4px 0 0;"><strong>Address:</strong> ${o.address || 'Delivery Address, Pattan 193121'}</p>
@@ -5009,55 +5108,6 @@ function renderAccountOrders() {
             <div style="font-size: 12px; color: #64748b; font-weight: 600;">${isCod ? 'To Collect (COD)' : 'Total Paid'}</div>
             <div class="fk-price-val">₹${o.amount || 0}</div>
             <span style="font-size: 11px; font-weight: 700; color: ${isCod ? '#b45309' : '#16a34a'};">${isCod ? 'Pay on Doorstep (COD)' : 'Prepaid Online'}</span>
-          </div>
-        </div>
-
-        <!-- FLIPKART LIVE DELIVERY STEPPER -->
-        <div class="delivery-tracker-box" style="margin-top: 16px;">
-          <div class="stepper-header-meta">
-            <span style="font-weight: 700; color: #0f172a; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-route" style="color: #2563eb;"></i> Live Delivery Progress
-            </span>
-            <span style="font-size: 12px; color: #64748b; font-weight: 600;">
-              Hub: <strong style="color: #1e293b;">Pattan (193121)</strong>
-            </span>
-          </div>
-
-          <div class="stepper-track-wrap">
-            <div class="stepper-line-fill" style="width: ${statusInfo.percent}%; ${statusLower === 'cancelled' ? 'background: #ef4444;' : ''}"></div>
-            
-            <!-- Step 1: Confirmed -->
-            <div class="stepper-node ${s1Class}">
-              <div class="node-icon"><i class="fa-solid fa-check"></i></div>
-              <div class="node-title">${isCod ? 'Order Placed' : 'Confirmed'}</div>
-              <div class="node-desc">${s1Desc}</div>
-            </div>
-
-            <!-- Step 2: Shipped -->
-            <div class="stepper-node ${s2Class}">
-              <div class="node-icon"><i class="fa-solid fa-box"></i></div>
-              <div class="node-title">Shipped</div>
-              <div class="node-desc">${s2Desc}</div>
-            </div>
-
-            <!-- Step 3: On the Way -->
-            <div class="stepper-node ${s3Class}">
-              <div class="node-icon"><i class="fa-solid fa-truck-fast"></i></div>
-              <div class="node-title">On the Way</div>
-              <div class="node-desc">${s3Desc}</div>
-            </div>
-
-            <!-- Step 4: Delivered -->
-            <div class="stepper-node ${s4Class}">
-              <div class="node-icon"><i class="fa-solid fa-house-chimney-check"></i></div>
-              <div class="node-title">${statusLower === 'cancelled' ? 'Cancelled' : 'Delivered'}</div>
-              <div class="node-desc">${s4Desc}</div>
-            </div>
-          </div>
-          
-          <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-circle-info" style="color: ${isCod ? '#b45309' : '#2563eb'};"></i>
-            <span>${statusInfo.summaryText}</span>
           </div>
         </div>
 
@@ -5090,13 +5140,9 @@ function renderAccountOrders() {
           </div>
         ` : ''}
 
-        <!-- Flipkart Order Actions (Invoice, Cancel, WhatsApp) -->
+        <!-- Zapvi Order Secondary Actions (Cancel, WhatsApp) -->
         <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <button type="button" onclick="printOrderReceipt('${safeOrderId}')" style="background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-              <i class="fa-solid fa-file-invoice" style="color: #2563eb;"></i> Download Invoice / Receipt
-            </button>
-
             ${(o.status === 'Delivered') ? `
               <a href="https://wa.me/919622605714?text=${encodeURIComponent('Hi JK Study Hub! I received my parcel for Order ' + safeOrderId + ' (' + o.product + '). My rating for print quality and delivery is: 5 Stars ⭐⭐⭐⭐⭐')}" target="_blank" rel="noopener" style="background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
                 ⭐ Rate Quality (WhatsApp)
@@ -6916,6 +6962,90 @@ async function deleteProductByOwner(prodId) {
     }).catch(e => console.warn("Delete sheet sync:", e));
   } catch (e) {
     console.warn("Delete dispatch error:", e);
+  }
+}
+
+// --- ZAPVI-STYLE UI CONTROLLERS ---
+let currentZapviSlideIndex = 0;
+let zapviCarouselTimer = null;
+
+function setZapviSlide(index) {
+  const slides = document.querySelectorAll('.zapvi-hero-slide');
+  const dots = document.querySelectorAll('.zapvi-carousel-dot');
+  if (slides.length === 0) return;
+
+  currentZapviSlideIndex = (index + slides.length) % slides.length;
+
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('active', i === currentZapviSlideIndex);
+  });
+
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentZapviSlideIndex);
+  });
+}
+
+function nextZapviSlide() {
+  setZapviSlide(currentZapviSlideIndex + 1);
+  resetZapviSlideTimer();
+}
+
+function prevZapviSlide() {
+  setZapviSlide(currentZapviSlideIndex - 1);
+  resetZapviSlideTimer();
+}
+
+function resetZapviSlideTimer() {
+  if (zapviCarouselTimer) clearInterval(zapviCarouselTimer);
+  zapviCarouselTimer = setInterval(() => {
+    setZapviSlide(currentZapviSlideIndex + 1);
+  }, 5500);
+}
+
+// Start Zapvi carousel auto-play on load
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    resetZapviSlideTimer();
+  });
+}
+
+function toggleZapviDropdown(e) {
+  if (e) e.stopPropagation();
+  const dropdown = document.getElementById('zapviMoreDropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+}
+
+function closeZapviDropdown() {
+  const dropdown = document.getElementById('zapviMoreDropdown');
+  if (dropdown) dropdown.classList.remove('open');
+}
+
+// Dismiss Zapvi dropdown on click outside
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('zapviMoreDropdown');
+    if (dropdown && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+}
+
+function openZapviOffersModal(e) {
+  if (e) e.preventDefault();
+  const offersEl = document.getElementById('offers');
+  if (offersEl) {
+    offersEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    offersEl.style.transition = 'transform 0.3s ease';
+    offersEl.style.transform = 'scale(1.02)';
+    setTimeout(() => { offersEl.style.transform = 'scale(1)'; }, 400);
+  }
+}
+
+function focusStoreSearch() {
+  const searchInput = document.getElementById('storeSearchInput');
+  if (searchInput) {
+    searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    searchInput.focus();
   }
 }
 

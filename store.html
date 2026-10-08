@@ -215,95 +215,543 @@
   </style>
 
 
+  <!-- Zapvi-Grade Storefront, Header, Carousel & Offers Suite -->
   <style>
-    /* Fixed, Never-Disappearing Store Navigation Bar */
-    .store-nav {
-      background: #ffffff !important;
-      padding: 12px 20px !important;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
-      position: sticky !important;
-      top: 0 !important;
-      z-index: 9999 !important;
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      box-sizing: border-box !important;
-      width: 100% !important;
-      flex-wrap: wrap !important;
-      gap: 10px !important;
+    /* 1. Yellow Announcement Bar */
+    .zapvi-top-bar {
+      background: #f59e0b;
+      color: #0f172a;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      padding: 8px 16px;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-sizing: border-box;
+      width: 100%;
+      font-family: 'Outfit', sans-serif;
     }
-    .store-nav .logo {
-      font-size: 18px !important;
-      font-weight: 800 !important;
-      color: #1e293b !important;
-      text-decoration: none !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-      font-family: 'Outfit', sans-serif !important;
+
+    /* 2. Sleek Zapvi Navigation Bar */
+    .zapvi-store-nav {
+      background: #ffffff;
+      padding: 12px 28px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      width: 100%;
     }
-    .store-nav-links {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      flex-wrap: wrap !important;
+    .zapvi-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .store-nav-btn {
-      text-decoration: none !important;
-      color: #334155 !important;
-      font-size: 13.5px !important;
-      font-weight: 700 !important;
-      padding: 7px 12px !important;
-      border-radius: 8px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 6px !important;
-      position: relative !important;
-      background: #f8fafc !important;
-      border: 1px solid #e2e8f0 !important;
-      transition: all 0.2s ease !important;
+    .zapvi-logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0f172a;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: -0.5px;
     }
-    .store-nav-btn:hover {
-      background: #eff6ff !important;
-      color: #2563eb !important;
-      border-color: #bfdbfe !important;
+    .zapvi-logo-bolt {
+      color: #f59e0b;
+      font-size: 20px;
     }
-    .store-nav-btn.active {
-      background: #2563eb !important;
-      color: #ffffff !important;
-      border-color: #2563eb !important;
+    .zapvi-nav-center {
+      display: flex;
+      align-items: center;
+      gap: 24px;
     }
-    .store-nav-btn.active i {
-      color: #ffffff !important;
+    .zapvi-nav-link {
+      color: #334155;
+      font-size: 14.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s ease;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 0;
+      font-family: inherit;
     }
-    .nav-badge-count {
-      background: #ef4444 !important;
-      color: #ffffff !important;
-      font-size: 10px !important;
-      padding: 2px 6px !important;
-      border-radius: 10px !important;
-      position: absolute !important;
-      top: -6px !important;
-      right: -6px !important;
-      font-weight: 800 !important;
-      box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4) !important;
+    .zapvi-nav-link:hover, .zapvi-nav-link.active {
+      color: #0f172a;
     }
-    .back-btn-pill {
-      background: #f1f5f9 !important;
-      color: #475569 !important;
-      padding: 7px 12px !important;
-      border-radius: 8px !important;
-      text-decoration: none !important;
-      font-weight: 600 !important;
-      font-size: 13px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 6px !important;
-      border: 1px solid #e2e8f0 !important;
+    .zapvi-arrow {
+      font-size: 11px;
+      transition: transform 0.2s ease;
     }
-    .back-btn-pill:hover {
-      background: #e2e8f0 !important;
-      color: #1e293b !important;
+    .zapvi-dropdown {
+      position: relative;
+    }
+    .zapvi-dropdown:hover .zapvi-dropdown-menu,
+    .zapvi-dropdown.open .zapvi-dropdown-menu {
+      display: block;
+      animation: zapviFadeDown 0.18s ease-out;
+    }
+    .zapvi-dropdown:hover .zapvi-arrow,
+    .zapvi-dropdown.open .zapvi-arrow {
+      transform: rotate(180deg);
+    }
+    .zapvi-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(15,23,42,0.14);
+      border: 1px solid #f1f5f9;
+      padding: 8px 0;
+      min-width: 250px;
+      z-index: 99999;
+      display: none;
+    }
+    @keyframes zapviFadeDown {
+      from { opacity: 0; transform: translate(-50%, -6px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .zapvi-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      color: #334155;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .zapvi-menu-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .zapvi-pill-new {
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      letter-spacing: 0.4px;
+      display: inline-block;
+    }
+    .zapvi-pill-new.dark {
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    /* Right Action Icons */
+    .zapvi-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .zapvi-icon-btn {
+      background: none;
+      border: none;
+      color: #1e293b;
+      font-size: 19px;
+      cursor: pointer;
+      padding: 6px;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .zapvi-icon-btn:hover {
+      color: #2563eb;
+      transform: scale(1.08);
+    }
+
+    /* 3. Hero Carousel Banner */
+    .zapvi-hero-stage {
+      max-width: 1200px;
+      height: 420px;
+      margin: 20px auto;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 32px rgba(2,132,199,0.18);
+      background: linear-gradient(130deg, #0284c7 0%, #0369a1 45%, #075985 100%);
+    }
+    .zapvi-hero-slider {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .zapvi-hero-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 60px;
+      box-sizing: border-box;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-in-out;
+    }
+    .zapvi-hero-slide.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .zapvi-slide-left {
+      max-width: 520px;
+      color: #ffffff;
+      z-index: 2;
+    }
+    .zapvi-slide-title {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1.08;
+      margin: 0 0 14px;
+      letter-spacing: -1.2px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .zapvi-slide-subtitle {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 24px;
+      color: #f0fdf4;
+      line-height: 1.45;
+    }
+    .zapvi-slide-btn {
+      background: #f59e0b;
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      padding: 13px 32px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+      transition: all 0.2s ease;
+    }
+    .zapvi-slide-btn:hover {
+      background: #d97706;
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+    .zapvi-slide-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      max-width: 500px;
+    }
+    .zapvi-hero-photo {
+      max-height: 340px;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.25));
+      animation: zapviFloat 4s ease-in-out infinite alternate;
+    }
+    @keyframes zapviFloat {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+    .zapvi-carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #0f172a;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 15px;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .zapvi-carousel-arrow:hover {
+      background: #f8fafc;
+      transform: translateY(-50%) scale(1.08);
+    }
+    .zapvi-carousel-arrow.prev { left: 20px; }
+    .zapvi-carousel-arrow.next { right: 20px; }
+    .zapvi-carousel-dots {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+    .zapvi-carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .zapvi-carousel-dot.active {
+      width: 24px;
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    /* 4. Featured Category Cards Row */
+    .zapvi-category-strip {
+      max-width: 1200px;
+      margin: 28px auto 36px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+      box-sizing: border-box;
+    }
+    .zapvi-cat-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .zapvi-cat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+      border-color: #cbd5e1;
+    }
+    .zapvi-cat-img-wrap {
+      width: 100%;
+      height: 180px;
+      background: #f8fafc;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .zapvi-cat-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .zapvi-cat-card:hover .zapvi-cat-img {
+      transform: scale(1.05);
+    }
+    .zapvi-cat-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #0f172a;
+      padding: 12px 8px;
+      text-align: center;
+      margin: 0;
+      border-top: 1px solid #f1f5f9;
+      background: #ffffff;
+    }
+
+    /* 5. Zapvi Offers & Deals Section (Ticket Cutouts) */
+    .zapvi-offers-section {
+      max-width: 850px;
+      margin: 30px auto 40px;
+      padding: 0 20px;
+    }
+    .zapvi-offers-heading {
+      font-size: 13px;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .zapvi-tickets-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .zapvi-ticket {
+      position: relative;
+      border-radius: 16px;
+      padding: 24px 28px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    /* Ticket Scallop Side Cutouts */
+    .zapvi-ticket::before, .zapvi-ticket::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f8fafc;
+      z-index: 3;
+    }
+    .zapvi-ticket::before { left: -10px; }
+    .zapvi-ticket::after { right: -10px; }
+
+    .zapvi-ticket.teal {
+      background: linear-gradient(135deg, #0d9488 0%, #10b981 100%);
+      color: #ffffff;
+    }
+    .zapvi-ticket.white {
+      background: #ffffff;
+      border: 2px dashed #10b981;
+      color: #0f172a;
+    }
+    .zapvi-ticket.gold {
+      background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+      color: #ffffff;
+    }
+
+    .zapvi-ticket-tag {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .zapvi-ticket.teal .zapvi-ticket-tag {
+      background: rgba(255,255,255,0.92);
+      color: #0f766e;
+    }
+    .zapvi-ticket.white .zapvi-ticket-tag {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    .zapvi-ticket.gold .zapvi-ticket-tag {
+      background: rgba(255,255,255,0.92);
+      color: #b45309;
+    }
+    .zapvi-ticket-title {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin: 0 0 6px;
+      letter-spacing: -0.5px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .zapvi-ticket.white .zapvi-ticket-title {
+      color: #047857;
+    }
+    .zapvi-ticket-sub {
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0.95;
+      margin: 0;
+    }
+    .zapvi-ticket.white .zapvi-ticket-sub {
+      color: #64748b;
+    }
+
+    /* Mobile Responsive Dimensions */
+    @media (max-width: 768px) {
+      .zapvi-store-nav {
+        padding: 10px 16px;
+      }
+      .zapvi-logo {
+        font-size: 18px;
+      }
+      .zapvi-nav-center {
+        display: none; /* Accessible in mobile drawer/footer or icons */
+      }
+      .zapvi-hero-stage {
+        height: 250px;
+        margin: 12px 14px;
+        border-radius: 16px;
+      }
+      .zapvi-hero-slide {
+        padding: 24px 20px;
+      }
+      .zapvi-slide-title {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+      .zapvi-slide-subtitle {
+        font-size: 13.5px;
+        margin-bottom: 14px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .zapvi-slide-btn {
+        padding: 8px 18px;
+        font-size: 13px;
+      }
+      .zapvi-hero-photo {
+        max-height: 170px;
+      }
+      .zapvi-carousel-arrow {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+      }
+      .zapvi-carousel-arrow.prev { left: 10px; }
+      .zapvi-carousel-arrow.next { right: 10px; }
+      .zapvi-category-strip {
+        display: flex;
+        overflow-x: auto;
+        gap: 12px;
+        padding: 0 14px 10px;
+        margin: 18px auto 26px;
+        scrollbar-width: none;
+      }
+      .zapvi-cat-card {
+        flex: 0 0 140px;
+        border-radius: 14px;
+      }
+      .zapvi-cat-img-wrap {
+        height: 120px;
+      }
+      .zapvi-ticket {
+        padding: 18px 16px;
+      }
+      .zapvi-ticket-title {
+        font-size: 26px;
+      }
+      .zapvi-ticket-sub {
+        font-size: 12.5px;
+      }
     }
   </style>
 
@@ -1069,87 +1517,225 @@
 </head>
 <body>
 
-        <nav class="store-nav">
-    <a href="index.html" class="logo" style="display:flex; align-items:center; gap:8px;">
-      <img src="images/logo-app.png" alt="JK Study Hub Logo" style="width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-      <span>JK STUDY HUB</span>
-    </a>
-    
-    <div class="store-nav-links">
-      <a href="store.html" class="store-nav-btn active">
-        <i class="fa-solid fa-store" style="color:#ffffff;"></i> Store
-      </a>
+  <!-- 1. Zapvi Top Yellow Announcement Bar -->
+  <div class="zapvi-top-bar">
+    <i class="fa-solid fa-sparkles" style="font-size: 11px;"></i>
+    <span>Your Books. Your Choice. Your JK Study Hub.</span>
+    <i class="fa-solid fa-sparkles" style="font-size: 11px;"></i>
+  </div>
 
-      <a href="account.html#wishlist" class="store-nav-btn ">
-        <i class="fa-solid fa-heart" style="color:#ef4444;"></i> Wishlist
+  <!-- 2. Zapvi Store Navigation Bar -->
+  <nav class="zapvi-store-nav">
+    <div class="zapvi-nav-left">
+      <a href="store.html" class="zapvi-logo">
+        <span>JK STUDY HUB</span>
+        <span class="zapvi-logo-bolt"><i class="fa-solid fa-bolt"></i></span>
+      </a>
+    </div>
+
+    <!-- Center Navigation Links -->
+    <div class="zapvi-nav-center">
+      <a href="store.html" class="zapvi-nav-link active">Books &amp; Syllabus</a>
+
+      <!-- "More ⌵" Dropdown -->
+      <div class="zapvi-dropdown" id="zapviMoreDropdown">
+        <button type="button" class="zapvi-nav-link zapvi-dropdown-trigger" onclick="toggleZapviDropdown(event)">
+          More <i class="fa-solid fa-chevron-down zapvi-arrow"></i>
+        </button>
+        <div class="zapvi-dropdown-menu" id="zapviDropdownMenu">
+          <a href="#section-novels" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>JKBOSE Class 10th &amp; 12th</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="#section-novels" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>College &amp; University Guides</span>
+          </a>
+          <a href="#section-novels" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>PYQs &amp; Solved Papers</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="#section-stationery" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>Stationery &amp; Desk Accessories</span>
+          </a>
+          <a href="#section-stationery" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>LED Study Lamps</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="#section-digital" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>Form Filling &amp; Digital Services</span>
+            <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="account.html#support" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>Help &amp; Support Helpline</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- "Offer NEW" Link -->
+      <a href="#offers" class="zapvi-nav-link zapvi-offer-link" onclick="openZapviOffersModal(event)">
+        Offer <span class="zapvi-pill-new dark">NEW</span>
+      </a>
+    </div>
+
+    <!-- Right Icons Cluster -->
+    <div class="zapvi-nav-right">
+      <button type="button" class="zapvi-icon-btn" onclick="focusStoreSearch()" title="Search books">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
+      <a href="account.html#wishlist" class="zapvi-icon-btn" title="Wishlist">
+        <i class="fa-regular fa-heart"></i>
         <span id="wishlistCount" class="wishlist-badge-count nav-badge-count" style="display:none;">0</span>
       </a>
 
-      <a href="cart.html" class="store-nav-btn ">
-        <i class="fa-solid fa-cart-shopping" style="color:#2563eb;"></i> Cart
+      <a href="cart.html" class="zapvi-icon-btn" title="Cart">
+        <i class="fa-solid fa-bag-shopping"></i>
         <span id="cartCount" class="cart-badge-count nav-badge-count" style="display:none;">0</span>
       </a>
 
-      <a href="account.html#orders" class="store-nav-btn ">
-        <i class="fa-solid fa-box" style="color:#10b981;"></i> Orders
+      <a href="account.html#orders" class="zapvi-icon-btn" title="My Orders &amp; Account">
+        <i class="fa-regular fa-user"></i>
         <span id="ordersCount" class="orders-badge-count nav-badge-count" style="display:none; background:#10b981 !important;">0</span>
       </a>
 
-      <div class="store-auth-cluster">
-        <!-- Rendered by store.js?v=9.6 -->
-      </div>
+      <!-- Hidden cluster to preserve JavaScript bindings -->
+      <div class="store-auth-cluster" style="display:none;"></div>
 
-      <a href="index.html" class="back-btn-pill">
+      <a href="index.html" class="back-btn-pill" style="margin-left: 4px;">
         <i class="fa-solid fa-arrow-left"></i> Hub
       </a>
     </div>
   </nav>
 
-  <header class="store-hero store-hero-3d-stage">
-    <div class="store-hero-inner">
-      <!-- Left 3D Floating Ad: Delivery Scooter -->
-      <div class="floating-3d-ad left" title="Direct Doorstep Delivery across Kashmir">
-        <div class="floating-3d-card">
+  <!-- 3. Zapvi Hero Carousel Stage (Responsive Mobile & PC Dimensions) -->
+  <header class="zapvi-hero-stage" id="zapviHeroCarousel">
+    <div class="zapvi-hero-slider">
+      <!-- Slide 1: Your Books. Your Style. -->
+      <div class="zapvi-hero-slide active" data-slide="0">
+        <div class="zapvi-slide-left">
+          <h1 class="zapvi-slide-title">Your Books.<br>Your Style.</h1>
+          <p class="zapvi-slide-subtitle">Pick from 1000+ textbooks, guides &amp; study essentials made for you.</p>
+          <a href="#section-novels" class="zapvi-slide-btn">Explore Books &rarr;</a>
+        </div>
+        <div class="zapvi-slide-right">
           <picture>
             <source srcset="images/ad-3d-scooter.webp" type="image/webp">
-            <img class="floating-3d-img" src="images/ad-3d-scooter.png" alt="JK Study Hub Scooter Delivery across Kashmir" width="340" height="360" loading="eager" fetchpriority="high">
+            <img class="zapvi-hero-photo" src="images/ad-3d-scooter.png" alt="JK Study Hub Fast Kashmir Delivery">
           </picture>
         </div>
-        <span class="floating-3d-badge">
-          <i class="fa-solid fa-truck-fast"></i> Kashmir Express
-        </span>
-        <span class="floating-3d-sub">100% Free Delivery</span>
       </div>
 
-      <!-- Center Store Info -->
-      <div class="store-hero-center">
-        <span class="store-hero-pill">
-          <i class="fa-solid fa-gift"></i> FREE Delivery Across All Kashmir Pincodes
-        </span>
-        <h1>Official Student Store</h1>
-        <p>Handpicked authentic textbooks, bestselling novels, and board exam guides with 100% free doorstep delivery & Cash on Delivery across Kashmir.</p>
-        <div class="store-hero-highlights">
-          <span><i class="fa-solid fa-truck-fast" style="color: #4ade80;"></i> Free Doorstep Delivery</span>
-          <span><i class="fa-solid fa-hand-holding-dollar" style="color: #38bdf8;"></i> Cash on Delivery</span>
-          <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Same-Day Dispatch</span>
+      <!-- Slide 2: 100% Free Kashmir Delivery -->
+      <div class="zapvi-hero-slide" data-slide="1">
+        <div class="zapvi-slide-left">
+          <h1 class="zapvi-slide-title">100% Free<br>Home Delivery.</h1>
+          <p class="zapvi-slide-subtitle">Fast 24-48 hr Kashmir doorstep delivery with Cash on Delivery across all pincodes.</p>
+          <a href="#section-novels" class="zapvi-slide-btn">Order with COD &rarr;</a>
         </div>
-      </div>
-
-      <!-- Right 3D Floating Ad: Founder Management -->
-      <div class="floating-3d-ad right" title="Store Management: Sahil Zahoor">
-        <div class="floating-3d-card">
+        <div class="zapvi-slide-right">
           <picture>
-            <source srcset="images/ad-3d-founder.webp" type="image/webp">
-            <img class="floating-3d-img" src="images/ad-3d-founder.png" alt="Store Management: Sahil Zahoor" width="340" height="360" loading="eager" fetchpriority="high">
+            <source srcset="images/books/atomic-habits-1.webp" type="image/webp">
+            <img class="zapvi-hero-photo" src="images/books/atomic-habits-1.jpg" alt="Atomic Habits Best Student Edition">
           </picture>
         </div>
-        <span class="floating-3d-badge">
-          <i class="fa-solid fa-user-check"></i> Sahil Zahoor
-        </span>
-        <span class="floating-3d-sub">Store Management</span>
+      </div>
+
+      <!-- Slide 3: Board Exam Guides & PYQs -->
+      <div class="zapvi-hero-slide" data-slide="2">
+        <div class="zapvi-slide-left">
+          <h1 class="zapvi-slide-title">Class 10th &amp; 12th<br>Solved PYQs.</h1>
+          <p class="zapvi-slide-subtitle">JKBOSE exam preparation sets, solved question papers &amp; toppers revision notes.</p>
+          <a href="#section-novels" class="zapvi-slide-btn">View Guides &rarr;</a>
+        </div>
+        <div class="zapvi-slide-right">
+          <picture>
+            <source srcset="images/books/lucent-gk-1.webp" type="image/webp">
+            <img class="zapvi-hero-photo" src="images/books/lucent-gk-1.jpg" alt="Lucent GK and Exam Revision">
+          </picture>
+        </div>
       </div>
     </div>
+
+    <!-- Carousel Circular Arrows -->
+    <button type="button" class="zapvi-carousel-arrow prev" onclick="prevZapviSlide()" title="Previous slide">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button type="button" class="zapvi-carousel-arrow next" onclick="nextZapviSlide()" title="Next slide">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <!-- Carousel Indicator Dots -->
+    <div class="zapvi-carousel-dots">
+      <span class="zapvi-carousel-dot active" onclick="setZapviSlide(0)"></span>
+      <span class="zapvi-carousel-dot" onclick="setZapviSlide(1)"></span>
+      <span class="zapvi-carousel-dot" onclick="setZapviSlide(2)"></span>
+    </div>
   </header>
+
+  <!-- 4. Featured Category Cards Row (Zapvi Style) -->
+  <section class="zapvi-category-strip">
+    <a href="#section-novels" class="zapvi-cat-card" onclick="setStoreCategoryFilter('novels')">
+      <div class="zapvi-cat-img-wrap">
+        <img src="images/books/atomic-habits-1.webp" alt="Novels &amp; Bestsellers" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+      </div>
+      <p class="zapvi-cat-title">Novels &amp; Bestsellers</p>
+    </a>
+
+    <a href="#section-novels" class="zapvi-cat-card" onclick="setStoreCategoryFilter('academic')">
+      <div class="zapvi-cat-img-wrap">
+        <img src="images/books/lucent-gk-1.webp" alt="JKBOSE Syllabus &amp; Guides" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+      </div>
+      <p class="zapvi-cat-title">Syllabus &amp; Guides</p>
+    </a>
+
+    <a href="#section-novels" class="zapvi-cat-card" onclick="setStoreCategoryFilter('academic')">
+      <div class="zapvi-cat-img-wrap">
+        <img src="images/spiral-copies.webp" alt="Solved Papers &amp; PYQs" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+      </div>
+      <p class="zapvi-cat-title">Solved Papers &amp; PYQs</p>
+    </a>
+
+    <a href="#section-novels" class="zapvi-cat-card" onclick="setStoreCategoryFilter('stationery')">
+      <div class="zapvi-cat-img-wrap">
+        <img src="images/geometry-box.webp" alt="Stationery Supplies" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+      </div>
+      <p class="zapvi-cat-title">Stationery Supplies</p>
+    </a>
+
+    <a href="#section-novels" class="zapvi-cat-card" onclick="setStoreCategoryFilter('stationery')">
+      <div class="zapvi-cat-img-wrap">
+        <img src="images/study-table.webp" alt="Study Lamps &amp; Tables" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+      </div>
+      <p class="zapvi-cat-title">Study Lamps &amp; Desks</p>
+    </a>
+  </section>
+
+  <!-- 5. Zapvi Offers & Deals Section (Ticket Cutouts) -->
+  <section class="zapvi-offers-section" id="offers">
+    <div class="zapvi-offers-heading">Offers &amp; Deals</div>
+    <div class="zapvi-tickets-wrap">
+      <!-- Ticket 1: Free Shipping -->
+      <div class="zapvi-ticket teal">
+        <span class="zapvi-ticket-tag">ORDER ₹399 &amp; ABOVE</span>
+        <h2 class="zapvi-ticket-title">FREE SHIPPING</h2>
+        <p class="zapvi-ticket-sub">All over Kashmir &middot; under ₹399 it's ₹40</p>
+      </div>
+
+      <!-- Ticket 2: Auto Applied -->
+      <div class="zapvi-ticket white">
+        <span class="zapvi-ticket-tag">NO COUPON NEEDED</span>
+        <h2 class="zapvi-ticket-title">AUTO APPLIED</h2>
+        <p class="zapvi-ticket-sub">Applied automatically at checkout</p>
+      </div>
+
+      <!-- Ticket 3: Extra Rs 100 Off -->
+      <div class="zapvi-ticket gold">
+        <span class="zapvi-ticket-tag">ORDER ₹599 &amp; ABOVE</span>
+        <h2 class="zapvi-ticket-title">EXTRA ₹100 OFF</h2>
+        <p class="zapvi-ticket-sub">+ FREE shipping &middot; on your order</p>
+      </div>
+    </div>
+  </section>
 
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
     
