@@ -166,10 +166,64 @@ window.addEventListener('DOMContentLoaded', () => {
 // 2. DATA LOADERS & GOOGLE SHEETS SYNC
 // =========================================================
 
+// Universal Bulletproof Helper: Check if an order is Cash on Delivery (COD) vs Paid Online
+function isCodOrder(order) {
+  if (!order) return false;
+
+  // 1. Explicit paymentMethod flag
+  if (order.paymentMethod === 'cod') return true;
+
+  // 2. Check order status text for explicit Cash on Delivery markers
+  const st = String(order.status || '').toLowerCase();
+  if (st.includes('cash on delivery') || st.includes('cod') || st.includes('pay on delivery') || st.includes('doorstep')) {
+    return true;
+  }
+
+  // 3. Check product description or title for COD annotations
+  const prod = String(order.product || '').toLowerCase();
+  if (prod.includes('cash on delivery') || prod.includes('(cod)') || prod.includes('pay at doorstep')) {
+    return true;
+  }
+
+  // 4. Check txnId text for Cash on Delivery descriptors
+  const txn = String(order.txnId || '').trim().toUpperCase();
+  if (txn.startsWith('COD') || txn === 'CASH_ON_DELIVERY' || txn === 'CASH ON DELIVERY' || txn === 'CASH' || txn === 'N/A' || txn === '-' || txn === '') {
+    if (order.paymentMethod === 'prepaid' || order.paymentMethod === 'online') {
+      return false;
+    }
+    return true;
+  }
+
+  // 5. If marked prepaid / online with real transaction ID
+  if (order.paymentMethod === 'prepaid' || order.paymentMethod === 'online') {
+    return false;
+  }
+
+  // 6. Real Razorpay / Online payment IDs start with 'pay_' or 'rzp_'
+  if (txn.startsWith('PAY_') || txn.startsWith('RZP_') || txn.startsWith('UPI_') || txn.startsWith('TXN_')) {
+    return false;
+  }
+
+  // Default: if transaction id is absent or too short to be a gateway ref, treat as COD
+  if (!txn || txn.length < 5) {
+    return true;
+  }
+
+  return false;
+}
+
 function getSellerOrders() {
   try {
     const raw = localStorage.getItem('jk_orders');
-    return raw ? JSON.parse(raw) : [];
+    const orders = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(orders)) {
+      orders.forEach(o => {
+        if (isCodOrder(o)) {
+          o.paymentMethod = 'cod';
+        }
+      });
+    }
+    return orders;
   } catch(e) {
     return [];
   }
@@ -199,8 +253,17 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           if (!remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT') {
             return;
           }
+
+          const isRemoteCod = isCodOrder(remote);
+          if (isRemoteCod) {
+            remote.paymentMethod = 'cod';
+          }
+
           const idx = localOrders.findIndex(l => String(l.orderId) === String(remote.orderId));
           if (idx >= 0) {
+            if (isRemoteCod || isCodOrder(localOrders[idx])) {
+              localOrders[idx].paymentMethod = 'cod';
+            }
             if (remote.status && remote.status !== localOrders[idx].status) {
               localOrders[idx].status = remote.status;
               updated = true;
@@ -332,7 +395,7 @@ function renderSellerOrdersTable() {
     if (!tabMatch) return false;
 
     // Payment filter
-    const isCod = (o.paymentMethod === 'cod' || !o.txnId || o.txnId === 'COD');
+    const isCod = isCodOrder(o);
     if (paymentFilter === 'cod' && !isCod) return false;
     if (paymentFilter === 'prepaid' && isCod) return false;
 
@@ -370,7 +433,7 @@ function renderSellerOrdersTable() {
 
   let rowsHtml = '';
   filtered.forEach(o => {
-    const isCod = (o.paymentMethod === 'cod' || !o.txnId || o.txnId === 'COD');
+    const isCod = isCodOrder(o);
     const safeOrderId = o.orderId || 'ORD-UNKNOWN';
     const statusLower = String(o.status || 'Confirmed').toLowerCase();
 
@@ -461,6 +524,9 @@ function updateOrderStatusFromSeller(orderId, newStatus) {
   let orders = getSellerOrders();
   const order = orders.find(o => String(o.orderId) === String(orderId));
   if (order) {
+    if (isCodOrder(order)) {
+      order.paymentMethod = 'cod';
+    }
     order.status = newStatus;
     saveSellerOrders(orders);
     renderSellerOrdersTable();
@@ -589,7 +655,7 @@ function calculatePaymentsSummary() {
   let onlinePrepaid = 0;
 
   orders.forEach(o => {
-    const isCod = (o.paymentMethod === 'cod' || !o.txnId || o.txnId === 'COD');
+    const isCod = isCodOrder(o);
     const amt = Number(o.amount || 0);
     const s = String(o.status || '').toLowerCase();
 
@@ -722,7 +788,7 @@ function openSellerShippingLabelModal(orderId) {
   const pinMatch = String(customerAddress).match(/\b(19\d{4})\b/);
   const pincode = pinMatch ? pinMatch[1] : '193121';
 
-  const isCod = (o.paymentMethod === 'cod' || !o.txnId || o.txnId === 'COD');
+  const isCod = isCodOrder(o);
   const barcodeSvg = generateCode128Svg(o.orderId, 55, 2);
   const qrUrl = `https://jkstudyhub.online/account.html#orders?id=${encodeURIComponent(o.orderId)}`;
   const awbNumber = 'JKSH' + (String(o.orderId).replace(/\D/g,'').slice(-6) || '193121');
@@ -974,7 +1040,7 @@ function exportOrdersToCSV() {
 
   let csv = 'Order ID,Date,Product,Customer,Phone,Address,Payment Mode,Amount,Status\n';
   orders.forEach(o => {
-    const isCod = (o.paymentMethod === 'cod' || !o.txnId || o.txnId === 'COD');
+    const isCod = isCodOrder(o);
     csv += `"${o.orderId || ''}","${o.date || ''}","${(o.product || '').replace(/"/g, '""')}","${(o.name || '').replace(/"/g, '""')}","${o.phone || ''}","${(o.address || '').replace(/"/g, '""')}","${isCod ? 'COD' : 'PREPAID'}","${o.amount || 0}","${o.status || 'Confirmed'}"\n`;
   });
 

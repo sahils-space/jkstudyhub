@@ -1200,19 +1200,49 @@ let currentOrderStatusFilter = 'all'; // 'all', 'in_progress', 'delivered', 'can
 let currentOwnerOrderView = 'store'; // 'store' (all store orders) vs 'personal' (owner's personal orders)
 let currentOrderSearchQuery = '';
 
-// Universal Helper: Check if an order is Cash on Delivery (COD) vs Paid Online
+// Universal Bulletproof Helper: Check if an order is Cash on Delivery (COD) vs Paid Online
 function isCodOrder(order) {
   if (!order) return false;
+
+  // 1. Explicit paymentMethod flag
   if (order.paymentMethod === 'cod') return true;
-  if (order.paymentMethod === 'prepaid' || order.paymentMethod === 'online') return false;
-  const txn = String(order.txnId || '').trim().toUpperCase();
-  if (txn.startsWith('COD') || txn === 'CASH_ON_DELIVERY' || txn === 'CASH ON DELIVERY' || txn === 'N/A' || txn === '-') return true;
+
+  // 2. Check order status text for explicit Cash on Delivery markers
   const st = String(order.status || '').toLowerCase();
-  if (st.includes('cash on delivery') || st.includes('cod') || st.includes('pay on delivery') || st.includes('doorstep')) return true;
+  if (st.includes('cash on delivery') || st.includes('cod') || st.includes('pay on delivery') || st.includes('doorstep')) {
+    return true;
+  }
+
+  // 3. Check product description or title for COD annotations
   const prod = String(order.product || '').toLowerCase();
-  if (prod.includes('cash on delivery') || prod.includes('(cod)') || prod.includes('pay at doorstep')) return true;
-  // Real Razorpay payment IDs start with 'pay_' or 'rzp_'
-  if (!txn.startsWith('PAY_') && !txn.startsWith('RZP_') && (!txn || txn.length < 5)) return true;
+  if (prod.includes('cash on delivery') || prod.includes('(cod)') || prod.includes('pay at doorstep')) {
+    return true;
+  }
+
+  // 4. Check txnId text for Cash on Delivery descriptors
+  const txn = String(order.txnId || '').trim().toUpperCase();
+  if (txn.startsWith('COD') || txn === 'CASH_ON_DELIVERY' || txn === 'CASH ON DELIVERY' || txn === 'CASH' || txn === 'N/A' || txn === '-' || txn === '') {
+    if (order.paymentMethod === 'prepaid' || order.paymentMethod === 'online') {
+      return false;
+    }
+    return true;
+  }
+
+  // 5. If marked prepaid / online with real transaction ID
+  if (order.paymentMethod === 'prepaid' || order.paymentMethod === 'online') {
+    return false;
+  }
+
+  // 6. Real Razorpay / Online payment IDs start with 'pay_' or 'rzp_'
+  if (txn.startsWith('PAY_') || txn.startsWith('RZP_') || txn.startsWith('UPI_') || txn.startsWith('TXN_')) {
+    return false;
+  }
+
+  // Default: if transaction id is absent or too short to be a gateway ref, treat as COD
+  if (!txn || txn.length < 5) {
+    return true;
+  }
+
   return false;
 }
 
