@@ -212,14 +212,65 @@ function isCodOrder(order) {
   return false;
 }
 
+function getSellerStatusOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem('jk_order_status_overrides') || '{}');
+  } catch(e) {
+    return {};
+  }
+}
+
+function setSellerStatusOverride(orderId, status) {
+  try {
+    const ov = getSellerStatusOverrides();
+    ov[String(orderId).trim().toUpperCase()] = {
+      status: status,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('jk_order_status_overrides', JSON.stringify(ov));
+  } catch(e) {}
+}
+
+function pushStatusUpdateToGoogleSheet(orderId, newStatus) {
+  if (!SELLER_SCRIPT_URL || !orderId || !newStatus) return;
+  const cleanId = String(orderId).trim();
+
+  // 1. Send via POST (with no-cors) - standard for Google Apps Script Web App
+  try {
+    const params = new URLSearchParams();
+    params.append('action', 'update_status');
+    params.append('order_id', cleanId);
+    params.append('orderId', cleanId);
+    params.append('status', newStatus);
+
+    fetch(SELLER_SCRIPT_URL + '?' + params.toString(), {
+      method: 'POST',
+      mode: 'no-cors',
+      body: params.toString(),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }).catch(err => console.warn('POST status sync notice:', err));
+  } catch(e) {}
+
+  // 2. Also send via GET fallback with both order_id and orderId
+  try {
+    const getUrl = `${SELLER_SCRIPT_URL}?action=update_status&order_id=${encodeURIComponent(cleanId)}&orderId=${encodeURIComponent(cleanId)}&status=${encodeURIComponent(newStatus)}&t=${Date.now()}`;
+    fetch(getUrl, { method: 'GET', mode: 'no-cors' }).catch(err => console.warn('GET status sync notice:', err));
+  } catch(e) {}
+}
+
 function getSellerOrders() {
   try {
     const raw = localStorage.getItem('jk_orders');
     const orders = raw ? JSON.parse(raw) : [];
+    const overrides = getSellerStatusOverrides();
     if (Array.isArray(orders)) {
       orders.forEach(o => {
         if (isCodOrder(o)) {
           o.paymentMethod = 'cod';
+        }
+        const ov = overrides[String(o.orderId || '').trim().toUpperCase()];
+        if (ov && ov.status) {
+          o.status = ov.status;
         }
       });
     }
@@ -247,6 +298,7 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
     .then(data => {
       if (data && data.status === 'success' && Array.isArray(data.orders)) {
         let localOrders = getSellerOrders();
+        const overrides = getSellerStatusOverrides();
         let updated = false;
 
         data.orders.forEach(remote => {
@@ -254,17 +306,39 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
             return;
           }
 
+          const remoteUpperId = String(remote.orderId).trim().toUpperCase();
           const isRemoteCod = isCodOrder(remote);
           if (isRemoteCod) {
             remote.paymentMethod = 'cod';
           }
 
-          const idx = localOrders.findIndex(l => String(l.orderId) === String(remote.orderId));
+          // Check if seller explicitly set a status override (e.g. Cancelled)
+          const ov = overrides[remoteUpperId];
+          if (ov && ov.status) {
+            remote.status = ov.status;
+            if (remote.status !== ov.status) {
+              pushStatusUpdateToGoogleSheet(remote.orderId, ov.status);
+            }
+          }
+
+          const idx = localOrders.findIndex(l => String(l.orderId).trim().toUpperCase() === remoteUpperId);
           if (idx >= 0) {
             if (isRemoteCod || isCodOrder(localOrders[idx])) {
               localOrders[idx].paymentMethod = 'cod';
             }
-            if (remote.status && remote.status !== localOrders[idx].status) {
+
+            // CRITICAL: NEVER overwrite "Cancelled" with an older "Confirmed" from Google Sheets!
+            const localStatus = localOrders[idx].status || '';
+            const isLocalCancelled = localStatus.toLowerCase().includes('cancel');
+            const isRemoteCancelled = String(remote.status || '').toLowerCase().includes('cancel');
+
+            if (isLocalCancelled && !isRemoteCancelled) {
+              remote.status = localStatus;
+              pushStatusUpdateToGoogleSheet(localOrders[idx].orderId, localStatus);
+            } else if (ov && ov.status) {
+              localOrders[idx].status = ov.status;
+              updated = true;
+            } else if (remote.status && remote.status !== localOrders[idx].status) {
               localOrders[idx].status = remote.status;
               updated = true;
             }
@@ -513,7 +587,7 @@ function renderSellerOrdersTable() {
 }
 
 function updateOrderStatusFromSeller(orderId, newStatus) {
-  if (!newStatus) return;
+  if (!newStatus || !orderId) return;
 
   // If marked delivered, ask for buyer OTP verification
   if (newStatus === 'Delivered') {
@@ -521,22 +595,39 @@ function updateOrderStatusFromSeller(orderId, newStatus) {
     if (!otp) return;
   }
 
+  // 1. Record persistent override so refresh can never revert this status!
+  setSellerStatusOverride(orderId, newStatus);
+
+  // 2. Update in local seller cache (jk_orders)
   let orders = getSellerOrders();
-  const order = orders.find(o => String(o.orderId) === String(orderId));
+  const order = orders.find(o => String(o.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase());
   if (order) {
     if (isCodOrder(order)) {
       order.paymentMethod = 'cod';
     }
     order.status = newStatus;
+    order.statusUpdatedAt = new Date().toLocaleString('en-IN');
     saveSellerOrders(orders);
-    renderSellerOrdersTable();
-
-    // Push update to Google Sheets
-    if (SELLER_SCRIPT_URL) {
-      const syncUrl = `${SELLER_SCRIPT_URL}?action=update_status&orderId=${encodeURIComponent(orderId)}&status=${encodeURIComponent(newStatus)}`;
-      fetch(syncUrl, { method: 'GET' }).catch(err => console.warn(err));
-    }
   }
+
+  // 3. Keep store.js cache in sync as well
+  try {
+    let storeOrders = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+    const sOrder = storeOrders.find(o => String(o.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase());
+    if (sOrder) {
+      sOrder.status = newStatus;
+      localStorage.setItem('jk_orders', JSON.stringify(storeOrders));
+    }
+  } catch(e) {}
+
+  renderSellerOrdersTable();
+  calculateBusinessMetrics();
+  calculatePaymentsSummary();
+
+  // 4. Push update to Google Sheets immediately
+  pushStatusUpdateToGoogleSheet(orderId, newStatus);
+
+  alert(`✅ Order ${orderId} updated to "${newStatus}"!`);
 }
 
 // =========================================================
@@ -966,26 +1057,360 @@ function openBulkLabelModal() {
   }
 }
 
+// =========================================================
+// 7. IN-APP CAMERA BARCODE & QR SCANNER ENGINE
+// =========================================================
+
+let activeSellerScannerStream = null;
+let activeSellerScannerTrack = null;
+let currentSellerFacingMode = 'environment';
+let isSellerScannerDetecting = false;
+let isSellerTorchActive = false;
+
+function playScanSuccessBeep() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.22);
+  } catch(e) {}
+}
+
+function extractOrderIdFromScan(raw) {
+  if (!raw) return '';
+  let str = String(raw).trim();
+
+  // 1. If scanned content is a URL with id parameter
+  const urlParamMatch = str.match(/[?&]id=([^&#\s]+)/i);
+  if (urlParamMatch) {
+    str = decodeURIComponent(urlParamMatch[1]).trim();
+  }
+
+  // 2. Strip bounding asterisks from thermal barcode representation: * OD123456 *
+  str = str.replace(/^\*+|\*+$/g, '').trim();
+
+  // 3. Extract order ID pattern: OD followed by digits, or ORD- followed by alphanumeric
+  const odMatch = str.match(/\b(OD\d{6,}|ORD[-_]?[A-Za-z0-9]+)\b/i);
+  if (odMatch) {
+    return odMatch[1].toUpperCase();
+  }
+
+  return str.toUpperCase();
+}
+
 function openBarcodeScannerModal() {
   const modal = document.getElementById('sellerBarcodeModal');
-  if (modal) modal.classList.add('open');
-  const input = document.getElementById('manualBarcodeScanInput');
-  if (input) {
-    input.value = '';
-    setTimeout(() => input.focus(), 200);
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  const resCard = document.getElementById('sellerScannedResultCard');
+  if (resCard) resCard.style.display = 'none';
+
+  const manualInput = document.getElementById('manualBarcodeScanInput');
+  if (manualInput) {
+    manualInput.value = '';
+    setTimeout(() => manualInput.focus(), 200);
+  }
+
+  startSellerScannerCamera(currentSellerFacingMode);
+}
+
+function closeBarcodeScannerModal() {
+  isSellerScannerDetecting = false;
+  if (activeSellerScannerStream) {
+    activeSellerScannerStream.getTracks().forEach(t => t.stop());
+    activeSellerScannerStream = null;
+    activeSellerScannerTrack = null;
+  }
+  const modal = document.getElementById('sellerBarcodeModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function startSellerScannerCamera(facingMode) {
+  const video = document.getElementById('sellerScannerVideo');
+  const statusBadge = document.getElementById('sellerScannerStatusBadge');
+  if (!video) return;
+
+  if (activeSellerScannerStream) {
+    activeSellerScannerStream.getTracks().forEach(t => t.stop());
+    activeSellerScannerStream = null;
+    activeSellerScannerTrack = null;
+  }
+
+  if (statusBadge) {
+    statusBadge.innerHTML = '<span class="live-pulse"></span> Initializing Camera...';
+  }
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (statusBadge) {
+      statusBadge.innerHTML = '⚠️ Camera not supported on this browser. Use manual entry.';
+    }
+    return;
+  }
+
+  navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: { ideal: facingMode },
+      width: { ideal: 1280 },
+      height: { ideal: 720 }
+    },
+    audio: false
+  }).then(stream => {
+    activeSellerScannerStream = stream;
+    activeSellerScannerTrack = stream.getVideoTracks()[0];
+    video.srcObject = stream;
+    video.setAttribute('playsinline', 'true');
+    video.play();
+
+    const torchBtn = document.getElementById('btnSellerToggleTorch');
+    if (torchBtn && activeSellerScannerTrack && activeSellerScannerTrack.getCapabilities) {
+      try {
+        const caps = activeSellerScannerTrack.getCapabilities();
+        torchBtn.style.display = caps.torch ? 'flex' : 'none';
+      } catch(e) {
+        torchBtn.style.display = 'none';
+      }
+    }
+
+    if (statusBadge) {
+      statusBadge.innerHTML = '<span class="live-pulse"></span> Align Barcode inside frame';
+    }
+
+    isSellerScannerDetecting = true;
+    requestAnimationFrame(scanSellerVideoFrameLoop);
+  }).catch(err => {
+    console.warn("Seller camera notice:", err);
+    if (statusBadge) {
+      statusBadge.innerHTML = '⚠️ Camera permission denied or busy. Enter Order ID below.';
+    }
+    const manualInput = document.getElementById('manualBarcodeScanInput');
+    if (manualInput) manualInput.focus();
+  });
+}
+
+function flipSellerScannerCamera() {
+  currentSellerFacingMode = (currentSellerFacingMode === 'environment') ? 'user' : 'environment';
+  startSellerScannerCamera(currentSellerFacingMode);
+}
+
+function toggleSellerScannerTorch() {
+  if (!activeSellerScannerTrack || !activeSellerScannerTrack.applyConstraints) return;
+  isSellerTorchActive = !isSellerTorchActive;
+  activeSellerScannerTrack.applyConstraints({
+    advanced: [{ torch: isSellerTorchActive }]
+  }).catch(() => {});
+}
+
+function scanSellerVideoFrameLoop() {
+  if (!isSellerScannerDetecting) return;
+  const video = document.getElementById('sellerScannerVideo');
+  if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+    requestAnimationFrame(scanSellerVideoFrameLoop);
+    return;
+  }
+
+  // 1. Native High-Speed BarcodeDetector (Chrome / Edge / Safari modern)
+  if ('BarcodeDetector' in window) {
+    try {
+      const detector = new BarcodeDetector({ formats: ['code_128', 'qr_code', 'code_39', 'ean_13'] });
+      detector.detect(video).then(barcodes => {
+        if (barcodes && barcodes.length > 0) {
+          handleScannedBarcodeValue(barcodes[0].rawValue);
+        } else if (isSellerScannerDetecting) {
+          requestAnimationFrame(scanSellerVideoFrameLoop);
+        }
+      }).catch(() => {
+        if (isSellerScannerDetecting) requestAnimationFrame(scanSellerVideoFrameLoop);
+      });
+      return;
+    } catch(e) {}
+  }
+
+  // 2. jsQR Fallback Engine for QR codes
+  if (typeof jsQR === 'function') {
+    const canvas = document.getElementById('sellerScannerCanvas');
+    if (canvas) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: "dontInvert" });
+      if (code && code.data) {
+        handleScannedBarcodeValue(code.data);
+        return;
+      }
+    }
+  }
+
+  if (isSellerScannerDetecting) {
+    requestAnimationFrame(scanSellerVideoFrameLoop);
   }
 }
 
-function processScannedPacketBarcode() {
+function handleManualBarcodeLookup() {
   const input = document.getElementById('manualBarcodeScanInput');
-  const raw = String(input ? input.value : '').trim();
-  if (!raw) {
-    alert("Please scan or enter an Order ID barcode.");
+  const val = String(input ? input.value : '').trim();
+  if (!val) {
+    alert("Please enter an Order ID or scan a barcode.");
     return;
   }
-  updateOrderStatusFromSeller(raw, 'Ready to Ship');
-  closeSellerModal('sellerBarcodeModal');
-  alert(`✅ Barcode verified for ${raw}! Marked as Ready to Ship.`);
+  handleScannedBarcodeValue(val);
+}
+
+function handleScannedBarcodeValue(raw) {
+  if (!raw) return;
+  const orderId = extractOrderIdFromScan(raw);
+  isSellerScannerDetecting = false;
+  playScanSuccessBeep();
+
+  const orders = getSellerOrders();
+  const match = orders.find(o => String(o.orderId).trim().toUpperCase() === orderId || String(o.orderId).trim().toUpperCase() === String(raw).trim().toUpperCase());
+
+  if (match) {
+    renderScannedOrderCard(match);
+  } else {
+    renderOrderNotFoundCard(orderId, raw);
+  }
+}
+
+function renderScannedOrderCard(order) {
+  const resCard = document.getElementById('sellerScannedResultCard');
+  if (!resCard) return;
+
+  const isCod = isCodOrder(order);
+  const customerName = (order.name && !order.name.match(/^[6789]\d{9}$/)) ? order.name : 'Student';
+  const customerPhone = order.phone || '';
+  const isDelivered = String(order.status || '').toLowerCase().includes('deliver');
+  const isCancelled = String(order.status || '').toLowerCase().includes('cancel');
+
+  resCard.innerHTML = `
+    <div style="background: #ffffff; border-radius: 12px; padding: 14px; border: 1.5px solid #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.06); text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 10px;">
+        <div>
+          <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #0284c7;">${order.orderId}</span>
+          <div style="font-size: 11px; color: #64748b;">${order.date || 'Today'}</div>
+        </div>
+        <span class="status-badge-pill ${String(order.status || 'Confirmed').toLowerCase().includes('cancel') ? 'cancelled' : 'ready'}" style="font-size: 11.5px;">
+          ${order.status || 'Confirmed'}
+        </span>
+      </div>
+
+      <div style="font-size: 12.5px; color: #334155; line-height: 1.45; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+        <div><strong>Item:</strong> ${order.product || 'Study Material'}</div>
+        <div style="margin-top: 3px;"><strong>Recipient:</strong> ${customerName} (📞 ${customerPhone || 'N/A'})</div>
+        <div style="margin-top: 3px; font-size: 11.5px; color: #64748b;"><strong>Address:</strong> ${order.address || 'Kashmir'}</div>
+        <div style="margin-top: 6px;">
+          ${isCod ? `
+            <span style="font-size: 11.5px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 3px 8px; border-radius: 4px; display: inline-block;">
+              💵 Cash on Delivery: Collect ₹${order.amount || 0} Cash
+            </span>
+          ` : `
+            <span style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #f0fdf4; padding: 3px 8px; border-radius: 4px; display: inline-block;">
+              💳 Online Prepaid: ₹${order.amount || 0} Paid Online
+            </span>
+          `}
+        </div>
+      </div>
+
+      <!-- Quick Status Update Buttons -->
+      <div style="margin-bottom: 12px;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase;">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> 1-Tap Status Update:
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Ready to Ship')" class="btn-hub-secondary" style="font-size: 11.5px; justify-content: center; padding: 7px 4px;">
+            📦 Ready to Ship
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Dispatched')" class="btn-hub-secondary" style="font-size: 11.5px; justify-content: center; padding: 7px 4px;">
+            🚚 Dispatched
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'On the Way')" class="btn-hub-secondary" style="font-size: 11.5px; justify-content: center; padding: 7px 4px;">
+            🛵 On the Way
+          </button>
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Delivered')" class="btn-hub-secondary" style="font-size: 11.5px; justify-content: center; padding: 7px 4px; color: #15803d; font-weight: 800;">
+            ✅ Delivered (Doorstep)
+          </button>
+        </div>
+        <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+          <button type="button" onclick="updateOrderStatusFromScanner('${order.orderId}', 'Cancelled')" style="flex: 1; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+            ❌ Cancel Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons: Print Label, WhatsApp, Next Scan -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" onclick="openSellerShippingLabelModal('${order.orderId}')" class="btn-hub-secondary" style="flex: 1; font-size: 11.5px; justify-content: center; padding: 8px;">
+          <i class="fa-solid fa-print"></i> Thermal Label
+        </button>
+        ${customerPhone ? `
+          <a href="https://wa.me/91${String(customerPhone).replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent('Hi ' + customerName + '! Your order ' + order.orderId + ' from JK Study Hub is ' + (order.status || 'being processed') + '.')}" target="_blank" rel="noopener" class="btn-hub-secondary" style="flex: 1; font-size: 11.5px; justify-content: center; padding: 8px; color: #16a34a; text-decoration: none;">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+          </a>
+        ` : ''}
+        <button type="button" onclick="resumeSellerScanner()" class="btn-hub-primary" style="flex: 1.2; font-size: 11.5px; justify-content: center; padding: 8px;">
+          <i class="fa-solid fa-rotate-right"></i> Scan Next
+        </button>
+      </div>
+    </div>
+  `;
+  resCard.style.display = 'block';
+}
+
+function renderOrderNotFoundCard(orderId, raw) {
+  const resCard = document.getElementById('sellerScannedResultCard');
+  if (!resCard) return;
+
+  resCard.innerHTML = `
+    <div style="background: #ffffff; border-radius: 12px; padding: 14px; border: 1.5px solid #fca5a5; text-align: center;">
+      <div style="font-size: 26px; margin-bottom: 6px;">🔍</div>
+      <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #b91c1c;">Order Not Found</h4>
+      <p style="font-size: 12px; color: #64748b; margin: 4px 0 12px;">Scanned: <strong>"${raw}"</strong> (clean: ${orderId})</p>
+      <div style="display: flex; gap: 6px; justify-content: center;">
+        <button type="button" onclick="syncSellerWithGoogleSheets(); setTimeout(() => handleScannedBarcodeValue('${raw}'), 800);" class="btn-hub-secondary" style="font-size: 11.5px; padding: 6px 10px;">
+          <i class="fa-solid fa-rotate"></i> Sync Sheets
+        </button>
+        <button type="button" onclick="resumeSellerScanner()" class="btn-hub-primary" style="font-size: 11.5px; padding: 6px 10px;">
+          <i class="fa-solid fa-camera"></i> Try Again
+        </button>
+      </div>
+    </div>
+  `;
+  resCard.style.display = 'block';
+}
+
+function updateOrderStatusFromScanner(orderId, newStatus) {
+  updateOrderStatusFromSeller(orderId, newStatus);
+  const orders = getSellerOrders();
+  const match = orders.find(o => String(o.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase());
+  if (match) {
+    renderScannedOrderCard(match);
+  }
+}
+
+function resumeSellerScanner() {
+  const resCard = document.getElementById('sellerScannedResultCard');
+  if (resCard) resCard.style.display = 'none';
+  const input = document.getElementById('manualBarcodeScanInput');
+  if (input) input.value = '';
+
+  isSellerScannerDetecting = true;
+  requestAnimationFrame(scanSellerVideoFrameLoop);
+}
+
+function processScannedPacketBarcode() {
+  handleManualBarcodeLookup();
 }
 
 // =========================================================

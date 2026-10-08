@@ -175,6 +175,10 @@
             <span>Google Sheets Synced</span>
           </div>
 
+          <button type="button" class="btn-hub-secondary" onclick="openBarcodeScannerModal()" title="Open In-App Camera Barcode & QR Scanner" style="font-weight: 700; color: #0284c7; border-color: #bae6fd; background: #f0f9ff;">
+            <i class="fa-solid fa-camera"></i> Scan Barcode
+          </button>
+
           <button type="button" class="btn-hub-secondary" onclick="exportOrdersToCSV()">
             <i class="fa-solid fa-file-arrow-down"></i> Download Orders Data ⌵
           </button>
@@ -216,7 +220,7 @@
               <span><strong>Packaging Policy:</strong> Sealed Barcoded Packaging is standard for all student book deliveries across Kashmir.</span>
             </div>
             <div style="display: flex; gap: 8px;">
-              <button type="button" class="notice-action-btn" style="padding: 4px 12px; font-size: 12px;" onclick="openBarcodeScannerModal()">Scan Barcoded Packets</button>
+              <button type="button" class="notice-action-btn" style="padding: 4px 12px; font-size: 12px;" onclick="openBarcodeScannerModal()"><i class="fa-solid fa-camera"></i> Scan Barcode Packets</button>
             </div>
           </div>
 
@@ -526,21 +530,55 @@
   </div>
 
   <!-- =========================================================
-       MODAL 2: BARCODE DISPATCH SCANNER
+       MODAL 2: IN-APP CAMERA BARCODE & QR CODE SCANNER
        ========================================================= -->
-  <div class="seller-modal-backdrop" id="sellerBarcodeModal">
-    <div class="seller-modal-card">
-      <div class="seller-modal-header">
-        <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">📦 Scan Barcoded Packet</h3>
-        <button type="button" onclick="closeSellerModal('sellerBarcodeModal')" style="background:none; border:none; font-size:22px; cursor:pointer;">&times;</button>
+  <div class="scanner-modal-backdrop" id="sellerBarcodeModal" style="display:none;" onclick="if(event.target===this) closeBarcodeScannerModal()">
+    <div class="scanner-modal-card">
+      <div class="scanner-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:18px; color:#10b981;"><i class="fa-solid fa-camera"></i></span>
+          <div>
+            <h3 style="margin:0; font-size:15px; font-weight:800; color:white;">Scan Parcel Barcode / QR Code</h3>
+            <p style="margin:0; font-size:11px; color:#94a3b8;">JK Study Hub Logistics • In-App Camera Scanner</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeBarcodeScannerModal()" class="scanner-close-btn">&times;</button>
       </div>
-      <div class="seller-modal-body" style="text-align: center;">
-        <p style="font-size: 13.5px; color: #475569; margin-bottom: 16px;">Type or scan the order barcode on the packet to verify parcel:</p>
-        <input type="text" id="manualBarcodeScanInput" class="seller-lock-input" placeholder="Scan or enter Order ID (e.g. ORD-12345)" style="text-align: center; font-size: 16px;">
-        <button type="button" class="btn-hub-primary" onclick="processScannedPacketBarcode()" style="width: 100%; justify-content: center; padding: 12px;">
-          <i class="fa-solid fa-barcode"></i> Verify &amp; Mark Ready for Pickup
-        </button>
+
+      <div class="scanner-viewfinder-wrap">
+        <video id="sellerScannerVideo" playsinline autoplay muted></video>
+        <canvas id="sellerScannerCanvas" style="display:none;"></canvas>
+
+        <div class="scanner-reticle">
+          <div class="reticle-corner top-left"></div>
+          <div class="reticle-corner top-right"></div>
+          <div class="reticle-corner bottom-left"></div>
+          <div class="reticle-corner bottom-right"></div>
+          <div class="scanner-laser-line"></div>
+        </div>
+
+        <div class="scanner-controls-overlay">
+          <button type="button" id="btnSellerToggleTorch" onclick="toggleSellerScannerTorch()" style="display:none;" title="Toggle Flashlight">
+            <i class="fa-solid fa-bolt"></i>
+          </button>
+          <button type="button" onclick="flipSellerScannerCamera()" title="Switch Camera">
+            <i class="fa-solid fa-camera-rotate"></i>
+          </button>
+        </div>
+
+        <div id="sellerScannerStatusBadge" class="scanner-status-badge">
+          <span class="live-pulse"></span> Align Barcode inside frame
+        </div>
       </div>
+
+      <!-- Manual Order ID fallback / External barcode gun input -->
+      <div class="scanner-manual-wrap">
+        <input type="text" id="manualBarcodeScanInput" placeholder="Enter or scan Order ID (e.g. OD12345)..." onkeydown="if(event.key==='Enter') handleManualBarcodeLookup()">
+        <button type="button" onclick="handleManualBarcodeLookup()"><i class="fa-solid fa-magnifying-glass"></i> Lookup</button>
+      </div>
+
+      <!-- Live Scanned Parcel Result Card -->
+      <div id="sellerScannedResultCard" class="scanned-result-card" style="display:none;"></div>
     </div>
   </div>
 
@@ -559,6 +597,8 @@
       });
     }
   </script>
+  <!-- jsQR Scanner Fallback Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <!-- External Script -->
   <script src="seller.js"></script>
 </body>

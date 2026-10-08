@@ -942,3 +942,95 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* In-App Camera Barcode Scanner Styles */
+.scanner-modal-backdrop {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(6px);
+  z-index: 99999; display: flex; align-items: center; justify-content: center;
+  padding: 15px; box-sizing: border-box; overflow-y: auto;
+}
+.scanner-modal-card {
+  background: #0f172a; border: 1.5px solid #334155; border-radius: 20px;
+  max-width: 500px; width: 100%; overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column;
+  animation: modalFadeIn 0.2s ease-out;
+}
+.scanner-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px; border-bottom: 1px solid #1e293b; background: #0b1329;
+}
+.scanner-close-btn {
+  background: none; border: none; color: #94a3b8; font-size: 26px;
+  cursor: pointer; line-height: 1; padding: 0 4px;
+}
+.scanner-close-btn:hover { color: #ffffff; }
+.scanner-viewfinder-wrap {
+  position: relative; width: 100%; height: 300px; background: #000000;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+#sellerScannerVideo {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.scanner-reticle {
+  position: absolute; width: 230px; height: 160px;
+  border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 12px;
+  pointer-events: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+.reticle-corner {
+  position: absolute; width: 20px; height: 20px;
+  border-color: #10b981; border-style: solid;
+}
+.reticle-corner.top-left { top: -2px; left: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 10px; }
+.reticle-corner.top-right { top: -2px; right: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 10px; }
+.reticle-corner.bottom-left { bottom: -2px; left: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 10px; }
+.reticle-corner.bottom-right { bottom: -2px; right: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 10px; }
+.scanner-laser-line {
+  position: absolute; left: 0; width: 100%; height: 2.5px;
+  background: linear-gradient(90deg, transparent, #10b981, #34d399, transparent);
+  box-shadow: 0 0 8px #10b981; animation: scannerLaser 2s ease-in-out infinite;
+}
+@keyframes scannerLaser {
+  0% { top: 10%; opacity: 0.3; }
+  50% { top: 88%; opacity: 1; }
+  100% { top: 10%; opacity: 0.3; }
+}
+.scanner-controls-overlay {
+  position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 5;
+}
+.scanner-controls-overlay button {
+  background: rgba(15, 23, 42, 0.75); color: white; border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 36px; height: 36px; border-radius: 50%; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.scanner-status-badge {
+  position: absolute; bottom: 10px; background: rgba(15, 23, 42, 0.85);
+  color: #e2e8f0; padding: 5px 12px; border-radius: 20px; font-size: 11.5px;
+  font-weight: 600; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px);
+}
+.live-pulse {
+  width: 7px; height: 7px; background: #10b981; border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); animation: pulseGreen 1.5s infinite;
+}
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.scanner-manual-wrap {
+  padding: 10px 16px; background: #1e293b; display: flex; gap: 8px; border-bottom: 1px solid #334155;
+}
+.scanner-manual-wrap input {
+  flex: 1; padding: 8px 12px; background: #0f172a; border: 1px solid #334155;
+  border-radius: 8px; color: white; font-size: 12.5px; outline: none;
+}
+.scanner-manual-wrap button {
+  background: #2563eb; color: white; border: none; padding: 8px 14px;
+  border-radius: 8px; font-weight: 700; font-size: 12.5px; cursor: pointer; white-space: nowrap;
+}
+.scanned-result-card {
+  padding: 16px; background: #ffffff; border-top: 1px solid #e2e8f0;
+  max-height: 400px; overflow-y: auto; color: #1e293b;
+}
+
