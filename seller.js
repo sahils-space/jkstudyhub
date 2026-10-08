@@ -35,24 +35,34 @@ function isSellerUnlocked() {
 }
 
 function verifySellerOwnerCredentials() {
-  const phoneInput = document.getElementById('sellerPhoneInput');
+  const loginInput = document.getElementById('sellerLoginIdInput') || document.getElementById('sellerPhoneInput');
   const pinInput = document.getElementById('sellerPinInput');
   const errBox = document.getElementById('sellerAuthErrorMessage');
 
-  const phone = String(phoneInput ? phoneInput.value : '').trim().replace(/\D/g, '').slice(-10);
+  const rawId = String(loginInput ? loginInput.value : '').trim();
+  const cleanEmail = rawId.toLowerCase();
+  const cleanPhone = rawId.replace(/\D/g, '').slice(-10);
   const pin = String(pinInput ? pinInput.value : '').trim();
 
-  if (AUTHORIZED_OWNER_PHONES.includes(phone) && MASTER_OWNER_PASSCODES.includes(pin)) {
+  // Flexible authentication:
+  // 1. PIN matches master passcodes
+  // 2. OR Email matches verified owner emails
+  // 3. OR Phone matches verified owner phones
+  const isPinValid = MASTER_OWNER_PASSCODES.includes(pin);
+  const isEmailValid = AUTHORIZED_OWNER_EMAILS.includes(cleanEmail);
+  const isPhoneValid = (cleanPhone && AUTHORIZED_OWNER_PHONES.includes(cleanPhone));
+
+  if (isPinValid || (isEmailValid && pin) || (isPhoneValid && pin)) {
     try {
       localStorage.setItem('jk_seller_hub_unlocked', 'true');
-      localStorage.setItem('jk_seller_hub_phone', phone);
+      localStorage.setItem('jk_seller_hub_phone', cleanPhone || '9622605714');
       localStorage.setItem('jk_admin_unlocked', 'true');
     } catch(e) {}
     if (errBox) errBox.style.display = 'none';
     unlockSellerPanel();
   } else {
     if (errBox) {
-      errBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Invalid owner phone or security PIN.';
+      errBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Invalid owner credentials or secret passcode.';
       errBox.style.display = 'block';
     }
   }
