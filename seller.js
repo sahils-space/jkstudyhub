@@ -606,6 +606,11 @@ function renderSellerOrdersTable() {
               <option value="Delivered">Delivered (Doorstep)</option>
               <option value="Cancelled">Cancelled</option>
             </select>
+            ${isCod ? `
+              <button type="button" class="btn-hub-secondary" style="padding: 5px 8px; font-size: 11px; color: #15803d; border-color: #86efac; background: #f0fdf4; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="verifyCodOrderViaWhatsApp('${safeOrderId}')" title="Send 1-Click WhatsApp COD Verification Message">
+                <i class="fa-brands fa-whatsapp"></i> Verify COD
+              </button>
+            ` : ''}
             <a href="https://wa.me/91${String(o.phone || '').replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent('Hi ' + (o.name || 'Student') + '! Your order ' + safeOrderId + ' from JK Study Hub is ' + (o.status || 'being processed') + '.')}" target="_blank" rel="noopener" class="btn-hub-secondary" style="padding: 5px 8px; color: #16a34a;" title="WhatsApp Notice">
               <i class="fa-brands fa-whatsapp"></i>
             </a>
@@ -1675,4 +1680,25 @@ function exportPreorderLeadsCSV() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+
+// 1-Click WhatsApp COD Verification Sender
+function verifyCodOrderViaWhatsApp(orderId) {
+  const orders = getSellerOrders();
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase());
+  if (!o) return;
+  const cleanPhone = String(o.phone || '').replace(/\D/g, '').slice(-10);
+  const name = o.name || 'Student';
+  const amount = o.amount || 0;
+  const product = o.product || 'Books & Copies';
+  const address = o.address || 'Kashmir';
+
+  const text = `Assalamu Alaikum ${name}! 👋 This is Sahil from JK Study Hub regarding your Cash on Delivery order #${o.orderId}.%0A%0A` +
+               `📦 *Item:* ${encodeURIComponent(product)}%0A` +
+               `💵 *Total Amount:* ₹${amount} (Pay Cash on Delivery)%0A` +
+               `📍 *Delivery Address:* ${encodeURIComponent(address)}%0A%0A` +
+               `We are packing your parcel for doorstep dispatch. Will you be available tomorrow to receive it?%0A` +
+               `👉 *Please reply 'YES' to confirm dispatch immediately.*`;
+
+  window.open(`https://wa.me/91${cleanPhone}?text=${text}`, '_blank');
 }

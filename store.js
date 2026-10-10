@@ -8540,3 +8540,81 @@ function sendBooklistWhatsAppQuote() {
     showToast('✅ Inquiry noted! WhatsApp opened — please attach and send your booklist photo now.');
   }
 }
+
+
+// =========================================================
+// INTERACTIVE SEMESTER BUNDLE CALCULATOR
+// =========================================================
+function getBundleSelection() {
+  const copiesEl = document.getElementById('bundleCopiesSelect');
+  const pensEl = document.getElementById('bundlePensSelect');
+  const statEl = document.getElementById('bundleStationerySelect');
+
+  const copiesOpt = copiesEl ? copiesEl.options[copiesEl.selectedIndex] : null;
+  const pensOpt = pensEl ? pensEl.options[pensEl.selectedIndex] : null;
+  const statOpt = statEl ? statEl.options[statEl.selectedIndex] : null;
+
+  const copiesPrice = copiesOpt ? parseFloat(copiesOpt.getAttribute('data-price') || 0) : 0;
+  const copiesMrp = copiesOpt ? parseFloat(copiesOpt.getAttribute('data-mrp') || 0) : 0;
+
+  const pensPrice = pensOpt ? parseFloat(pensOpt.getAttribute('data-price') || 0) : 0;
+  const pensMrp = pensOpt ? parseFloat(pensOpt.getAttribute('data-mrp') || 0) : 0;
+
+  const statPrice = statOpt ? parseFloat(statOpt.getAttribute('data-price') || 0) : 0;
+  const statMrp = statOpt ? parseFloat(statOpt.getAttribute('data-mrp') || 0) : 0;
+
+  const totalOurPrice = copiesPrice + pensPrice + statPrice;
+  const totalMrp = copiesMrp + pensMrp + statMrp;
+  const savings = Math.max(0, totalMrp - totalOurPrice);
+  const percentSaved = totalMrp > 0 ? Math.round((savings / totalMrp) * 100) : 0;
+
+  const items = [];
+  if (copiesOpt && copiesOpt.value !== 'none') items.push(copiesOpt.text);
+  if (pensOpt && pensOpt.value !== 'none') items.push(pensOpt.text);
+  if (statOpt && statOpt.value !== 'none') items.push(statOpt.text);
+
+  return {
+    items: items,
+    ourPrice: totalOurPrice,
+    mrp: totalMrp,
+    savings: savings,
+    percent: percentSaved
+  };
+}
+
+function calculateBundleTotal() {
+  const bundle = getBundleSelection();
+  const mrpEl = document.getElementById('bundleMrpTotal');
+  const priceEl = document.getElementById('bundlePriceTotal');
+  const savingsEl = document.getElementById('bundleSavingsAmount');
+
+  if (mrpEl) mrpEl.textContent = '₹' + bundle.mrp;
+  if (priceEl) priceEl.textContent = '₹' + bundle.ourPrice;
+  if (savingsEl) savingsEl.textContent = '₹' + bundle.savings + ' (' + bundle.percent + '% OFF)';
+}
+
+function orderCalculatedBundleWhatsApp() {
+  const bundle = getBundleSelection();
+  const summary = bundle.items.join(' + ');
+  const message = 'Hi JK Study Hub! 👋 I want to order this Custom Semester Bundle at less than bookshop rates & less than MRP:\n\n' +
+                  '📦 *Bundle Items:* ' + summary + '\n' +
+                  '💰 *JK Study Hub Rate:* ₹' + bundle.ourPrice + ' (Shop MRP: ₹' + bundle.mrp + ')\n' +
+                  '🎉 *Total Savings:* ₹' + bundle.savings + ' (' + bundle.percent + '% Saved!)\n' +
+                  '🚚 *Delivery:* Cash on Delivery across Kashmir\n\n' +
+                  'Please confirm my order!';
+
+  const phone = '919622605714';
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(message), '_blank');
+}
+
+function checkoutCalculatedBundle() {
+  const bundle = getBundleSelection();
+  const bundleName = 'Custom Semester Bundle (' + bundle.items.join(' + ') + ')';
+  openCheckout(bundleName, bundle.ourPrice, 'physical', 'bundle');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('bundleCopiesSelect')) {
+    calculateBundleTotal();
+  }
+});

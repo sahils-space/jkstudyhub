@@ -3100,6 +3100,95 @@
     </div>
 
     <!-- =========================================================================
+         INTERACTIVE SEMESTER BUNDLE BUILDER & SAVINGS CALCULATOR
+         ========================================================================= -->
+    <div id="section-bundle-calculator" style="background: white; border: 2px solid #e2e8f0; border-radius: 16px; padding: 24px 26px; margin: 30px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+        <div>
+          <span style="background: #eff6ff; color: #1e40af; font-size: 11.5px; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px;">
+            🧮 Interactive Custom Bundle Builder
+          </span>
+          <h3 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 8px 0 4px;">
+            Build Your School / College Semester Bundle &amp; Calculate Savings
+          </h3>
+          <p style="font-size: 13.5px; color: #64748b; margin: 0;">
+            Customize your notebooks, pens, and exam stationery &mdash; see your exact live savings compared to local Kashmir bookshops!
+          </p>
+        </div>
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 12px 18px; text-align: center;">
+          <div style="font-size: 11px; font-weight: 800; color: #166534; text-transform: uppercase;">Your Total Savings</div>
+          <div style="font-size: 24px; font-weight: 900; color: #15803d;" id="bundleSavingsAmount">₹193 (36% OFF)</div>
+          <div style="font-size: 11px; color: #16a34a; font-weight: 700;">Strictly Less Than Bookshop MRP</div>
+        </div>
+      </div>
+
+      <!-- Selectors Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+        <!-- 1. Notebooks Pack -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+          <label style="font-size: 12.5px; font-weight: 800; color: #1e293b; display: block; margin-bottom: 6px;">
+            <i class="fa-solid fa-book" style="color:#2563eb;"></i> 1. Exercise Copies / Registers
+          </label>
+          <select id="bundleCopiesSelect" onchange="calculateBundleTotal()" style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; background: white; font-weight: 600;">
+            <option value="copies_6" data-price="249" data-mrp="390" selected>6 Premium Exercise Copies (172 pgs)</option>
+            <option value="copies_12" data-price="469" data-mrp="750">12 Copies Mega Semester Pack (172 pgs)</option>
+            <option value="registers_4" data-price="299" data-mrp="460">4 Thick Hardcover Spiral Registers</option>
+            <option value="registers_8" data-price="559" data-mrp="890">8 Hardcover College Registers Bundle</option>
+          </select>
+        </div>
+
+        <!-- 2. Pens & Writing -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+          <label style="font-size: 12.5px; font-weight: 800; color: #1e293b; display: block; margin-bottom: 6px;">
+            <i class="fa-solid fa-pen-nib" style="color:#2563eb;"></i> 2. Pens &amp; Writing Kit
+          </label>
+          <select id="bundlePensSelect" onchange="calculateBundleTotal()" style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; background: white; font-weight: 600;">
+            <option value="gel_5" data-price="49" data-mrp="75" selected>5 Smooth Waterproof Gel Pens</option>
+            <option value="gel_10" data-price="89" data-mrp="150">10 Exam Gel Pens Combo Pack</option>
+            <option value="ball_10" data-price="59" data-mrp="100">10 Fast-Writing Ballpoint Pens</option>
+            <option value="none" data-price="0" data-mrp="0">No pens needed</option>
+          </select>
+        </div>
+
+        <!-- 3. Add-on Stationery -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+          <label style="font-size: 12.5px; font-weight: 800; color: #1e293b; display: block; margin-bottom: 6px;">
+            <i class="fa-solid fa-highlighter" style="color:#2563eb;"></i> 3. Exam Stationery Kit
+          </label>
+          <select id="bundleStationerySelect" onchange="calculateBundleTotal()" style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; background: white; font-weight: 600;">
+            <option value="highlighters_2" data-price="39" data-mrp="65" selected>2 Pastel Highlighters + Index Sticky Tabs</option>
+            <option value="clipboard_combo" data-price="79" data-mrp="130">Transparent Exam Clipboard + Sticky Notes</option>
+            <option value="full_combo" data-price="119" data-mrp="195">Exam Board + Highlighters + Geometry Tool</option>
+            <option value="none" data-price="0" data-mrp="0">No extra stationery</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Price Breakdown & Checkout Action -->
+      <div style="background: #f8fafc; border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Retail Bookshop MRP:</div>
+            <div style="font-size: 16px; color: #94a3b8; text-decoration: line-through; font-weight: 700;" id="bundleMrpTotal">₹530</div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: #166534; font-weight: 800;">JK Study Hub Rate:</div>
+            <div style="font-size: 24px; color: #0f172a; font-weight: 900;" id="bundlePriceTotal">₹337</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button type="button" onclick="orderCalculatedBundleWhatsApp()" class="btn-whatsapp-direct" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border-radius: 8px;">
+            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Order via WhatsApp
+          </button>
+          <button type="button" onclick="checkoutCalculatedBundle()" class="buy-btn" style="padding: 11px 22px; font-size: 13.5px; font-weight: 800; border-radius: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
+            ⚡ Buy Bundle (COD)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
          ANNOUNCEMENT: SCHOOL COPIES & BOOKS COMING SOON (NOT AVAILABLE YET)
          ========================================================================= -->
     <div style="background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%); border: 2px solid #fde047; border-radius: 16px; padding: 20px 24px; margin: 35px 0 25px; box-shadow: 0 4px 18px rgba(234,179,8,0.1);">
