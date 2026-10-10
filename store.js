@@ -8408,10 +8408,22 @@ window.openStoreCategorySection = openStoreCategorySection;
 
 function preBookViaWhatsApp(itemName) {
   const safeName = itemName || 'Upcoming Book / Copy';
-  const msg = `Hi JK Study Hub! I want to pre-book the upcoming item at less than MRP & bookseller price:%0A%0A` +
+  const msg = `Hi JK Study Hub! I want to pre-book and get notified when this item is available:%0A%0A` +
               `📦 *Item:* ${encodeURIComponent(safeName)}%0A` +
-              `🏷️ *Offer:* Less than MRP & Book Sellers Price%0A` +
+              `🏷️ *Pricing:* Less than Retail & Book Shop Price%0A` +
               `🚚 *Delivery:* Cash on Delivery across Kashmir%0A%0A` +
-              `Please notify me and confirm my priority pre-order when stock arrives!`;
+              `Please notify me first when stock arrives for this academic session!`;
   window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
+}
+
+
+function notifyComingSoon(itemName) {
+  const safeName = itemName || 'This item';
+  if (typeof showToast === 'function') {
+    showToast(`⏳ ${safeName} is Coming Soon (Not Available Yet)! Tap 'Notify Me' to pre-book on WhatsApp.`);
+  } else {
+    alert(`⏳ ${safeName} is Coming Soon (Not Available Yet)!
+
+We haven't opened sales yet. Tap WhatsApp to pre-book and get notified when stock arrives below retail price.`);
+  }
 }
