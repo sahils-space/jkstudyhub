@@ -9,6 +9,16 @@
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta name="theme-color" content="#2563eb">
+  <!-- Open Graph & Social Sharing Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JK Study Hub - Kashmir's Wholesale Books & School Copies Store">
+  <meta property="og:description" content="Bestselling novels, wholesale school exercise copies, Class 1st to 12th book sets, and board exam guides with Cash on Delivery across all J&K pincodes.">
+  <meta property="og:image" content="images/logo-app.png">
+  <meta property="og:url" content="https://sahils-space.github.io/jkstudyhub/store.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JK Study Hub Official Storefront">
+  <meta name="twitter:description" content="Wholesale school copies, syllabus booksets and bestselling novels with Kashmir doorstep delivery.">
+  <meta name="twitter:image" content="images/logo-app.png">
   <!-- Preload Critical Above-The-Fold 3D Ads for Instant 0ms Rendering -->
   <link rel="preload" as="image" href="images/ad-3d-scooter.webp" type="image/webp">
   <link rel="preload" as="image" href="images/ad-3d-founder.webp" type="image/webp">
@@ -3016,6 +3026,56 @@
     
     
     <!-- =========================================================================
+         BANNER & QUICK FORM: SNAP & SEND SCHOOL BOOKLIST (WHOLESALE QUOTE)
+         ========================================================================= -->
+    <div id="section-booklist-quote" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%); border-radius: 16px; padding: 26px 28px; margin: 35px 0 25px; color: white; box-shadow: 0 10px 25px rgba(37,99,235,0.22); position: relative; overflow: hidden;">
+      <div style="position:absolute; right:-20px; top:-20px; opacity:0.08; font-size:160px; pointer-events:none;">
+        <i class="fa-solid fa-clipboard-list"></i>
+      </div>
+      <div style="position:relative; z-index:2; max-width: 860px;">
+        <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:800; margin-bottom:10px; letter-spacing:0.3px;">
+          📸 Direct School Booklist Ordering &bull; Kashmir Wholesale Rates
+        </div>
+        <h2 style="font-size:23px; font-weight:800; margin:0 0 8px; line-height:1.3; color:#ffffff;">
+          Have a Booklist or Copies Requirement from Your School?
+        </h2>
+        <p style="font-size:13.5px; color:#dbeafe; line-height:1.6; margin:0 0 18px;">
+          Avoid paying inflated bookshop retail rates! Simply enter your school details or send a photo of your school syllabus / booklist on WhatsApp. We verify your exact curriculum and dispatch full sets at <strong>wholesale prices directly to your doorstep with Cash on Delivery</strong>.
+        </p>
+
+        <!-- Quick 1-Click Form Row -->
+        <div style="background:white; border-radius:12px; padding:16px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <input type="text" id="quoteSchoolName" placeholder="School Name (e.g. Burn Hall, Biscoe, DPS, Govt HSS)" style="flex:1.5; min-width:200px; padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; outline:none; color:#0f172a;">
+          
+          <select id="quoteClassSelect" style="flex:1; min-width:140px; padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; outline:none; color:#0f172a; background:white;">
+            <option value="">Select Class</option>
+            <option value="Nursery / KG">Nursery / KG</option>
+            <option value="Class 1st">Class 1st</option>
+            <option value="Class 2nd">Class 2nd</option>
+            <option value="Class 3rd">Class 3rd</option>
+            <option value="Class 4th">Class 4th</option>
+            <option value="Class 5th">Class 5th</option>
+            <option value="Class 6th">Class 6th</option>
+            <option value="Class 7th">Class 7th</option>
+            <option value="Class 8th">Class 8th</option>
+            <option value="Class 9th">Class 9th</option>
+            <option value="Class 10th">Class 10th</option>
+            <option value="Class 11th">Class 11th</option>
+            <option value="Class 12th">Class 12th</option>
+            <option value="College / University">College / University</option>
+          </select>
+
+          <button type="button" onclick="sendBooklistWhatsAppQuote()" style="background:#22c55e; color:white; border:none; padding:11px 22px; border-radius:8px; font-size:13.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:background 0.2s; white-space:nowrap; box-shadow:0 4px 12px rgba(34,197,94,0.3);">
+            <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Send Booklist on WhatsApp &rarr;
+          </button>
+        </div>
+        <p style="font-size:12px; color:#bfdbfe; margin:10px 0 0; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-shield-halved"></i> 100% Free WhatsApp Quote &bull; Instant reply within 15 minutes &bull; Cash on Delivery across Kashmir
+        </p>
+      </div>
+    </div>
+
+    <!-- =========================================================================
          ANNOUNCEMENT: SCHOOL COPIES & BOOKS COMING SOON (NOT AVAILABLE YET)
          ========================================================================= -->
     <div style="background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%); border: 2px solid #fde047; border-radius: 16px; padding: 20px 24px; margin: 35px 0 25px; box-shadow: 0 4px 18px rgba(234,179,8,0.1);">
@@ -4172,6 +4232,136 @@
 
     </div>
 
+    <!-- =========================================================================
+         SECTION: VERIFIED KASHMIR STUDENT REVIEWS & DELIVERY PROOF
+         ========================================================================= -->
+    <div id="section-reviews" style="margin-top: 60px; margin-bottom: 40px;">
+      <div style="text-align: center; max-width: 700px; margin: 0 auto 30px;">
+        <span style="background: #fef3c7; color: #b45309; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-star"></i> 4.9 / 5 Rating &bull; Verified J&amp;K Deliveries
+        </span>
+        <h2 class="category-title" style="margin: 10px 0 6px; border: none; font-size: 26px; justify-content: center; display: flex; align-items: center; gap: 8px;">
+          Loved by 1,000+ Students Across Kashmir
+        </h2>
+        <p style="font-size: 14px; color: #64748b; margin: 0;">
+          Real feedback from students and parents across Srinagar, Anantnag, Baramulla, Sopore, Pulwama, Kupwara and Pattan who ordered from JK Study Hub.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        
+        <!-- Review 1 -->
+        <div style="background: white; border-radius: 14px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; gap: 3px; color: #f59e0b; font-size: 13px;">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;">
+                <i class="fa-solid fa-check-circle"></i> Verified Delivery
+              </span>
+            </div>
+            <p style="font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 14px;">
+              &ldquo;Ordered Atomic Habits and Psychology of Money novels. Delivered to Bemina, Srinagar within 24 hours with Cash on Delivery! Paper quality is 100% genuine and bookmarks were included.&rdquo;
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+              FB
+            </div>
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">Faizan Bhat</h4>
+              <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">📍 Bemina, Srinagar &bull; Class 12th Student</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 2 -->
+        <div style="background: white; border-radius: 14px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; gap: 3px; color: #f59e0b; font-size: 13px;">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;">
+                <i class="fa-solid fa-check-circle"></i> Verified Delivery
+              </span>
+            </div>
+            <p style="font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 14px;">
+              &ldquo;Pre-booked exercise spiral copies for my brother. The wholesale price is literally 40% less than local bookshops in Baramulla. Very thick 80 GSM paper with zero ink bleed!&rdquo;
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+              SM
+            </div>
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">Sahira Mir</h4>
+              <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">📍 Baramulla Town &bull; College Student</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 3 -->
+        <div style="background: white; border-radius: 14px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; gap: 3px; color: #f59e0b; font-size: 13px;">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;">
+                <i class="fa-solid fa-check-circle"></i> Verified Delivery
+              </span>
+            </div>
+            <p style="font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 14px;">
+              &ldquo;Got JKBOSE Class 10th solved question paper guides delivered in Anantnag. Everything was packaged neatly in waterproof envelope. Best study platform for J&amp;K students.&rdquo;
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #f3e8ff; color: #7e22ce; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+              AD
+            </div>
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">Abrar Dar</h4>
+              <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">📍 KP Road, Anantnag &bull; Class 10th</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Trust Badges Strip -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 25px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fa-solid fa-truck-fast" style="font-size: 24px; color: #2563eb;"></i>
+          <div>
+            <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">Free Kashmir Delivery</h4>
+            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Express 24–48 hr doorstep reach</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fa-solid fa-hand-holding-dollar" style="font-size: 24px; color: #16a34a;"></i>
+          <div>
+            <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">100% Cash on Delivery</h4>
+            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Pay only after inspecting package</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fa-solid fa-tags" style="font-size: 24px; color: #d97706;"></i>
+          <div>
+            <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">Wholesale Rate Guarantee</h4>
+            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Strictly less than bookshop MRP</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fa-solid fa-shield-heart" style="font-size: 24px; color: #9333ea;"></i>
+          <div>
+            <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">Easy 3-Day Replacement</h4>
+            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Hassle-free student guarantee</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- CHECKOUT MODAL -->

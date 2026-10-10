@@ -2995,3 +2995,189 @@ body {
   }
 }
 
+
+/* ===================================================
+   JKBOSE EXAM COUNTDOWN TOPBAR (Class 10th, 11th, 12th)
+   =================================================== */
+.exam-countdown-topbar {
+  background: linear-gradient(90deg, #090d16 0%, #0f172a 35%, #1e1b4b 75%, #090d16 100%);
+  color: #ffffff;
+  padding: 7px 16px;
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, sans-serif);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.exam-countdown-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.exam-countdown-headline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.exam-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+  animation: pulseExamDot 1.4s infinite;
+}
+
+@keyframes pulseExamDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+.exam-badge-tag {
+  color: #f8fafc;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.exam-badge-tag i {
+  color: #f59e0b;
+}
+
+.exam-countdown-cards-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.exam-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.exam-timer-pill:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.pill-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill-class {
+  font-weight: 800;
+  color: #60a5fa;
+  letter-spacing: 0.2px;
+}
+
+.pill-date {
+  font-size: 10.5px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.pill-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace;
+}
+
+.time-block {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+.t-val {
+  font-weight: 800;
+  color: #fde047;
+  font-size: 12.5px;
+}
+
+.t-lbl {
+  font-size: 9px;
+  color: #94a3b8;
+  text-transform: lowercase;
+  font-weight: 600;
+}
+
+.time-sep {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.exam-countdown-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-exam-datesheet {
+  background: rgba(37, 99, 235, 0.35);
+  color: #bfdbfe;
+  border: 1px solid rgba(191, 219, 254, 0.4);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+}
+
+.btn-exam-datesheet:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+@media (max-width: 820px) {
+  .exam-countdown-container {
+    justify-content: center;
+    gap: 6px;
+    padding: 3px 0;
+  }
+  .exam-countdown-headline {
+    font-size: 12px;
+  }
+  .exam-countdown-cards-row {
+    justify-content: center;
+    width: 100%;
+    gap: 6px;
+  }
+  .exam-timer-pill {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  .exam-countdown-action {
+    display: none;
+  }
+}

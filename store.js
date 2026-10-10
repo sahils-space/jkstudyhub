@@ -8456,3 +8456,25 @@ function filterSchoolClassBooks(cls, btnEl) {
     }
   });
 }
+
+
+// 1-Click WhatsApp Booklist & Custom School Syllabus Quote
+function sendBooklistWhatsAppQuote() {
+  const schoolEl = document.getElementById('quoteSchoolName');
+  const classEl = document.getElementById('quoteClassSelect');
+  const school = schoolEl ? schoolEl.value.trim() : '';
+  const classVal = classEl ? classEl.value.trim() : '';
+
+  let message = 'Hi JK Study Hub! 👋 I want to order a School Books & Copies set at wholesale rates.';
+  if (school) {
+    message += '\n🏫 *School Name:* ' + school;
+  }
+  if (classVal) {
+    message += '\n📚 *Class:* ' + classVal;
+  }
+  message += '\n\nI am attaching our school syllabus / booklist photo. Please send me the complete wholesale bundle price with free Kashmir doorstep delivery!';
+
+  const phone = '919622605714';
+  const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+  window.open(url, '_blank');
+}

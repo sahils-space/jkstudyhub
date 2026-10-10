@@ -16,9 +16,14 @@
 
   <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="JK STUDY HUB - Class 10th & 11th Study Portal">
-  <meta property="og:description" content="Empowering Class 10th and 11th students with curated notes, core subjects, stream guides, and JKBOSE exam resources.">
-  <meta property="og:image" content="ceo.jpg">
+  <meta property="og:title" content="JK STUDY HUB - Class 10th, 11th & 12th Academic & Books Portal">
+  <meta property="og:description" content="JKBOSE Annual Regular Exam countdown, curated notes, guess papers, bestselling novels, and wholesale school copies with free Kashmir doorstep delivery.">
+  <meta property="og:image" content="images/logo-app.png">
+  <meta property="og:url" content="https://sahils-space.github.io/jkstudyhub/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JK STUDY HUB - Empowering J&K Students">
+  <meta name="twitter:description" content="Curated JKBOSE notes, datesheet alerts, board guess papers, and wholesale books in Kashmir.">
+  <meta name="twitter:image" content="images/logo-app.png">
 
   <!-- Google Fonts for Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +35,75 @@
   <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
+
+  <!-- Top Exam Countdown Ticker (Class 10th, 11th, 12th Annual Regular Exams) -->
+  <aside class="exam-countdown-topbar" id="examCountdownBar">
+    <div class="exam-countdown-container">
+      <div class="exam-countdown-headline">
+        <span class="exam-pulse-dot"></span>
+        <span class="exam-badge-tag"><i class="fa-solid fa-bell"></i> JKBOSE Annual Regular Exams</span>
+      </div>
+
+      <div class="exam-countdown-cards-row">
+        <!-- Class 10th (Exam from 19th) -->
+        <div class="exam-timer-pill" data-class="10" title="Class 10th Annual Regular Exam starts 19th">
+          <div class="pill-left">
+            <span class="pill-class">10th</span>
+            <span class="pill-date">(19th)</span>
+          </div>
+          <div class="pill-time" id="timerClass10">
+            <span class="time-block"><span class="t-val" id="d10">--</span><span class="t-lbl">d</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="h10">--</span><span class="t-lbl">h</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="m10">--</span><span class="t-lbl">m</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="s10">--</span><span class="t-lbl">s</span></span>
+          </div>
+        </div>
+
+        <!-- Class 12th (Exam from 21st) -->
+        <div class="exam-timer-pill" data-class="12" title="Class 12th Annual Regular Exam starts 21st">
+          <div class="pill-left">
+            <span class="pill-class">12th</span>
+            <span class="pill-date">(21st)</span>
+          </div>
+          <div class="pill-time" id="timerClass12">
+            <span class="time-block"><span class="t-val" id="d12">--</span><span class="t-lbl">d</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="h12">--</span><span class="t-lbl">h</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="m12">--</span><span class="t-lbl">m</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="s12">--</span><span class="t-lbl">s</span></span>
+          </div>
+        </div>
+
+        <!-- Class 11th (Exam from 29th) -->
+        <div class="exam-timer-pill" data-class="11" title="Class 11th Annual Regular Exam starts 29th">
+          <div class="pill-left">
+            <span class="pill-class">11th</span>
+            <span class="pill-date">(29th)</span>
+          </div>
+          <div class="pill-time" id="timerClass11">
+            <span class="time-block"><span class="t-val" id="d11">--</span><span class="t-lbl">d</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="h11">--</span><span class="t-lbl">h</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="m11">--</span><span class="t-lbl">m</span></span>
+            <span class="time-sep">:</span>
+            <span class="time-block"><span class="t-val" id="s11">--</span><span class="t-lbl">s</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-countdown-action">
+        <a href="https://wa.me/919622605714?text=Hi%20JK%20Study%20Hub!%20Please%20share%20the%20Class%2010th,%2011th%20and%2012th%20Annual%20Regular%20Exam%20Date%20Sheets%20and%20Important%20Questions." target="_blank" class="btn-exam-datesheet">
+          <i class="fa-solid fa-file-pdf"></i> Date Sheets &rarr;
+        </a>
+      </div>
+    </div>
+  </aside>
 
   <!-- Top Centered Branding Header -->
   <header class="main-header">
@@ -118,6 +192,16 @@
 
   <!-- Hero Section -->
   <section class="hero-section" id="home">
+    <!-- Free WhatsApp Community Strip -->
+    <div style="background: rgba(30, 58, 138, 0.45); border-bottom: 1px solid rgba(255, 255, 255, 0.15); padding: 7px 16px; text-align: center; font-size: 13px; color: #ffffff;">
+      <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <span><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> Join <strong>5,000+ JKBOSE Students</strong> for Free Date Sheets, Notes &amp; Solved Papers:</span>
+        <a href="https://wa.me/919622605714?text=Hi%20JK%20Study%20Hub!%20Please%20add%20me%20to%20the%20JKBOSE%20Students%20Study%20Group%20for%20Notes%20and%20Updates." target="_blank" style="background: #22c55e; color: white; padding: 3px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+          Join WhatsApp Group &rarr;
+        </a>
+      </div>
+    </div>
+
     <div class="container hero-content">
       <span class="badge">Your Dedicated Learning Partner</span>
       <h2 class="hero-heading">Welcome to <span class="text-highlight">JK STUDY HUB</span></h2>
@@ -789,5 +873,59 @@
     }
   </script>
 
+  <!-- Dynamic Exam Countdown Script for Class 10th, 11th, 12th -->
+  <script>
+    (function initExamCountdown() {
+      const now = new Date();
+
+      function getExamTargetDate(dayOfMonth) {
+        // Exam starts at 10:00 AM on the given day of current month
+        let target = new Date(now.getFullYear(), now.getMonth(), dayOfMonth, 10, 0, 0);
+        // If current time is past that date by more than 30 days, move to next month
+        if (now.getTime() > target.getTime() + (24 * 60 * 60 * 1000 * 30)) {
+          target = new Date(now.getFullYear(), now.getMonth() + 1, dayOfMonth, 10, 0, 0);
+        }
+        return target;
+      }
+
+      const examTargets = {
+        '10': getExamTargetDate(19),
+        '12': getExamTargetDate(21),
+        '11': getExamTargetDate(29)
+      };
+
+      function updateCountdown() {
+        const currentTime = new Date();
+        ['10', '11', '12'].forEach(cls => {
+          const diff = examTargets[cls].getTime() - currentTime.getTime();
+          const dEl = document.getElementById('d' + cls);
+          const hEl = document.getElementById('h' + cls);
+          const mEl = document.getElementById('m' + cls);
+          const sEl = document.getElementById('s' + cls);
+          if (!dEl) return;
+
+          if (diff <= 0 && diff > -(24 * 3600 * 1000 * 25)) {
+            const pillTime = document.getElementById('timerClass' + cls);
+            if (pillTime) {
+              pillTime.innerHTML = '<span style="color:#22c55e; font-weight:800; font-size:11.5px;">Exam Ongoing 🎯</span>';
+            }
+          } else {
+            const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+            const hours = Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24));
+            const mins = Math.max(0, Math.floor((diff / 1000 / 60) % 60));
+            const secs = Math.max(0, Math.floor((diff / 1000) % 60));
+
+            dEl.textContent = String(days).padStart(2, '0');
+            hEl.textContent = String(hours).padStart(2, '0');
+            mEl.textContent = String(mins).padStart(2, '0');
+            sEl.textContent = String(secs).padStart(2, '0');
+          }
+        });
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    })();
+  </script>
 </body>
 </html>
