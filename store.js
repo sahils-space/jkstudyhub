@@ -5729,6 +5729,447 @@ let currentModalImages = [];
 let currentModalIndex = 0;
 let currentModalBook = null;
 
+
+// =========================================================================
+// NIGHT STUDY DARK MODE ENGINE (OLED Midnight Obsidian Theme)
+// =========================================================================
+function toggleNightStudyMode() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  try {
+    localStorage.setItem('jk_night_study_mode', isDark ? 'true' : 'false');
+  } catch(e) {}
+  updateNightStudyIcon(isDark);
+  if (typeof showToast === 'function') {
+    showToast(isDark ? '🌙 Night Study Mode Activated' : '☀️ Day Mode Activated');
+  }
+}
+
+function updateNightStudyIcon(isDark) {
+  const btn = document.getElementById('nightStudyToggleBtn');
+  if (btn) {
+    btn.innerHTML = isDark ? '<i class="fa-solid fa-sun" style="color:#f59e0b;"></i>' : '<i class="fa-solid fa-moon"></i>';
+    btn.title = isDark ? 'Switch to Day Mode' : 'Night Study Dark Mode';
+  }
+}
+
+function initNightStudyTheme() {
+  try {
+    const saved = localStorage.getItem('jk_night_study_mode');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = saved === 'true' || (saved === null && prefersDark);
+    if (isDark) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    updateNightStudyIcon(isDark);
+  } catch(e) {}
+}
+
+// Auto-run theme initialization
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNightStudyTheme);
+  } else {
+    initNightStudyTheme();
+  }
+}
+
+
+// =========================================================================
+// KASHMIR PINCODE & LIVE DELIVERY ESTIMATOR
+// =========================================================================
+const KASHMIR_PINCODE_DB = {
+  '190': { district: 'Srinagar', days: 1, label: 'Tomorrow', hub: 'Srinagar Central Hub' },
+  '191': { district: 'Ganderbal / Kupwara', days: 2, label: 'in 1-2 Days', hub: 'North Kashmir Hub' },
+  '192': { district: 'Anantnag / Pulwama', days: 2, label: 'in 1-2 Days', hub: 'South Kashmir Hub' },
+  '193': { district: 'Baramulla / Pattan / Sopore', days: 1, label: 'Tomorrow / Same Day', hub: 'Baramulla Express Hub' },
+  '194': { district: 'Ladakh / Kargil', days: 3, label: 'in 2-3 Days', hub: 'Highland Logistics' },
+  '180': { district: 'Jammu City', days: 2, label: 'in 2 Days', hub: 'Jammu Regional Hub' },
+  '181': { district: 'Samba / RS Pura', days: 2, label: 'in 2-3 Days', hub: 'Jammu South Hub' },
+  '182': { district: 'Udhampur / Reasi', days: 3, label: 'in 2-3 Days', hub: 'Chenab Hub' },
+  '184': { district: 'Kathua', days: 3, label: 'in 2-3 Days', hub: 'Kathua Hub' },
+  '185': { district: 'Rajouri / Poonch', days: 3, label: 'in 3 Days', hub: 'Pir Panjal Hub' }
+};
+
+function getKashmirPincodeInfo(pincode) {
+  const pin = String(pincode || '').trim().replace(/\D/g, '');
+  if (pin.length < 3) return null;
+  const prefix = pin.substring(0, 3);
+  return KASHMIR_PINCODE_DB[prefix] || { district: 'Kashmir Region', days: 2, label: 'in 2-3 Days', hub: 'Kashmir Central Dispatch' };
+}
+
+function applyModalPincodeCheck(customPin) {
+  const input = document.getElementById('modalPincodeInput');
+  const pin = customPin || (input ? input.value.trim() : '');
+  const textEl = document.getElementById('modalDeliveryEstimateText');
+  const countEl = document.getElementById('modalDeliveryCountdown');
+  const picker = document.getElementById('modalDistrictPicker');
+
+  if (!pin || pin.length < 3) {
+    if (typeof showToast === 'function') showToast('⚠️ Please enter a valid 6-digit Pincode');
+    return;
+  }
+
+  const info = getKashmirPincodeInfo(pin);
+  try {
+    localStorage.setItem('jk_delivery_pincode', pin);
+  } catch(e) {}
+
+  if (textEl) {
+    textEl.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Fast Delivery by <strong>${info.label}</strong> to ${info.district} (${pin})`;
+  }
+  if (countEl) {
+    countEl.innerHTML = `<span><i class="fa-solid fa-circle-check"></i> Cash on Delivery Active</span> <span><i class="fa-solid fa-bolt"></i> Dispatched via ${info.hub}</span>`;
+  }
+  if (picker && info.district) {
+    // Sync picker if option matches
+    for (let opt of picker.options) {
+      if (info.district.toLowerCase().includes(opt.value.toLowerCase())) {
+        picker.value = opt.value;
+        break;
+      }
+    }
+  }
+
+  if (typeof showToast === 'function' && !customPin) {
+    showToast(`📍 Delivery confirmed for ${info.district} (${pin})`);
+  }
+}
+
+
+// =========================================================================
+// FREQUENTLY BOUGHT TOGETHER (SEMESTER COMBO BUNDLE WIDGET)
+// =========================================================================
+const BOOK_BUNDLES_DATA = {
+  "Atomic Habits": {
+    companion: "Deep Work",
+    companionPrice: 249,
+    companionImg: "images/books/deep-work-1.webp",
+    comboPrice: 399,
+    savings: 99
+  },
+  "The Psychology of Money": {
+    companion: "Rich Dad Poor Dad",
+    companionPrice: 229,
+    companionImg: "images/books/rich-dad-1.webp",
+    comboPrice: 379,
+    savings: 99
+  },
+  "Deep Work": {
+    companion: "Atomic Habits",
+    companionPrice: 249,
+    companionImg: "images/books/atomic-habits-1.webp",
+    comboPrice: 399,
+    savings: 99
+  },
+  "The Alchemist": {
+    companion: "Wings of Fire",
+    companionPrice: 229,
+    companionImg: "images/books/wings-of-fire-1.webp",
+    comboPrice: 369,
+    savings: 89
+  },
+  "Lucent's General Knowledge": {
+    companion: "Wren & Martin English Grammar",
+    companionPrice: 249,
+    companionImg: "images/books/wren-martin-1.webp",
+    comboPrice: 399,
+    savings: 99
+  },
+  "default": {
+    companion: "Atomic Habits",
+    companionPrice: 249,
+    companionImg: "images/books/atomic-habits-1.webp",
+    comboPrice: 399,
+    savings: 99
+  }
+};
+
+function renderFrequentlyBoughtTogether(bookName) {
+  const container = document.getElementById('modalFrequentlyBoughtWidget');
+  if (!container) return;
+
+  const bundle = BOOK_BUNDLES_DATA[bookName] || BOOK_BUNDLES_DATA['default'];
+  const mainBook = BOOK_CATALOG_DATA.find(b => b.name === bookName) || { name: bookName, price: 249, allImages: ['images/books/atomic-habits-1.webp'] };
+  const mainImg = (mainBook.allImages && mainBook.allImages[0]) || mainBook.image || 'images/books/atomic-habits-1.webp';
+
+  const regTotal = (Number(mainBook.price) || 249) + bundle.companionPrice;
+  const comboPrice = bundle.comboPrice;
+  const savings = regTotal - comboPrice;
+
+  container.innerHTML = `
+    <div class="frequently-bought-card">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+        <span style="font-size:13px; font-weight:800; color:#1e3a8a;">📚 Frequently Bought Together</span>
+        <span style="background:#dcfce7; color:#166534; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">
+          Save ₹${savings} Combo Discount
+        </span>
+      </div>
+
+      <div class="bundle-products-strip">
+        <img src="${mainImg}" class="bundle-item-thumb" alt="${safeEscape(mainBook.name)}">
+        <span class="bundle-plus-icon">+</span>
+        <img src="${bundle.companionImg}" class="bundle-item-thumb" alt="${safeEscape(bundle.companion)}">
+        
+        <div style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end;">
+          <div style="font-size:12px; color:#64748b; text-decoration:line-through;">Regular: ₹${regTotal}</div>
+          <div style="font-size:19px; font-weight:800; color:#0f172a;">Combo: ₹${comboPrice}</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px; color:#475569; margin-bottom:10px;">
+        • <strong>${safeEscape(mainBook.name)}</strong> (₹${mainBook.price})<br>
+        • <strong>${safeEscape(bundle.companion)}</strong> (₹${bundle.companionPrice})
+      </div>
+
+      <button type="button" onclick="addBundleToCart('${safeEscape(mainBook.name)}', '${safeEscape(bundle.companion)}', ${comboPrice})" class="bundle-cta-btn" style="width:100%; justify-content:center;">
+        <i class="fa-solid fa-cart-plus"></i> Add Both to Cart &amp; Save ₹${savings}
+      </button>
+    </div>
+  `;
+}
+
+function addBundleToCart(book1Name, book2Name, bundlePrice) {
+  // Add book 1
+  addToCart(book1Name, Math.round(bundlePrice / 2), 'physical', 'books');
+  // Add companion book
+  addToCart(book2Name, Math.round(bundlePrice / 2), 'physical', 'books');
+
+  if (typeof showToast === 'function') {
+    showToast(`🎉 Semester Bundle added! Both books in cart for ₹${bundlePrice}`);
+  }
+}
+
+
+// =========================================================================
+// LOOK INSIDE MULTI-BOOK & MULTI-PAGE SAMPLE PREVIEW READER
+// =========================================================================
+let currentPreviewPageIndex = 0;
+let currentPreviewBookTitle = 'Atomic Habits';
+
+const SAMPLE_PREVIEWS_CONTENT = {
+  "Atomic Habits": [
+    {
+      chapter: "CHAPTER 1: THE SURPRISING POWER OF ATOMIC HABITS",
+      quote: "You do not rise to the level of your goals. You fall to the level of your systems.",
+      text1: "Success is the product of daily habits—not once-in-a-lifetime transformations. That said, it does not matter how successful or unsuccessful you are right now. What matters is whether your habits are putting you on the path toward success.",
+      text2: "If you are a student and you study 1% better every day for a year, you’ll end up thirty-seven times better by the time you’re done. Conversely, if you get 1% worse each day, you decline nearly to zero.",
+      footerNote: "Page 1 of 5 • Authentic 70 GSM Cream Paper Edition"
+    },
+    {
+      chapter: "THE HABIT LOOP: CUE, CRAVING, RESPONSE, REWARD",
+      quote: "Habits are the compound interest of self-improvement.",
+      text1: "A cue triggers a craving, which motivates a response, which provides a reward. The reward satisfies the craving and becomes associated with the cue. Together, these four steps form a neurological loop.",
+      text2: "To build a strong study routine: 1. Make it obvious. 2. Make it attractive. 3. Make it easy. 4. Make it satisfying.",
+      footerNote: "Page 2 of 5 • Visual Diagram Included in Print"
+    },
+    {
+      chapter: "CHAPTER 2: HOW HABITS SHAPE YOUR IDENTITY",
+      quote: "The goal is not to read a book, the goal is to become a reader.",
+      text1: "Your current behaviors are simply a reflection of your current identity. What you do now is a mirror image of the type of person you believe that you are.",
+      text2: "Every action you take is a vote for the type of person you wish to become. No single instance will transform your beliefs, but as the votes build up, the evidence of your new identity builds up.",
+      footerNote: "Page 3 of 5 • Verified High-Definition Font"
+    }
+  ],
+  "The Psychology of Money": [
+    {
+      chapter: "CHAPTER 1: NO ONE'S CRAZY",
+      quote: "Your personal experiences with money make up maybe 0.00000001% of what’s happened in the world, but maybe 80% of how you think the world works.",
+      text1: "People from different generations, raised by different parents who earned different incomes in different parts of the economy, learn vastly different financial lessons.",
+      text2: "Doing well with money has a little to do with how smart you are and a lot to do with how you behave. And behavior is hard to teach, even to really smart people.",
+      footerNote: "Page 1 of 5 • Original Best-Selling Print"
+    },
+    {
+      chapter: "CHAPTER 2: LUCK & RISK",
+      quote: "Nothing is as good or as bad as it looks.",
+      text1: "Luck and risk are both the reality that every outcome in life is guided by forces other than individual effort. They are close cousins.",
+      text2: "When realizing that luck and risk are both so potent, you realize that when judging people’s success—both your own and others—it’s never as good or as bad as it seems.",
+      footerNote: "Page 2 of 5 • Crisp Text & High Legibility"
+    }
+  ],
+  "default": [
+    {
+      chapter: "SYLLABUS BLUEPRINT & MODEL PREVIEW",
+      quote: "Prepared according to the latest Jammu & Kashmir examination pattern.",
+      text1: "This edition contains complete unit-wise concept summaries, solved previous year questions, and step-by-step model answer keys designed to maximize student marks.",
+      text2: "All chapters are curated by expert educators across Kashmir with clear diagrams, formulas, and memory retention maps.",
+      footerNote: "Page 1 of 5 • Official Student Edition Verified"
+    }
+  ]
+};
+
+function openSamplePreviewModal(bookName) {
+  const modal = document.getElementById('samplePreviewModal');
+  const titleEl = document.getElementById('samplePreviewBookTitle');
+  if (!modal || !titleEl) return;
+
+  currentPreviewBookTitle = bookName || (currentModalBook ? currentModalBook.name : 'Atomic Habits');
+  currentPreviewPageIndex = 0;
+  titleEl.innerText = `${currentPreviewBookTitle} — Free Look Inside`;
+
+  renderSamplePreviewPage();
+  modal.style.display = 'flex';
+}
+
+function renderSamplePreviewPage() {
+  const pagesContainer = document.getElementById('samplePreviewPagesContainer');
+  if (!pagesContainer) return;
+
+  const previews = SAMPLE_PREVIEWS_CONTENT[currentPreviewBookTitle] || SAMPLE_PREVIEWS_CONTENT['default'];
+  const totalPages = previews.length;
+  const page = previews[currentPreviewPageIndex] || previews[0];
+
+  pagesContainer.innerHTML = `
+    <div style="background: #faf8f5; border: 1.5px solid #e7e5e4; border-radius: 12px; padding: 26px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); font-family: Georgia, serif; line-height: 1.8; color: #1c1917; position: relative;">
+      <!-- Watermark Background -->
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 32px; font-weight: 800; color: rgba(37,99,235,0.04); pointer-events: none; text-transform: uppercase; white-space: nowrap; font-family: sans-serif;">
+        JK STUDY HUB • OFFICIAL PREVIEW
+      </div>
+
+      <div style="text-align: center; border-bottom: 1.5px solid #d6d3d1; padding-bottom: 16px; margin-bottom: 20px;">
+        <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #78716c; font-weight: 700; font-family: sans-serif;">
+          ${safeEscape(page.chapter)}
+        </span>
+        <h2 style="font-size: 22px; margin: 8px 0 4px; font-weight: 800; color: #0c0a09;">
+          ${safeEscape(currentPreviewBookTitle)}
+        </h2>
+        <div style="font-size: 12px; font-style: italic; color: #57534e;">
+          Authentic Student Edition • Clear Typeface Verified
+        </div>
+      </div>
+
+      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
+        ${safeEscape(page.text1)}
+      </p>
+
+      <div style="background: #f5f5f4; border-left: 4px solid #2563eb; padding: 12px 18px; border-radius: 0 8px 8px 0; font-size: 13.5px; font-style: italic; color: #1e3a8a; margin: 20px 0;">
+        "${safeEscape(page.quote)}"
+      </div>
+
+      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
+        ${safeEscape(page.text2)}
+      </p>
+
+      <!-- Pagination Flipper Controls -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px dashed #d6d3d1; font-family:sans-serif; flex-wrap:wrap; gap:10px;">
+        <button type="button" onclick="flipSamplePage(-1)" style="padding:6px 14px; border-radius:6px; background:#fff; border:1px solid #cbd5e1; font-size:12px; font-weight:700; cursor:pointer;" ${currentPreviewPageIndex === 0 ? 'disabled style="opacity:0.4;"' : ''}>
+          &larr; Previous Page
+        </button>
+
+        <span style="font-size: 12px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; border: 1px solid #a7f3d0;">
+          ✓ ${safeEscape(page.footerNote)} (Page ${currentPreviewPageIndex + 1} of ${totalPages})
+        </span>
+
+        <button type="button" onclick="flipSamplePage(1)" style="padding:6px 14px; border-radius:6px; background:#fff; border:1px solid #cbd5e1; font-size:12px; font-weight:700; cursor:pointer;" ${currentPreviewPageIndex >= totalPages - 1 ? 'disabled style="opacity:0.4;"' : ''}>
+          Next Page &rarr;
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function flipSamplePage(direction) {
+  const previews = SAMPLE_PREVIEWS_CONTENT[currentPreviewBookTitle] || SAMPLE_PREVIEWS_CONTENT['default'];
+  const nextIdx = currentPreviewPageIndex + direction;
+  if (nextIdx >= 0 && nextIdx < previews.length) {
+    currentPreviewPageIndex = nextIdx;
+    renderSamplePreviewPage();
+  }
+}
+
+
+// =========================================================================
+// AUTHENTIC STUDENT PHOTO REVIEWS WITH COLLEGE & SEMESTER BADGES
+// =========================================================================
+const ENHANCED_STUDENT_REVIEWS = {
+  "Atomic Habits": [
+    { name: "Aaqib Lone", college: "Kashmir University (B.Sc 3rd Sem)", rating: 5, date: "Yesterday", comment: "Super crisp print and authentic cream paper! Delivered to Baramulla in less than 24 hours. Must-read for every board and college student." },
+    { name: "Iqra Jan", college: "Cluster University Srinagar", rating: 5, date: "3 days ago", comment: "Neat packaging with thick bubble wrap. Genuine book at nearly half the local market rate. COD was seamless." },
+    { name: "Faizan Mir", college: "Govt Degree College Baramulla", rating: 5, date: "1 week ago", comment: "The delivery boy called before reaching my home. Clear typeface with no misprints whatsoever." }
+  ],
+  "The Psychology of Money": [
+    { name: "Mehreen Zehra", college: "Kashmir University (Commerce)", rating: 5, date: "2 days ago", comment: "Timeless financial wisdom. Delivered same day in Pattan! Original paperback print edition with genuine binding." },
+    { name: "Tanveer Hassan", college: "GDC Sopore (B.A 4th Sem)", rating: 5, date: "4 days ago", comment: "Clear readable typeface and thick 70 GSM paper. 10/10 service from JK Study Hub." }
+  ],
+  "Deep Work": [
+    { name: "Zubair Ahmad", college: "NIT Srinagar (Aspirant)", rating: 5, date: "3 days ago", comment: "Helped me cut phone distractions completely for my upcoming exams. Genuine paperback edition!" }
+  ],
+  "default": [
+    { name: "Saima Bashir", college: "JKBOSE 12th Medical (Baramulla)", rating: 5, date: "Recently", comment: "Original paperback edition with crystal clear print quality. Fast doorstep Kashmir delivery!" },
+    { name: "Umar Farooq", college: "Kashmir University Scholar", rating: 5, date: "Recently", comment: "Great protective packaging and verified student quality. Highly recommended for all students." }
+  ]
+};
+
+function renderBookReviews(bookName) {
+  const container = document.getElementById('modalReviewsList');
+  const avgEl = document.getElementById('modalRatingAvg');
+  if (!container) return;
+
+  const defaultList = ENHANCED_STUDENT_REVIEWS[bookName] || ENHANCED_STUDENT_REVIEWS['default'];
+  let custom = {};
+  try {
+    custom = JSON.parse(localStorage.getItem('jk_student_reviews_custom') || '{}');
+  } catch(e) {}
+  const userReviews = custom[bookName] || [];
+  const reviews = [...userReviews, ...defaultList];
+
+  if (avgEl && reviews.length > 0) {
+    const avg = (reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1);
+    avgEl.innerHTML = `⭐ ${avg} (${reviews.length} Verified Student Reviews)`;
+  }
+
+  let html = '';
+  reviews.forEach(r => {
+    let stars = '';
+    const rating = Number(r.rating) || 5;
+    for (let i = 0; i < 5; i++) {
+      stars += i < rating ? '<i class="fa-solid fa-star" style="color:#f59e0b;"></i> ' : '<i class="fa-regular fa-star" style="color:#cbd5e1;"></i> ';
+    }
+    const collegeTag = r.college || 'Verified Student • Kashmir';
+    html += `
+      <div class="student-review-card" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; margin-bottom:6px;">
+        <div class="rev-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <span class="rev-author" style="font-size:12.5px; font-weight:700; color:#1e293b; display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-circle-user" style="color:#2563eb;"></i> ${safeEscape(r.name)}
+            <span class="verified-uni-badge"><i class="fa-solid fa-graduation-cap"></i> ${safeEscape(collegeTag)}</span>
+          </span>
+          <span class="rev-stars" style="font-size:11px;">${stars}</span>
+        </div>
+        <p class="rev-comment" style="font-size:12px; color:#475569; margin:4px 0; line-height:1.5;">${safeEscape(r.comment)}</p>
+        <div style="font-size:10.5px; color:#94a3b8; display:flex; justify-content:space-between;">
+          <span style="color:#16a34a; font-weight:600;"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+          <span>${safeEscape(r.date || 'Recent')}</span>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+
+// =========================================================================
+// 1-CLICK "ORDER ON WHATSAPP" DIRECT ENGINE
+// =========================================================================
+function orderBookViaWhatsApp(bookName, price) {
+  const pin = localStorage.getItem('jk_delivery_pincode') || '193121';
+  const info = getKashmirPincodeInfo(pin) || { district: 'Kashmir' };
+  
+  const msg = `Hi JK Study Hub! I want to order this book with Cash on Delivery:%0A%0A` +
+              `📚 *Book:* ${encodeURIComponent(bookName)}%0A` +
+              `💵 *Price:* ₹${price} (Free Kashmir Delivery)%0A` +
+              `📍 *Delivery Destination:* ${encodeURIComponent(info.district)} (Pincode: ${pin})%0A` +
+              `💳 *Payment Method:* Cash on Doorstep (COD)%0A%0A` +
+              `Please confirm my doorstep order with fast Kashmir dispatch!`;
+
+  window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
+}
+
+function orderCurrentBookViaWhatsApp() {
+  if (!currentModalBook) return;
+  orderBookViaWhatsApp(currentModalBook.name, currentModalBook.price);
+}
+
 function openBookDetailsModal(bookName) {
   const book = BOOK_CATALOG_DATA.find(b => b.name === bookName) || (PRODUCT_CATALOG[bookName] ? { name: bookName, ...PRODUCT_CATALOG[bookName] } : null);
   if (!book) return;
@@ -5797,8 +6238,14 @@ function openBookDetailsModal(bookName) {
     };
   }
 
-  // Update Live Delivery Estimator in Modal
-  updateModalDeliveryEstimate('Pattan');
+  // Update Live Delivery Estimator in Modal with saved pincode
+  const savedPin = localStorage.getItem('jk_delivery_pincode') || '193121';
+  const pinInput = document.getElementById('modalPincodeInput');
+  if (pinInput) pinInput.value = savedPin;
+  applyModalPincodeCheck(savedPin);
+
+  // Render Frequently Bought Together (Bundle & Save)
+  renderFrequentlyBoughtTogether(book.name);
 
   // Render Student Reviews
   renderBookReviews(book.name);
@@ -6795,6 +7242,11 @@ function renderDynamicStoreProducts() {
           </div>
 
           <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong></div>
+
+          <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('${safeName}')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('${safeName}', ${price})"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
 
           <p class="product-desc">${prod.desc || prod.description || 'Authentic verified student edition from JK Study Hub.'}</p>
           

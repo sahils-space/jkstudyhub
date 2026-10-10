@@ -1522,6 +1522,263 @@
       font-weight: 700;
       color: #1e293b;
     }
+
+    /* =========================================================================
+       NIGHT STUDY DARK MODE (OLED Midnight Obsidian Theme)
+       ========================================================================= */
+    body.dark-mode {
+      background-color: #0b0f19 !important;
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .zapvi-store-nav,
+    body.dark-mode .mobile-bottom-nav,
+    body.dark-mode .book-details-card,
+    body.dark-mode .shipping-modal-card,
+    body.dark-mode .product-card,
+    body.dark-mode .book-product-card,
+    body.dark-mode .zapvi-dropdown-menu,
+    body.dark-mode .checkout-card {
+      background-color: #111827 !important;
+      color: #f8fafc !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode .product-title,
+    body.dark-mode .zapvi-logo,
+    body.dark-mode .category-title,
+    body.dark-mode #modalBookTitle,
+    body.dark-mode .spec-val,
+    body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .product-desc,
+    body.dark-mode #modalBookDesc,
+    body.dark-mode #modalBookAuthor,
+    body.dark-mode .spec-lbl,
+    body.dark-mode .zapvi-nav-link,
+    body.dark-mode .zapvi-ticket-sub {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .product-price,
+    body.dark-mode #modalBookPrice {
+      color: #60a5fa !important;
+    }
+    body.dark-mode .specs-table-grid,
+    body.dark-mode .invoice-box,
+    body.dark-mode .zapvi-price-box,
+    body.dark-mode .frequently-bought-card,
+    body.dark-mode .student-review-card,
+    body.dark-mode .modal-delivery-checker {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .zapvi-icon-btn,
+    body.dark-mode .back-btn-pill {
+      background: #1e293b !important;
+      color: #cbd5e1 !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode .zapvi-top-bar {
+      background: #090d16 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .pincode-input-wrap input {
+      background: #0f172a !important;
+      color: white !important;
+      border-color: #334155 !important;
+    }
+
+    /* =========================================================================
+       "LOOK INSIDE" & QUICK WHATSAPP ORDER BUTTONS
+       ========================================================================= */
+    .btn-look-inside {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .btn-look-inside:hover {
+      background: #dcfce7;
+      transform: translateY(-1px);
+    }
+    body.dark-mode .btn-look-inside {
+      background: #064e3b !important;
+      color: #6ee7b7 !important;
+      border-color: #047857 !important;
+    }
+
+    .btn-whatsapp-direct {
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(37,211,102,0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-whatsapp-direct:hover {
+      background: #20ba5a;
+      transform: translateY(-1px);
+    }
+
+    /* =========================================================================
+       KASHMIR PINCODE DELIVERY ESTIMATOR
+       ========================================================================= */
+    .pincode-input-wrap {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .pincode-input-wrap input {
+      flex: 1;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      font-size: 12.5px;
+      font-weight: 600;
+      outline: none;
+    }
+    .pincode-input-wrap button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* =========================================================================
+       FREQUENTLY BOUGHT TOGETHER (SEMESTER COMBO BUNDLE WIDGET)
+       ========================================================================= */
+    .frequently-bought-card {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1.5px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 16px 0;
+    }
+    .bundle-products-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .bundle-item-thumb {
+      width: 60px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .bundle-plus-icon {
+      font-size: 18px;
+      font-weight: 800;
+      color: #2563eb;
+    }
+    .bundle-cta-btn {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+      transition: all 0.2s;
+    }
+    .bundle-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37,99,235,0.35);
+    }
+
+    /* =========================================================================
+       STUDENT PHOTO REVIEWS GALLERY & RATINGS BREAKDOWN
+       ========================================================================= */
+    .rating-bars-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 8px 0 14px;
+    }
+    .rating-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #64748b;
+    }
+    .rating-progress-track {
+      flex: 1;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .rating-progress-fill {
+      height: 100%;
+      background: #f59e0b;
+      border-radius: 4px;
+    }
+    .student-photo-gallery {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .student-photo-thumb {
+      width: 65px;
+      height: 65px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1.5px solid #cbd5e1;
+      cursor: pointer;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .student-photo-thumb:hover {
+      transform: scale(1.08);
+      border-color: #2563eb;
+    }
+    .verified-uni-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #1e40af;
+      background: #dbeafe;
+      padding: 2px 7px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    body.dark-mode .verified-uni-badge {
+      background: #1e3a8a !important;
+      color: #93c5fd !important;
+    }
   </style>
 
 </head>
@@ -1594,6 +1851,11 @@
     <div class="zapvi-nav-right">
       <button type="button" class="zapvi-icon-btn" onclick="focusStoreSearch()" title="Search books">
         <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
+      <!-- Night Study Dark Mode Toggle -->
+      <button type="button" class="zapvi-icon-btn" id="nightStudyToggleBtn" onclick="toggleNightStudyMode()" title="Night Study Dark Mode">
+        <i class="fa-solid fa-moon"></i>
       </button>
 
       <a href="account.html#wishlist" class="zapvi-icon-btn" title="Wishlist">
@@ -1860,7 +2122,10 @@
           </div>
 
           <p class="product-desc">An easy and proven way to build good habits and break bad ones. The #1 self-discipline handbook for students and high achievers.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Atomic Habits')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Atomic Habits', 249)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -1912,7 +2177,10 @@
           </div>
 
           <p class="product-desc">Timeless lessons on wealth, greed, and happiness. Crucial financial wisdom every young student should understand before college.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('The Psychology of Money')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('The Psychology of Money', 220)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -1964,7 +2232,10 @@
           </div>
 
           <p class="product-desc">Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Deep Work')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Deep Work', 240)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2016,7 +2287,10 @@
           </div>
 
           <p class="product-desc">A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('The Alchemist')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('The Alchemist', 180)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2068,7 +2342,10 @@
           </div>
 
           <p class="product-desc">An unforgettable, heartbreaking story of the unlikely friendship between a wealthy boy and the son of his father's servant in Afghanistan.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('The Kite Runner')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('The Kite Runner', 260)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2120,7 +2397,10 @@
           </div>
 
           <p class="product-desc">A breathtaking story of two women brought together by war and tragedy in Kabul. Unputdownable modern literature.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('A Thousand Splendid Suns')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('A Thousand Splendid Suns', 260)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2172,7 +2452,10 @@
           </div>
 
           <p class="product-desc">A heart-centered, practical guide to using the Quran and Islamic spirituality to awaken divine love, peace, and hope.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Secrets of Divine Love')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Secrets of Divine Love', 299)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2224,7 +2507,10 @@
           </div>
 
           <p class="product-desc">Manual on freeing the heart from life's attachments, overcoming emotional pain, and staying mentally strong as a student.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Reclaim Your Heart')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Reclaim Your Heart', 250)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2276,7 +2562,10 @@
           </div>
 
           <p class="product-desc">Inspiring autobiography of Dr. Kalam—from a humble boy in Rameswaram to leading India's space and missile programs.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Wings of Fire')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Wings of Fire', 199)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2328,7 +2617,10 @@
           </div>
 
           <p class="product-desc">Essential handbook covering Indian History, Polity, Geography, Economy, and General Science. The Bible for JKSSB & SSC exams.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Wren & Martin English Grammar')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Wren & Martin English Grammar', 290)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -2380,7 +2672,10 @@
           </div>
 
           <p class="product-desc">High School English Grammar and Composition. Comprehensive rules, sentence structures, vocabulary, and writing techniques.</p>
-          
+          <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Wren & Martin English Grammar')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Wren & Martin English Grammar', 290)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -3017,16 +3312,16 @@
             <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;" id="modalPriceDeliveryBadge"><i class="fa-solid fa-truck-fast"></i> Kashmir Express Delivery</span>
           </div>
 
-          <!-- Live District Delivery Estimator -->
-          <div class="modal-delivery-checker" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:10px 14px; margin-bottom:14px;">
+          <!-- Live Kashmir Pincode & Delivery Estimator -->
+          <div class="modal-delivery-checker" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-bottom:14px;">
             <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
               <div style="font-size:12.5px; color:#15803d; font-weight:700;" id="modalDeliveryEstimateText">
-                <i class="fa-solid fa-truck-fast"></i> Delivery by <strong>Tomorrow</strong> in Pattan / Baramulla
+                <i class="fa-solid fa-truck-fast"></i> Delivery by <strong>Tomorrow</strong> in Kashmir
               </div>
               <div style="display:flex; align-items:center; gap:6px;">
-                <label style="font-size:11px; color:#166534; font-weight:700;">Check District:</label>
+                <label style="font-size:11px; color:#166534; font-weight:700;">District:</label>
                 <select id="modalDistrictPicker" onchange="updateModalDeliveryEstimate(this.value)" style="font-size:11.5px; padding:3px 8px; border-radius:5px; border:1px solid #86efac; background:white; color:#15803d; font-weight:700; cursor:pointer;">
-                  <option value="Pattan">Pattan / Baramulla</option>
+                  <option value="Baramulla">Baramulla / Pattan</option>
                   <option value="Srinagar">Srinagar</option>
                   <option value="Sopore">Sopore</option>
                   <option value="Budgam">Budgam</option>
@@ -3034,11 +3329,23 @@
                   <option value="Pulwama">Pulwama</option>
                   <option value="Kupwara">Kupwara</option>
                   <option value="Ganderbal">Ganderbal</option>
+                  <option value="Kulgam">Kulgam</option>
+                  <option value="Shopian">Shopian</option>
+                  <option value="Bandipora">Bandipora</option>
+                  <option value="Jammu">Jammu</option>
                 </select>
               </div>
             </div>
-            <div style="font-size:11px; color:#16a34a; margin-top:4px; font-weight:600;" id="modalDeliveryCountdown">
-              Order within 4 hrs for same-day dispatch from Baramulla Hub
+
+            <!-- Pincode Direct Solver -->
+            <div class="pincode-input-wrap">
+              <input type="text" id="modalPincodeInput" maxlength="6" placeholder="Enter 6-digit Pincode (e.g. 190001)" onkeypress="if(event.key==='Enter') applyModalPincodeCheck();">
+              <button type="button" onclick="applyModalPincodeCheck()">Check Date</button>
+            </div>
+
+            <div style="font-size:11px; color:#16a34a; margin-top:6px; font-weight:600; display:flex; align-items:center; gap:12px; flex-wrap:wrap;" id="modalDeliveryCountdown">
+              <span><i class="fa-solid fa-circle-check"></i> Cash on Delivery Available</span>
+              <span><i class="fa-solid fa-bolt"></i> Dispatched from Baramulla Hub</span>
             </div>
           </div>
 
@@ -3073,6 +3380,9 @@
             </div>
           </div>
 
+          <!-- Frequently Bought Together (Semester Bundle & Save) -->
+          <div id="modalFrequentlyBoughtWidget"></div>
+
           <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin:16px 0 6px;">Synopsis &amp; What You'll Learn</h4>
           <p id="modalBookDesc" style="font-size:13.5px; color:#475569; line-height:1.6; margin-bottom:14px;"></p>
 
@@ -3085,6 +3395,24 @@
               <button type="button" onclick="toggleReviewForm()" style="font-size:11.5px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; padding:4px 10px; border-radius:6px; font-weight:700; cursor:pointer;">
                 <i class="fa-solid fa-pen"></i> Write Review
               </button>
+            </div>
+
+            <!-- Rating Breakdown Summary -->
+            <div class="rating-bars-container">
+              <div class="rating-bar-row"><span>5 ★</span><div class="rating-progress-track"><div class="rating-progress-fill" style="width: 88%;"></div></div><span>88%</span></div>
+              <div class="rating-bar-row"><span>4 ★</span><div class="rating-progress-track"><div class="rating-progress-fill" style="width: 9%;"></div></div><span>9%</span></div>
+              <div class="rating-bar-row"><span>3 ★</span><div class="rating-progress-track"><div class="rating-progress-fill" style="width: 3%;"></div></div><span>3%</span></div>
+            </div>
+
+            <!-- Student Photo Gallery -->
+            <div style="margin-bottom: 6px;">
+              <span style="font-size: 11.5px; font-weight: 700; color: #475569;">📷 Student Unboxing &amp; Book Photos:</span>
+              <div class="student-photo-gallery" id="studentPhotoGallery">
+                <img src="images/books/atomic-habits-1.webp" class="student-photo-thumb" alt="Delivered Book" onclick="window.open(this.src, '_blank')">
+                <img src="images/books/atomic-habits-2.webp" class="student-photo-thumb" alt="Print Quality" onclick="window.open(this.src, '_blank')">
+                <img src="images/books/psychology-of-money-1.webp" class="student-photo-thumb" alt="Original Paperback" onclick="window.open(this.src, '_blank')">
+                <img src="images/books/deep-work-1.webp" class="student-photo-thumb" alt="Kashmir Delivery" onclick="window.open(this.src, '_blank')">
+              </div>
             </div>
 
             <!-- Add Review Form (Collapsible) -->
@@ -3111,14 +3439,17 @@
           </div>
 
           <div style="display:flex; gap:10px; margin-top:auto; flex-wrap:wrap;">
-            <button type="button" onclick="openSamplePreviewModal()" class="yellow-btn" style="flex:1; min-width:140px; background:#f8fafc; color:#1e293b; border:1.5px solid #cbd5e1; padding:12px; font-size:14px; font-weight:700; border-radius:10px;">
-              📖 Look Inside (Sample)
+            <button type="button" onclick="openSamplePreviewModal()" class="yellow-btn" style="flex:1; min-width:140px; background:#f8fafc; color:#1e293b; border:1.5px solid #cbd5e1; padding:12px; font-size:13.5px; font-weight:700; border-radius:10px;">
+              📖 Look Inside
             </button>
-            <button id="modalCartBtn" class="yellow-btn" style="flex:1; min-width:100px; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; padding:12px; font-size:14px; font-weight:700; border-radius:10px;">
+            <button id="modalCartBtn" class="yellow-btn" style="flex:1; min-width:90px; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; padding:12px; font-size:13.5px; font-weight:700; border-radius:10px;">
               <i class="fa-solid fa-cart-plus"></i> Add
             </button>
-            <button id="modalBuyBtn" class="yellow-btn" style="flex:2; min-width:180px; background:#2563eb; color:white; padding:12px; font-size:15px; font-weight:700; border-radius:10px; box-shadow:0 4px 14px rgba(37,99,235,0.25);">
-              ⚡ Buy Now & Pay Securely
+            <button type="button" onclick="orderCurrentBookViaWhatsApp()" class="btn-whatsapp-direct" style="flex:1.2; min-width:150px; padding:12px; font-size:13.5px; font-weight:700; border-radius:10px; justify-content:center;">
+              <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> WhatsApp
+            </button>
+            <button id="modalBuyBtn" class="yellow-btn" style="flex:1.8; min-width:160px; background:#2563eb; color:white; padding:12px; font-size:14.5px; font-weight:700; border-radius:10px; box-shadow:0 4px 14px rgba(37,99,235,0.25);">
+              ⚡ Buy (COD)
             </button>
           </div>
         </div>
