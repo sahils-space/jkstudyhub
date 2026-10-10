@@ -23,10 +23,45 @@
     
     /* Legacy .store-hero rules consolidated into .store-hero-3d-stage below */
 
-    .category-title { font-size: 24px; font-weight: 700; color: #1e293b; margin-bottom: 20px; margin-top: 40px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; }
-    
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-    .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; transition: transform 0.3s; display: flex; flex-direction: column; }
+    .container {
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      box-sizing: border-box;
+    }
+    .category-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 20px;
+      margin-top: 40px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e2e8f0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      border: 1px solid #e2e8f0;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+    }
     .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
     .product-img { width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #e2e8f0; }
     .product-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
@@ -268,6 +303,25 @@
     .bottom-nav-item.active {
       color: #2563eb;
       font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 14px 70px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 16px;
+      }
+    }
+    @media (max-width: 520px) {
+      .container {
+        padding: 0 12px 70px;
+      }
+      .product-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
     }
 
     @media (max-width: 640px) {
@@ -2079,6 +2133,7 @@
             <span>Help &amp; Support Helpline</span>
           </a>
         </div>
+      </div>
 
       <!-- "Offer NEW" Link -->
       <a href="#offers" class="zapvi-nav-link zapvi-offer-link" onclick="openZapviOffersModal(event)">
@@ -2137,6 +2192,7 @@
             <img class="zapvi-hero-photo" src="images/ad-3d-scooter.png" alt="JK Study Hub Fast Kashmir Delivery">
           </picture>
         </div>
+      </div>
 
       <!-- Slide 2: 100% Free Kashmir Delivery -->
       <div class="zapvi-hero-slide" data-slide="1">
@@ -2151,6 +2207,7 @@
             <img class="zapvi-hero-photo" src="images/books/atomic-habits-1.jpg" alt="Atomic Habits Best Student Edition">
           </picture>
         </div>
+      </div>
 
       <!-- Slide 3: Board Exam Guides & PYQs -->
       <div class="zapvi-hero-slide" data-slide="2">
@@ -3695,11 +3752,7 @@
           </div>
         </div>
       </div>
-      </div>
-      </div>
-
     </div>
-
 
     <h2 class="category-title" id="section-academic"><i class="fa-solid fa-box"></i> Physical Study Materials & Stationery</h2>
     <div class="product-grid">
@@ -3726,6 +3779,7 @@
             </div>
           </div>
         </div>
+      </div>
 
       <!-- New Item 2: Complete Board Exam Stationery Combo Pack -->
       <div class="product-card">
@@ -3749,6 +3803,7 @@
             </div>
           </div>
         </div>
+      </div>
 
       <!-- New Item 3: Custom Notes Laser Printing & Spiral Binding -->
       <div class="product-card">
@@ -3773,6 +3828,8 @@
           </div>
         </div>
       </div>
+
+      <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
         <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" alt="Printed Notes" class="product-img">
         <div class="product-info">
@@ -4019,6 +4076,7 @@
             </div>
           </div>
         </div>
+      </div>
 
       <!-- Coming Soon 2: JKBOSE Class 10th & 12th Board Guess Papers 2026 -->
       <div class="product-card">
@@ -4040,6 +4098,7 @@
             </div>
           </div>
         </div>
+      </div>
 
       <!-- Coming Soon 3: Kashmir University & Cluster University College Starter Pack -->
       <div class="product-card">
@@ -4061,6 +4120,7 @@
             </div>
           </div>
         </div>
+      </div>
 
       <!-- Coming Soon 4: NEET & JEE Droppers Foundation Formula Charts -->
       <div class="product-card">
