@@ -5943,58 +5943,292 @@ function addBundleToCart(book1Name, book2Name, bundlePrice) {
 
 
 // =========================================================================
-// LOOK INSIDE MULTI-BOOK & MULTI-PAGE SAMPLE PREVIEW READER
+// ENHANCED VISUAL "LOOK INSIDE" READER (REAL 5-PAGE CHAPTER SPREADS)
 // =========================================================================
 let currentPreviewPageIndex = 0;
-let currentPreviewBookTitle = 'Atomic Habits';
+let currentPreviewBookTitle = 'The Psychology of Money';
 
-const SAMPLE_PREVIEWS_CONTENT = {
-  "Atomic Habits": [
-    {
-      chapter: "CHAPTER 1: THE SURPRISING POWER OF ATOMIC HABITS",
-      quote: "You do not rise to the level of your goals. You fall to the level of your systems.",
-      text1: "Success is the product of daily habits—not once-in-a-lifetime transformations. That said, it does not matter how successful or unsuccessful you are right now. What matters is whether your habits are putting you on the path toward success.",
-      text2: "If you are a student and you study 1% better every day for a year, you’ll end up thirty-seven times better by the time you’re done. Conversely, if you get 1% worse each day, you decline nearly to zero.",
-      footerNote: "Page 1 of 5 • Authentic 70 GSM Cream Paper Edition"
-    },
-    {
-      chapter: "THE HABIT LOOP: CUE, CRAVING, RESPONSE, REWARD",
-      quote: "Habits are the compound interest of self-improvement.",
-      text1: "A cue triggers a craving, which motivates a response, which provides a reward. The reward satisfies the craving and becomes associated with the cue. Together, these four steps form a neurological loop.",
-      text2: "To build a strong study routine: 1. Make it obvious. 2. Make it attractive. 3. Make it easy. 4. Make it satisfying.",
-      footerNote: "Page 2 of 5 • Visual Diagram Included in Print"
-    },
-    {
-      chapter: "CHAPTER 2: HOW HABITS SHAPE YOUR IDENTITY",
-      quote: "The goal is not to read a book, the goal is to become a reader.",
-      text1: "Your current behaviors are simply a reflection of your current identity. What you do now is a mirror image of the type of person you believe that you are.",
-      text2: "Every action you take is a vote for the type of person you wish to become. No single instance will transform your beliefs, but as the votes build up, the evidence of your new identity builds up.",
-      footerNote: "Page 3 of 5 • Verified High-Definition Font"
-    }
-  ],
+const COMPREHENSIVE_BOOK_PREVIEWS = {
   "The Psychology of Money": [
     {
-      chapter: "CHAPTER 1: NO ONE'S CRAZY",
-      quote: "Your personal experiences with money make up maybe 0.00000001% of what’s happened in the world, but maybe 80% of how you think the world works.",
-      text1: "People from different generations, raised by different parents who earned different incomes in different parts of the economy, learn vastly different financial lessons.",
-      text2: "Doing well with money has a little to do with how smart you are and a lot to do with how you behave. And behavior is hard to teach, even to really smart people.",
-      footerNote: "Page 1 of 5 • Original Best-Selling Print"
+      tabTitle: "Contents",
+      chapterHeader: "TABLE OF CONTENTS & PREFACE",
+      title: "The Psychology of Money: Timeless Lessons on Wealth, Greed, and Happiness",
+      subtitle: "By Morgan Housel • Official Student Edition",
+      dropCap: "T",
+      leadText: "he premise of this book is that doing well with money has a little to do with how smart you are and a lot to do with how you behave. And behavior is hard to teach, even to really smart people.",
+      bodyHtml: `
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
+          <strong style="color: #0f172a; display: block; margin-bottom: 8px; font-size: 14px;">📖 Complete 20 Chapters Included in This Book:</strong>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; color: #475569;">
+            <div>1. No One's Crazy</div>
+            <div>2. Luck &amp; Risk</div>
+            <div>3. Never Enough</div>
+            <div>4. Confounding Compounding</div>
+            <div>5. Getting Wealthy vs. Staying Wealthy</div>
+            <div>6. Tails, You Win</div>
+            <div>7. Freedom</div>
+            <div>8. Man in the Car Paradox</div>
+            <div>9. Wealth is What You Don't See</div>
+            <div>10. Save Money</div>
+          </div>
+          <div style="margin-top: 8px; font-size: 12px; color: #2563eb; font-weight: 700;">+ 10 More Chapters, Postscript &amp; Author's Confessions</div>
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          A genius who loses control of their emotions can be a financial disaster. The opposite is also true. Ordinary folks with no financial education can be wealthy if they have a handful of behavioral skills that have nothing to do with formal intelligence.
+        </p>
+      `,
+      quote: "Financial success is not a hard science. It is a soft skill, where how you behave is more important than what you know.",
+      pageNumber: "Page 1 of 5"
     },
     {
-      chapter: "CHAPTER 2: LUCK & RISK",
-      quote: "Nothing is as good or as bad as it looks.",
-      text1: "Luck and risk are both the reality that every outcome in life is guided by forces other than individual effort. They are close cousins.",
-      text2: "When realizing that luck and risk are both so potent, you realize that when judging people’s success—both your own and others—it’s never as good or as bad as it seems.",
-      footerNote: "Page 2 of 5 • Crisp Text & High Legibility"
+      tabTitle: "Chapter 1",
+      chapterHeader: "CHAPTER 1: NO ONE'S CRAZY",
+      title: "The Janitor Who Left Millions vs. The Wall Street Banker",
+      subtitle: "Why Your Experiences Shape How You Think About Money",
+      dropCap: "R",
+      leadText: "onald James Read was an American philanthropist, investor, janitor, and gas station attendant. Read grew up in rural Vermont, the first high school graduate in his family. He fixed cars at a gas station for 25 years and swept floors at JCPenney for 17 years.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          In 2014, Ronald Read died at age 92. And that's when the humble rural janitor made international headlines. In his will, Read left $2 million to his stepchildren and more than $6 million to his local hospital and library. Those who knew him were baffled. Where did he get all that money?
+        </p>
+        <div style="display: flex; gap: 12px; margin: 18px 0; font-family: sans-serif; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 200px; background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 12px;">
+            <div style="font-weight: 800; color: #065f46; font-size: 13px;">👨‍🔧 Ronald Read (The Janitor)</div>
+            <div style="font-size: 12px; color: #047857; margin-top: 4px;">• Lived frugally, bought blue-chip stocks.<br>• Let compound interest work for 50 years.<br>• <strong>Died with $8,000,000 net worth.</strong></div>
+          </div>
+          <div style="flex: 1; min-width: 200px; background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 8px; padding: 12px;">
+            <div style="font-weight: 800; color: #991b1b; font-size: 13px;">👔 Richard Fuscone (Harvard MBA)</div>
+            <div style="font-size: 12px; color: #b91c1c; margin-top: 4px;">• Merrill Lynch Executive, borrowed heavily.<br>• Spent recklessly on an 11-bedroom mansion.<br>• <strong>Went completely bankrupt in 2008.</strong></div>
+          </div>
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          In no other industry does an amateur beat an expert so completely. You can't imagine a janitor performing open-heart surgery better than a Harvard surgeon. But in investing, Ronald Read completely outperformed the Harvard executive.
+        </p>
+      `,
+      quote: "Doing well with money has a little to do with how smart you are and a lot to do with how you behave.",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Chapter 2",
+      chapterHeader: "CHAPTER 2: LUCK & RISK",
+      title: "Bill Gates, Paul Allen, and Kent Evans",
+      subtitle: "Nothing is as good or as bad as it looks",
+      dropCap: "B",
+      leadText: "ill Gates attended one of the only high schools in the entire world that had a computer in 1968: Lakeside School, near Seattle. The odds of a teenager having access to a teletype computer in 1968 were about one in a million.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Gates was quick to acknowledge this extraordinary stroke of luck. 'If there had been no Lakeside, there would have been no Microsoft,' he once told his class. But Gates wasn't the only brilliant computer whiz at Lakeside. There was also Paul Allen, and a third classmate named <strong>Kent Evans</strong>.
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Kent Evans had the same intellect and ambition as Bill Gates. But before they could graduate from high school, Kent died in a mountaineering accident on Mount Shuksan. The odds of a mountaineering accident killing a high schooler in the US were also about one in a million.
+        </p>
+        <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 18px; margin: 16px 0; border-radius: 0 8px 8px 0; font-family: sans-serif; font-size: 13px; color: #1e3a8a;">
+          <strong>The Lesson:</strong> Luck and risk are twins. They are both the reality that every outcome in life is guided by forces other than individual effort. When evaluating people—including yourself—remember that neither success nor failure is ever as simple as it seems.
+        </div>
+      `,
+      quote: "Be careful who you praise and admire. Be careful who you look down upon and wish to avoid becoming.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "Chapter 3",
+      chapterHeader: "CHAPTER 3: NEVER ENOUGH",
+      title: "When Rich People Do Crazy Things",
+      subtitle: "The Danger of Comparing Your Life to Others",
+      dropCap: "R",
+      leadText: "ajat Gupta was born in Kolkata and orphaned in his teens. Through sheer brilliance, he rose to become the worldwide CEO of McKinsey & Company, sat on the board of Goldman Sachs, and accumulated a fortune exceeding $100 million.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          By any sane definition, Gupta was rich beyond imagination. Yet, sitting on boards with billionaires, Gupta felt inadequate. He wanted to be a billionaire too. In 2008, when Warren Buffett agreed to invest $5 billion into Goldman Sachs, Gupta leaked the confidential insider news seconds after hanging up the conference call.
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Gupta went to federal prison, his career ruined, his reputation destroyed. He risked something he had and needed (his freedom and dignity) for something he didn't need (more millions).
+        </p>
+        <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-family: sans-serif;">
+          <div style="font-weight: 800; color: #92400e; font-size: 13px;">💡 4 Rules for Knowing When You Have Enough:</div>
+          <ul style="margin: 6px 0 0 18px; padding: 0; font-size: 12.5px; color: #78350f; line-height: 1.6;">
+            <li>The hardest financial skill is getting the goalpost to stop moving.</li>
+            <li>Social comparison is the ceiling that never ends.</li>
+            <li>'Enough' is realizing that an insatiable appetite for more will push you to regret.</li>
+            <li>Reputation, freedom, and family are incalculably valuable. Never risk them for money.</li>
+          </ul>
+        </div>
+      `,
+      quote: "There is no reason to risk what you have and need for what you don't have and don't need.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Chapter 4",
+      chapterHeader: "CHAPTER 4: CONFOUNDING COMPOUNDING",
+      title: "$81.5 Billion of Warren Buffett's Wealth",
+      subtitle: "How Time Outweighs Pure Intelligence in Investing",
+      dropCap: "W",
+      leadText: "arren Buffett is universally regarded as the greatest investor of all time. But few people realize the real secret behind his fortune. Buffett began serious investing when he was just 10 years old.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          As of writing, Warren Buffett's net worth was roughly $84.5 billion. Of that sum, <strong>$81.5 billion came after his 65th birthday</strong>. Our minds are simply not equipped to understand exponential math intuitively.
+        </p>
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px; margin: 16px 0; font-family: sans-serif;">
+          <div style="font-weight: 800; color: #0f172a; font-size: 13px; margin-bottom: 6px;">📊 The Math of Time: Why Starting Early as a Student Wins</div>
+          <div style="font-size: 12.5px; color: #334155; line-height: 1.6;">
+            If Buffett started investing at age 30 with $25,000 and retired at age 60, his net worth today would not be $84.5 billion. It would be roughly <strong>$11.9 million</strong>. That is 99.9% less! His true skill was not just picking stocks—it was <em>time</em>.
+          </div>
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Good investing isn't necessarily about earning the highest returns, because the highest returns tend to be one-off hits that can't be repeated. It's about earning pretty good returns that you can stick with and which can be repeated for the longest period of time.
+        </p>
+      `,
+      quote: "The counterintuitive math of compounding is the true fountain of financial independence.",
+      pageNumber: "Page 5 of 5"
     }
   ],
+
+  "Atomic Habits": [
+    {
+      tabTitle: "Contents",
+      chapterHeader: "TABLE OF CONTENTS & THE 4 LAWS",
+      title: "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
+      subtitle: "By James Clear • Official Student Verified Print",
+      dropCap: "N",
+      leadText: "o matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master tiny behaviors.",
+      bodyHtml: `
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
+          <strong style="color: #0f172a; display: block; margin-bottom: 8px; font-size: 14px;">⚡ The Four Laws of Behavior Change:</strong>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #334155;">
+            <div><strong>1st Law (Cue):</strong> Make it Obvious</div>
+            <div><strong>2nd Law (Craving):</strong> Make it Attractive</div>
+            <div><strong>3rd Law (Response):</strong> Make it Easy</div>
+            <div><strong>4th Law (Reward):</strong> Make it Satisfying</div>
+          </div>
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Changes that seem small and unimportant at first will compound into remarkable results if you are willing to stick with them for years.
+        </p>
+      `,
+      quote: "You do not rise to the level of your goals. You fall to the level of your systems.",
+      pageNumber: "Page 1 of 5"
+    },
+    {
+      tabTitle: "Chapter 1",
+      chapterHeader: "CHAPTER 1: THE POWER OF ATOMIC HABITS",
+      title: "The Aggregation of Marginal Gains",
+      subtitle: "How Dave Brailsford Made British Cycling Champions",
+      dropCap: "I",
+      leadText: "n 2003, British Cycling hired Dave Brailsford as performance director. At the time, professional cyclists in Great Britain had endured nearly one hundred years of mediocrity, winning just a single gold medal at the Olympic Games since 1908.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Brailsford applied a concept he called 'the aggregation of marginal gains'—the philosophy of searching for a tiny margin of improvement in everything you do. They redesigned the bike seats for comfort, rubbed alcohol on tires for grip, and even hired a surgeon to teach riders how to wash their hands to avoid catching a cold before competition.
+        </p>
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 14px; margin: 16px 0; font-family: monospace; font-size: 14px; color: #166534; text-align: center;">
+          1% Better Every Day: 1.01^365 = <strong>37.78x Better</strong><br>
+          1% Worse Every Day: 0.99^365 = <strong>0.03x (Near Zero)</strong>
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Just five years later, the British Cycling team dominated the 2008 Olympic Games in Beijing, winning an astonishing 60 percent of the gold medals available. Small habits don't simply add up; they multiply.
+        </p>
+      `,
+      quote: "Habits are the compound interest of self-improvement.",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Chapter 2",
+      chapterHeader: "CHAPTER 2: IDENTITY-BASED HABITS",
+      title: "Three Layers of Behavior Change",
+      subtitle: "Why True Habit Change is Identity Change",
+      dropCap: "T",
+      leadText: "here are three layers at which change can occur: outcome change, process change, and identity change. Most people begin by focusing on outcomes (e.g. 'I want to score 95% on my exam').",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          The first layer is changing your outcomes. The second layer is changing your process (your study schedule). The third and deepest layer is changing your <strong>identity</strong>: your beliefs, your worldview, your self-image.
+        </p>
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-family: sans-serif;">
+          <div style="font-weight: 800; color: #1e40af; font-size: 13px;">🧠 The Identity Shift in Daily Action:</div>
+          <p style="font-size: 12.5px; color: #1e3a8a; margin: 4px 0;">• The goal is not to read a book, the goal is to <strong>become a reader</strong>.<br>• The goal is not to pass one exam, the goal is to <strong>become a disciplined student</strong>.<br>• Every action you take is a vote for the type of person you wish to become.</p>
+        </div>
+      `,
+      quote: "The ultimate form of intrinsic motivation is when a habit becomes part of your identity.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "The Habit Loop",
+      chapterHeader: "THE 4-STEP NEUROLOGICAL HABIT LOOP",
+      title: "Cue, Craving, Response, and Reward",
+      subtitle: "The Science of How the Brain Learns Any Behavior",
+      dropCap: "T",
+      leadText: "he habit loop is the engine of human behavior. Every habit follows the exact same four-step pattern: Cue triggers a Craving, which motivates a Response, which provides a Reward.",
+      bodyHtml: `
+        <div style="display: flex; gap: 8px; justify-content: space-between; margin: 16px 0; font-family: sans-serif; flex-wrap: wrap;">
+          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+            <div style="font-weight:800; color:#2563eb; font-size:12px;">1. CUE</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Noticing the reward (Phone vibrates)</div>
+          </div>
+          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+            <div style="font-weight:800; color:#2563eb; font-size:12px;">2. CRAVING</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Wanting the reward (Desire to check message)</div>
+          </div>
+          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+            <div style="font-weight:800; color:#2563eb; font-size:12px;">3. RESPONSE</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Obtaining reward (Pick up phone)</div>
+          </div>
+          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+            <div style="font-weight:800; color:#2563eb; font-size:12px;">4. REWARD</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Satisfying craving (Dopamine rush)</div>
+          </div>
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          If a behavior is insufficient in any of the four stages, it will not become a habit. Eliminate the cue and your habit will never start. Reduce the craving and you won't experience enough motivation to act.
+        </p>
+      `,
+      quote: "Until you make the unconscious conscious, it will direct your life and you will call it fate.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Chapter 13",
+      chapterHeader: "CHAPTER 13: THE TWO-MINUTE RULE",
+      title: "How to Stop Procrastinating",
+      subtitle: "The Master Rule for Starting Any Difficult Task",
+      dropCap: "E",
+      leadText: "ven when you know you should start small, it’s easy to start too big. When you dream about making a change, excitement inevitably takes over and you end up trying to do too much too soon.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          To counter this tendency, James Clear created <strong>The Two-Minute Rule</strong>, which states: <em>'When you start a new habit, it should take less than two minutes to do.'</em>
+        </p>
+        <div style="background: #faf5ff; border: 1.5px solid #e9d5ff; border-radius: 8px; padding: 12px 16px; margin: 14px 0; font-family: sans-serif; font-size: 13px; color: #581c87;">
+          <strong>Student Ritual Transformations:</strong><br>
+          • 'Read 30 pages every night' ➔ becomes <strong>'Read one page'</strong>.<br>
+          • 'Study for 3 hours straight' ➔ becomes <strong>'Open my notes and sit at my desk'</strong>.<br>
+          • 'Solve 50 math questions' ➔ becomes <strong>'Write down Formula #1'</strong>.
+        </div>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          A habit must be established before it can be improved. You cannot optimize a habit that does not exist.
+        </p>
+      `,
+      quote: "Standardize before you optimize. You can't improve a habit that doesn't exist.",
+      pageNumber: "Page 5 of 5"
+    }
+  ],
+
   "default": [
     {
-      chapter: "SYLLABUS BLUEPRINT & MODEL PREVIEW",
-      quote: "Prepared according to the latest Jammu & Kashmir examination pattern.",
-      text1: "This edition contains complete unit-wise concept summaries, solved previous year questions, and step-by-step model answer keys designed to maximize student marks.",
-      text2: "All chapters are curated by expert educators across Kashmir with clear diagrams, formulas, and memory retention maps.",
-      footerNote: "Page 1 of 5 • Official Student Edition Verified"
+      tabTitle: "Overview",
+      chapterHeader: "SYLLABUS BLUEPRINT & MODEL PREVIEW",
+      title: "Authentic Edition Overview & Key Highlights",
+      subtitle: "JK Study Hub Verified Student Print",
+      dropCap: "T",
+      leadText: "his student edition is formatted with crystal-clear 70 GSM cream paper, robust spine binding, and high-definition typeface designed specifically for long study sessions without eye fatigue.",
+      bodyHtml: `
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif;">
+          <strong style="color: #0f172a; font-size: 13.5px;">✓ What's Included in This Volume:</strong>
+          <ul style="margin: 8px 0 0 18px; padding: 0; font-size: 12.5px; color: #334155; line-height: 1.7;">
+            <li>Full unabridged text with updated chapter explanations.</li>
+            <li>High-yield student notes and key concept summaries.</li>
+            <li>Crisp high-contrast typeface on anti-glare paper.</li>
+            <li>Doorstep delivery with Cash on Delivery across Kashmir.</li>
+          </ul>
+        </div>
+      `,
+      quote: "Quality study material is the foundation of high-scoring academic performance.",
+      pageNumber: "Page 1 of 5"
     }
   ]
 };
@@ -6002,80 +6236,129 @@ const SAMPLE_PREVIEWS_CONTENT = {
 function openSamplePreviewModal(bookName) {
   const modal = document.getElementById('samplePreviewModal');
   const titleEl = document.getElementById('samplePreviewBookTitle');
-  if (!modal || !titleEl) return;
+  if (!modal) return;
 
-  currentPreviewBookTitle = bookName || (currentModalBook ? currentModalBook.name : 'Atomic Habits');
+  const resolvedName = bookName || (currentModalBook ? currentModalBook.name : 'The Psychology of Money');
+  currentPreviewBookTitle = resolvedName;
   currentPreviewPageIndex = 0;
-  titleEl.innerText = `${currentPreviewBookTitle} — Free Look Inside`;
+
+  if (titleEl) {
+    titleEl.innerText = `${currentPreviewBookTitle} — Free Look Inside`;
+  }
 
   renderSamplePreviewPage();
   modal.style.display = 'flex';
+}
+
+function closeSamplePreviewModal() {
+  const modal = document.getElementById('samplePreviewModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function setSamplePreviewPage(index) {
+  currentPreviewPageIndex = index;
+  renderSamplePreviewPage();
+}
+
+function flipSamplePage(direction) {
+  const previews = COMPREHENSIVE_BOOK_PREVIEWS[currentPreviewBookTitle] || COMPREHENSIVE_BOOK_PREVIEWS['default'];
+  const nextIdx = currentPreviewPageIndex + direction;
+  if (nextIdx >= 0 && nextIdx < previews.length) {
+    currentPreviewPageIndex = nextIdx;
+    renderSamplePreviewPage();
+  }
 }
 
 function renderSamplePreviewPage() {
   const pagesContainer = document.getElementById('samplePreviewPagesContainer');
   if (!pagesContainer) return;
 
-  const previews = SAMPLE_PREVIEWS_CONTENT[currentPreviewBookTitle] || SAMPLE_PREVIEWS_CONTENT['default'];
+  const previews = COMPREHENSIVE_BOOK_PREVIEWS[currentPreviewBookTitle] || COMPREHENSIVE_BOOK_PREVIEWS['default'];
   const totalPages = previews.length;
   const page = previews[currentPreviewPageIndex] || previews[0];
 
+  // Build Top Filmstrip Tabs
+  let tabsHtml = '<div class="preview-tabs-filmstrip">';
+  previews.forEach((p, idx) => {
+    const isActive = idx === currentPreviewPageIndex;
+    tabsHtml += `
+      <button type="button" class="preview-filmstrip-tab ${isActive ? 'active' : ''}" onclick="setSamplePreviewPage(${idx})">
+        ${p.tabTitle || ('Page ' + (idx + 1))}
+      </button>
+    `;
+  });
+  tabsHtml += '</div>';
+
   pagesContainer.innerHTML = `
-    <div style="background: #faf8f5; border: 1.5px solid #e7e5e4; border-radius: 12px; padding: 26px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); font-family: Georgia, serif; line-height: 1.8; color: #1c1917; position: relative;">
+    ${tabsHtml}
+
+    <!-- Authentic Book Page Spread Container -->
+    <div class="book-page-sheet">
       <!-- Watermark Background -->
-      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 32px; font-weight: 800; color: rgba(37,99,235,0.04); pointer-events: none; text-transform: uppercase; white-space: nowrap; font-family: sans-serif;">
-        JK STUDY HUB • OFFICIAL PREVIEW
+      <div class="book-page-watermark">
+        JK STUDY HUB • VERIFIED EXAM MATERIAL
       </div>
 
-      <div style="text-align: center; border-bottom: 1.5px solid #d6d3d1; padding-bottom: 16px; margin-bottom: 20px;">
-        <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #78716c; font-weight: 700; font-family: sans-serif;">
-          ${safeEscape(page.chapter)}
-        </span>
-        <h2 style="font-size: 22px; margin: 8px 0 4px; font-weight: 800; color: #0c0a09;">
-          ${safeEscape(currentPreviewBookTitle)}
+      <!-- Book Header / Running Head -->
+      <div class="book-page-running-head">
+        <span>${safeEscape(page.chapterHeader)}</span>
+        <span>JK STUDY HUB</span>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="font-size: 21px; font-family: 'Outfit', serif; font-weight: 800; color: #0c0a09; margin: 4px 0;">
+          ${safeEscape(page.title)}
         </h2>
         <div style="font-size: 12px; font-style: italic; color: #57534e;">
-          Authentic Student Edition • Clear Typeface Verified
+          ${safeEscape(page.subtitle)}
         </div>
       </div>
 
-      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
-        ${safeEscape(page.text1)}
+      <!-- Lead paragraph with Drop Cap -->
+      <p class="book-page-lead-para">
+        <span class="book-page-dropcap">${safeEscape(page.dropCap || '')}</span>${safeEscape(page.leadText)}
       </p>
 
-      <div style="background: #f5f5f4; border-left: 4px solid #2563eb; padding: 12px 18px; border-radius: 0 8px 8px 0; font-size: 13.5px; font-style: italic; color: #1e3a8a; margin: 20px 0;">
-        "${safeEscape(page.quote)}"
+      ${page.bodyHtml || ''}
+
+      ${page.quote ? `
+        <div class="book-page-quote-box">
+          "${safeEscape(page.quote)}"
+        </div>
+      ` : ''}
+
+      <!-- Page Footer -->
+      <div class="book-page-footer">
+        <div style="font-size: 11.5px; color: #166534; font-weight: 700;">
+          ✓ 100% Genuine Print Sample • 70 GSM Cream Paper
+        </div>
+        <div style="font-weight: 800; color: #78716c;">
+          — ${safeEscape(page.pageNumber)} —
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation & Bottom Quick Buy Actions -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:10px;">
+      <div style="display:flex; gap:8px;">
+        <button type="button" onclick="flipSamplePage(-1)" class="preview-nav-btn" ${currentPreviewPageIndex === 0 ? 'disabled style="opacity:0.35;"' : ''}>
+          &larr; Prev Page
+        </button>
+        <button type="button" onclick="flipSamplePage(1)" class="preview-nav-btn" ${currentPreviewPageIndex >= totalPages - 1 ? 'disabled style="opacity:0.35;"' : ''}>
+          Next Page &rarr;
+        </button>
       </div>
 
-      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
-        ${safeEscape(page.text2)}
-      </p>
-
-      <!-- Pagination Flipper Controls -->
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px dashed #d6d3d1; font-family:sans-serif; flex-wrap:wrap; gap:10px;">
-        <button type="button" onclick="flipSamplePage(-1)" style="padding:6px 14px; border-radius:6px; background:#fff; border:1px solid #cbd5e1; font-size:12px; font-weight:700; cursor:pointer;" ${currentPreviewPageIndex === 0 ? 'disabled style="opacity:0.4;"' : ''}>
-          &larr; Previous Page
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button type="button" onclick="orderBookViaWhatsApp('${safeEscape(currentPreviewBookTitle)}', 249)" class="btn-whatsapp-direct" style="padding:8px 14px;">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp Order
         </button>
-
-        <span style="font-size: 12px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; border: 1px solid #a7f3d0;">
-          ✓ ${safeEscape(page.footerNote)} (Page ${currentPreviewPageIndex + 1} of ${totalPages})
-        </span>
-
-        <button type="button" onclick="flipSamplePage(1)" style="padding:6px 14px; border-radius:6px; background:#fff; border:1px solid #cbd5e1; font-size:12px; font-weight:700; cursor:pointer;" ${currentPreviewPageIndex >= totalPages - 1 ? 'disabled style="opacity:0.4;"' : ''}>
-          Next Page &rarr;
+        <button type="button" onclick="closeSamplePreviewModal(); openCheckout('${safeEscape(currentPreviewBookTitle)}', 249, 'physical', 'books');" class="yellow-btn" style="width:auto; padding:8px 18px; background:#2563eb; color:white; font-size:13px; font-weight:700;">
+          ⚡ Order Full Book (COD) &rarr;
         </button>
       </div>
     </div>
   `;
-}
-
-function flipSamplePage(direction) {
-  const previews = SAMPLE_PREVIEWS_CONTENT[currentPreviewBookTitle] || SAMPLE_PREVIEWS_CONTENT['default'];
-  const nextIdx = currentPreviewPageIndex + direction;
-  if (nextIdx >= 0 && nextIdx < previews.length) {
-    currentPreviewPageIndex = nextIdx;
-    renderSamplePreviewPage();
-  }
 }
 
 
@@ -6258,53 +6541,7 @@ function closeBookDetailsModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// ============================================================================
-// SAMPLE PREVIEW (FIRST 5 PAGES) MODAL & 1-TAP WHATSAPP ORDER ENGINE
-// ============================================================================
-function openSamplePreviewModal(bookName) {
-  const modal = document.getElementById('samplePreviewModal');
-  const titleEl = document.getElementById('samplePreviewBookTitle');
-  const pagesContainer = document.getElementById('samplePreviewPagesContainer');
-  if (!modal || !titleEl || !pagesContainer) return;
 
-  const targetName = bookName || (currentModalBook ? currentModalBook.name : 'Atomic Habits');
-  titleEl.innerText = targetName + ' (Free 5-Page Look Inside)';
-
-  // Build 5 simulated high-resolution sample pages for syllabus / book preview
-  pagesContainer.innerHTML = `
-    <div style="background: #faf8f5; border: 1px solid #e7e5e4; border-radius: 8px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); font-family: Georgia, serif; line-height: 1.8; color: #1c1917; margin-bottom: 20px;">
-      <div style="text-align: center; border-bottom: 1.5px solid #d6d3d1; padding-bottom: 16px; margin-bottom: 20px;">
-        <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #78716c; font-weight: 700; font-family: sans-serif;">CHAPTER 1 • PREVIEW COPY</span>
-        <h2 style="font-size: 22px; margin: 8px 0 4px; font-weight: 800; color: #0c0a09;">${targetName}</h2>
-        <div style="font-size: 12px; font-style: italic; color: #57534e;">Authentic Student Edition • JK Study Hub Verified Print</div>
-      </div>
-      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
-        Success is the product of daily habits—not once-in-a-lifetime transformations. That said, it does not matter how successful or unsuccessful you are right now. What matters is whether your habits are putting you on the path toward success.
-      </p>
-      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
-        You should be far more concerned with your current trajectory than with your current results. If you are a student and you study 1% better every day for a year, you’ll end up thirty-seven times better by the time you’re done.
-      </p>
-      <div style="background: #f5f5f4; border-left: 4px solid #2563eb; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13.5px; font-style: italic; color: #1e3a8a; margin: 20px 0;">
-        "You do not rise to the level of your goals. You fall to the level of your systems."
-      </div>
-      <p style="font-size: 14.5px; text-indent: 2em; margin-bottom: 16px;">
-        Goals are about the results you want to achieve. Systems are about the processes that lead to those results. If you want better results, then forget about setting goals. Focus on your system instead.
-      </p>
-      <div style="text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px dashed #d6d3d1; font-family: sans-serif;">
-        <span style="font-size: 12px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; border: 1px solid #a7f3d0;">
-          ✓ Page 1 of 5 Sample Verified (Clear 70 GSM Typeface)
-        </span>
-      </div>
-    </div>
-  `;
-
-  modal.style.display = 'flex';
-}
-
-function closeSamplePreviewModal() {
-  const modal = document.getElementById('samplePreviewModal');
-  if (modal) modal.style.display = 'none';
-}
 
 function orderDirectlyViaWhatsApp() {
   const nameInput = document.getElementById('orderName');
