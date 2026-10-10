@@ -5943,10 +5943,80 @@ function addBundleToCart(book1Name, book2Name, bundlePrice) {
 
 
 // =========================================================================
-// ENHANCED VISUAL "LOOK INSIDE" READER (REAL 5-PAGE CHAPTER SPREADS)
+// ENHANCED VISUAL "LOOK INSIDE" READER (REAL 5-PAGE CHAPTER SPREADS + OPEN BOOK PHOTOS)
 // =========================================================================
 let currentPreviewPageIndex = 0;
 let currentPreviewBookTitle = 'The Psychology of Money';
+let currentPreviewMode = 'reader'; // 'reader' or 'photos'
+
+const BOOK_INTERNAL_PHOTOS = {
+  "The Psychology of Money": [
+    { url: "images/books/psychology-of-money-3.webp", caption: "Original Interior Print Quality & Cream Paper (70 GSM)" },
+    { url: "images/books/psychology-of-money-2.webp", caption: "Spine & Perfect Thermal Binding" },
+    { url: "images/books/psychology-of-money-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/psychology-of-money-4.webp", caption: "Back Cover with ISBN & Dimensions" }
+  ],
+  "Atomic Habits": [
+    { url: "images/books/atomic-habits-3.webp", caption: "Interior Habit Loop Diagram & Chapter Print" },
+    { url: "images/books/atomic-habits-2.webp", caption: "Spine & Durable Paperback Binding" },
+    { url: "images/books/atomic-habits-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/atomic-habits-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "Deep Work": [
+    { url: "images/books/deep-work-3.webp", caption: "Interior High-Contrast Print & Focus Tables" },
+    { url: "images/books/deep-work-2.webp", caption: "Spine & Bound Pages" },
+    { url: "images/books/deep-work-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/deep-work-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "The Alchemist": [
+    { url: "images/books/the-alchemist-3.webp", caption: "Internal English Typography & Novel Spread" },
+    { url: "images/books/the-alchemist-2.webp", caption: "Spine & Paperback Binding" },
+    { url: "images/books/the-alchemist-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/the-alchemist-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "The Kite Runner": [
+    { url: "images/books/the-kite-runner-3.webp", caption: "Crisp Novel Interior Pages & Dialogues" },
+    { url: "images/books/the-kite-runner-2.webp", caption: "Spine & Book Thickness" },
+    { url: "images/books/the-kite-runner-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/the-kite-runner-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "A Thousand Splendid Suns": [
+    { url: "images/books/thousand-splendid-suns-3.webp", caption: "Internal Chapter Pages & Typography" },
+    { url: "images/books/thousand-splendid-suns-2.webp", caption: "Spine & Thermal Binding" },
+    { url: "images/books/thousand-splendid-suns-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/thousand-splendid-suns-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "Secrets of Divine Love": [
+    { url: "images/books/secrets-of-divine-love-3.webp", caption: "Spiritual Poetry & Guided Chapter Spreads" },
+    { url: "images/books/secrets-of-divine-love-2.webp", caption: "Spine & Premium Paperback Binding" },
+    { url: "images/books/secrets-of-divine-love-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/secrets-of-divine-love-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "Reclaim Your Heart": [
+    { url: "images/books/reclaim-your-heart-3.webp", caption: "Reflective Chapter Layout & Clean Typography" },
+    { url: "images/books/reclaim-your-heart-2.webp", caption: "Spine & Binding" },
+    { url: "images/books/reclaim-your-heart-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/reclaim-your-heart-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "Wings of Fire": [
+    { url: "images/books/wings-of-fire-3.webp", caption: "Autobiography Chapters & Historical Notes" },
+    { url: "images/books/wings-of-fire-2.webp", caption: "Spine & Binding" },
+    { url: "images/books/wings-of-fire-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/wings-of-fire-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "Lucent's General Knowledge": [
+    { url: "images/books/lucent-gk-3.webp", caption: "Tables, Maps & High-Yield GK Facts" },
+    { url: "images/books/lucent-gk-2.webp", caption: "Spine & Thick Book Binding" },
+    { url: "images/books/lucent-gk-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/lucent-gk-4.webp", caption: "Back Cover & Dimensions" }
+  ],
+  "Wren & Martin English Grammar": [
+    { url: "images/books/wren-martin-3.webp", caption: "Grammar Rules, Exercises & Verb Tables" },
+    { url: "images/books/wren-martin-2.webp", caption: "Spine & Binding" },
+    { url: "images/books/wren-martin-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/wren-martin-4.webp", caption: "Back Cover & Dimensions" }
+  ]
+};
 
 const COMPREHENSIVE_BOOK_PREVIEWS = {
   "The Psychology of Money": [
@@ -5982,7 +6052,7 @@ const COMPREHENSIVE_BOOK_PREVIEWS = {
       pageNumber: "Page 1 of 5"
     },
     {
-      tabTitle: "Chapter 1",
+      tabTitle: "Ch. 1 No One's Crazy",
       chapterHeader: "CHAPTER 1: NO ONE'S CRAZY",
       title: "The Janitor Who Left Millions vs. The Wall Street Banker",
       subtitle: "Why Your Experiences Shape How You Think About Money",
@@ -6010,75 +6080,63 @@ const COMPREHENSIVE_BOOK_PREVIEWS = {
       pageNumber: "Page 2 of 5"
     },
     {
-      tabTitle: "Chapter 2",
+      tabTitle: "Ch. 2 Luck & Risk",
       chapterHeader: "CHAPTER 2: LUCK & RISK",
-      title: "Bill Gates, Paul Allen, and Kent Evans",
-      subtitle: "Nothing is as good or as bad as it looks",
-      dropCap: "B",
-      leadText: "ill Gates attended one of the only high schools in the entire world that had a computer in 1968: Lakeside School, near Seattle. The odds of a teenager having access to a teletype computer in 1968 were about one in a million.",
+      title: "Bill Gates, Lakeside School, and The Forgotten Friend",
+      subtitle: "Nothing is as Good or as Bad as It Looks",
+      dropCap: "I",
+      leadText: "n 1968, there were roughly 303 million high-school-age people in the world. Out of all of them, only about 300 attended Lakeside School near Seattle, Washington. Lakeside was the only school in the entire world that had the foresight and money to buy a computer terminal.",
       bodyHtml: `
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Gates was quick to acknowledge this extraordinary stroke of luck. 'If there had been no Lakeside, there would have been no Microsoft,' he once told his class. But Gates wasn't the only brilliant computer whiz at Lakeside. There was also Paul Allen, and a third classmate named <strong>Kent Evans</strong>.
+          Bill Gates was an eighth-grader at Lakeside. Bill Gates possessed extraordinary vision, intellect, and work ethic. But as Bill Gates himself admitted: <em>'If there had been no Lakeside, there would have been no Microsoft.'</em> The odds of being in that school were roughly one in a million.
         </p>
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Kent Evans had the same intellect and ambition as Bill Gates. But before they could graduate from high school, Kent died in a mountaineering accident on Mount Shuksan. The odds of a mountaineering accident killing a high schooler in the US were also about one in a million.
+          Gates had a classmate named <strong>Kent Evans</strong> who was just as brilliant with computers. Kent and Bill planned to conquer the software world together. But before graduating high school, Kent died in a mountaineering accident. The odds of dying on a mountain in high school are also one in a million.
         </p>
-        <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 18px; margin: 16px 0; border-radius: 0 8px 8px 0; font-family: sans-serif; font-size: 13px; color: #1e3a8a;">
-          <strong>The Lesson:</strong> Luck and risk are twins. They are both the reality that every outcome in life is guided by forces other than individual effort. When evaluating people—including yourself—remember that neither success nor failure is ever as simple as it seems.
-        </div>
       `,
-      quote: "Be careful who you praise and admire. Be careful who you look down upon and wish to avoid becoming.",
+      quote: "Luck and risk are doppelgängers. They are both the reality that every outcome in life is guided by forces other than individual effort.",
       pageNumber: "Page 3 of 5"
     },
     {
-      tabTitle: "Chapter 3",
+      tabTitle: "Ch. 3 Never Enough",
       chapterHeader: "CHAPTER 3: NEVER ENOUGH",
-      title: "When Rich People Do Crazy Things",
-      subtitle: "The Danger of Comparing Your Life to Others",
+      title: "When Rich People Do Crazy Things for More",
+      subtitle: "The Dangerous Art of Knowing When to Stop",
       dropCap: "R",
-      leadText: "ajat Gupta was born in Kolkata and orphaned in his teens. Through sheer brilliance, he rose to become the worldwide CEO of McKinsey & Company, sat on the board of Goldman Sachs, and accumulated a fortune exceeding $100 million.",
+      leadText: "ajat Gupta was born in Kolkata, orphaned as a teenager, and rose by pure brilliance to become the CEO of McKinsey & Company, the most prestigious consulting firm on earth. By 2007, Gupta was worth over $100 million.",
       bodyHtml: `
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          By any sane definition, Gupta was rich beyond imagination. Yet, sitting on boards with billionaires, Gupta felt inadequate. He wanted to be a billionaire too. In 2008, when Warren Buffett agreed to invest $5 billion into Goldman Sachs, Gupta leaked the confidential insider news seconds after hanging up the conference call.
+          Having a hundred million dollars meant he could buy anything a human being could ever desire. But Rajat Gupta wanted to be a billionaire. He sat on the board of Goldman Sachs, and when Warren Buffett agreed to invest $5 billion to save Goldman during the 2008 crash, Gupta called hedge fund manager Raj Rajaratnam seconds after the board meeting ended.
         </p>
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Gupta went to federal prison, his career ruined, his reputation destroyed. He risked something he had and needed (his freedom and dignity) for something he didn't need (more millions).
+          Gupta leaked the inside information, got caught by federal wiretaps, and was sentenced to federal prison. He risked everything he had and needed for something he didn't need and didn't even keep.
         </p>
-        <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-family: sans-serif;">
-          <div style="font-weight: 800; color: #92400e; font-size: 13px;">💡 4 Rules for Knowing When You Have Enough:</div>
-          <ul style="margin: 6px 0 0 18px; padding: 0; font-size: 12.5px; color: #78350f; line-height: 1.6;">
-            <li>The hardest financial skill is getting the goalpost to stop moving.</li>
-            <li>Social comparison is the ceiling that never ends.</li>
-            <li>'Enough' is realizing that an insatiable appetite for more will push you to regret.</li>
-            <li>Reputation, freedom, and family are incalculably valuable. Never risk them for money.</li>
-          </ul>
-        </div>
       `,
       quote: "There is no reason to risk what you have and need for what you don't have and don't need.",
       pageNumber: "Page 4 of 5"
     },
     {
-      tabTitle: "Chapter 4",
+      tabTitle: "Ch. 4 Compounding",
       chapterHeader: "CHAPTER 4: CONFOUNDING COMPOUNDING",
-      title: "$81.5 Billion of Warren Buffett's Wealth",
-      subtitle: "How Time Outweighs Pure Intelligence in Investing",
-      dropCap: "W",
-      leadText: "arren Buffett is universally regarded as the greatest investor of all time. But few people realize the real secret behind his fortune. Buffett began serious investing when he was just 10 years old.",
+      title: "Warren Buffett's Real Secret Is Time, Not Genius",
+      subtitle: "The Math of Exponential Growth",
+      dropCap: "M",
+      leadText: "ore than 2,000 books have been written analyzing Warren Buffett's investment genius. But almost none of them highlight the simplest, most powerful truth: Warren Buffett's skill is investing, but his secret is time.",
       bodyHtml: `
-        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          As of writing, Warren Buffett's net worth was roughly $84.5 billion. Of that sum, <strong>$81.5 billion came after his 65th birthday</strong>. Our minds are simply not equipped to understand exponential math intuitively.
-        </p>
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px; margin: 16px 0; font-family: sans-serif;">
-          <div style="font-weight: 800; color: #0f172a; font-size: 13px; margin-bottom: 6px;">📊 The Math of Time: Why Starting Early as a Student Wins</div>
-          <div style="font-size: 12.5px; color: #334155; line-height: 1.6;">
-            If Buffett started investing at age 30 with $25,000 and retired at age 60, his net worth today would not be $84.5 billion. It would be roughly <strong>$11.9 million</strong>. That is 99.9% less! His true skill was not just picking stocks—it was <em>time</em>.
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif;">
+          <strong style="color: #166534; font-size: 13.5px;">📈 The Compounding Reality of Warren Buffett:</strong>
+          <div style="margin-top: 6px; font-size: 13px; color: #15803d; line-height: 1.7;">
+            • Buffett began serious investing at age 10.<br>
+            • By age 30, his net worth was $1 million.<br>
+            • Over <strong>99% of his total wealth was accumulated after his 50th birthday</strong>.<br>
+            • If Buffett retired at 60 like ordinary people, virtually nobody would know his name today.
           </div>
         </div>
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Good investing isn't necessarily about earning the highest returns, because the highest returns tend to be one-off hits that can't be repeated. It's about earning pretty good returns that you can stick with and which can be repeated for the longest period of time.
+          The highest returns don't produce the greatest wealth. Rather, good returns sustained uninterrupted for the longest period of time are what create exponential, mind-boggling riches.
         </p>
       `,
-      quote: "The counterintuitive math of compounding is the true fountain of financial independence.",
+      quote: "Shut up and wait. Compounding only works if you give it decades to do its magic.",
       pageNumber: "Page 5 of 5"
     }
   ],
@@ -6086,106 +6144,99 @@ const COMPREHENSIVE_BOOK_PREVIEWS = {
   "Atomic Habits": [
     {
       tabTitle: "Contents",
-      chapterHeader: "TABLE OF CONTENTS & THE 4 LAWS",
+      chapterHeader: "TABLE OF CONTENTS & INTRODUCTION",
       title: "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
-      subtitle: "By James Clear • Official Student Verified Print",
-      dropCap: "N",
-      leadText: "o matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master tiny behaviors.",
+      subtitle: "By James Clear • The #1 Self-Discipline Student Guide",
+      dropCap: "T",
+      leadText: "he fate of your life depends on the quality of your habits. With the same habits, you’ll end up with the same results. But with better habits, anything is possible.",
       bodyHtml: `
-        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
-          <strong style="color: #0f172a; display: block; margin-bottom: 8px; font-size: 14px;">⚡ The Four Laws of Behavior Change:</strong>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #334155;">
-            <div><strong>1st Law (Cue):</strong> Make it Obvious</div>
-            <div><strong>2nd Law (Craving):</strong> Make it Attractive</div>
-            <div><strong>3rd Law (Response):</strong> Make it Easy</div>
-            <div><strong>4th Law (Reward):</strong> Make it Satisfying</div>
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
+          <strong style="color: #1e40af; display: block; margin-bottom: 6px;">The 4 Laws of Behavior Change Included in This Book:</strong>
+          <div style="color: #1e3a8a; line-height: 1.7;">
+            1. <strong>The 1st Law (Cue):</strong> Make it Obvious.<br>
+            2. <strong>The 2nd Law (Craving):</strong> Make it Attractive.<br>
+            3. <strong>The 3rd Law (Response):</strong> Make it Easy.<br>
+            4. <strong>The 4th Law (Reward):</strong> Make it Satisfying.
           </div>
         </div>
-        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Changes that seem small and unimportant at first will compound into remarkable results if you are willing to stick with them for years.
-        </p>
       `,
       quote: "You do not rise to the level of your goals. You fall to the level of your systems.",
       pageNumber: "Page 1 of 5"
     },
     {
-      tabTitle: "Chapter 1",
-      chapterHeader: "CHAPTER 1: THE POWER OF ATOMIC HABITS",
-      title: "The Aggregation of Marginal Gains",
-      subtitle: "How Dave Brailsford Made British Cycling Champions",
+      tabTitle: "Ch. 1 1% Better",
+      chapterHeader: "CHAPTER 1: THE SURPRISING POWER OF ATOMIC HABITS",
+      title: "The British Cycling Miracle & The Aggregation of Marginal Gains",
+      subtitle: "How Tiny Changes Lead to Massive Transformations",
       dropCap: "I",
-      leadText: "n 2003, British Cycling hired Dave Brailsford as performance director. At the time, professional cyclists in Great Britain had endured nearly one hundred years of mediocrity, winning just a single gold medal at the Olympic Games since 1908.",
+      leadText: "n 2003, British Cycling hired Dave Brailsford as its new performance director. For nearly 100 years, British cyclists had been mediocrity personified—winning just a single Olympic gold medal and zero Tour de France titles.",
       bodyHtml: `
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Brailsford applied a concept he called 'the aggregation of marginal gains'—the philosophy of searching for a tiny margin of improvement in everything you do. They redesigned the bike seats for comfort, rubbed alcohol on tires for grip, and even hired a surgeon to teach riders how to wash their hands to avoid catching a cold before competition.
+          Brailsford believed in 'the aggregation of marginal gains'—the philosophy of searching for a tiny 1% improvement in everything you do. They redesigned bike saddles, tested outdoor aerodynamic fabrics, rubbed alcohol on tires, and searched for the exact pillow that gave riders the best sleep.
         </p>
-        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 14px; margin: 16px 0; font-family: monospace; font-size: 14px; color: #166534; text-align: center;">
-          1% Better Every Day: 1.01^365 = <strong>37.78x Better</strong><br>
-          1% Worse Every Day: 0.99^365 = <strong>0.03x (Near Zero)</strong>
-        </div>
         <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          Just five years later, the British Cycling team dominated the 2008 Olympic Games in Beijing, winning an astonishing 60 percent of the gold medals available. Small habits don't simply add up; they multiply.
+          Within five years, the British cycling team dominated the 2008 Beijing Olympics, winning 60% of all gold medals available. From 2007 to 2017, they won 178 world championships and five Tour de France victories.
         </p>
       `,
-      quote: "Habits are the compound interest of self-improvement.",
+      quote: "If you get 1% better each day for one year, you'll end up thirty-seven times better by the time you're done.",
       pageNumber: "Page 2 of 5"
     },
     {
-      tabTitle: "Chapter 2",
-      chapterHeader: "CHAPTER 2: IDENTITY-BASED HABITS",
-      title: "Three Layers of Behavior Change",
-      subtitle: "Why True Habit Change is Identity Change",
-      dropCap: "T",
-      leadText: "here are three layers at which change can occur: outcome change, process change, and identity change. Most people begin by focusing on outcomes (e.g. 'I want to score 95% on my exam').",
+      tabTitle: "Ch. 2 Identity",
+      chapterHeader: "CHAPTER 2: HOW YOUR HABITS SHAPE YOUR IDENTITY",
+      title: "Outcome-Based vs. Identity-Based Habits",
+      subtitle: "Why True Behavior Change is Identity Change",
+      dropCap: "M",
+      leadText: "any people begin the process of changing their habits by focusing on what they want to achieve. This leads to outcome-based habits. The alternative is to build identity-based habits.",
       bodyHtml: `
-        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          The first layer is changing your outcomes. The second layer is changing your process (your study schedule). The third and deepest layer is changing your <strong>identity</strong>: your beliefs, your worldview, your self-image.
-        </p>
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-family: sans-serif;">
-          <div style="font-weight: 800; color: #1e40af; font-size: 13px;">🧠 The Identity Shift in Daily Action:</div>
-          <p style="font-size: 12.5px; color: #1e3a8a; margin: 4px 0;">• The goal is not to read a book, the goal is to <strong>become a reader</strong>.<br>• The goal is not to pass one exam, the goal is to <strong>become a disciplined student</strong>.<br>• Every action you take is a vote for the type of person you wish to become.</p>
+        <div style="display:flex; gap:12px; margin:16px 0; font-family:sans-serif; flex-wrap:wrap;">
+          <div style="flex:1; min-width:180px; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:10px;">
+            <strong style="color:#991b1b; font-size:12px;">Person A (Outcome Focus):</strong>
+            <p style="font-size:12px; color:#7f1d1d; margin:4px 0 0;">When offered a cigarette: <em>'No thanks, I'm trying to quit.'</em> They still believe they are a smoker trying to behave differently.</p>
+          </div>
+          <div style="flex:1; min-width:180px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:10px;">
+            <strong style="color:#166534; font-size:12px;">Person B (Identity Focus):</strong>
+            <p style="font-size:12px; color:#14532d; margin:4px 0 0;">When offered a cigarette: <em>'No thanks, I am not a smoker.'</em> It signals a shift in who they are.</p>
+          </div>
         </div>
       `,
-      quote: "The ultimate form of intrinsic motivation is when a habit becomes part of your identity.",
+      quote: "Every action you take is a vote for the type of person you wish to become.",
       pageNumber: "Page 3 of 5"
     },
     {
-      tabTitle: "The Habit Loop",
-      chapterHeader: "THE 4-STEP NEUROLOGICAL HABIT LOOP",
+      tabTitle: "Ch. 3 The Loop",
+      chapterHeader: "CHAPTER 3: THE 4-STEP NEUROLOGICAL HABIT LOOP",
       title: "Cue, Craving, Response, and Reward",
       subtitle: "The Science of How the Brain Learns Any Behavior",
       dropCap: "T",
       leadText: "he habit loop is the engine of human behavior. Every habit follows the exact same four-step pattern: Cue triggers a Craving, which motivates a Response, which provides a Reward.",
       bodyHtml: `
         <div style="display: flex; gap: 8px; justify-content: space-between; margin: 16px 0; font-family: sans-serif; flex-wrap: wrap;">
-          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+          <div style="flex:1; min-width: 100px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
             <div style="font-weight:800; color:#2563eb; font-size:12px;">1. CUE</div>
-            <div style="font-size:11px; color:#64748b; margin-top:2px;">Noticing the reward (Phone vibrates)</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Phone vibrates</div>
           </div>
-          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+          <div style="flex:1; min-width: 100px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
             <div style="font-weight:800; color:#2563eb; font-size:12px;">2. CRAVING</div>
-            <div style="font-size:11px; color:#64748b; margin-top:2px;">Wanting the reward (Desire to check message)</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Want dopamine</div>
           </div>
-          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+          <div style="flex:1; min-width: 100px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
             <div style="font-weight:800; color:#2563eb; font-size:12px;">3. RESPONSE</div>
-            <div style="font-size:11px; color:#64748b; margin-top:2px;">Obtaining reward (Pick up phone)</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Check screen</div>
           </div>
-          <div style="flex:1; min-width: 110px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
+          <div style="flex:1; min-width: 100px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; text-align:center;">
             <div style="font-weight:800; color:#2563eb; font-size:12px;">4. REWARD</div>
-            <div style="font-size:11px; color:#64748b; margin-top:2px;">Satisfying craving (Dopamine rush)</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Temporary relief</div>
           </div>
         </div>
-        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          If a behavior is insufficient in any of the four stages, it will not become a habit. Eliminate the cue and your habit will never start. Reduce the craving and you won't experience enough motivation to act.
-        </p>
       `,
       quote: "Until you make the unconscious conscious, it will direct your life and you will call it fate.",
       pageNumber: "Page 4 of 5"
     },
     {
-      tabTitle: "Chapter 13",
+      tabTitle: "Ch. 13 Two-Minute",
       chapterHeader: "CHAPTER 13: THE TWO-MINUTE RULE",
-      title: "How to Stop Procrastinating",
+      title: "How to Stop Procrastinating on Any Big Goal",
       subtitle: "The Master Rule for Starting Any Difficult Task",
       dropCap: "E",
       leadText: "ven when you know you should start small, it’s easy to start too big. When you dream about making a change, excitement inevitably takes over and you end up trying to do too much too soon.",
@@ -6199,20 +6250,365 @@ const COMPREHENSIVE_BOOK_PREVIEWS = {
           • 'Study for 3 hours straight' ➔ becomes <strong>'Open my notes and sit at my desk'</strong>.<br>
           • 'Solve 50 math questions' ➔ becomes <strong>'Write down Formula #1'</strong>.
         </div>
-        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
-          A habit must be established before it can be improved. You cannot optimize a habit that does not exist.
-        </p>
       `,
       quote: "Standardize before you optimize. You can't improve a habit that doesn't exist.",
       pageNumber: "Page 5 of 5"
     }
   ],
 
+  "The Alchemist": [
+    {
+      tabTitle: "Contents",
+      chapterHeader: "PROLOGUE & TABLE OF CONTENTS",
+      title: "The Alchemist: The Soul of the World & Personal Legend",
+      subtitle: "By Paulo Coelho • Over 150 Million Copies Sold Worldwide",
+      dropCap: "T",
+      leadText: "he boy's name was Santiago. Dusk was falling as the boy arrived with his herd at an abandoned church. The roof had fallen in long ago, and an enormous sycamore had grown on the spot where the sacristy had once stood.",
+      bodyHtml: `
+        <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px; color: #78350f;">
+          <strong>📖 The Hero's Journey Across Continents:</strong><br>
+          • Part One: The Fields of Andalusia &amp; Meeting the King of Salem<br>
+          • Part Two: Tangier, The Crystal Merchant &amp; The Great Sahara Desert<br>
+          • Part Three: The Al-Fayoum Oasis, The Love of Fatima &amp; The Pyramids of Egypt
+        </div>
+      `,
+      quote: "And, when you want something, all the universe conspires in helping you to achieve it.",
+      pageNumber: "Page 1 of 5"
+    },
+    {
+      tabTitle: "Ch. 1 The Dream",
+      chapterHeader: "PART ONE: ANDALUSIA",
+      title: "The Recurring Dream Beneath the Sycamore Tree",
+      subtitle: "Why Dreams Are the Language of God",
+      dropCap: "H",
+      leadText: "e decided to spend the night there. He saw to it that all the sheep entered through the ruined gate, and then laid some planks across it to prevent the flock from wandering away at night.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          He swept the floor with his jacket and lay down, using the book he had just finished reading as a pillow. He told himself that he would have to start reading thicker books: they lasted longer, and made more comfortable pillows.
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          It was still dark when he woke, and, looking up, he could see the stars through the half-destroyed roof. For the second time in his life, he had dreamed that a child took his hands and transported him to the Egyptian Pyramids, pointing out a hidden treasure.
+        </p>
+      `,
+      quote: "It's the possibility of having a dream come true that makes life interesting.",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Ch. 2 King of Salem",
+      chapterHeader: "PART ONE: TARIFA PLAZA",
+      title: "Melchizedek & The World's Greatest Lie",
+      subtitle: "Discovering Your Personal Legend",
+      dropCap: "A",
+      leadText: "n old man approached Santiago in the plaza of Tarifa. 'What is the world's greatest lie?' the boy asked, completely taken aback.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          'It’s this,' the old man replied. 'That at a certain point in our lives, we lose control of what’s happening to us, and our lives become controlled by fate. That’s the world’s greatest lie. Everyone, when they are young, knows what their Personal Legend is.'
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          'At that point in their lives, everything is clear and everything is possible. They are not afraid to dream, and to yearn for everything they would like to see happen to them in their lives.'
+        </p>
+      `,
+      quote: "There is one great truth on this planet: whoever you are, or whatever it is you do, when you really want something, it's because that desire originated in the soul of the universe.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "Ch. 3 The Merchant",
+      chapterHeader: "PART TWO: TANGIER",
+      title: "The Crystal Merchant & The Fear of Achieving Dreams",
+      subtitle: "Why Some People Prefer the Dream Over Reality",
+      dropCap: "T",
+      leadText: "he boy worked for the crystal merchant for nearly a year. He cleaned every piece of glass until the shop sparkled with refracted sunlight, attracting wealthy merchants from across the Mediterranean.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          One evening, the boy asked the merchant why he never made his pilgrimage to Mecca, the fifth pillar of his faith. The merchant smiled sadly and said:
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          <em>'I’m afraid that if my dream is realized, I’ll have no reason to go on living. I prefer to just dream about Mecca. I’m afraid that it would all be a huge disappointment, so I prefer just to dream.'</em>
+        </p>
+      `,
+      quote: "There is only one thing that makes a dream impossible to achieve: the fear of failure.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Ch. 4 The Oasis",
+      chapterHeader: "PART TWO: THE SAHARA OASIS",
+      title: "Meeting Fatima & The Master Alchemist",
+      subtitle: "Love and the Soul of the World",
+      dropCap: "A",
+      leadText: "t the well of Al-Fayoum, Santiago saw a girl with dark eyes and lips between laughter and silence. When he saw her eyes, he felt that he had learned the purest part of the Language that all the world spoke.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          In that moment, it seemed to him that time stood still, and the Soul of the World surged within him. Her name was Fatima.
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          'You must understand that love never keeps a man from pursuing his Personal Legend,' the Alchemist told him on horseback. 'If he abandons that pursuit, it’s because it wasn’t true love... love that speaks the Language of the World.'
+        </p>
+      `,
+      quote: "One is loved because one is loved. No reason is needed for loving.",
+      pageNumber: "Page 5 of 5"
+    }
+  ],
+
+  "Deep Work": [
+    {
+      tabTitle: "Contents",
+      chapterHeader: "TABLE OF CONTENTS & INTRODUCTION",
+      title: "Deep Work: Rules for Focused Success in a Distracted World",
+      subtitle: "By Cal Newport • The Ultimate Focus Manual for High Scores",
+      dropCap: "D",
+      leadText: "eep work is the ability to focus without distraction on a cognitively demanding task. It’s a superpower in our increasingly distracted 21st-century economy.",
+      bodyHtml: `
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
+          <strong style="color: #0f172a; display: block; margin-bottom: 6px;">The 4 Core Rules of Deep Work:</strong>
+          <div style="color: #334155; line-height: 1.7;">
+            • Rule #1: Work Deeply (Rituals, Routines, and Bimodal Schedules)<br>
+            • Rule #2: Embrace Boredom (Rewiring Your Brain Against Instant Gratification)<br>
+            • Rule #3: Quit Social Media (The Craftsman Approach to Tool Selection)<br>
+            • Rule #4: Drain the Shallows (The Evening Shutdown Ritual)
+          </div>
+        </div>
+      `,
+      quote: "If you don't produce, you won't thrive—no matter how skilled or talented you are.",
+      pageNumber: "Page 1 of 5"
+    },
+    {
+      tabTitle: "Ch. 1 Hypothesis",
+      chapterHeader: "CHAPTER 1: THE DEEP WORK HYPOTHESIS",
+      title: "Why Deep Work Is Both Rare and Invaluable",
+      subtitle: "The Science of High-Velocity Skill Acquisition",
+      dropCap: "T",
+      leadText: "o thrive in the modern economy, you must master two core abilities: First, the ability to quickly master hard things. Second, the ability to produce at an elite level, in terms of both quality and speed.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Both abilities depend on your capacity for deep work. Neurologist Dr. Marcus Raichle demonstrated that intense concentration without distraction triggers oligodendrocytes to wrap layers of myelin around your neural circuits, cementing knowledge permanently into long-term memory.
+        </p>
+      `,
+      quote: "High-Quality Work Produced = (Time Spent) × (Intensity of Focus)",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Ch. 2 The Shallows",
+      chapterHeader: "CHAPTER 2: DEEP WORK IS RARE",
+      title: "The Metric Black Hole & Attention Residue",
+      subtitle: "Why Checking Your Phone for 10 Seconds Destroys 25 Minutes of Study",
+      dropCap: "W",
+      leadText: "hen you switch from Study Task A to checking a notification on Task B, your attention does not immediately follow. A thick residue of your attention remains stuck on the distraction.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Research by Dr. Sophie Leroy shows that workers who multi-task suffer persistent cognitive deficit. Even glancing at an incoming text for two seconds leaves you operating at half-capacity for up to twenty minutes afterward.
+        </p>
+      `,
+      quote: "Clarity about what matters provides clarity about what does not.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "Ch. 3 Four Rules",
+      chapterHeader: "CHAPTER 3: RULE #1 — WORK DEEPLY",
+      title: "The Grand Gesture & Monastic Study Habits",
+      subtitle: "How J.K. Rowling & Bill Gates Execute Deep Work",
+      dropCap: "J",
+      leadText: "ust as J.K. Rowling checked into The Balmoral luxury hotel in Edinburgh to escape all interruptions while finishing the final Harry Potter novel, you must construct an environment where focus is sacred.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Willpower is not a character trait—it is a finite muscle that exhausts quickly. If you rely on willpower to resist your smartphone, you will fail. Instead, you must build unbreakable rituals: fixed study hours, isolated study rooms, and zero notifications.
+        </p>
+      `,
+      quote: "Efforts to deepen your focus will struggle if you don’t simultaneously wean your mind from a dependence on distraction.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Ch. 4 Shutdown",
+      chapterHeader: "CHAPTER 4: RULE #4 — DRAIN THE SHALLOWS",
+      title: "The Evening Shutdown Ritual",
+      subtitle: "Why Real Rest Is Mandatory for Deep Focus",
+      dropCap: "A",
+      leadText: "t the end of your study day, shut down your books and laptop completely. Say the phrase out loud: 'Shutdown Complete.'",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Never check academic messages or study notes late at night. Your subconscious mind consolidates memory while you sleep. Respecting your rest period is the single greatest determinant of whether tomorrow morning's study session will be powerful or sluggish.
+        </p>
+      `,
+      quote: "Regularly resting your brain improves the quality of your deep work.",
+      pageNumber: "Page 5 of 5"
+    }
+  ],
+
+  "The Kite Runner": [
+    {
+      tabTitle: "Contents",
+      chapterHeader: "TABLE OF CONTENTS & PROLOGUE",
+      title: "The Kite Runner: Loyalty, Betrayal, and Redemption",
+      subtitle: "By Khaled Hosseini • International Bestseller",
+      dropCap: "I",
+      leadText: "became what I am today at the age of twelve, on a frigid overcast day in the winter of 1975. I remember the precise moment, crouching behind a crumbling mud wall, peeking into the alley near the frozen creek.",
+      bodyHtml: `
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
+          <strong style="color: #0f172a; display: block; margin-bottom: 6px;">The Chapters of an Unforgettable Story:</strong>
+          <div style="color: #334155; line-height: 1.7;">
+            • Kabul, 1975: Amir, Hassan, and Baba's Wazir Akbar Khan mansion.<br>
+            • The Blue Kite: The tournament that changed everything.<br>
+            • Fremont, California: Escape to America and Baba's flea market stall.<br>
+            • The Call from Pakistan: Rahim Khan's unforgettable words: <em>'There is a way to be good again.'</em>
+          </div>
+        </div>
+      `,
+      quote: "There is a way to be good again.",
+      pageNumber: "Page 1 of 5"
+    },
+    {
+      tabTitle: "Ch. 1 Hassan",
+      chapterHeader: "CHAPTER 1: KABUL, 1975",
+      title: "The Boy with the Chinese Doll Face",
+      subtitle: "Hassan and Amir's Childhood in Kabul",
+      dropCap: "H",
+      leadText: "assan never denied me anything. When I asked him to read a story with me on the hill beneath the pomegranate tree, he sat eagerly with his knees drawn to his chest, listening with unblinking brown eyes.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          We used to chase kites across the rooftops of Kabul. Hassan was by far the greatest kite runner anyone had ever seen. He had an innate sense of where a falling kite would land before anyone else even turned their head.
+        </p>
+      `,
+      quote: "For you, a thousand times over.",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Ch. 2 Tournament",
+      chapterHeader: "CHAPTER 7: THE BLUE KITE",
+      title: "The Winter Kite Tournament of 1975",
+      subtitle: "Winning Baba's Love at Too High a Price",
+      dropCap: "T",
+      leadText: "he streets of Kabul were lined with spectators. The glass string hummed through my numb fingers as my kite sliced through the last opponent's line. The blue kite fluttered free into the icy winter sky.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Hassan threw his arms around me and screamed: <em>'You won, Amir agha! You won!'</em> Then he sprinted off into the crowded alleys to run that final prized trophy for me, calling out over his shoulder: <em>'For you, a thousand times over!'</em>
+        </p>
+      `,
+      quote: "A boy who won't stand up for himself becomes a man who can't stand up to anything.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "Ch. 3 Baba's Sin",
+      chapterHeader: "CHAPTER 10: FREMONT, CALIFORNIA",
+      title: "The Flea Market & Baba's Pride",
+      subtitle: "Starting Over from Nothing in America",
+      dropCap: "I",
+      leadText: "n America, Baba worked long exhausting hours at a gas station, his fingernails permanently stained with grease. But on Sunday mornings, we loaded his old Volkswagen bus and set up our stall at the San Jose flea market.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          It was there that I realized Baba had never stopped being a king, even in blue overalls. America was a river where you could wash your sins away—or so I desperately hoped.
+        </p>
+      `,
+      quote: "There is only one sin, only one. And that is theft. Every other sin is a variation of theft.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Ch. 4 Redemption",
+      chapterHeader: "CHAPTER 25: REDEMPTION",
+      title: "Running the Kite for Sohrab",
+      subtitle: "The Healing Power of Standing Up for Others",
+      dropCap: "T",
+      leadText: "wenty-six years later, under a clear California sky in a park packed with Afghan families, I bought a kite and held it out to Hassan's son, Sohrab.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          When our kite cut down the opponent's string, I looked at Sohrab. A tiny, faint smile touched the corner of his lips. I turned to run the kite for him and yelled the words that had lived in my soul for thirty years: <em>'For you, a thousand times over!'</em>
+        </p>
+      `,
+      quote: "It may be unfair, but what happens in a few days, sometimes even a single day, can change the course of a whole lifetime.",
+      pageNumber: "Page 5 of 5"
+    }
+  ],
+
+  "Wings of Fire": [
+    {
+      tabTitle: "Contents",
+      chapterHeader: "TABLE OF CONTENTS & PREFACE",
+      title: "Wings of Fire: An Autobiography of Dr. A.P.J. Abdul Kalam",
+      subtitle: "From a Humble Island Boy to the Missile Man of India",
+      dropCap: "T",
+      leadText: "his is the story of Kalam, who began his life selling newspapers in Rameswaram and went on to lead India's space program, test the Pokhran nuclear deterrent, and become the beloved President of India.",
+      bodyHtml: `
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-family: sans-serif; font-size: 13px;">
+          <strong style="color: #0f172a; display: block; margin-bottom: 6px;">The 4 Major Sections of Dr. Kalam's Journey:</strong>
+          <div style="color: #334155; line-height: 1.7;">
+            • Orientation (1931–1963): Rameswaram, MIT Chennai, and early aeronautical training.<br>
+            • Creation (1963–1980): The SLV-3 satellite launch vehicle at Thumba &amp; Sriharikota.<br>
+            • Propitiation (1981–1991): The Integrated Guided Missile Development Program (Prithvi, Agni).<br>
+            • Contemplation: Lessons on leadership, overcoming failure, and igniting student minds.
+          </div>
+        </div>
+      `,
+      quote: "Dream is not that which you see while sleeping, it is something that does not let you sleep.",
+      pageNumber: "Page 1 of 5"
+    },
+    {
+      tabTitle: "Ch. 1 Rameswaram",
+      chapterHeader: "CHAPTER 1: ORIENTATION",
+      title: "The Tamarind Seeds & The Island of Rameswaram",
+      subtitle: "Childhood Lessons in Hard Work and Inter-Faith Brotherhood",
+      dropCap: "I",
+      leadText: "was born into a middle-class Tamil family in the island town of Rameswaram in the erstwhile Madras State. My father, Jainulabdeen, had neither much formal education nor much wealth; despite these disadvantages, he possessed great innate wisdom.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          During World War II, I collected tamarind seeds and sold them to a provision shop on Mosque Street for one anna. My cousin Samsuddin distributed newspapers, and when the train did not stop at Rameswaram station, bundles of papers were thrown out onto the moving tracks. I helped catch them, earning my very first wages.
+        </p>
+      `,
+      quote: "Man needs difficulties because to enjoy the success he needs them.",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Ch. 2 SLV-3 Launch",
+      chapterHeader: "CHAPTER 4: CREATION",
+      title: "The SLV-3 Satellite Launch & Overcoming Crash",
+      subtitle: "How Prof. Satish Dhawan Taught Leadership in Failure",
+      dropCap: "O",
+      leadText: "n 10 August 1979, SLV-3 was ready on the launch pad at Sriharikota. Hundreds of scientists watched with baited breath. At T-minus 315 seconds, the computer took over.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Shortly after liftoff, a leak in the second stage caused the rocket to plunge into the Bay of Bengal. It was a heart-wrenching failure. But our chairman, Prof. Satish Dhawan, stepped up to the press conference, took all the blame upon himself, and told reporters: <em>'We will succeed next year.'</em>
+        </p>
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          When SLV-3 succeeded gloriously in July 1980 putting Rohini into orbit, Dhawan sent me to address the press. That was the greatest lesson in leadership: absorb failure, share success.
+        </p>
+      `,
+      quote: "Don't take rest after your first victory because if you fail in second, more lips are waiting to say that your first victory was just luck.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "Ch. 3 Agni Missile",
+      chapterHeader: "CHAPTER 8: PROPITIATION",
+      title: "The Flight of Agni: Fire of Self-Reliance",
+      subtitle: "Chandipur-on-Sea, 22 May 1989",
+      dropCap: "A",
+      leadText: "t 0710 hours on 22 May 1989, Agni took off from Chandipur. It was a textbook flight. All guidance parameters were achieved with pinpoint accuracy.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Western superpowers had placed immense embargoes on India's technology. But our indigenous team proved that India could never be intimidated or held hostage. Self-reliance is not merely a slogan; it is the fundamental currency of national sovereignty.
+        </p>
+      `,
+      quote: "All of us do not have equal talent. But, all of us have an equal opportunity to develop our talents.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Ch. 4 Student Vision",
+      chapterHeader: "CHAPTER 12: CONTEMPLATION",
+      title: "Dr. Kalam's Call to Every Kashmiri & Indian Student",
+      subtitle: "Igniting the Minds of the Next Generation",
+      dropCap: "M",
+      leadText: "y message, especially to young people is to have courage to think differently, courage to invent, to travel the unexplored path, courage to discover the impossible and to conquer the problems and succeed.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          The ignited mind of the youth is the most powerful resource on earth, under the earth, and above the earth. Never let anyone convince you that your humble background limits the heights you can soar.
+        </p>
+      `,
+      quote: "If you want to shine like a sun, first burn like a sun.",
+      pageNumber: "Page 5 of 5"
+    }
+  ],
+
   "default": [
     {
-      tabTitle: "Overview",
+      tabTitle: "Contents",
       chapterHeader: "SYLLABUS BLUEPRINT & MODEL PREVIEW",
-      title: "Authentic Edition Overview & Key Highlights",
+      title: "Official Student Edition: Overview & Key Highlights",
       subtitle: "JK Study Hub Verified Student Print",
       dropCap: "T",
       leadText: "his student edition is formatted with crystal-clear 70 GSM cream paper, robust spine binding, and high-definition typeface designed specifically for long study sessions without eye fatigue.",
@@ -6229,9 +6625,90 @@ const COMPREHENSIVE_BOOK_PREVIEWS = {
       `,
       quote: "Quality study material is the foundation of high-scoring academic performance.",
       pageNumber: "Page 1 of 5"
+    },
+    {
+      tabTitle: "Chapter 1",
+      chapterHeader: "CORE STUDY MATERIAL: MODULE 1",
+      title: "Foundations & Fundamental Principles",
+      subtitle: "High-Yield Notes for University & Board Exams",
+      dropCap: "E",
+      leadText: "very great subject is built upon fundamental first principles. Mastering these basics guarantees effortless retention and high marks in objective and long-answer questions.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          This chapter breaks down core definitions, provides step-by-step model explanations, and contrasts key concepts using verified memory charts.
+        </p>
+      `,
+      quote: "Mastery of basics is the secret weapon of academic toppers.",
+      pageNumber: "Page 2 of 5"
+    },
+    {
+      tabTitle: "Chapter 2",
+      chapterHeader: "CORE STUDY MATERIAL: MODULE 2",
+      title: "Advanced Theory & Exam Application",
+      subtitle: "Analysis of High-Frequency Exam Problems",
+      dropCap: "T",
+      leadText: "heory without practice is incomplete. Here we examine practical case studies and application problems that examiners repeat across annual papers.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Key formulae and principles are derived cleanly with margin annotations to prevent common exam mistakes.
+        </p>
+      `,
+      quote: "Practice does not make perfect; perfect practice makes perfect.",
+      pageNumber: "Page 3 of 5"
+    },
+    {
+      tabTitle: "Chapter 3",
+      chapterHeader: "EXAM SOLVER: MODULE 3",
+      title: "Model Questions & Expert Marking Schemes",
+      subtitle: "How to Structure Full-Mark Answers",
+      dropCap: "W",
+      leadText: "riting the right answer is only half the battle; presenting it according to the examiner's marking criteria is what earns distinction marks.",
+      bodyHtml: `
+        <p style="font-size: 14.5px; text-indent: 1.5em; line-height: 1.8;">
+          Review the included bulleted model answers and diagrams for instant visual recall under examination hall pressure.
+        </p>
+      `,
+      quote: "Clear presentation converts knowledge into top ranks.",
+      pageNumber: "Page 4 of 5"
+    },
+    {
+      tabTitle: "Print Quality",
+      chapterHeader: "VERIFIED KASHMIR DISPATCH SAMPLE",
+      title: "Paper, Binding & Doorstep Delivery Specs",
+      subtitle: "100% Student Satisfaction Guarantee",
+      dropCap: "A",
+      leadText: "ll books dispatched from JK Study Hub are individually inspected for pristine binding, zero misprints, and dark high-contrast ink.",
+      bodyHtml: `
+        <div style="background:#ecfdf5; border:1.5px solid #a7f3d0; border-radius:8px; padding:12px 16px; margin:14px 0; font-family:sans-serif; color:#065f46; font-size:13px;">
+          ✓ Express dispatch within 24 hours across Srinagar, Baramulla, Anantnag, Pulwama, Sopore, and all Kashmir districts.<br>
+          ✓ Full Cash on Delivery available at your doorstep.
+        </div>
+      `,
+      quote: "Trusted by thousands of Kashmiri college and university students.",
+      pageNumber: "Page 5 of 5"
     }
   ]
 };
+
+function getBookPriceByName(name) {
+  if (typeof BOOKS_DATA !== 'undefined' && BOOKS_DATA[name] && BOOKS_DATA[name].price) {
+    return BOOKS_DATA[name].price;
+  }
+  const pricingMap = {
+    "Atomic Habits": 249,
+    "The Psychology of Money": 220,
+    "Deep Work": 249,
+    "The Alchemist": 199,
+    "The Kite Runner": 260,
+    "A Thousand Splendid Suns": 260,
+    "Secrets of Divine Love": 299,
+    "Reclaim Your Heart": 260,
+    "Wings of Fire": 230,
+    "Lucent's General Knowledge": 299,
+    "Wren & Martin English Grammar": 299
+  };
+  return pricingMap[name] || 249;
+}
 
 function openSamplePreviewModal(bookName) {
   const modal = document.getElementById('samplePreviewModal');
@@ -6241,10 +6718,14 @@ function openSamplePreviewModal(bookName) {
   const resolvedName = bookName || (currentModalBook ? currentModalBook.name : 'The Psychology of Money');
   currentPreviewBookTitle = resolvedName;
   currentPreviewPageIndex = 0;
+  currentPreviewMode = 'reader';
 
   if (titleEl) {
     titleEl.innerText = `${currentPreviewBookTitle} — Free Look Inside`;
   }
+
+  // Prevent background scrolling while modal is open
+  document.body.style.overflow = 'hidden';
 
   renderSamplePreviewPage();
   modal.style.display = 'flex';
@@ -6253,6 +6734,7 @@ function openSamplePreviewModal(bookName) {
 function closeSamplePreviewModal() {
   const modal = document.getElementById('samplePreviewModal');
   if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function setSamplePreviewPage(index) {
@@ -6269,6 +6751,18 @@ function flipSamplePage(direction) {
   }
 }
 
+function togglePreviewMode(mode) {
+  currentPreviewMode = mode;
+  renderSamplePreviewPage();
+}
+
+function orderCurrentPreviewBookCOD() {
+  const bookName = currentPreviewBookTitle || 'The Psychology of Money';
+  const price = getBookPriceByName(bookName);
+  closeSamplePreviewModal();
+  openCheckout(bookName, price, 'physical', 'books');
+}
+
 function renderSamplePreviewPage() {
   const pagesContainer = document.getElementById('samplePreviewPagesContainer');
   if (!pagesContainer) return;
@@ -6276,8 +6770,77 @@ function renderSamplePreviewPage() {
   const previews = COMPREHENSIVE_BOOK_PREVIEWS[currentPreviewBookTitle] || COMPREHENSIVE_BOOK_PREVIEWS['default'];
   const totalPages = previews.length;
   const page = previews[currentPreviewPageIndex] || previews[0];
+  const photos = BOOK_INTERNAL_PHOTOS[currentPreviewBookTitle] || [
+    { url: "images/books/psychology-of-money-3.webp", caption: "Original Interior Print Quality & Cream Paper (70 GSM)" },
+    { url: "images/books/psychology-of-money-2.webp", caption: "Spine & Perfect Thermal Binding" },
+    { url: "images/books/psychology-of-money-1.webp", caption: "Front Cover Paperback Edition" },
+    { url: "images/books/psychology-of-money-4.webp", caption: "Back Cover with ISBN & Dimensions" }
+  ];
 
-  // Build Top Filmstrip Tabs
+  const price = getBookPriceByName(currentPreviewBookTitle);
+
+  // Top Mode Switcher: Reader vs Real Photos
+  let modeSwitcherHtml = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; flex-wrap:wrap;">
+      <div style="display:inline-flex; background:#e2e8f0; padding:3px; border-radius:24px;">
+        <button type="button" onclick="togglePreviewMode('reader')" style="border:none; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; background:${currentPreviewMode === 'reader' ? '#1e3a8a; color:white; box-shadow:0 2px 6px rgba(0,0,0,0.15);' : 'transparent; color:#475569;'}">
+          📖 Read Chapter Pages (1–5)
+        </button>
+        <button type="button" onclick="togglePreviewMode('photos')" style="border:none; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; background:${currentPreviewMode === 'photos' ? '#1e3a8a; color:white; box-shadow:0 2px 6px rgba(0,0,0,0.15);' : 'transparent; color:#475569;'}">
+          📸 Physical Open Book Photos (${photos.length})
+        </button>
+      </div>
+      <div style="font-size:12px; font-weight:800; color:#166534; background:#dcfce7; padding:4px 10px; border-radius:12px;">
+        ₹${price} • Cash on Delivery
+      </div>
+    </div>
+  `;
+
+  if (currentPreviewMode === 'photos') {
+    // RENDER PHYSICAL BOOK & OPEN PAGE PHOTOS VIEW
+    let photosHtml = `
+      ${modeSwitcherHtml}
+      <div style="background:white; border-radius:12px; padding:16px; border:1px solid #e2e8f0;">
+        <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-camera" style="color:#2563eb;"></i> Genuine Physical Copy Photography (${safeEscape(currentPreviewBookTitle)})
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
+    `;
+    photos.forEach((ph, idx) => {
+      photosHtml += `
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+          <div style="height:240px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; cursor:pointer;" onclick="window.open('${ph.url}', '_blank')">
+            <img src="${ph.url}" alt="${safeEscape(ph.caption)}" style="max-height:100%; max-width:100%; object-fit:contain; transition:transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:white; font-size:11px; padding:2px 8px; border-radius:4px;"><i class="fa-solid fa-expand"></i> Tap to Zoom</span>
+          </div>
+          <div style="padding:10px 12px; font-size:12px; font-weight:600; color:#334155; line-height:1.4;">
+            ${safeEscape(ph.caption)}
+          </div>
+        </div>
+      `;
+    });
+    photosHtml += `
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:10px;">
+        <button type="button" onclick="togglePreviewMode('reader')" class="preview-nav-btn">
+          &larr; Switch to Reading Chapters
+        </button>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="button" onclick="orderBookViaWhatsApp('${safeEscape(currentPreviewBookTitle)}', ${price})" class="btn-whatsapp-direct" style="padding:8px 14px;">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp Order
+          </button>
+          <button type="button" onclick="orderCurrentPreviewBookCOD()" class="yellow-btn" style="width:auto; padding:8px 18px; background:#2563eb; color:white; font-size:13px; font-weight:700;">
+            ⚡ Order Full Paperback (COD ₹${price}) &rarr;
+          </button>
+        </div>
+      </div>
+    `;
+    pagesContainer.innerHTML = photosHtml;
+    return;
+  }
+
+  // Build Top Filmstrip Tabs for Reader
   let tabsHtml = '<div class="preview-tabs-filmstrip">';
   previews.forEach((p, idx) => {
     const isActive = idx === currentPreviewPageIndex;
@@ -6290,6 +6853,7 @@ function renderSamplePreviewPage() {
   tabsHtml += '</div>';
 
   pagesContainer.innerHTML = `
+    ${modeSwitcherHtml}
     ${tabsHtml}
 
     <!-- Authentic Book Page Spread Container -->
@@ -6350,11 +6914,11 @@ function renderSamplePreviewPage() {
       </div>
 
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-        <button type="button" onclick="orderBookViaWhatsApp('${safeEscape(currentPreviewBookTitle)}', 249)" class="btn-whatsapp-direct" style="padding:8px 14px;">
+        <button type="button" onclick="orderBookViaWhatsApp('${safeEscape(currentPreviewBookTitle)}', ${price})" class="btn-whatsapp-direct" style="padding:8px 14px;">
           <i class="fa-brands fa-whatsapp"></i> WhatsApp Order
         </button>
-        <button type="button" onclick="closeSamplePreviewModal(); openCheckout('${safeEscape(currentPreviewBookTitle)}', 249, 'physical', 'books');" class="yellow-btn" style="width:auto; padding:8px 18px; background:#2563eb; color:white; font-size:13px; font-weight:700;">
-          ⚡ Order Full Book (COD) &rarr;
+        <button type="button" onclick="orderCurrentPreviewBookCOD()" class="yellow-btn" style="width:auto; padding:8px 18px; background:#2563eb; color:white; font-size:13px; font-weight:700;">
+          ⚡ Order Full Book (COD ₹${price}) &rarr;
         </button>
       </div>
     </div>
