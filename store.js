@@ -8427,3 +8427,32 @@ function notifyComingSoon(itemName) {
 We haven't opened sales yet. Tap WhatsApp to pre-book and get notified when stock arrives below retail price.`);
   }
 }
+
+
+function filterSchoolClassBooks(cls, btnEl) {
+  const tabs = document.querySelectorAll('.school-class-tab');
+  tabs.forEach(t => {
+    t.style.background = 'white';
+    t.style.color = '#475569';
+    t.style.borderColor = '#cbd5e1';
+    t.classList.remove('active');
+  });
+
+  if (btnEl) {
+    btnEl.style.background = '#1e3a8a';
+    btnEl.style.color = 'white';
+    btnEl.style.borderColor = '#1e3a8a';
+    btnEl.classList.add('active');
+  }
+
+  const cards = document.querySelectorAll('#schoolBooksGrid .product-card');
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    if (cls === 'all') {
+      card.style.display = 'flex';
+    } else {
+      const match = text.includes('class ' + cls.toLowerCase()) || text.includes(cls.toLowerCase() + ' board') || text.includes(cls.toLowerCase() + ' stream');
+      card.style.display = match ? 'flex' : 'none';
+    }
+  });
+}
