@@ -832,7 +832,21 @@ const SYLLABUS_PDF_DATA = {
     modalSyllabusTitle.textContent = data.title;
     modalSyllabusSubtitle.textContent = 'Official PDF Syllabus for Board Examination';
 
-    let html = '';
+    const storePromoBanner = `
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">📦</span>
+          <div>
+            <h4 style="margin: 0; font-size: 13.5px; font-weight: 800; color: #1e3a8a;">Solved Guides, Board Notes &amp; School Copies</h4>
+            <p style="margin: 2px 0 0; font-size: 11.5px; color: #2563eb;">Delivered across Kashmir at less than bookshop rates &amp; less than MRP!</p>
+          </div>
+        </div>
+        <a href="store.html" target="_blank" style="background: #2563eb; color: white; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+          Store Window &rarr;
+        </a>
+      </div>
+    `;
+    let html = storePromoBanner;
     const itemsToRender = data.files ? data.files : [{ file: data.file, name: data.name }];
     
     itemsToRender.forEach(p => {
@@ -1028,7 +1042,21 @@ const SYLLABUS_PDF_DATA = {
     modalStreamTitle.textContent = data.title;
     modalStreamSubtitle.textContent = data.subtitle;
 
-    let html = '';
+    const storePromoBanner = `
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">📦</span>
+          <div>
+            <h4 style="margin: 0; font-size: 13.5px; font-weight: 800; color: #1e3a8a;">Solved Guides, Board Notes &amp; School Copies</h4>
+            <p style="margin: 2px 0 0; font-size: 11.5px; color: #2563eb;">Delivered across Kashmir at less than bookshop rates &amp; less than MRP!</p>
+          </div>
+        </div>
+        <a href="store.html" target="_blank" style="background: #2563eb; color: white; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+          Store Window &rarr;
+        </a>
+      </div>
+    `;
+    let html = storePromoBanner;
     if (data.papers.length > 0) {
       data.papers.forEach(p => {
         html += generatePaperItemHtml(p, 'var(--primary-blue)', '#dbeafe', 'Official Model Paper');

@@ -417,6 +417,11 @@ function switchSellerView(viewName) {
     const pane = document.getElementById('view-payments');
     if (pane) pane.style.display = 'block';
     calculatePaymentsSummary();
+  } else if (viewName === 'leads') {
+    if (pageTitle) pageTitle.innerText = 'School Pre-Orders & Leads';
+    const pane = document.getElementById('view-leads');
+    if (pane) pane.style.display = 'block';
+    renderSellerLeadsTable();
   } else {
     if (pageTitle) pageTitle.innerText = 'Orders';
     const pane = document.getElementById('view-orders');
@@ -1516,4 +1521,158 @@ function initSellerSupplierPanel() {
   calculateBusinessMetrics();
   calculatePaymentsSummary();
   syncSellerWithGoogleSheets(false);
+}
+
+
+// =========================================================
+// SCHOOL PRE-ORDERS & BOOKLIST LEADS MANAGEMENT
+// =========================================================
+function getPreorderLeads() {
+  try {
+    return JSON.parse(localStorage.getItem('jk_preorder_leads') || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+
+function updateLeadsBadgeCount() {
+  const leads = getPreorderLeads();
+  const badge = document.getElementById('preorderLeadsBadge');
+  if (badge) {
+    badge.textContent = leads.length;
+    badge.style.display = leads.length > 0 ? 'inline-block' : 'none';
+  }
+}
+
+function renderSellerLeadsTable() {
+  updateLeadsBadgeCount();
+  const leads = getPreorderLeads();
+  const container = document.getElementById('sellerLeadsTableContainer');
+  if (!container) return;
+
+  // Stats
+  const statTotal = document.getElementById('statTotalLeads');
+  const statPhoto = document.getElementById('statPhotoLeads');
+  const statSchools = document.getElementById('statUniqueSchools');
+
+  if (statTotal) statTotal.textContent = leads.length;
+  if (statPhoto) statPhoto.textContent = leads.filter(l => l.hasPhoto).length;
+  const unique = new Set(leads.map(l => (l.school || '').toLowerCase()).filter(Boolean));
+  if (statSchools) statSchools.textContent = unique.size;
+
+  if (leads.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: #64748b; font-size: 13.5px;">
+        <i class="fa-solid fa-graduation-cap" style="font-size: 36px; color: #94a3b8; margin-bottom: 12px; display: block;"></i>
+        <strong>No school pre-orders received yet.</strong><br>
+        When parents or students submit booklists or inquiries on the store, they will appear here live with 1-click WhatsApp reply!
+      </div>
+    `;
+    return;
+  }
+
+  let html = `
+    <div style="overflow-x: auto;">
+      <table class="hub-table" style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead>
+          <tr style="background: #f8fafc; text-align: left; border-bottom: 2px solid #e2e8f0; color: #475569;">
+            <th style="padding: 10px 12px;">Date &amp; ID</th>
+            <th style="padding: 10px 12px;">School Name</th>
+            <th style="padding: 10px 12px;">Class</th>
+            <th style="padding: 10px 12px;">Parent / Student</th>
+            <th style="padding: 10px 12px;">Photo Attached</th>
+            <th style="padding: 10px 12px;">Status</th>
+            <th style="padding: 10px 12px; text-align: right;">WhatsApp Action</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  leads.forEach(lead => {
+    const dateStr = lead.timestamp ? new Date(lead.timestamp).toLocaleDateString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : 'Recently';
+    const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+    const waReplyMsg = encodeURIComponent(`Hi! I am Sahil from JK Study Hub regarding your booklist inquiry for *${lead.school}* (${lead.class}). Here is the quote with free Kashmir doorstep delivery...`);
+    const waLink = cleanPhone ? `https://wa.me/91${cleanPhone}?text=${waReplyMsg}` : `https://wa.me/919622605714`;
+
+    html += `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 10px 12px;">
+          <div style="font-weight: 700; color: #0f172a;">${lead.id || 'LEAD'}</div>
+          <div style="font-size: 11px; color: #64748b;">${dateStr}</div>
+        </td>
+        <td style="padding: 10px 12px; font-weight: 700; color: #1e3a8a;">
+          <i class="fa-solid fa-school" style="color: #3b82f6; margin-right: 4px;"></i> ${lead.school || 'General'}
+        </td>
+        <td style="padding: 10px 12px;">
+          <span style="background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11.5px;">
+            ${lead.class || 'Any'}
+          </span>
+        </td>
+        <td style="padding: 10px 12px; color: #334155;">
+          ${lead.phone || 'Not given'}
+        </td>
+        <td style="padding: 10px 12px;">
+          ${lead.hasPhoto ? `<span style="color: #16a34a; font-weight: 800; font-size: 12px;"><i class="fa-solid fa-camera"></i> ${lead.photoName || 'Yes'}</span>` : `<span style="color: #94a3b8; font-size: 12px;">No photo</span>`}
+        </td>
+        <td style="padding: 10px 12px;">
+          <select onchange="updateLeadStatus('${lead.id}', this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; background: white; font-weight: 600;">
+            <option value="New Inquiry" ${lead.status === 'New Inquiry' ? 'selected' : ''}>⏳ New Inquiry</option>
+            <option value="Quoted" ${lead.status === 'Quoted' ? 'selected' : ''}>💬 Quoted on WA</option>
+            <option value="Order Booked" ${lead.status === 'Order Booked' ? 'selected' : ''}>✅ Order Booked</option>
+            <option value="Closed" ${lead.status === 'Closed' ? 'selected' : ''}>📁 Closed</option>
+          </select>
+        </td>
+        <td style="padding: 10px 12px; text-align: right;">
+          <a href="${waLink}" target="_blank" class="btn-hub-primary" style="padding: 5px 12px; font-size: 11.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; background: #22c55e;">
+            <i class="fa-brands fa-whatsapp"></i> Quote on WA
+          </a>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function updateLeadStatus(leadId, newStatus) {
+  const leads = getPreorderLeads();
+  const lead = leads.find(l => l.id === leadId);
+  if (lead) {
+    lead.status = newStatus;
+    localStorage.setItem('jk_preorder_leads', JSON.stringify(leads));
+    if (typeof showToast === 'function') showToast('Lead status updated to ' + newStatus);
+  }
+}
+
+function clearPreorderLeads() {
+  if (confirm('Are you sure you want to clear all school pre-order leads?')) {
+    localStorage.removeItem('jk_preorder_leads');
+    renderSellerLeadsTable();
+  }
+}
+
+function exportPreorderLeadsCSV() {
+  const leads = getPreorderLeads();
+  if (leads.length === 0) {
+    alert('No leads to export.');
+    return;
+  }
+  let csv = 'ID,Date,School,Class,Phone,HasPhoto,Status\n';
+  leads.forEach(l => {
+    csv += `"${l.id}","${l.timestamp}","${(l.school||'').replace(/"/g, '""')}","${l.class}","${l.phone}","${l.hasPhoto?'Yes':'No'}","${l.status}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'JK_Study_Hub_School_Leads_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }

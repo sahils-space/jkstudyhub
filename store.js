@@ -8458,23 +8458,85 @@ function filterSchoolClassBooks(cls, btnEl) {
 }
 
 
-// 1-Click WhatsApp Booklist & Custom School Syllabus Quote
+// 1-Click WhatsApp Booklist & Custom School Syllabus Quote with Photo & Leads Tracking
+let selectedBooklistPhotoData = null;
+
+function handleBooklistFileSelect(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    selectedBooklistPhotoData = {
+      name: file.name,
+      size: (file.size / 1024).toFixed(1) + ' KB',
+      dataUrl: e.target.result
+    };
+    const previewBox = document.getElementById('quotePhotoPreviewBox');
+    const thumb = document.getElementById('quotePhotoThumb');
+    const nameEl = document.getElementById('quotePhotoName');
+    const labelEl = document.getElementById('quoteFileLabel');
+
+    if (thumb) thumb.src = e.target.result;
+    if (nameEl) nameEl.textContent = file.name;
+    if (previewBox) previewBox.style.display = 'inline-flex';
+    if (labelEl) labelEl.textContent = 'Change Photo';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearBooklistPhoto() {
+  selectedBooklistPhotoData = null;
+  const fileInput = document.getElementById('quoteBooklistFile');
+  if (fileInput) fileInput.value = '';
+  const previewBox = document.getElementById('quotePhotoPreviewBox');
+  if (previewBox) previewBox.style.display = 'none';
+  const labelEl = document.getElementById('quoteFileLabel');
+  if (labelEl) labelEl.textContent = 'Snap / Upload Booklist Photo (Optional)';
+}
+
 function sendBooklistWhatsAppQuote() {
   const schoolEl = document.getElementById('quoteSchoolName');
   const classEl = document.getElementById('quoteClassSelect');
+  const phoneEl = document.getElementById('quoteParentPhone');
+
   const school = schoolEl ? schoolEl.value.trim() : '';
   const classVal = classEl ? classEl.value.trim() : '';
+  const phone = phoneEl ? phoneEl.value.trim() : '';
+
+  // Record Lead into LocalStorage for Seller Dashboard
+  const newLead = {
+    id: 'LEAD-' + Date.now().toString().slice(-5),
+    timestamp: new Date().toISOString(),
+    school: school || 'General Inquiry',
+    class: classVal || 'Not Specified',
+    phone: phone || 'Shared on WhatsApp',
+    hasPhoto: selectedBooklistPhotoData ? true : false,
+    photoName: selectedBooklistPhotoData ? selectedBooklistPhotoData.name : null,
+    status: 'New Inquiry'
+  };
+
+  try {
+    const existing = JSON.parse(localStorage.getItem('jk_preorder_leads') || '[]');
+    existing.unshift(newLead);
+    localStorage.setItem('jk_preorder_leads', JSON.stringify(existing.slice(0, 500)));
+  } catch(e) {}
 
   let message = 'Hi JK Study Hub! 👋 I want to order a School Books & Copies set at less than bookshop rates & less than MRP.';
-  if (school) {
-    message += '\n🏫 *School Name:* ' + school;
+  if (school) message += '\n🏫 *School Name:* ' + school;
+  if (classVal) message += '\n📚 *Class:* ' + classVal;
+  if (phone) message += '\n📞 *Parent WhatsApp:* ' + phone;
+  if (selectedBooklistPhotoData) {
+    message += '\n📷 *Booklist Photo:* I have selected my school booklist image (' + selectedBooklistPhotoData.name + ') and am attaching it here in this WhatsApp chat!';
+  } else {
+    message += '\n\nI will send our school syllabus / booklist photo in this chat. Please quote the complete bundle price with free Kashmir doorstep delivery!';
   }
-  if (classVal) {
-    message += '\n📚 *Class:* ' + classVal;
-  }
-  message += '\n\nI am attaching our school syllabus / booklist photo. Please send me the complete bundle price (less than bookshop rates & less than MRP) with free Kashmir doorstep delivery!';
 
-  const phone = '919622605714';
-  const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+  const sellerPhone = '919622605714';
+  const url = 'https://wa.me/' + sellerPhone + '?text=' + encodeURIComponent(message);
   window.open(url, '_blank');
+
+  if (typeof showToast === 'function') {
+    showToast('✅ Inquiry noted! WhatsApp opened — please attach and send your booklist photo now.');
+  }
 }
