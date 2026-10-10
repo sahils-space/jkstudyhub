@@ -546,7 +546,14 @@ function renderSellerOrdersTable() {
             <img src="${o.image || 'images/logo-app.png'}" class="product-item-thumb" onerror="this.src='images/logo-app.png'" alt="Book">
             <div>
               <div class="product-item-title">${o.product || 'Study Book'}</div>
-              <div style="font-size: 11.5px; color: #64748b;">Qty: ${o.quantity || 1} &middot; SKU: BOK-${safeOrderId.slice(-4)}</div>
+              ${(o.schoolName || (o.product && o.product.includes('[School:'))) ? `
+                <div style="margin-top: 3px;">
+                  <span style="background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 4px; border: 1px solid #fde68a; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-school"></i> School: ${o.schoolName || (o.product.match(/\[School:\s*([^\]]+)\]/) ? o.product.match(/\[School:\s*([^\]]+)\]/)[1] : 'Prescribed')}
+                  </span>
+                </div>
+              ` : ''}
+              <div style="font-size: 11.5px; color: #64748b; margin-top:2px;">Qty: ${o.quantity || 1} &middot; SKU: BOK-${safeOrderId.slice(-4)}</div>
             </div>
           </div>
         </td>

@@ -3517,8 +3517,16 @@ function openCartCheckout() {
     if (item.category === 'form') hasForms = true;
   });
 
+  let hasSchool = false;
+  cart.forEach(item => {
+    if (item.category === 'school-books' || item.category === 'copies' || (item.name && (item.name.includes('Book Set') || item.name.includes('Copies') || item.name.includes('Register')))) {
+      hasSchool = true;
+    }
+  });
+
   let combinedCat = 'standard';
-  if (hasNotes && hasForms) combinedCat = 'both';
+  if (hasSchool) combinedCat = 'school-books';
+  else if (hasNotes && hasForms) combinedCat = 'both';
   else if (hasNotes) combinedCat = 'notes';
   else if (hasForms) combinedCat = 'form';
 
@@ -3534,14 +3542,30 @@ function setupCheckoutModal(name, price, category) {
   const modal = document.getElementById('checkoutModal');
   if (!modal) return;
 
+  const isSchoolOrder = (category === 'school-books' || category === 'copies' || 
+                         name.includes('Book Set') || name.includes('Copies') || 
+                         name.includes('Register') || name.includes('Class '));
+  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const platformFee = 5;
+  const totalAmount = price + deliveryFee + platformFee;
+
   const nameEl = document.getElementById('itemName');
   if (nameEl) nameEl.innerText = name;
 
   const priceEl = document.getElementById('itemPrice');
   if (priceEl) priceEl.innerText = '₹' + price;
 
+  const deliveryFeeEl = document.getElementById('invoiceDeliveryFee');
+  if (deliveryFeeEl) {
+    if (isSchoolOrder) {
+      deliveryFeeEl.innerHTML = '<span style="color:#b45309; font-weight:800;">₹50 (Kashmir Express Dispatch)</span>';
+    } else {
+      deliveryFeeEl.innerHTML = '<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>';
+    }
+  }
+
   const totalEl = document.getElementById('totalPrice');
-  if (totalEl) totalEl.innerText = '₹' + (price + 5);
+  if (totalEl) totalEl.innerText = '₹' + totalAmount;
 
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
@@ -3633,20 +3657,53 @@ function setupCheckoutModal(name, price, category) {
   if (p2) p2.classList.remove('active-step');
 
   const notesFields = document.getElementById('notesSpecificFields');
+  const schoolFields = document.getElementById('schoolBooksSpecificFields');
   const formFields = document.getElementById('formSpecificFields');
   const addressFields = document.getElementById('addressFields');
 
   if (notesFields) notesFields.style.display = 'none';
+  if (schoolFields) schoolFields.style.display = 'none';
   if (formFields) formFields.style.display = 'none';
   if (addressFields) addressFields.style.display = 'none';
 
   const notesSub = document.getElementById('notesSubject');
+  const schoolNameInput = document.getElementById('orderSchoolName');
+  const schoolClassSelect = document.getElementById('orderSchoolClass');
   const formType = document.getElementById('digitalFormType');
   const addr = document.getElementById('orderAddress');
 
   if (notesSub) notesSub.removeAttribute('required');
+  if (schoolNameInput) schoolNameInput.removeAttribute('required');
   if (formType) formType.removeAttribute('required');
   if (addr) addr.removeAttribute('required');
+
+  // School Books (Class 1st–10th requires School Name)
+  if (category === 'school-books' || name.includes('Book Set') || (name.includes('Class ') && !name.includes('11th') && !name.includes('12th'))) {
+    if (schoolFields) schoolFields.style.display = 'block';
+    // Auto-select class in dropdown if found in title
+    if (schoolClassSelect) {
+      for (let i = 1; i <= 12; i++) {
+        const clsStr = 'Class ' + i + (i === 1 ? 'st' : i === 2 ? 'nd' : i === 3 ? 'rd' : 'th');
+        if (name.includes(clsStr)) {
+          schoolClassSelect.value = clsStr;
+          break;
+        }
+      }
+    }
+    // Only require school name for Class 1st to 10th (Private/Govt schools syllabus varies)
+    const isHigherSec = name.includes('11th') || name.includes('12th');
+    if (!isHigherSec && schoolNameInput) {
+      schoolNameInput.setAttribute('required', 'true');
+    }
+    if (addressFields) addressFields.style.display = 'block';
+    if (addr) addr.setAttribute('required', 'true');
+  }
+
+  // School Copies & Registers
+  if (category === 'copies' || name.includes('Copies') || name.includes('Register')) {
+    if (addressFields) addressFields.style.display = 'block';
+    if (addr) addr.setAttribute('required', 'true');
+  }
 
   if (category === 'notes' || category === 'both') {
     if (notesFields) notesFields.style.display = 'block';
@@ -3834,8 +3891,11 @@ function startRazorpayPayment() {
   if (!form.reportValidity()) return;
 
   const name = document.getElementById('orderName').value;
-  const phone = document.getElementById('orderPhone').value;
-  const totalPaid = currentCheckoutPrice + 5;
+  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
+                         currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
+                         currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
+  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const totalPaid = currentCheckoutPrice + deliveryFee + 5;
 
   const btn = document.getElementById('submitOrderBtn');
   if (btn) {
@@ -3918,9 +3978,25 @@ function processOrder(txnId, customStatus) {
     finalProductDesc += ` [Form: ${formSelected}, Files: ${filesCount}]`;
   }
 
+  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
+                         currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
+                         currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
+  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const platformFee = 5;
+  const totalPaid = currentCheckoutPrice + deliveryFee + platformFee;
+
+  let schoolName = '';
+  let studentClass = '';
+  const schoolNameInput = document.getElementById('orderSchoolName');
+  const schoolClassSelect = document.getElementById('orderSchoolClass');
+  if (schoolNameInput && schoolNameInput.value.trim()) {
+    schoolName = schoolNameInput.value.trim();
+    studentClass = schoolClassSelect ? schoolClassSelect.value : '';
+    finalProductDesc += ` [School: ${schoolName}${studentClass ? ', ' + studentClass : ''}]`;
+  }
+
   const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId === 'Cash on Delivery' || String(txnId).startsWith('COD') || String(txnId).toUpperCase().includes('CASH');
   const cleanTxnId = isCod ? 'Cash on Delivery' : txnId;
-  const totalPaid = currentCheckoutPrice + 5;
   const orderStatus = customStatus || (isCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed');
   const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | ${isCod ? 'Payment: Cash on Delivery (Pay at Doorstep)' : 'TXN: ' + cleanTxnId}`;
 
@@ -3945,6 +4021,9 @@ function processOrder(txnId, customStatus) {
     email: orderEmail,
     address: finalAddress,
     product: finalProductDesc,
+    schoolName: schoolName || '',
+    studentClass: studentClass || '',
+    deliveryFee: deliveryFee,
     amount: totalPaid,
     userEmail: orderEmail,
     status: orderStatus
@@ -7319,8 +7398,10 @@ function getCardCategoryType(card) {
   if (!card) return 'all';
   if (card.classList.contains('book-product-card')) return 'novels';
   const text = (card.textContent || '').toLowerCase();
-  if (text.includes('pyqs') || text.includes('instant notes') || text.includes('survival kit')) return 'academic';
-  if (text.includes('table') || text.includes('diary') || text.includes('pen') || text.includes('geometry') || text.includes('quran') || text.includes('copies') || text.includes('lamp')) return 'stationery';
+  if (card.closest('#copiesGrid') || text.includes('copies (pack') || text.includes('exercise copies') || text.includes('college register') || text.includes('practical lab copy') || text.includes('hardcover register') || text.includes('four-line english') || text.includes('two-line urdu') || text.includes('math square grid')) return 'copies';
+  if (card.closest('#schoolBooksGrid') || text.includes('complete book set') || text.includes('textbooks set') || text.includes('medical set') || text.includes('non-med set') || text.includes('commerce set') || text.includes('arts set') || text.includes('school book')) return 'school-books';
+  if (text.includes('pyqs') || text.includes('instant notes') || text.includes('survival kit') || text.includes('solved papers')) return 'academic';
+  if (text.includes('table') || text.includes('diary') || text.includes('pen') || text.includes('geometry') || text.includes('quran') || text.includes('lamp')) return 'stationery';
   if (text.includes('form filling') || text.includes('digital') || text.includes('scholarship')) return 'digital';
   return 'stationery';
 }
@@ -7353,8 +7434,21 @@ function handleStoreLiveSearch(query) {
 
   // Section titles visibility
   const secNovels = document.getElementById('section-novels');
+  const secCopies = document.getElementById('section-copies');
+  const secSchoolBooks = document.getElementById('section-school-books');
   const secAcademic = document.getElementById('section-academic');
   const secDigital = document.getElementById('section-digital');
+
+  if (secCopies) {
+    const parentHeading = secCopies.closest('div');
+    const hasVisibleCopies = Array.from(document.querySelectorAll('#copiesGrid .product-card')).some(c => c.style.display !== 'none');
+    if (parentHeading) parentHeading.style.display = hasVisibleCopies ? 'flex' : 'none';
+  }
+  if (secSchoolBooks) {
+    const parentHeading = secSchoolBooks.closest('div');
+    const hasVisibleSchoolBooks = Array.from(document.querySelectorAll('#schoolBooksGrid .product-card')).some(c => c.style.display !== 'none');
+    if (parentHeading) parentHeading.style.display = hasVisibleSchoolBooks ? 'flex' : 'none';
+  }
 
   if (secNovels) {
     const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).some(c => c.style.display !== 'none');
