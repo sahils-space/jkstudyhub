@@ -8465,14 +8465,14 @@ function sendBooklistWhatsAppQuote() {
   const school = schoolEl ? schoolEl.value.trim() : '';
   const classVal = classEl ? classEl.value.trim() : '';
 
-  let message = 'Hi JK Study Hub! 👋 I want to order a School Books & Copies set at wholesale rates.';
+  let message = 'Hi JK Study Hub! 👋 I want to order a School Books & Copies set at less than bookshop rates & MRP.';
   if (school) {
     message += '\n🏫 *School Name:* ' + school;
   }
   if (classVal) {
     message += '\n📚 *Class:* ' + classVal;
   }
-  message += '\n\nI am attaching our school syllabus / booklist photo. Please send me the complete wholesale bundle price with free Kashmir doorstep delivery!';
+  message += '\n\nI am attaching our school syllabus / booklist photo. Please send me the complete bundle price (less than bookshop rates & MRP) with free Kashmir doorstep delivery!';
 
   const phone = '919622605714';
   const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
