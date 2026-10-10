@@ -7398,6 +7398,7 @@ function getCardCategoryType(card) {
   if (!card) return 'all';
   if (card.classList.contains('book-product-card')) return 'novels';
   const text = (card.textContent || '').toLowerCase();
+  if (card.closest('#comingSoonGrid') || text.includes('coming soon') || text.includes('launching soon') || text.includes('pre-book')) return 'coming-soon';
   if (card.closest('#copiesGrid') || text.includes('copies (pack') || text.includes('exercise copies') || text.includes('college register') || text.includes('practical lab copy') || text.includes('hardcover register') || text.includes('four-line english') || text.includes('two-line urdu') || text.includes('math square grid')) return 'copies';
   if (card.closest('#schoolBooksGrid') || text.includes('complete book set') || text.includes('textbooks set') || text.includes('medical set') || text.includes('non-med set') || text.includes('commerce set') || text.includes('arts set') || text.includes('school book')) return 'school-books';
   if (text.includes('pyqs') || text.includes('instant notes') || text.includes('survival kit') || text.includes('solved papers')) return 'academic';
@@ -7437,7 +7438,14 @@ function handleStoreLiveSearch(query) {
   const secCopies = document.getElementById('section-copies');
   const secSchoolBooks = document.getElementById('section-school-books');
   const secAcademic = document.getElementById('section-academic');
+  const secComingSoon = document.getElementById('section-coming-soon');
   const secDigital = document.getElementById('section-digital');
+
+  if (secComingSoon) {
+    const parentHeading = secComingSoon.closest('div');
+    const hasVisibleComingSoon = Array.from(document.querySelectorAll('#comingSoonGrid .product-card')).some(c => c.style.display !== 'none');
+    if (parentHeading) parentHeading.style.display = hasVisibleComingSoon ? 'flex' : 'none';
+  }
 
   if (secCopies) {
     const parentHeading = secCopies.closest('div');
@@ -8396,3 +8404,14 @@ function openStoreCategorySection(catName, specificQuery) {
 }
 window.openStoreCategorySection = openStoreCategorySection;
 
+
+
+function preBookViaWhatsApp(itemName) {
+  const safeName = itemName || 'Upcoming Book / Copy';
+  const msg = `Hi JK Study Hub! I want to pre-book the upcoming item at less than MRP & bookseller price:%0A%0A` +
+              `📦 *Item:* ${encodeURIComponent(safeName)}%0A` +
+              `🏷️ *Offer:* Less than MRP & Book Sellers Price%0A` +
+              `🚚 *Delivery:* Cash on Delivery across Kashmir%0A%0A` +
+              `Please notify me and confirm my priority pre-order when stock arrives!`;
+  window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
+}
