@@ -926,7 +926,7 @@ function openSellerShippingLabelModal(orderId) {
     <div class="seller-label-dual-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; align-items: stretch;">
       
       <!-- ========================================================
-           LEFT: PERSONALIZED CUSTOMER THANK YOU & 20% REWARD CARD
+           LEFT: PERSONALIZED CUSTOMER THANK YOU & ₹20 REWARD CARD
            ======================================================== -->
       <div id="printTargetCard" class="seller-custom-thank-card" style="background: linear-gradient(145deg, #07111e 0%, #0e233d 100%); border: 2.5px solid #d4af37; border-radius: 12px; padding: 22px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 6px 20px rgba(0,0,0,0.18); min-height: 520px; box-sizing: border-box;">
         
@@ -956,7 +956,7 @@ function openSellerShippingLabelModal(orderId) {
           </div>
         </div>
 
-        <!-- Order & One-Time 20% Coupon Voucher Box -->
+        <!-- Order & One-Time ₹20 Coupon Voucher Box -->
         <div style="background: rgba(212, 175, 55, 0.1); border: 2px dashed #d4af37; border-radius: 10px; padding: 14px; margin-bottom: 14px; position: relative; z-index: 2; text-align: center;">
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 6px; margin-bottom: 8px;">
             <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">LOCKED TO YOUR ORDER:</span>
@@ -967,7 +967,7 @@ function openSellerShippingLabelModal(orderId) {
             🎁 EXCLUSIVE ONE-TIME REWARD
           </div>
           <div style="font-size: 22px; font-weight: 900; color: #fef08a; margin: 3px 0; letter-spacing: 1px;">
-            20% OFF NEXT ORDER
+            ₹20 OFF NEXT ORDER
           </div>
           <div style="display: inline-block; background: #07111e; border: 1.5px solid #d4af37; padding: 4px 14px; border-radius: 6px; margin: 6px 0;">
             <span style="font-size: 10px; color: #cbd5e1; font-weight: 600;">COUPON CODE: </span>
@@ -975,7 +975,7 @@ function openSellerShippingLabelModal(orderId) {
           </div>
 
           <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; margin-top: 6px;">
-            🔒 <strong>How to Redeem:</strong> On your next order, tick <em>"Have you ordered before?"</em> at checkout and enter your Order ID <strong>${o.orderId}</strong> + Code <strong>STUDENT20</strong>. Can only be redeemed once!
+            🔒 <strong>How to Redeem:</strong> On your next order, tick <em>"Have you ordered before?"</em> at checkout and enter your Order ID <strong>${o.orderId}</strong> + Code <strong>STUDENT20</strong> to get ₹20 off. Can only be redeemed once!
           </div>
         </div>
 
