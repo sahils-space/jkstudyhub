@@ -3540,14 +3540,41 @@ function openCartCheckout() {
   setupCheckoutModal(combinedTitle, total, combinedCat);
 }
 
+function getCheckoutDeliveryInfo() {
+  const pinInput = document.getElementById('orderPin');
+  const citySelect = document.getElementById('orderCity');
+  const addrInput = document.getElementById('orderAddress');
+
+  const pin = pinInput ? pinInput.value.trim() : (localStorage.getItem('jk_delivery_pincode') || '193121');
+  const city = citySelect ? citySelect.value : '';
+  const addr = addrInput ? addrInput.value : '';
+
+  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
+                         (currentCheckoutProduct && (currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
+                          currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '))));
+
+  if (!isSchoolOrder) {
+    return { fee: 0, html: '<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>' };
+  }
+
+  const isPattan = (pin === '193121') || city.toLowerCase().includes('pattan') || addr.toLowerCase().includes('pattan');
+  if (isPattan) {
+    return { fee: 0, html: '<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • Pattan Hometown Delivery)</span>' };
+  }
+
+  return { fee: 50, html: '<span style="color:#b45309; font-weight:800;">₹50 (Kashmir Express Dispatch)</span>' };
+}
+
 function setupCheckoutModal(name, price, category) {
   const modal = document.getElementById('checkoutModal');
   if (!modal) return;
 
-  const isSchoolOrder = (category === 'school-books' || category === 'copies' || 
-                         name.includes('Book Set') || name.includes('Copies') || 
-                         name.includes('Register') || name.includes('Class '));
-  const deliveryFee = isSchoolOrder ? 50 : 0;
+  currentCheckoutProduct = name;
+  currentCheckoutPrice = price;
+  currentCheckoutCategory = category;
+
+  const deliveryInfo = getCheckoutDeliveryInfo();
+  const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
   const totalAmount = price + deliveryFee + platformFee;
 
@@ -3559,11 +3586,7 @@ function setupCheckoutModal(name, price, category) {
 
   const deliveryFeeEl = document.getElementById('invoiceDeliveryFee');
   if (deliveryFeeEl) {
-    if (isSchoolOrder) {
-      deliveryFeeEl.innerHTML = '<span style="color:#b45309; font-weight:800;">₹50 (Kashmir Express Dispatch)</span>';
-    } else {
-      deliveryFeeEl.innerHTML = '<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>';
-    }
+    deliveryFeeEl.innerHTML = deliveryInfo.html;
   }
 
   const totalEl = document.getElementById('totalPrice');
@@ -3633,6 +3656,17 @@ function setupCheckoutModal(name, price, category) {
   if (addrInput && savedProfile && savedProfile.address) {
     addrInput.value = savedProfile.address;
   }
+
+  // Real-time recalculation of delivery fee when customer updates PIN, city or address
+  ['orderPin', 'orderCity', 'orderAddress'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.dataset.deliveryFeeListener) {
+      el.dataset.deliveryFeeListener = 'true';
+      el.addEventListener('input', updateCheckoutInvoiceTotals);
+      el.addEventListener('change', updateCheckoutInvoiceTotals);
+    }
+  });
+  updateCheckoutInvoiceTotals();
 
   // Display 1-Click Quick COD Order Banner if address already saved
   const quickBox = document.getElementById('quickOneClickCodBox');
@@ -3811,7 +3845,7 @@ function toggleRepeatCustomerReward(isChecked) {
   }
 }
 
-function verifyAndApplyRepeatDiscount() {
+async function verifyAndApplyRepeatDiscount() {
   const orderIdInput = document.getElementById('repeatPrevOrderId');
   const couponInput = document.getElementById('repeatCouponCode');
   const msgEl = document.getElementById('repeatCouponMessage');
@@ -3894,6 +3928,45 @@ function verifyAndApplyRepeatDiscount() {
     } catch(e) {}
   }
 
+  // Live fallback check against Google Sheets (cross-device verification)
+  if (!isValidOrder && typeof SCRIPT_URL !== 'undefined' && SCRIPT_URL) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#2563eb';
+    msgEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking Order ID in system records...';
+    try {
+      const resp = await fetch(SCRIPT_URL + '?action=get_orders&t=' + Date.now());
+      const data = await resp.json();
+      if (data && data.status === 'success' && Array.isArray(data.orders)) {
+        const remoteOrder = data.orders.find(ro => {
+          if (!ro || !ro.orderId) return false;
+          return String(ro.orderId).trim().toUpperCase().replace(/^#/, '') === cleanId;
+        });
+        if (remoteOrder) {
+          isValidOrder = true;
+          let currentLocal = getOrders();
+          const exists = currentLocal.find(cl => String(cl.orderId).toUpperCase() === String(remoteOrder.orderId).toUpperCase());
+          if (!exists) {
+            currentLocal.push({
+              orderId: remoteOrder.orderId,
+              txnId: remoteOrder.txnId || 'N/A',
+              date: remoteOrder.timestamp || new Date().toLocaleDateString('en-IN'),
+              timestamp: Date.now(),
+              name: (remoteOrder.name && !remoteOrder.name.match(/^[6789]\d{9}$/)) ? remoteOrder.name : 'Student',
+              phone: remoteOrder.phone || '',
+              address: remoteOrder.address || 'Baramulla, J&K',
+              product: remoteOrder.product || 'Study Hub Purchase',
+              amount: parseFloat(remoteOrder.amount) || 0,
+              status: remoteOrder.status || 'Confirmed'
+            });
+            saveOrders(currentLocal);
+          }
+        }
+      }
+    } catch(err) {
+      console.warn("Live order check fallback error:", err);
+    }
+  }
+
   // STRICT REQUIREMENT: Order ID MUST exist in the system's order records!
   if (!isValidOrder) {
     msgEl.style.display = 'block';
@@ -3945,13 +4018,16 @@ function removeRepeatDiscount() {
 }
 
 function updateCheckoutInvoiceTotals() {
-  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
-                         currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
-                         currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
-  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const deliveryInfo = getCheckoutDeliveryInfo();
+  const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
   const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
   const totalAmount = finalPrice + deliveryFee + platformFee;
+
+  const deliveryFeeEl = document.getElementById('invoiceDeliveryFee');
+  if (deliveryFeeEl) {
+    deliveryFeeEl.innerHTML = deliveryInfo.html;
+  }
 
   const discountRow = document.getElementById('invoiceRepeatDiscountRow');
   const discountAmtEl = document.getElementById('invoiceRepeatDiscountAmount');
@@ -4089,10 +4165,8 @@ function startRazorpayPayment() {
 
   const name = document.getElementById('orderName').value;
   const phone = document.getElementById('orderPhone') ? document.getElementById('orderPhone').value : '';
-  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
-                         currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
-                         currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
-  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const deliveryInfo = getCheckoutDeliveryInfo();
+  const deliveryFee = deliveryInfo.fee;
   const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
   const totalPaid = finalItemPrice + deliveryFee + 5;
 
@@ -4177,10 +4251,8 @@ function processOrder(txnId, customStatus) {
     finalProductDesc += ` [Form: ${formSelected}, Files: ${filesCount}]`;
   }
 
-  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
-                         currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
-                         currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
-  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const deliveryInfo = getCheckoutDeliveryInfo();
+  const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
   const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
   const totalPaid = finalItemPrice + deliveryFee + platformFee;

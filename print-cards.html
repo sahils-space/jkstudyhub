@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JK Study Hub - Printable Cards & VIP Passes</title>
+    <title>JK Study Hub - Printable Cards (8 per A4 Sheet)</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -24,11 +24,11 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: #f1f5f9;
             color: #1e293b;
-            padding: 24px;
+            padding: 20px;
         }
 
         .screen-header {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto 24px auto;
             background: #fff;
             padding: 20px 24px;
@@ -45,6 +45,9 @@
             font-size: 1.25rem;
             font-weight: 800;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .screen-header p {
@@ -53,18 +56,24 @@
             margin-top: 4px;
         }
 
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .print-btn {
             background: #1e3a8a;
             color: #fff;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 22px;
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             transition: all 0.2s;
         }
 
@@ -73,17 +82,36 @@
             transform: translateY(-1px);
         }
 
+        .secondary-btn {
+            background: #f8fafc;
+            color: #334155;
+            border: 1.5px solid #cbd5e1;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.88rem;
+            text-decoration: none;
+        }
+
+        .secondary-btn:hover {
+            background: #e2e8f0;
+        }
+
         .sheet {
-            max-width: 900px;
-            margin: 0 auto 30px auto;
+            max-width: 960px;
+            margin: 0 auto 36px auto;
             background: #fff;
-            padding: 24px;
+            padding: 20px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
         .sheet-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: #334155;
             margin-bottom: 16px;
@@ -91,44 +119,56 @@
             border-bottom: 2px dashed #cbd5e1;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .sheet-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 800;
         }
 
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 12px;
         }
 
-        /* --- CARD 1: LUXURY NAVY & GOLD THANK YOU CARD --- */
+        /* --- COMPACT THANK YOU CARD (8 PER SHEET) --- */
         .thank-card {
             background: linear-gradient(145deg, #07111e 0%, #0e233d 100%);
-            border: 2px solid #c59b27;
-            border-radius: 14px;
-            padding: 24px 20px;
+            border: 1.5px solid #c59b27;
+            border-radius: 10px;
+            padding: 12px 14px;
             color: #fff;
             position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            aspect-ratio: 1.55 / 1;
+            height: 100%;
+            min-height: 220px;
             overflow: hidden;
+            outline: 1px dashed rgba(203, 213, 225, 0.4);
+            outline-offset: 2px;
         }
 
         .thank-card::before {
             content: '';
             position: absolute;
-            inset: 6px;
-            border: 1px solid rgba(212, 175, 55, 0.45);
-            border-radius: 10px;
+            inset: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 7px;
             pointer-events: none;
         }
 
         .card-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             position: relative;
             z-index: 2;
         }
@@ -136,34 +176,35 @@
         .card-brand {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .card-logo-badge {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
             background: var(--gold-gradient);
             color: #0b192c;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-family: 'Cinzel', serif;
         }
 
         .brand-text h3 {
-            font-size: 0.95rem;
+            font-size: 0.8rem;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             color: #f8fafc;
+            line-height: 1.1;
         }
 
         .brand-text span {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             color: #d4af37;
             display: block;
             font-weight: 600;
@@ -172,48 +213,59 @@
         .special-seal {
             background: var(--gold-gradient);
             color: #1a1a1a;
-            font-size: 0.6rem;
+            font-size: 0.52rem;
             font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 20px;
+            padding: 3px 7px;
+            border-radius: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(212,175,55,0.4);
+            letter-spacing: 0.4px;
         }
 
         .card-body {
             text-align: center;
-            margin: 12px 0;
+            margin: 6px 0;
             position: relative;
             z-index: 2;
         }
 
         .card-body h2 {
             font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
+            font-size: 0.95rem;
             color: #fbf5b7;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            letter-spacing: 0.4px;
         }
 
         .card-body p {
-            font-size: 0.72rem;
+            font-size: 0.62rem;
             color: #cbd5e1;
-            line-height: 1.4;
+            line-height: 1.35;
         }
 
         .voucher-pill {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 5px;
             background: rgba(212, 175, 55, 0.15);
             border: 1px dashed #d4af37;
-            padding: 4px 12px;
-            border-radius: 8px;
-            margin-top: 8px;
-            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 6px;
+            font-size: 0.64rem;
             color: #fef08a;
             font-weight: 700;
+            width: 100%;
+        }
+
+        .voucher-pill strong {
+            background: var(--gold-gradient);
+            color: #0b192c;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 0.66rem;
+            letter-spacing: 0.5px;
         }
 
         .card-footer {
@@ -221,8 +273,8 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid rgba(212, 175, 55, 0.25);
-            padding-top: 8px;
-            font-size: 0.68rem;
+            padding-top: 5px;
+            font-size: 0.58rem;
             color: #94a3b8;
             position: relative;
             z-index: 2;
@@ -230,52 +282,55 @@
 
         .footer-tag {
             color: #38bdf8;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        /* --- CARD 2: GOLD STUDENT PRIVILEGE PASS (THE ATTRACTION) --- */
+        /* --- COMPACT GOLD STUDENT PRIVILEGE PASS (8 PER SHEET) --- */
         .gold-pass {
-            background: linear-gradient(135deg, #1e1e1e 0%, #2d2615 40%, #151515 100%);
-            border: 2px solid #eab308;
-            border-radius: 14px;
-            padding: 22px 20px;
+            background: linear-gradient(135deg, #181818 0%, #2b220e 40%, #111111 100%);
+            border: 1.5px solid #eab308;
+            border-radius: 10px;
+            padding: 12px 14px;
             color: #fff;
             position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.22);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            aspect-ratio: 1.55 / 1;
+            height: 100%;
+            min-height: 220px;
             overflow: hidden;
+            outline: 1px dashed rgba(203, 213, 225, 0.4);
+            outline-offset: 2px;
         }
 
         .gold-pass::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(234, 179, 8, 0.15) 0%, transparent 60%);
+            top: -40%;
+            left: -40%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.12) 0%, transparent 60%);
             pointer-events: none;
         }
 
         .pass-chip {
-            width: 38px;
-            height: 28px;
+            width: 28px;
+            height: 20px;
             background: var(--gold-gradient);
-            border-radius: 6px;
+            border-radius: 4px;
             border: 1px solid #785210;
             position: relative;
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
         }
 
         .pass-chip::after {
             content: '';
             position: absolute;
-            inset: 4px;
-            border: 1px solid rgba(0,0,0,0.3);
-            border-radius: 3px;
+            inset: 3px;
+            border: 1px solid rgba(0,0,0,0.35);
+            border-radius: 2px;
         }
 
         .pass-header {
@@ -288,51 +343,54 @@
 
         .pass-title {
             font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
+            font-size: 0.72rem;
             font-weight: 800;
             color: #fef08a;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             text-align: right;
         }
 
         .pass-title span {
             display: block;
-            font-size: 0.6rem;
+            font-size: 0.52rem;
             color: #ca8a04;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .pass-middle {
-            margin: 10px 0;
+            margin: 6px 0;
             position: relative;
             z-index: 2;
         }
 
         .pass-number {
             font-family: monospace;
-            font-size: 1.05rem;
-            letter-spacing: 2.5px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
             color: #fef9c3;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            font-weight: 800;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
         }
 
         .pass-perks {
-            margin-top: 6px;
+            margin-top: 4px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            flex-direction: column;
+            gap: 3px;
         }
 
         .perk-badge {
-            background: rgba(234, 179, 8, 0.15);
-            border: 1px solid rgba(234, 179, 8, 0.4);
+            background: rgba(234, 179, 8, 0.12);
+            border: 1px solid rgba(234, 179, 8, 0.35);
             color: #fef08a;
-            font-size: 0.62rem;
+            font-size: 0.56rem;
             font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .pass-bottom {
@@ -342,74 +400,102 @@
             position: relative;
             z-index: 2;
             border-top: 1px solid rgba(234, 179, 8, 0.2);
-            padding-top: 8px;
+            padding-top: 5px;
         }
 
         .pass-holder {
-            font-size: 0.65rem;
+            font-size: 0.54rem;
             color: #94a3b8;
         }
 
         .pass-holder strong {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.64rem;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
         }
 
         .pass-qr-box {
             background: #fff;
-            padding: 3px;
-            border-radius: 6px;
+            padding: 2px 4px;
+            border-radius: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
         .pass-qr-box i {
-            font-size: 26px;
+            font-size: 18px;
             color: #0b192c;
         }
 
         .pass-qr-box span {
-            font-size: 0.45rem;
+            font-size: 0.42rem;
             color: #0b192c;
             font-weight: 800;
             text-transform: uppercase;
         }
 
-        /* --- PRINT STYLES --- */
+        /* --- EXACT A4 PRINT STYLES (8 CARDS PER SHEET) --- */
+        @page {
+            size: A4 portrait;
+            margin: 6mm 6mm;
+        }
+
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
             }
 
             .screen-header {
-                display: none;
+                display: none !important;
             }
 
             .sheet {
-                box-shadow: none;
-                padding: 10mm;
-                margin: 0;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
                 page-break-after: always;
+                break-after: page;
+            }
+
+            .sheet:last-child {
+                page-break-after: auto;
+                break-after: auto;
             }
 
             .sheet-title {
-                display: none;
+                display: none !important;
             }
 
             .cards-grid {
-                gap: 8mm;
+                display: grid !important;
+                grid-template-columns: repeat(2, 96mm) !important;
+                grid-template-rows: repeat(4, 64mm) !important;
+                gap: 5mm !important;
+                justify-content: center !important;
+                align-content: center !important;
             }
 
             .thank-card, .gold-pass {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                box-shadow: none;
-                border-width: 1.5px;
+                width: 96mm !important;
+                height: 64mm !important;
+                min-height: 64mm !important;
+                max-height: 64mm !important;
+                box-shadow: none !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                outline: 0.8px dashed #94a3b8 !important;
+                outline-offset: 1.5mm !important;
             }
         }
     </style>
@@ -418,19 +504,25 @@
 
     <div class="screen-header">
         <div>
-            <h1><i class="fa-solid fa-print"></i> JK Study Hub - Print Ready Cards & Vouchers</h1>
-            <p>Ready to print on standard A4 Cardstock / Glossy 250-300 GSM paper. Cut along edges.</p>
+            <h1><i class="fa-solid fa-print" style="color: #1e3a8a;"></i> JK Study Hub - Printable Cards (8 per A4 Sheet)</h1>
+            <p>Optimized for 250-300 GSM paper. Exactly <strong>8 cards fit on a single A4 sheet</strong> (50% printing cost savings!). Dashed cut lines included.</p>
         </div>
-        <button class="print-btn" onclick="window.print()">
-            <i class="fa-solid fa-file-pdf"></i> Print / Save as PDF (A4)
-        </button>
+        <div class="btn-group">
+            <a href="store.html" class="secondary-btn"><i class="fa-solid fa-arrow-left"></i> Back to Store</a>
+            <button class="print-btn" onclick="window.print()">
+                <i class="fa-solid fa-file-pdf"></i> Print / Save 8-Card PDF
+            </button>
+        </div>
     </div>
 
-    <!-- SHEET 1: THANK YOU CARDS -->
+    <!-- SHEET 1: 8 COMPACT THANK YOU CARDS -->
     <div class="sheet">
         <div class="sheet-title">
-            <i class="fa-solid fa-heart" style="color: #ef4444;"></i>
-            Sheet 1: Premium Customer Thank You Cards (Place 1 in every parcel)
+            <div>
+                <i class="fa-solid fa-heart" style="color: #ef4444;"></i>
+                Sheet 1: Customer Thank You Cards (8 Cards per Sheet • Put 1 in each parcel)
+            </div>
+            <span class="sheet-badge">8 Cards • ₹20 OFF Coupon</span>
         </div>
         <div class="cards-grid">
             <!-- Card 1 -->
@@ -440,20 +532,20 @@
                         <div class="card-logo-badge">JK</div>
                         <div class="brand-text">
                             <h3>JK STUDY HUB</h3>
-                            <span>Excellence in Learning • Kashmir</span>
+                            <span>Student Store • Kashmir</span>
                         </div>
                     </div>
                     <div class="special-seal">Verified Student</div>
                 </div>
                 <div class="card-body">
                     <h2>Thank You for Ordering!</h2>
-                    <p>You didn't just buy books; you supported a student-first initiative in Kashmir. We guarantee authentic study materials at strictly less than bookshop rates & less than MRP.</p>
+                    <p>You supported a student-first initiative in Kashmir. Guaranteed 100% authentic study books at strictly less than bookshop rates & less than MRP.</p>
                     <div class="voucher-pill">
-                        <i class="fa-solid fa-gift"></i> Use Code: <strong>STUDENT20</strong> for ₹20 OFF Next Order (Enter with Order ID)
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div><i class="fa-brands fa-whatsapp"></i> Helpline: <strong>+91 9622605714</strong></div>
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
                     <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
                 </div>
             </div>
@@ -465,31 +557,184 @@
                         <div class="card-logo-badge">JK</div>
                         <div class="brand-text">
                             <h3>JK STUDY HUB</h3>
-                            <span>Excellence in Learning • Kashmir</span>
+                            <span>Student Store • Kashmir</span>
                         </div>
                     </div>
                     <div class="special-seal">Verified Student</div>
                 </div>
                 <div class="card-body">
                     <h2>Best of Luck for Exams!</h2>
-                    <p>To our hardworking student: every hour you invest today shapes your future tomorrow. Thank you for making JK Study Hub your academic companion across Kashmir.</p>
+                    <p>Every hour you invest today shapes your future tomorrow. Thank you for choosing JK Study Hub as your trusted academic companion across Kashmir.</p>
                     <div class="voucher-pill">
-                        <i class="fa-solid fa-gift"></i> Use Code: <strong>STUDENT20</strong> for ₹20 OFF Next Order (Enter with Order ID)
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div><i class="fa-brands fa-whatsapp"></i> Helpline: <strong>+91 9622605714</strong></div>
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
+                    <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="thank-card">
+                <div class="card-top">
+                    <div class="card-brand">
+                        <div class="card-logo-badge">JK</div>
+                        <div class="brand-text">
+                            <h3>JK STUDY HUB</h3>
+                            <span>Student Store • Kashmir</span>
+                        </div>
+                    </div>
+                    <div class="special-seal">Verified Student</div>
+                </div>
+                <div class="card-body">
+                    <h2>Thank You, Hardworking Student!</h2>
+                    <p>Genuine syllabus books, solved PYQs, and school notes delivered to your doorstep. We are here to help you score the highest in Kashmir.</p>
+                    <div class="voucher-pill">
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
+                    <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="thank-card">
+                <div class="card-top">
+                    <div class="card-brand">
+                        <div class="card-logo-badge">JK</div>
+                        <div class="brand-text">
+                            <h3>JK STUDY HUB</h3>
+                            <span>Student Store • Kashmir</span>
+                        </div>
+                    </div>
+                    <div class="special-seal">Verified Student</div>
+                </div>
+                <div class="card-body">
+                    <h2>Authentic Books Delivered!</h2>
+                    <p>No extra bookshop margins, no fake prints. Always transparent rates, doorstep Cash on Delivery, and instant student care support.</p>
+                    <div class="voucher-pill">
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
+                    <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="thank-card">
+                <div class="card-top">
+                    <div class="card-brand">
+                        <div class="card-logo-badge">JK</div>
+                        <div class="brand-text">
+                            <h3>JK STUDY HUB</h3>
+                            <span>Student Store • Kashmir</span>
+                        </div>
+                    </div>
+                    <div class="special-seal">Verified Student</div>
+                </div>
+                <div class="card-body">
+                    <h2>Thank You for Ordering!</h2>
+                    <p>You supported a student-first initiative in Kashmir. Guaranteed 100% authentic study books at strictly less than bookshop rates & less than MRP.</p>
+                    <div class="voucher-pill">
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
+                    <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="thank-card">
+                <div class="card-top">
+                    <div class="card-brand">
+                        <div class="card-logo-badge">JK</div>
+                        <div class="brand-text">
+                            <h3>JK STUDY HUB</h3>
+                            <span>Student Store • Kashmir</span>
+                        </div>
+                    </div>
+                    <div class="special-seal">Verified Student</div>
+                </div>
+                <div class="card-body">
+                    <h2>Best of Luck for Exams!</h2>
+                    <p>Every hour you invest today shapes your future tomorrow. Thank you for choosing JK Study Hub as your trusted academic companion across Kashmir.</p>
+                    <div class="voucher-pill">
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
+                    <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+                </div>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="thank-card">
+                <div class="card-top">
+                    <div class="card-brand">
+                        <div class="card-logo-badge">JK</div>
+                        <div class="brand-text">
+                            <h3>JK STUDY HUB</h3>
+                            <span>Student Store • Kashmir</span>
+                        </div>
+                    </div>
+                    <div class="special-seal">Verified Student</div>
+                </div>
+                <div class="card-body">
+                    <h2>Thank You, Hardworking Student!</h2>
+                    <p>Genuine syllabus books, solved PYQs, and school notes delivered to your doorstep. We are here to help you score the highest in Kashmir.</p>
+                    <div class="voucher-pill">
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
+                    <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+                </div>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="thank-card">
+                <div class="card-top">
+                    <div class="card-brand">
+                        <div class="card-logo-badge">JK</div>
+                        <div class="brand-text">
+                            <h3>JK STUDY HUB</h3>
+                            <span>Student Store • Kashmir</span>
+                        </div>
+                    </div>
+                    <div class="special-seal">Verified Student</div>
+                </div>
+                <div class="card-body">
+                    <h2>Authentic Books Delivered!</h2>
+                    <p>No extra bookshop margins, no fake prints. Always transparent rates, doorstep Cash on Delivery, and instant student care support.</p>
+                    <div class="voucher-pill">
+                        <i class="fa-solid fa-gift"></i> Next Order: Use <strong>STUDENT20</strong> with Order ID for ₹20 OFF
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div><i class="fa-brands fa-whatsapp"></i> Care: <strong>+91 9622605714</strong></div>
                     <div class="footer-tag"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SHEET 2: GOLD STUDENT PRIVILEGE PASS (THE ATTRACTION) -->
+    <!-- SHEET 2: 8 COMPACT GOLD STUDENT PRIVILEGE PASSES -->
     <div class="sheet">
         <div class="sheet-title">
-            <i class="fa-solid fa-crown" style="color: #eab308;"></i>
-            Sheet 2: Gold Student Privilege Pass (The Special Attraction to Keep Students Coming Back)
+            <div>
+                <i class="fa-solid fa-crown" style="color: #eab308;"></i>
+                Sheet 2: Gold Student Privilege Passes (8 Passes per Sheet • High Loyalty Retention)
+            </div>
+            <span class="sheet-badge" style="background: #fef3c7; color: #b45309;">8 Passes • VIP Perks</span>
         </div>
         <div class="cards-grid">
             <!-- Pass 1 -->
@@ -504,9 +749,9 @@
                 <div class="pass-middle">
                     <div class="pass-number">JK • 2026 • VIP • 8841</div>
                     <div class="pass-perks">
-                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Always Less Than Bookshop Rates</span>
-                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority COD Dispatch</span>
-                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan</span>
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
                     </div>
                 </div>
                 <div class="pass-bottom">
@@ -516,7 +761,7 @@
                     </div>
                     <div class="pass-qr-box">
                         <i class="fa-solid fa-qrcode"></i>
-                        <span>Scan for Rewards</span>
+                        <span>jkstudyhub</span>
                     </div>
                 </div>
             </div>
@@ -531,11 +776,11 @@
                     </div>
                 </div>
                 <div class="pass-middle">
-                    <div class="pass-number">JK • 2026 • VIP • 9924</div>
+                    <div class="pass-number">JK • 2026 • VIP • 8842</div>
                     <div class="pass-perks">
-                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Always Less Than Bookshop Rates</span>
-                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority COD Dispatch</span>
-                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan</span>
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
                     </div>
                 </div>
                 <div class="pass-bottom">
@@ -545,7 +790,181 @@
                     </div>
                     <div class="pass-qr-box">
                         <i class="fa-solid fa-qrcode"></i>
-                        <span>Scan for Rewards</span>
+                        <span>jkstudyhub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pass 3 -->
+            <div class="gold-pass">
+                <div class="pass-header">
+                    <div class="pass-chip"></div>
+                    <div class="pass-title">
+                        JK STUDY HUB
+                        <span>GOLD PRIVILEGE PASS</span>
+                    </div>
+                </div>
+                <div class="pass-middle">
+                    <div class="pass-number">JK • 2026 • VIP • 8843</div>
+                    <div class="pass-perks">
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
+                    </div>
+                </div>
+                <div class="pass-bottom">
+                    <div class="pass-holder">
+                        PRIVILEGED MEMBER
+                        <strong>VALUED STUDENT • KASHMIR</strong>
+                    </div>
+                    <div class="pass-qr-box">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>jkstudyhub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pass 4 -->
+            <div class="gold-pass">
+                <div class="pass-header">
+                    <div class="pass-chip"></div>
+                    <div class="pass-title">
+                        JK STUDY HUB
+                        <span>GOLD PRIVILEGE PASS</span>
+                    </div>
+                </div>
+                <div class="pass-middle">
+                    <div class="pass-number">JK • 2026 • VIP • 8844</div>
+                    <div class="pass-perks">
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
+                    </div>
+                </div>
+                <div class="pass-bottom">
+                    <div class="pass-holder">
+                        PRIVILEGED MEMBER
+                        <strong>VALUED STUDENT • KASHMIR</strong>
+                    </div>
+                    <div class="pass-qr-box">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>jkstudyhub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pass 5 -->
+            <div class="gold-pass">
+                <div class="pass-header">
+                    <div class="pass-chip"></div>
+                    <div class="pass-title">
+                        JK STUDY HUB
+                        <span>GOLD PRIVILEGE PASS</span>
+                    </div>
+                </div>
+                <div class="pass-middle">
+                    <div class="pass-number">JK • 2026 • VIP • 8845</div>
+                    <div class="pass-perks">
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
+                    </div>
+                </div>
+                <div class="pass-bottom">
+                    <div class="pass-holder">
+                        PRIVILEGED MEMBER
+                        <strong>VALUED STUDENT • KASHMIR</strong>
+                    </div>
+                    <div class="pass-qr-box">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>jkstudyhub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pass 6 -->
+            <div class="gold-pass">
+                <div class="pass-header">
+                    <div class="pass-chip"></div>
+                    <div class="pass-title">
+                        JK STUDY HUB
+                        <span>GOLD PRIVILEGE PASS</span>
+                    </div>
+                </div>
+                <div class="pass-middle">
+                    <div class="pass-number">JK • 2026 • VIP • 8846</div>
+                    <div class="pass-perks">
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
+                    </div>
+                </div>
+                <div class="pass-bottom">
+                    <div class="pass-holder">
+                        PRIVILEGED MEMBER
+                        <strong>VALUED STUDENT • KASHMIR</strong>
+                    </div>
+                    <div class="pass-qr-box">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>jkstudyhub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pass 7 -->
+            <div class="gold-pass">
+                <div class="pass-header">
+                    <div class="pass-chip"></div>
+                    <div class="pass-title">
+                        JK STUDY HUB
+                        <span>GOLD PRIVILEGE PASS</span>
+                    </div>
+                </div>
+                <div class="pass-middle">
+                    <div class="pass-number">JK • 2026 • VIP • 8847</div>
+                    <div class="pass-perks">
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
+                    </div>
+                </div>
+                <div class="pass-bottom">
+                    <div class="pass-holder">
+                        PRIVILEGED MEMBER
+                        <strong>VALUED STUDENT • KASHMIR</strong>
+                    </div>
+                    <div class="pass-qr-box">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>jkstudyhub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pass 8 -->
+            <div class="gold-pass">
+                <div class="pass-header">
+                    <div class="pass-chip"></div>
+                    <div class="pass-title">
+                        JK STUDY HUB
+                        <span>GOLD PRIVILEGE PASS</span>
+                    </div>
+                </div>
+                <div class="pass-middle">
+                    <div class="pass-number">JK • 2026 • VIP • 8848</div>
+                    <div class="pass-perks">
+                        <span class="perk-badge"><i class="fa-solid fa-check"></i> Less Than Bookshop Rates Always</span>
+                        <span class="perk-badge"><i class="fa-solid fa-bolt"></i> Priority Doorstep COD Dispatch</span>
+                        <span class="perk-badge"><i class="fa-solid fa-location-dot"></i> Free Delivery in Pattan (193121)</span>
+                    </div>
+                </div>
+                <div class="pass-bottom">
+                    <div class="pass-holder">
+                        PRIVILEGED MEMBER
+                        <strong>VALUED STUDENT • KASHMIR</strong>
+                    </div>
+                    <div class="pass-qr-box">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>jkstudyhub</span>
                     </div>
                 </div>
             </div>
