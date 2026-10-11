@@ -923,131 +923,215 @@ function openSellerShippingLabelModal(orderId) {
   const orderDate = o.date || new Date().toLocaleDateString('en-IN');
 
   sheet.innerHTML = `
-    <div class="shipping-label-sheet" style="border: 2.5px solid #000; background: #fff; color: #000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: left; line-height: 1.35;">
-      <!-- Top Bar: Logistics Header -->
-      <div style="border-bottom: 2px solid #000; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">📦</span>
-          <div>
-            <div style="font-size: 15px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">JK STUDY HUB LOGISTICS</div>
-            <div style="font-size: 10px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
+    <div class="seller-label-dual-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; align-items: stretch;">
+      
+      <!-- ========================================================
+           LEFT: PERSONALIZED CUSTOMER THANK YOU & 20% REWARD CARD
+           ======================================================== -->
+      <div id="printTargetCard" class="seller-custom-thank-card" style="background: linear-gradient(145deg, #07111e 0%, #0e233d 100%); border: 2.5px solid #d4af37; border-radius: 12px; padding: 22px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 6px 20px rgba(0,0,0,0.18); min-height: 520px; box-sizing: border-box;">
+        
+        <div style="position: absolute; inset: 7px; border: 1px solid rgba(212, 175, 55, 0.45); border-radius: 8px; pointer-events: none;"></div>
+
+        <!-- Card Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%); color: #0b192c; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; font-family: 'Cinzel', serif;">JK</div>
+            <div>
+              <div style="font-size: 14px; font-weight: 800; letter-spacing: 0.5px; color: #f8fafc;">JK STUDY HUB</div>
+              <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #d4af37; font-weight: 700;">Excellence in Learning • Kashmir</div>
+            </div>
           </div>
-        </div>
-        <div style="text-align: right;">
-          <div style="font-size: 12px; font-weight: 900; border: 1.5px solid #000; padding: 2px 8px; display: inline-block;">ROUTE: KMR-193</div>
-          <div style="font-size: 10px; font-weight: 600; margin-top: 2px;">DISPATCH: ${orderDate}</div>
-        </div>
-      </div>
-
-      <!-- Primary Barcode Section -->
-      <div style="border-bottom: 2px solid #000; padding: 12px 10px; text-align: center; background: #fff;">
-        <div style="display: flex; justify-content: center; margin-bottom: 4px;">
-          ${barcodeSvg}
-        </div>
-        <div style="font-family: monospace; font-size: 14px; font-weight: 900; letter-spacing: 2px;">* ${o.orderId} *</div>
-        <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; margin-top: 4px; padding: 0 10px; color: #222;">
-          <span>AWB: ${awbNumber}</span>
-          <span>HUB: BARAMULLA / PATTAN</span>
-        </div>
-      </div>
-
-      <!-- Payment Status Banner (PREPAID vs COD) -->
-      <div style="border-bottom: 2px solid #000; padding: 8px 12px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
-        ${isCod ? `
-          <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
-          <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${o.amount || 0}</div>
-          <div style="font-size: 10px; font-weight: 700; margin-top: 2px; letter-spacing: 0.5px;">⚠️ COLLECT EXACT CASH BEFORE OPENING PARCEL</div>
-        ` : `
-          <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
-          <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${o.amount || 0} • VERIFIED ONLINE</div>
-          <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Payment ID: ${o.txnId || 'PREPAID_VERIFIED'}</div>
-        `}
-      </div>
-
-      <!-- Address Section: SHIP TO (Consignee) & SHIP FROM (Shipper) -->
-      <div style="display: grid; grid-template-columns: 1.4fr 1fr; border-bottom: 2px solid #000;">
-        <!-- Ship To -->
-        <div style="padding: 10px 12px; border-right: 2px solid #000; background: #fff;">
-          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
-          <div style="font-size: 14px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
-          <div style="font-size: 12px; font-weight: 800; color: #000; margin-top: 3px;">TEL: +91 ${customerPhone}</div>
-          <div style="font-size: 11px; font-weight: 600; color: #111; line-height: 1.4; margin-top: 4px; word-break: break-word;">${customerAddress}</div>
-          <div style="margin-top: 8px; padding-top: 4px; border-top: 1px dashed #000;">
-            <span style="font-size: 11px; font-weight: 900;">PIN: </span>
-            <span style="font-size: 20px; font-weight: 900; letter-spacing: 1px;">${pincode}</span>
+          <div style="background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%); color: #07111e; font-size: 9px; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(212,175,55,0.4);">
+            Verified Student
           </div>
         </div>
 
-        <!-- Ship From -->
-        <div style="padding: 10px 12px; background: #fff;">
-          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">SHIPPER (RETURN TO):</div>
-          <div style="font-size: 12px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB LOGISTICS</div>
-          <div style="font-size: 10.5px; font-weight: 600; color: #222; margin-top: 3px; line-height: 1.3;">
-            Fulfillment Center, Main Market, Pattan, Dist. Baramulla<br>
-            Jammu &amp; Kashmir - 193121
+        <!-- Greeting & Message -->
+        <div style="text-align: center; margin: 10px 0 14px; position: relative; z-index: 2;">
+          <div style="font-family: 'Cinzel', serif; font-size: 19px; font-weight: 800; color: #fbf5b7; letter-spacing: 0.5px; margin-bottom: 6px;">
+            BEST OF LUCK FOR EXAMS!
           </div>
-          <div style="font-size: 11px; font-weight: 800; margin-top: 4px;">HELPLINE: +91 9622605714</div>
-          <div style="margin-top: 8px; font-size: 9px; font-weight: 700; border: 1px solid #000; padding: 2px 4px; display: inline-block;">
-            ORIGIN PIN: 193121
+          <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.5; max-width: 360px; margin: 0 auto;">
+            Dear <strong style="color:#fff;">${customerName}</strong>, thank you for choosing JK Study Hub! We are proud to support your academic journey with authentic books &amp; study supplies at strictly less than bookshop rates &amp; less than MRP.
           </div>
         </div>
+
+        <!-- Order & One-Time 20% Coupon Voucher Box -->
+        <div style="background: rgba(212, 175, 55, 0.1); border: 2px dashed #d4af37; border-radius: 10px; padding: 14px; margin-bottom: 14px; position: relative; z-index: 2; text-align: center;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 6px; margin-bottom: 8px;">
+            <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">LOCKED TO YOUR ORDER:</span>
+            <span style="font-family: monospace; font-size: 13.5px; font-weight: 900; color: #fef08a; letter-spacing: 1px;">#${o.orderId}</span>
+          </div>
+
+          <div style="font-size: 10.5px; font-weight: 800; color: #e2e8f0; text-transform: uppercase; letter-spacing: 1px;">
+            🎁 EXCLUSIVE ONE-TIME REWARD
+          </div>
+          <div style="font-size: 22px; font-weight: 900; color: #fef08a; margin: 3px 0; letter-spacing: 1px;">
+            20% OFF NEXT ORDER
+          </div>
+          <div style="display: inline-block; background: #07111e; border: 1.5px solid #d4af37; padding: 4px 14px; border-radius: 6px; margin: 6px 0;">
+            <span style="font-size: 10px; color: #cbd5e1; font-weight: 600;">COUPON CODE: </span>
+            <span style="font-family: monospace; font-size: 14px; font-weight: 900; color: #fde047; letter-spacing: 1.5px;">STUDENT20</span>
+          </div>
+
+          <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; margin-top: 6px;">
+            🔒 <strong>How to Redeem:</strong> On your next order, tick <em>"Have you ordered before?"</em> at checkout and enter your Order ID <strong>${o.orderId}</strong> + Code <strong>STUDENT20</strong>. Can only be redeemed once!
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(212, 175, 55, 0.3); padding-top: 10px; font-size: 10.5px; color: #94a3b8; position: relative; z-index: 2;">
+          <div><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> Helpline: <strong style="color: #fff;">+91 9622605714</strong></div>
+          <div style="color: #38bdf8; font-weight: 700;"><i class="fa-solid fa-truck-fast"></i> Free Delivery Pattan</div>
+        </div>
+
       </div>
 
-      <!-- Items and Package Contents -->
-      <div style="border-bottom: 2px solid #000; padding: 8px 12px; background: #fff;">
-        <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px;">
-          <span style="flex: 2;">ITEM DESCRIPTION</span>
-          <span style="flex: 0.5; text-align: center;">QTY</span>
-          <span style="flex: 0.8; text-align: right;">TOTAL VALUE</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; line-height: 1.3;">
-          <span style="flex: 2; word-break: break-word;">${o.product || 'Study Material / Textbook'}</span>
-          <span style="flex: 0.5; text-align: center;">1</span>
-          <span style="flex: 0.8; text-align: right;">₹${o.amount || 0}</span>
-        </div>
-        <div style="font-size: 9px; font-weight: 700; color: #444; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
-          NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
-        </div>
-      </div>
-
-      <!-- Footer with QR Code and Dispatch Stamp -->
-      <div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div id="sellerShippingLabelQrWrap" style="width: 70px; height: 70px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #000; padding: 2px;">
+      <!-- ========================================================
+           RIGHT: LOGISTICS SURFACE SHIPPING LABEL (BARCODED)
+           ======================================================== -->
+      <div id="printTargetLabel" class="shipping-label-sheet" style="border: 2.5px solid #000; background: #fff; color: #000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: left; line-height: 1.35; border-radius: 4px; box-sizing: border-box;">
+        <!-- Top Bar: Logistics Header -->
+        <div style="border-bottom: 2px solid #000; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 22px;">📦</span>
+            <div>
+              <div style="font-size: 14px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">JK STUDY HUB LOGISTICS</div>
+              <div style="font-size: 9.5px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
+            </div>
           </div>
-          <div>
-            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase;">SCAN FOR REAL-TIME TRACKING</div>
-            <div style="font-size: 8.5px; font-weight: 600; color: #333; line-height: 1.3; max-width: 170px; margin-top: 2px;">
-              Scan with mobile camera or scanner to verify parcel authenticity &amp; live delivery status.
+          <div style="text-align: right;">
+            <div style="font-size: 11px; font-weight: 900; border: 1.5px solid #000; padding: 2px 7px; display: inline-block;">ROUTE: KMR-193</div>
+            <div style="font-size: 9.5px; font-weight: 600; margin-top: 2px;">DISPATCH: ${orderDate}</div>
+          </div>
+        </div>
+
+        <!-- Primary Barcode Section -->
+        <div style="border-bottom: 2px solid #000; padding: 12px 10px; text-align: center; background: #fff;">
+          <div style="display: flex; justify-content: center; margin-bottom: 4px;">
+            ${barcodeSvg}
+          </div>
+          <div style="font-family: monospace; font-size: 14px; font-weight: 900; letter-spacing: 2px;">* ${o.orderId} *</div>
+          <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 4px; padding: 0 10px; color: #222;">
+            <span>AWB: ${awbNumber}</span>
+            <span>HUB: BARAMULLA / PATTAN</span>
+          </div>
+        </div>
+
+        <!-- Payment Status Banner (PREPAID vs COD) -->
+        <div style="border-bottom: 2px solid #000; padding: 8px 12px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
+          ${isCod ? `
+            <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
+            <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${o.amount || 0}</div>
+            <div style="font-size: 9.5px; font-weight: 700; margin-top: 2px; letter-spacing: 0.5px;">⚠️ COLLECT EXACT CASH BEFORE OPENING PARCEL</div>
+          ` : `
+            <div style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
+            <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${o.amount || 0} • VERIFIED ONLINE</div>
+            <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Payment ID: ${o.txnId || 'PREPAID_VERIFIED'}</div>
+          `}
+        </div>
+
+        <!-- Address Section: SHIP TO & SHIP FROM -->
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr; border-bottom: 2px solid #000;">
+          <!-- Ship To -->
+          <div style="padding: 10px 12px; border-right: 2px solid #000; background: #fff;">
+            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
+            <div style="font-size: 13.5px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
+            <div style="font-size: 11.5px; font-weight: 800; color: #000; margin-top: 3px;">TEL: +91 ${customerPhone}</div>
+            <div style="font-size: 10.5px; font-weight: 600; color: #111; line-height: 1.4; margin-top: 4px; word-break: break-word;">${customerAddress}</div>
+            <div style="margin-top: 8px; padding-top: 4px; border-top: 1px dashed #000;">
+              <span style="font-size: 10.5px; font-weight: 900;">PIN: </span>
+              <span style="font-size: 18px; font-weight: 900; letter-spacing: 1px;">${pincode}</span>
+            </div>
+          </div>
+
+          <!-- Ship From -->
+          <div style="padding: 10px 12px; background: #fff;">
+            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">SHIPPER (RETURN TO):</div>
+            <div style="font-size: 11.5px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB LOGISTICS</div>
+            <div style="font-size: 10px; font-weight: 600; color: #222; margin-top: 3px; line-height: 1.3;">
+              Fulfillment Center, Main Market, Pattan, Dist. Baramulla<br>
+              Jammu &amp; Kashmir - 193121
+            </div>
+            <div style="font-size: 10.5px; font-weight: 800; margin-top: 4px;">HELPLINE: +91 9622605714</div>
+            <div style="margin-top: 8px; font-size: 8.5px; font-weight: 700; border: 1px solid #000; padding: 2px 4px; display: inline-block;">
+              ORIGIN PIN: 193121
             </div>
           </div>
         </div>
-        <div style="text-align: center; border: 1.5px dashed #000; padding: 6px 10px; border-radius: 4px; min-width: 110px;">
-          <div style="font-size: 8.5px; font-weight: 900; letter-spacing: 0.5px;">JK STUDY HUB</div>
-          <div style="font-size: 10px; font-weight: 900; color: #000; margin: 2px 0;">VERIFIED DISPATCH</div>
-          <div style="font-size: 8px; font-weight: 700; color: #555;">AUTH. SIGNATORY</div>
+
+        <!-- Items and Package Contents -->
+        <div style="border-bottom: 2px solid #000; padding: 8px 12px; background: #fff;">
+          <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px;">
+            <span style="flex: 2;">ITEM DESCRIPTION</span>
+            <span style="flex: 0.5; text-align: center;">QTY</span>
+            <span style="flex: 0.8; text-align: right;">TOTAL VALUE</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; line-height: 1.3;">
+            <span style="flex: 2; word-break: break-word;">${o.product || 'Study Material / Textbook'}</span>
+            <span style="flex: 0.5; text-align: center;">1</span>
+            <span style="flex: 0.8; text-align: right;">₹${o.amount || 0}</span>
+          </div>
+          <div style="font-size: 8.5px; font-weight: 700; color: #444; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
+            NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
+          </div>
+        </div>
+
+        <!-- Footer with QR Code and Dispatch Stamp -->
+        <div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="sellerShippingLabelQrWrap" style="width: 65px; height: 65px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #000; padding: 2px;">
+            </div>
+            <div>
+              <div style="font-size: 9px; font-weight: 900; text-transform: uppercase;">SCAN FOR REAL-TIME TRACKING</div>
+              <div style="font-size: 8px; font-weight: 600; color: #333; line-height: 1.3; max-width: 160px; margin-top: 2px;">
+                Scan with mobile camera or scanner to verify parcel authenticity &amp; live delivery status.
+              </div>
+            </div>
+          </div>
+          <div style="text-align: center; border: 1.5px dashed #000; padding: 6px 10px; border-radius: 4px; min-width: 105px;">
+            <div style="font-size: 8px; font-weight: 900; letter-spacing: 0.5px;">JK STUDY HUB</div>
+            <div style="font-size: 9.5px; font-weight: 900; color: #000; margin: 2px 0;">VERIFIED DISPATCH</div>
+            <div style="font-size: 7.5px; font-weight: 700; color: #555;">AUTH. SIGNATORY</div>
+          </div>
         </div>
       </div>
+
     </div>
   `;
 
   setTimeout(() => {
     const qrContainer = document.getElementById('sellerShippingLabelQrWrap');
     if (qrContainer) {
-      renderQrCodeIntoContainer(qrContainer, qrUrl, 68);
+      renderQrCodeIntoContainer(qrContainer, qrUrl, 64);
     }
   }, 40);
 
   if (modal) modal.classList.add('open');
 }
 
-function printSellerShippingLabel() {
-  const printContent = document.getElementById('sellerShippingLabelSheet');
-  if (!printContent) {
-    window.print();
-    return;
+function printSellerShippingLabel(targetType = 'all') {
+  let contentHtml = '';
+  let docTitle = `Dispatch Package - ${activePrintingOrderId}`;
+
+  if (targetType === 'card') {
+    const cardEl = document.getElementById('printTargetCard');
+    if (!cardEl) return;
+    contentHtml = `<div style="max-width: 480px; margin: 20px auto;">${cardEl.outerHTML}</div>`;
+    docTitle = `Student Reward Card - ${activePrintingOrderId}`;
+  } else if (targetType === 'label') {
+    const labelEl = document.getElementById('printTargetLabel');
+    if (!labelEl) return;
+    contentHtml = `<div style="max-width: 420px; margin: 20px auto;">${labelEl.outerHTML}</div>`;
+    docTitle = `Shipping Label - ${activePrintingOrderId}`;
+  } else {
+    const dualGrid = document.querySelector('.seller-label-dual-container');
+    if (!dualGrid) return;
+    contentHtml = `<div style="max-width: 900px; margin: 10px auto;">${dualGrid.outerHTML}</div>`;
+    docTitle = `Label & Student Card - ${activePrintingOrderId}`;
   }
-  const printWindow = window.open('', '_blank', 'width=800,height=900');
+
+  const printWindow = window.open('', '_blank', 'width=950,height=900');
   if (!printWindow) {
     window.print();
     return;
@@ -1056,20 +1140,24 @@ function printSellerShippingLabel() {
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Shipping Label - JK Study Hub</title>
+      <title>${docTitle}</title>
       <meta charset="utf-8">
+      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
       <style>
-        body { margin: 0; padding: 15px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; background: #fff; }
-        .shipping-label-sheet { width: 100mm; max-width: 100mm; margin: 0 auto; border: 2.5px solid #000; }
+        body { margin: 0; padding: 15px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .seller-label-dual-container { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+        .seller-custom-thank-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .shipping-label-sheet { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         @media print {
           body { padding: 0; }
-          .shipping-label-sheet { width: 100mm !important; max-width: 100mm !important; margin: 0 auto !important; }
-          @page { size: 100mm 150mm; margin: 0; }
+          @page { size: ${targetType === 'all' ? 'A4 landscape' : 'auto'}; margin: 6mm; }
+          .seller-label-dual-container { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 6mm !important; }
         }
       </style>
     </head>
     <body>
-      ${printContent.innerHTML}
+      ${contentHtml}
     </body>
     </html>
   `);
@@ -1077,7 +1165,7 @@ function printSellerShippingLabel() {
   printWindow.focus();
   setTimeout(() => {
     printWindow.print();
-  }, 400);
+  }, 450);
 }
 
 function closeSellerModal(modalId) {

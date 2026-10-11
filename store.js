@@ -3485,6 +3485,8 @@ let currentCheckoutProduct = '';
 let currentCheckoutPrice = 0;
 let currentCheckoutCategory = 'standard';
 let isCartCheckoutSession = false;
+let activeRepeatDiscountAmount = 0;
+let activeRedeemedPrevOrderId = null;
 
 function openCheckout(name, price, type, category) {
   isCartCheckoutSession = false;
@@ -3566,6 +3568,8 @@ function setupCheckoutModal(name, price, category) {
 
   const totalEl = document.getElementById('totalPrice');
   if (totalEl) totalEl.innerText = '₹' + totalAmount;
+
+  resetRepeatDiscountState();
 
   const form = document.getElementById('checkoutForm');
   if (form) form.reset();
@@ -3771,6 +3775,194 @@ function quickOneClickCodCheckout(btnEl, evt) {
 function closeCheckout() {
   const modal = document.getElementById('checkoutModal');
   if (modal) modal.classList.remove('active');
+  resetRepeatDiscountState();
+}
+
+// --- REPEAT STUDENT 20% DISCOUNT (ONE-TIME ORDER ID VALIDATION) ---
+function resetRepeatDiscountState() {
+  activeRepeatDiscountAmount = 0;
+  activeRedeemedPrevOrderId = null;
+  const check = document.getElementById('haveOrderedBeforeCheck');
+  if (check) check.checked = false;
+  const formBox = document.getElementById('repeatCustomerFormFields');
+  if (formBox) formBox.style.display = 'none';
+  const msg = document.getElementById('repeatCouponMessage');
+  if (msg) { msg.style.display = 'none'; msg.innerHTML = ''; }
+  const prevOrderInput = document.getElementById('repeatPrevOrderId');
+  if (prevOrderInput) { prevOrderInput.value = ''; prevOrderInput.disabled = false; }
+  const couponInput = document.getElementById('repeatCouponCode');
+  if (couponInput) { couponInput.value = ''; couponInput.disabled = false; }
+  const applyBtn = document.getElementById('btnApplyRepeatCoupon');
+  if (applyBtn) { 
+    applyBtn.disabled = false; 
+    applyBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Verify & Apply 20% Off'; 
+  }
+  const discountRow = document.getElementById('invoiceRepeatDiscountRow');
+  if (discountRow) discountRow.style.display = 'none';
+}
+
+function toggleRepeatCustomerReward(isChecked) {
+  const formBox = document.getElementById('repeatCustomerFormFields');
+  if (formBox) {
+    formBox.style.display = isChecked ? 'block' : 'none';
+  }
+  if (!isChecked && activeRepeatDiscountAmount > 0) {
+    removeRepeatDiscount();
+  }
+}
+
+function verifyAndApplyRepeatDiscount() {
+  const orderIdInput = document.getElementById('repeatPrevOrderId');
+  const couponInput = document.getElementById('repeatCouponCode');
+  const msgEl = document.getElementById('repeatCouponMessage');
+
+  if (!orderIdInput || !couponInput || !msgEl) return;
+
+  const rawOrderId = orderIdInput.value.trim().toUpperCase();
+  const rawCoupon = couponInput.value.trim().toUpperCase();
+
+  if (!rawOrderId) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your Previous Order ID.';
+    orderIdInput.focus();
+    return;
+  }
+
+  if (!rawCoupon) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your card Coupon Code.';
+    couponInput.focus();
+    return;
+  }
+
+  // 1. Verify coupon code text
+  if (rawCoupon !== 'STUDENT20' && rawCoupon !== 'JKSTUDENT20') {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Coupon Code. Enter <strong>STUDENT20</strong> from your Thank You card.';
+    return;
+  }
+
+  // 2. Check if this Order ID has ALREADY been used/redeemed (Anti-Abuse)
+  let redeemedList = [];
+  try {
+    redeemedList = JSON.parse(localStorage.getItem('jk_redeemed_repeat_coupons') || '[]');
+  } catch(e) {}
+
+  if (redeemedList.includes(rawOrderId)) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Order #${rawOrderId} has <strong>ALREADY redeemed</strong> its one-time 20% discount. It cannot be used again!`;
+    return;
+  }
+
+  // Check if already used in any local orders
+  const allExistingOrders = typeof getOrders === 'function' ? getOrders() : [];
+  const alreadyUsedInOrders = allExistingOrders.some(ord => 
+    String(ord.redeemedPrevOrderId || ord.verifiedPrevOrderId || '').toUpperCase() === rawOrderId
+  );
+
+  if (alreadyUsedInOrders) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Order #${rawOrderId} has already been used on a previous order.`;
+    return;
+  }
+
+  // 3. Verify that the Order ID belongs to an ACTUAL completed order
+  const cleanId = rawOrderId.replace(/^#/, '');
+  let isValidOrder = false;
+
+  const foundOrder = allExistingOrders.find(ord => {
+    const oid = String(ord.orderId || '').toUpperCase().replace(/^#/, '');
+    return oid === cleanId || oid.endsWith(cleanId) || cleanId.endsWith(oid);
+  });
+
+  if (foundOrder) {
+    isValidOrder = true;
+  } else {
+    try {
+      const sellerOrders = JSON.parse(localStorage.getItem('jk_orders_db') || '[]');
+      if (sellerOrders.some(ord => String(ord.orderId).toUpperCase().replace(/^#/, '') === cleanId)) {
+        isValidOrder = true;
+      }
+    } catch(e) {}
+  }
+
+  // Match recognized JK Study Hub order syntax or database entry
+  if (!isValidOrder && !rawOrderId.match(/^(OD\d{5,}|ORD[-_]?[A-Z0-9]{4,}|JKSH\d{4,}|JK-202\d-[A-Z0-9]+)$/i)) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Order #${rawOrderId} not found. Only students who have previously ordered can claim this!`;
+    return;
+  }
+
+  // 4. Calculate 20% discount on item price
+  activeRepeatDiscountAmount = Math.max(1, Math.round(currentCheckoutPrice * 0.20));
+  activeRedeemedPrevOrderId = rawOrderId;
+
+  orderIdInput.disabled = true;
+  couponInput.disabled = true;
+  const applyBtn = document.getElementById('btnApplyRepeatCoupon');
+  if (applyBtn) {
+    applyBtn.disabled = true;
+    applyBtn.innerHTML = '<i class="fa-solid fa-check"></i> 20% Applied';
+  }
+
+  msgEl.style.display = 'block';
+  msgEl.style.color = '#16a34a';
+  msgEl.innerHTML = `🎉 <strong>20% Student Discount Verified!</strong> Saved ₹${activeRepeatDiscountAmount}. <button type="button" onclick="removeRepeatDiscount()" style="background:none; border:none; color:#dc2626; text-decoration:underline; cursor:pointer; font-size:11px; margin-left:6px;">Remove</button>`;
+
+  updateCheckoutInvoiceTotals();
+}
+
+function removeRepeatDiscount() {
+  activeRepeatDiscountAmount = 0;
+  activeRedeemedPrevOrderId = null;
+
+  const orderIdInput = document.getElementById('repeatPrevOrderId');
+  const couponInput = document.getElementById('repeatCouponCode');
+  const msgEl = document.getElementById('repeatCouponMessage');
+  const applyBtn = document.getElementById('btnApplyRepeatCoupon');
+
+  if (orderIdInput) { orderIdInput.disabled = false; }
+  if (couponInput) { couponInput.disabled = false; }
+  if (applyBtn) {
+    applyBtn.disabled = false;
+    applyBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Verify & Apply 20% Off';
+  }
+  if (msgEl) {
+    msgEl.style.display = 'none';
+    msgEl.innerHTML = '';
+  }
+
+  updateCheckoutInvoiceTotals();
+}
+
+function updateCheckoutInvoiceTotals() {
+  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
+                         currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
+                         currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
+  const deliveryFee = isSchoolOrder ? 50 : 0;
+  const platformFee = 5;
+  const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const totalAmount = finalPrice + deliveryFee + platformFee;
+
+  const discountRow = document.getElementById('invoiceRepeatDiscountRow');
+  const discountAmtEl = document.getElementById('invoiceRepeatDiscountAmount');
+  if (discountRow && discountAmtEl) {
+    if (activeRepeatDiscountAmount > 0) {
+      discountRow.style.display = 'flex';
+      discountAmtEl.innerText = `-₹${activeRepeatDiscountAmount}`;
+    } else {
+      discountRow.style.display = 'none';
+    }
+  }
+
+  const totalEl = document.getElementById('totalPrice');
+  if (totalEl) totalEl.innerText = '₹' + totalAmount;
 }
 
 function updateChecklist() {
@@ -3790,6 +3982,8 @@ function updateChecklist() {
 function goToStep2() {
   const form = document.getElementById('checkoutForm');
   if (!form.reportValidity()) return;
+
+  updateCheckoutInvoiceTotals();
 
   document.getElementById('step1').style.display = 'none';
   document.getElementById('step2').style.display = 'block';
@@ -3891,11 +4085,13 @@ function startRazorpayPayment() {
   if (!form.reportValidity()) return;
 
   const name = document.getElementById('orderName').value;
+  const phone = document.getElementById('orderPhone') ? document.getElementById('orderPhone').value : '';
   const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
                          currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
                          currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
   const deliveryFee = isSchoolOrder ? 50 : 0;
-  const totalPaid = currentCheckoutPrice + deliveryFee + 5;
+  const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const totalPaid = finalItemPrice + deliveryFee + 5;
 
   const btn = document.getElementById('submitOrderBtn');
   if (btn) {
@@ -3983,7 +4179,8 @@ function processOrder(txnId, customStatus) {
                          currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '));
   const deliveryFee = isSchoolOrder ? 50 : 0;
   const platformFee = 5;
-  const totalPaid = currentCheckoutPrice + deliveryFee + platformFee;
+  const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const totalPaid = finalItemPrice + deliveryFee + platformFee;
 
   let schoolName = '';
   let studentClass = '';
@@ -4029,6 +4226,19 @@ function processOrder(txnId, customStatus) {
     status: orderStatus
   };
 
+  if (activeRepeatDiscountAmount > 0 && activeRedeemedPrevOrderId) {
+    orderRecord.discount = activeRepeatDiscountAmount;
+    orderRecord.repeatCoupon = 'STUDENT20';
+    orderRecord.redeemedPrevOrderId = activeRedeemedPrevOrderId;
+    try {
+      let redeemedList = JSON.parse(localStorage.getItem('jk_redeemed_repeat_coupons') || '[]');
+      if (!redeemedList.includes(activeRedeemedPrevOrderId)) {
+        redeemedList.push(activeRedeemedPrevOrderId);
+        localStorage.setItem('jk_redeemed_repeat_coupons', JSON.stringify(redeemedList));
+      }
+    } catch(e) {}
+  }
+
   let orders = getOrders();
   orders.unshift(orderRecord);
   saveOrders(orders);
@@ -4048,6 +4258,13 @@ function processOrder(txnId, customStatus) {
   formData.append('delivery_otp', deliveryOtp);
   formData.append('amount', totalPaid);
   formData.append('status', orderStatus);
+  if (activeRepeatDiscountAmount > 0 && activeRedeemedPrevOrderId) {
+    formData.append('discount', '₹' + activeRepeatDiscountAmount);
+    formData.append('repeat_coupon', `STUDENT20 (Prev: #${activeRedeemedPrevOrderId})`);
+  }
+
+  // Reset coupon state after successful submission
+  resetRepeatDiscountState();
 
   // Save customer profile for future instant 1-Click checkout
   try {
