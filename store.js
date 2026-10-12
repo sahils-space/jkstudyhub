@@ -90,6 +90,58 @@ function handleKashmirPincodeLookup(pinVal) {
   }
 }
 
+// Dynamic Seller Price Override System
+function getCustomPrice(productName, defaultPrice) {
+  try {
+    const raw = localStorage.getItem('jk_custom_prices');
+    if (raw) {
+      const overrides = JSON.parse(raw);
+      if (overrides && overrides[productName] !== undefined && overrides[productName] !== null) {
+        const val = Number(overrides[productName]);
+        if (!isNaN(val) && val > 0) return val;
+      }
+    }
+  } catch(e) {}
+  return defaultPrice;
+}
+
+function applyCustomPricesToStorefront() {
+  try {
+    const raw = localStorage.getItem('jk_custom_prices');
+    if (!raw) return;
+    const overrides = JSON.parse(raw);
+    if (!overrides || Object.keys(overrides).length === 0) return;
+
+    // 1. Sync overrides into PRODUCT_CATALOG
+    if (typeof PRODUCT_CATALOG !== 'undefined') {
+      Object.keys(overrides).forEach(pName => {
+        if (PRODUCT_CATALOG[pName]) {
+          PRODUCT_CATALOG[pName].price = Number(overrides[pName]);
+        }
+      });
+    }
+
+    // 2. Sync DOM product cards
+    const cards = document.querySelectorAll('.product-card, .book-product-card');
+    cards.forEach(card => {
+      const titleEl = card.querySelector('.product-title');
+      if (!titleEl) return;
+      const title = titleEl.textContent.trim();
+
+      const matchedKey = Object.keys(overrides).find(k => k.toLowerCase() === title.toLowerCase());
+      if (matchedKey) {
+        const newPrice = Number(overrides[matchedKey]);
+        const priceEl = card.querySelector('.product-price');
+        if (priceEl) {
+          priceEl.textContent = '₹' + newPrice;
+        }
+      }
+    });
+  } catch(e) {
+    console.warn("Could not apply custom prices to storefront:", e);
+  }
+}
+
 // Master Catalog
 const PRODUCT_CATALOG = {
   "Atomic Habits": {
@@ -867,12 +919,12 @@ function addToCart(name, price, type, category) {
   const card = event && event.target ? event.target.closest('.product-card') : null;
   const catalog = PRODUCT_CATALOG[name] || {};
 
-  let finalPrice = price || catalog.price;
+  let finalPrice = getCustomPrice(name, price || catalog.price);
   if (!finalPrice && card) {
     const pEl = card.querySelector('.product-price');
     if (pEl) finalPrice = parseInt(pEl.innerText.replace(/[^0-9]/g, ''));
   }
-  finalPrice = finalPrice || 99;
+  finalPrice = getCustomPrice(name, finalPrice || 99);
 
   let finalImg = catalog.image;
   if (!finalImg && card) {
@@ -3502,11 +3554,12 @@ let activeRedeemedPrevOrderId = null;
 
 function openCheckout(name, price, type, category) {
   isCartCheckoutSession = false;
+  const effectivePrice = getCustomPrice(name, price);
   currentCheckoutProduct = name;
-  currentCheckoutPrice = price;
+  currentCheckoutPrice = effectivePrice;
   currentCheckoutCategory = category || 'standard';
 
-  setupCheckoutModal(name, price, category);
+  setupCheckoutModal(name, effectivePrice, category);
 }
 
 function openCartCheckout() {
@@ -7382,6 +7435,7 @@ function renderBookReviews(bookName) {
 // 1-CLICK "ORDER ON WHATSAPP" DIRECT ENGINE
 // =========================================================================
 function orderViaWhatsApp(productName, price, category) {
+  const effectivePrice = getCustomPrice(productName, price);
   const pin = localStorage.getItem('jk_delivery_pincode') || '193121';
   const info = (typeof getKashmirPincodeInfo === 'function' ? getKashmirPincodeInfo(pin) : null) || { district: 'Pattan / Baramulla, Kashmir' };
   
@@ -7390,7 +7444,7 @@ function orderViaWhatsApp(productName, price, category) {
 
   const msg = `Hi JK Study Hub! I want to order this with Cash on Delivery:%0A%0A` +
               `📦 *Product:* ${encodeURIComponent(productName)}%0A` +
-              `💵 *Price:* ₹${price} (${deliveryText})%0A` +
+              `💵 *Price:* ₹${effectivePrice} (${deliveryText})%0A` +
               `📍 *Destination:* ${encodeURIComponent(info.district || 'Pattan / Baramulla')} (Pincode: ${pin})%0A` +
               `💳 *Payment:* Cash on Delivery (Pay at Doorstep)%0A%0A` +
               `Please confirm my order dispatch!`;
@@ -8927,6 +8981,7 @@ function checkoutCalculatedBundle() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  applyCustomPricesToStorefront();
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
   }

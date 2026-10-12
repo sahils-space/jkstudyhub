@@ -408,6 +408,11 @@ function switchSellerView(viewName) {
     const pane = document.getElementById('view-dashboard');
     if (pane) pane.style.display = 'block';
     calculateBusinessMetrics();
+  } else if (viewName === 'pricing') {
+    if (pageTitle) pageTitle.innerText = 'Product Pricing & Rate Changer';
+    const pane = document.getElementById('view-pricing');
+    if (pane) pane.style.display = 'block';
+    renderSellerPricingTable();
   } else if (viewName === 'catalog' || viewName === 'inventory') {
     if (pageTitle) pageTitle.innerText = 'Catalog & Inventory';
     const pane = document.getElementById('view-catalog');
@@ -1790,3 +1795,223 @@ function verifyCodOrderViaWhatsApp(orderId) {
 
   window.open(`https://wa.me/91${cleanPhone}?text=${text}`, '_blank');
 }
+
+// =========================================================
+// 9. LIVE PRODUCT PRICING & RATE CHANGER ENGINE
+// =========================================================
+
+const SELLER_MANAGED_PRODUCTS = [
+  // Board Exam Kits
+  { name: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)", category: "exam-kits", categoryLabel: "Board Exam Kits", mrp: 650, defaultPrice: 349, image: "images/school-bookset.webp" },
+  { name: "JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)", category: "exam-kits", categoryLabel: "Board Exam Kits", mrp: 799, defaultPrice: 399, image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" },
+  { name: "JKBOSE Board Solved Papers & Guide", category: "notes", categoryLabel: "Notes & PYQs", mrp: 350, defaultPrice: 199, image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=500" },
+  { name: "Board Exam Stationery Combo", category: "stationery", categoryLabel: "Stationery", mrp: 450, defaultPrice: 249, image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&q=80&w=500" },
+  { name: "PDF Printing & Spiral Binding", category: "notes", categoryLabel: "Print on Demand", mrp: 160, defaultPrice: 99, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=500" },
+  { name: "Printed PYQs & Syllabus", category: "notes", categoryLabel: "Notes & PYQs", mrp: 99, defaultPrice: 49, image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" },
+  { name: "Instant Notes", category: "notes", categoryLabel: "Notes & PYQs", mrp: 250, defaultPrice: 150, image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" },
+  { name: "Exam Survival Kit", category: "stationery", categoryLabel: "Stationery", mrp: 499, defaultPrice: 299, image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" },
+
+  // Novels & Bestsellers
+  { name: "Atomic Habits", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 249, image: "images/books/atomic-habits-1.webp" },
+  { name: "The Psychology of Money", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 399, defaultPrice: 220, image: "images/books/psychology-of-money-1.webp" },
+  { name: "Deep Work", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 240, image: "images/books/deep-work-1.webp" },
+  { name: "The Alchemist", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 299, defaultPrice: 180, image: "images/books/the-alchemist-1.webp" },
+  { name: "The Kite Runner", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 260, image: "images/books/the-kite-runner-1.webp" },
+  { name: "A Thousand Splendid Suns", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 260, image: "images/books/thousand-splendid-suns-1.webp" },
+  { name: "Secrets of Divine Love", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 550, defaultPrice: 299, image: "images/books/secrets-of-divine-love-1.webp" },
+  { name: "Reclaim Your Heart", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 450, defaultPrice: 250, image: "images/books/reclaim-your-heart-1.webp" },
+  { name: "Wings of Fire", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 350, defaultPrice: 199, image: "images/books/wings-of-fire-1.webp" },
+  { name: "Lucent's General Knowledge", category: "books", categoryLabel: "Competitive Exam", mrp: 420, defaultPrice: 250, image: "images/books/lucent-gk-1.webp" },
+  { name: "Wren & Martin English Grammar", category: "books", categoryLabel: "Grammar & English", mrp: 450, defaultPrice: 290, image: "images/books/wren-martin-1.webp" },
+
+  // Stationery & Study Supplies
+  { name: "Premium Spiral Copies (Set of 2)", category: "stationery", categoryLabel: "Copies & Registers", mrp: 250, defaultPrice: 149, image: "images/spiral-copies.webp" },
+  { name: "Geometry Box Pro", category: "stationery", categoryLabel: "Stationery", mrp: 260, defaultPrice: 170, image: "images/geometry-box.webp" },
+  { name: "The Holy Quran", category: "stationery", categoryLabel: "Islamic & Spiritual", mrp: 300, defaultPrice: 200, image: "images/quran.webp" },
+  { name: "Beautiful Gift Diary", category: "stationery", categoryLabel: "Stationery", mrp: 180, defaultPrice: 99, image: "images/diary.webp" },
+  { name: "Premium Pen Set", category: "stationery", categoryLabel: "Stationery", mrp: 180, defaultPrice: 99, image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=500" },
+  { name: "Desk Pen Stand", category: "stationery", categoryLabel: "Stationery", mrp: 250, defaultPrice: 149, image: "images/pen-stand.webp" },
+  { name: "Folding Study Table", category: "stationery", categoryLabel: "Study Essentials", mrp: 799, defaultPrice: 490, image: "images/study-table.webp" },
+  { name: "LED Study Table Lamp", category: "stationery", categoryLabel: "Study Essentials", mrp: 499, defaultPrice: 299, image: "https://image.pollinations.ai/prompt/A_simple_modern_LED_study_table_lamp_product_photography_on_white_background?width=600&height=400&nologo=true" },
+  { name: "Form Filling Service", category: "digital", categoryLabel: "Digital Services", mrp: 150, defaultPrice: 99, image: "images/icon.svg" },
+
+  // School Book Sets (Class 1st–12th)
+  { name: "Class 1st Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1200, defaultPrice: 850, image: "images/school-bookset.webp" },
+  { name: "Class 2nd Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1350, defaultPrice: 950, image: "images/school-bookset.webp" },
+  { name: "Class 3rd Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1500, defaultPrice: 1050, image: "images/school-bookset.webp" },
+  { name: "Class 4th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1650, defaultPrice: 1150, image: "images/school-bookset.webp" },
+  { name: "Class 5th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1800, defaultPrice: 1250, image: "images/school-bookset.webp" },
+  { name: "Class 6th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1950, defaultPrice: 1350, image: "images/school-bookset.webp" },
+  { name: "Class 7th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2100, defaultPrice: 1450, image: "images/school-bookset.webp" },
+  { name: "Class 8th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2300, defaultPrice: 1550, image: "images/school-bookset.webp" },
+  { name: "Class 9th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2500, defaultPrice: 1750, image: "images/school-bookset.webp" },
+  { name: "Class 10th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2800, defaultPrice: 1950, image: "images/school-bookset.webp" },
+  { name: "Class 11th Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3200, defaultPrice: 2250, image: "images/school-bookset.webp" },
+  { name: "Class 11th Non-Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3100, defaultPrice: 2150, image: "images/school-bookset.webp" },
+  { name: "Class 12th Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3500, defaultPrice: 2450, image: "images/school-bookset.webp" },
+  { name: "Class 12th Non-Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3400, defaultPrice: 2350, image: "images/school-bookset.webp" }
+];
+
+function getAllSellerPricingProducts() {
+  const list = [...SELLER_MANAGED_PRODUCTS];
+  try {
+    const uploaded = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+    if (Array.isArray(uploaded)) {
+      uploaded.forEach(u => {
+        if (!list.some(p => p.name === u.name)) {
+          list.push({
+            name: u.name,
+            category: u.category || 'academic',
+            categoryLabel: 'Custom Upload',
+            mrp: Number(u.originalPrice || Math.round(u.price * 1.3)),
+            defaultPrice: Number(u.price),
+            image: u.image || 'images/logo-app.png'
+          });
+        }
+      });
+    }
+  } catch(e) {}
+  return list;
+}
+
+function getSellerCustomPriceOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem('jk_custom_prices') || '{}');
+  } catch(e) {
+    return {};
+  }
+}
+
+function renderSellerPricingTable() {
+  const tbody = document.getElementById('sellerPricingTableBody');
+  if (!tbody) return;
+
+  const products = getAllSellerPricingProducts();
+  const overrides = getSellerCustomPriceOverrides();
+
+  // Update counters
+  const totalCountEl = document.getElementById('pricingTotalProductsCount');
+  if (totalCountEl) totalCountEl.innerText = products.length;
+
+  const activeOverridesCount = Object.keys(overrides).length;
+  const activeCountEl = document.getElementById('pricingCustomOverridesCount');
+  if (activeCountEl) activeCountEl.innerText = activeOverridesCount;
+
+  const searchQuery = String(document.getElementById('pricingSearchInput') ? document.getElementById('pricingSearchInput').value : '').toLowerCase().trim();
+  const catFilter = document.getElementById('pricingCategoryFilter') ? document.getElementById('pricingCategoryFilter').value : 'all';
+
+  let html = '';
+  products.forEach((p, index) => {
+    // Search & Category Filter
+    if (catFilter !== 'all' && p.category !== catFilter) return;
+    if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return;
+
+    const currentPrice = (overrides[p.name] !== undefined) ? Number(overrides[p.name]) : p.defaultPrice;
+    const isCustom = (overrides[p.name] !== undefined);
+    const mrp = p.mrp || Math.round(currentPrice * 1.3);
+    const discountPct = Math.max(0, Math.round(((mrp - currentPrice) / mrp) * 100));
+
+    const safeEscapedName = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    html += `
+      <tr style="${isCustom ? 'background: #f0fdf4;' : ''}">
+        <td>
+          <img src="${p.image}" alt="${p.name}" onerror="this.src='images/logo-app.png'" style="width: 38px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">
+        </td>
+        <td>
+          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.name}</div>
+          ${isCustom ? '<span style="font-size: 10px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">Custom Rate Live</span>' : ''}
+        </td>
+        <td>
+          <span style="font-size: 11.5px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">${p.categoryLabel || p.category}</span>
+        </td>
+        <td>
+          <span style="font-size: 13px; font-weight: 600; color: #94a3b8; text-decoration: line-through;">₹${mrp}</span>
+        </td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 14px; font-weight: 800; color: #0f172a;">₹</span>
+            <input type="number" id="seller-price-${index}" value="${currentPrice}" min="1" step="1" 
+                   onkeydown="if(event.key==='Enter') saveSellerProductPrice('${safeEscapedName}', ${index})"
+                   style="width: 85px; padding: 5px 8px; border: 1.5px solid ${isCustom ? '#22c55e' : '#cbd5e1'}; border-radius: 6px; font-weight: 800; font-size: 14px; color: #0f172a;">
+          </div>
+        </td>
+        <td>
+          <span style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 7px; border-radius: 4px;">
+            Save ${discountPct}%
+          </span>
+        </td>
+        <td style="text-align: center;">
+          <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+            <button type="button" class="btn-hub-primary" onclick="saveSellerProductPrice('${safeEscapedName}', ${index})" style="padding: 5px 10px; font-size: 12px; font-weight: 700; border-radius: 6px;">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+            ${isCustom ? `
+              <button type="button" onclick="resetSingleSellerProductPrice('${safeEscapedName}')" title="Reset to default ₹${p.defaultPrice}" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 11px; text-decoration: underline; padding: 2px;">
+                Reset
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html || '<tr><td colspan="7" style="text-align: center; padding: 24px; color: #64748b;">No products matched your search.</td></tr>';
+}
+
+function filterPricingProductsTable() {
+  renderSellerPricingTable();
+}
+
+function saveSellerProductPrice(productName, index) {
+  const input = document.getElementById(`seller-price-${index}`);
+  if (!input) return;
+
+  const newPrice = Number(input.value);
+  if (isNaN(newPrice) || newPrice <= 0) {
+    alert("Please enter a valid price greater than ₹0.");
+    return;
+  }
+
+  const overrides = getSellerCustomPriceOverrides();
+  overrides[productName] = newPrice;
+  localStorage.setItem('jk_custom_prices', JSON.stringify(overrides));
+
+  // Show feedback
+  const msgEl = document.getElementById('pricingFeedbackMessage');
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved! "${productName}" updated to <strong>₹${newPrice}</strong>. Live on store.`;
+    setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(`✅ Price updated: ${productName} is now ₹${newPrice}!`);
+  }
+
+  renderSellerPricingTable();
+}
+
+function resetSingleSellerProductPrice(productName) {
+  const overrides = getSellerCustomPriceOverrides();
+  if (overrides[productName] !== undefined) {
+    delete overrides[productName];
+    localStorage.setItem('jk_custom_prices', JSON.stringify(overrides));
+    if (typeof showToast === 'function') {
+      showToast(`Restored default price for ${productName}.`);
+    }
+    renderSellerPricingTable();
+  }
+}
+
+function resetAllSellerPricesToDefault() {
+  if (confirm("Reset all products back to their factory default prices? Any custom overrides will be removed.")) {
+    localStorage.removeItem('jk_custom_prices');
+    if (typeof showToast === 'function') {
+      showToast("All product prices have been reset to factory defaults.");
+    }
+    renderSellerPricingTable();
+  }
+}
+

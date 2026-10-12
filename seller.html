@@ -549,7 +549,88 @@
 
               </div>
             </div>
-</section>
+          </section>
+
+        <!-- =======================================================
+             VIEW: LIVE PRICING & DISCOUNT MANAGER
+             ======================================================= -->
+        <section class="seller-view-pane" id="view-pricing" style="display: none;">
+          <div style="background: white; border: 1px solid var(--hub-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
+              <div>
+                <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-tags" style="color: #2563eb;"></i> Live Product Pricing &amp; Rate Changer
+                </h2>
+                <p style="font-size: 13px; color: #64748b; margin: 0;">Change the selling price of any book, kit, or stationery anytime. Updates instantly across the store, checkout invoices, and WhatsApp orders.</p>
+              </div>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-hub-secondary" onclick="resetAllSellerPricesToDefault()" style="font-size: 12px; color: #dc2626; border-color: #fecaca; background: #fff5f5;">
+                  <i class="fa-solid fa-rotate-left"></i> Reset All to Default
+                </button>
+              </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px;">
+                <span style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Total Products</span>
+                <div style="font-size: 22px; font-weight: 900; color: #0f172a; margin-top: 2px;" id="pricingTotalProductsCount">0</div>
+              </div>
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 12px 16px;">
+                <span style="font-size: 11.5px; color: #065f46; font-weight: 700; text-transform: uppercase;">Custom Overrides Active</span>
+                <div style="font-size: 22px; font-weight: 900; color: #047857; margin-top: 2px;" id="pricingCustomOverridesCount">0</div>
+              </div>
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px;">
+                <span style="font-size: 11.5px; color: #1e40af; font-weight: 700; text-transform: uppercase;">Store Sync Status</span>
+                <div style="font-size: 14px; font-weight: 800; color: #2563eb; margin-top: 6px;">
+                  <i class="fa-solid fa-circle-check" style="color: #10b981;"></i> 100% Live on Store
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter & Search Toolbar -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; justify-content: space-between;">
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 1; max-width: 540px;">
+                <div style="position: relative; flex: 1; min-width: 220px;">
+                  <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 11px; color: #94a3b8; font-size: 13px;"></i>
+                  <input type="text" id="pricingSearchInput" oninput="filterPricingProductsTable()" placeholder="Search product name..." style="width: 100%; padding: 8px 12px 8px 34px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;">
+                </div>
+                <select id="pricingCategoryFilter" onchange="filterPricingProductsTable()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; background: #fff;">
+                  <option value="all">All Categories</option>
+                  <option value="exam-kits">Board Exam Master Kits</option>
+                  <option value="books">Novels &amp; Bestsellers</option>
+                  <option value="school-books">School Book Sets (1st-12th)</option>
+                  <option value="notes">Notes &amp; PYQs</option>
+                  <option value="stationery">Stationery &amp; Supplies</option>
+                  <option value="digital">Digital &amp; Forms</option>
+                </select>
+              </div>
+
+              <div id="pricingFeedbackMessage" style="display: none; font-size: 12.5px; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 6px 14px; border-radius: 6px;"></div>
+            </div>
+
+            <!-- Pricing Table -->
+            <div class="table-responsive" style="max-height: 560px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+              <table class="supplier-data-table" style="width: 100%; margin: 0;">
+                <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 5;">
+                  <tr>
+                    <th style="width: 50px;">Item</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th style="width: 90px;">Base MRP</th>
+                    <th style="width: 150px;">Selling Price (₹)</th>
+                    <th style="width: 100px;">Discount</th>
+                    <th style="width: 130px; text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="sellerPricingTableBody">
+                  <!-- Populated by seller.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
 
         <!-- =======================================================
