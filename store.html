@@ -2253,6 +2253,13 @@
 
   <!-- 4. Featured Category Cards Row (Zapvi Style) -->
   <section class="zapvi-category-strip">
+    <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('exam-kits', '')">
+      <div class="zapvi-cat-img-wrap" style="background:#fff7ed; border:1.5px solid #fed7aa;">
+        <span style="font-size:26px; line-height:1;">🎯</span>
+      </div>
+      <p class="zapvi-cat-title" style="color:#c2410c; font-weight:800;">Board Exam Kits</p>
+    </a>
+
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('copies', '')">
       <div class="zapvi-cat-img-wrap" style="background:#fef3c7;">
         <img src="images/spiral-copies.webp" alt="School Copies &amp; Registers" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
@@ -2262,7 +2269,7 @@
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('school-books', '')">
       <div class="zapvi-cat-img-wrap" style="background:#e0f2fe;">
-        <img src="images/books/lucent-gk-1.webp" alt="School Books 1st to 12th" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="School Books 1st to 12th" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
       </div>
       <p class="zapvi-cat-title">School Books (1st–12th)</p>
     </a>
@@ -3927,7 +3934,112 @@
       </div>
     </div>
 
-    <h2 class="category-title" id="section-academic"><i class="fa-solid fa-box"></i> Physical Study Materials & Stationery</h2>
+    <!-- Dedicated 2026 Board Exam Master Kits (Class 10th & 12th) -->
+    <div id="section-exam-kits" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #fed7aa; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
+      <div>
+        <h2 style="font-size: 26px; font-weight: 800; color: #9a3412; margin: 0; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-graduation-cap" style="color: #ea580c;"></i> JKBOSE 2026 Board Exam Master Kits (Class 10th &amp; 12th)
+        </h2>
+        <p style="font-size: 14px; color: #64748b; margin: 4px 0 0 0;">All-in-one exam revision arsenal: 5-Yr Solved Papers, High-Yield Guess Questions, Formula Cheat Sheets &amp; Exam Stationery.</p>
+      </div>
+      <span style="background:#fff7ed; color:#c2410c; font-weight:800; font-size:12.5px; padding:6px 14px; border-radius:20px; border:1px solid #ffedd5;">
+        🔥 Guaranteed Less Than Market Rates • Free Pattan Delivery
+      </span>
+    </div>
+
+    <div class="product-grid" style="margin-bottom: 30px;">
+      <!-- Master Kit 1: Class 10th -->
+      <div class="product-card" style="border: 2px solid #fb923c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)')"><i class="fa-solid fa-heart"></i></button>
+        <div style="position:relative;">
+          <img src="images/school-bookset.webp" alt="Class 10th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'">
+          <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
+            <i class="fa-solid fa-fire"></i> 2026 ALL 5 SUBJECTS TOPPER PACK
+          </span>
+        </div>
+        <div class="product-info">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+            <span style="background:#ffedd5; color:#9a3412; font-size:11px; font-weight:800; padding:2px 8px; border-radius:4px;">CLASS 10TH JKBOSE</span>
+            <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> 4.9 (Topper Choice)</span>
+          </div>
+          <h3 class="product-title" style="font-size:17px; font-weight:800; color:#0f172a;">JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)</h3>
+          <p class="product-desc" style="color:#475569; font-size:12.5px; line-height:1.5;">
+            <strong>What's Inside:</strong><br>
+            &bull; 5-Year Chapterwise Solved PYQs (Science, Math, SST, English, Urdu)<br>
+            &bull; 2026 Official Model Question Papers &amp; Marking Schemes<br>
+            &bull; Fast Formula &amp; Diagram Quick Revision Cheat Sheet<br>
+            &bull; 2 High-Flow Exam Gel Pens + 1 OMR Practice Sheet Pack
+          </p>
+          <div class="product-footer" style="margin-top:10px;">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price" style="font-size:22px; color:#c2410c;">₹349</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹650</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹301 (46% OFF) &bull; Free Pattan COD</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1; background:#ea580c; border:none; padding:9px 12px;" onclick="openCheckout('JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)', 349, 'physical', 'notes')">
+                <i class="fa-solid fa-bolt"></i> Buy Now
+              </button>
+              <button class="btn-icon" onclick="addToCart('JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)', 349, 'physical', 'notes')" title="Add to Cart">
+                <i class="fa-solid fa-cart-plus"></i>
+              </button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp('JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)', 349, 'notes')" title="Order on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Master Kit 2: Class 12th -->
+      <div class="product-card" style="border: 2px solid #8b5cf6; background: #faf5ff; box-shadow: 0 8px 24px rgba(139, 92, 246, 0.08);">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)')"><i class="fa-solid fa-heart"></i></button>
+        <div style="position:relative;">
+          <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" alt="Class 12th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'">
+          <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #7c3aed, #6d28d9); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(124,58,237,0.35);">
+            <i class="fa-solid fa-star"></i> 2026 BOARD SPECIAL • MERIT BOOSTER
+          </span>
+        </div>
+        <div class="product-info">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+            <span style="background:#ede9fe; color:#6d28d9; font-size:11px; font-weight:800; padding:2px 8px; border-radius:4px;">CLASS 12TH JKBOSE</span>
+            <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> 5.0 (Top Rated)</span>
+          </div>
+          <h3 class="product-title" style="font-size:17px; font-weight:800; color:#0f172a;">JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)</h3>
+          <p class="product-desc" style="color:#475569; font-size:12.5px; line-height:1.5;">
+            <strong>What's Inside:</strong><br>
+            &bull; 5-Year Solved Board Papers with Official Marking Blueprint<br>
+            &bull; High-Yield Guess Questions &amp; Derivations/Diagrams Digest<br>
+            &bull; Quick Revision Short Notes &amp; Formula Compendium<br>
+            &bull; 4 Premium Smooth Writing Pens, Highlighters &amp; Index Tabs
+          </p>
+          <div class="product-footer" style="margin-top:10px;">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price" style="font-size:22px; color:#7c3aed;">₹399</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹799</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹400 (50% OFF) &bull; Free Pattan COD</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1; background:#7c3aed; border:none; padding:9px 12px;" onclick="openCheckout('JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)', 399, 'physical', 'notes')">
+                <i class="fa-solid fa-bolt"></i> Buy Now
+              </button>
+              <button class="btn-icon" onclick="addToCart('JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)', 399, 'physical', 'notes')" title="Add to Cart">
+                <i class="fa-solid fa-cart-plus"></i>
+              </button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp('JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)', 399, 'notes')" title="Order on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="category-title" id="section-academic"><i class="fa-solid fa-box"></i> Physical Study Materials &amp; Stationery</h2>
     <div class="product-grid">
       
       <!-- New Item 1: JKBOSE Solved Papers & Revision Kit -->
@@ -3946,9 +4058,10 @@
               </div>
               <span style="color:#10b981; font-size:11px; font-weight:800;">Save 43% • Free Delivery</span>
             </div>
-            <div class="product-actions">
+            <div class="product-actions" style="gap:6px;">
               <button class="buy-btn" style="flex:1;" onclick="openCheckout('JKBOSE Board Solved Papers &amp; Guide', 199, 'physical', 'notes')">Buy Now</button>
               <button class="btn-icon" onclick="addToCart('JKBOSE Board Solved Papers &amp; Guide', 199, 'physical', 'notes')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp('JKBOSE Board Solved Papers &amp; Guide', 199, 'notes')" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
             </div>
           </div>
         </div>
@@ -3970,9 +4083,10 @@
               </div>
               <span style="color:#10b981; font-size:11px; font-weight:800;">Save 45% • Free Delivery</span>
             </div>
-            <div class="product-actions">
+            <div class="product-actions" style="gap:6px;">
               <button class="buy-btn" style="flex:1;" onclick="openCheckout('Board Exam Stationery Combo', 249, 'physical', 'standard')">Buy Now</button>
               <button class="btn-icon" onclick="addToCart('Board Exam Stationery Combo', 249, 'physical', 'standard')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp('Board Exam Stationery Combo', 249, 'standard')" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
             </div>
           </div>
         </div>
@@ -3994,9 +4108,10 @@
               </div>
               <span style="color:#10b981; font-size:11px; font-weight:800;">Per Booklet • Free Delivery</span>
             </div>
-            <div class="product-actions">
+            <div class="product-actions" style="gap:6px;">
               <button class="buy-btn" style="flex:1;" onclick="openCheckout('PDF Printing &amp; Spiral Binding', 99, 'physical', 'standard')">Order Now</button>
               <button class="btn-icon" onclick="addToCart('PDF Printing &amp; Spiral Binding', 99, 'physical', 'standard')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp('PDF Printing &amp; Spiral Binding', 99, 'standard')" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
             </div>
           </div>
         </div>

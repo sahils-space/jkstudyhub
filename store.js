@@ -393,6 +393,18 @@ const PRODUCT_CATALOG = {
     price: 99,
     category: "form",
     image: "images/icon.svg"
+  },
+  "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)": {
+    price: 349,
+    mrp: 650,
+    category: "notes",
+    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=500"
+  },
+  "JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)": {
+    price: 399,
+    mrp: 799,
+    category: "notes",
+    image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500"
   }
 };
 
@@ -7369,18 +7381,25 @@ function renderBookReviews(bookName) {
 // =========================================================================
 // 1-CLICK "ORDER ON WHATSAPP" DIRECT ENGINE
 // =========================================================================
-function orderBookViaWhatsApp(bookName, price) {
+function orderViaWhatsApp(productName, price, category) {
   const pin = localStorage.getItem('jk_delivery_pincode') || '193121';
-  const info = getKashmirPincodeInfo(pin) || { district: 'Kashmir' };
+  const info = (typeof getKashmirPincodeInfo === 'function' ? getKashmirPincodeInfo(pin) : null) || { district: 'Pattan / Baramulla, Kashmir' };
   
-  const msg = `Hi JK Study Hub! I want to order this book with Cash on Delivery:%0A%0A` +
-              `📚 *Book:* ${encodeURIComponent(bookName)}%0A` +
-              `💵 *Price:* ₹${price} (Free Kashmir Delivery)%0A` +
-              `📍 *Delivery Destination:* ${encodeURIComponent(info.district)} (Pincode: ${pin})%0A` +
-              `💳 *Payment Method:* Cash on Doorstep (COD)%0A%0A` +
-              `Please confirm my doorstep order with fast Kashmir dispatch!`;
+  const isPattan = (pin === '193121');
+  const deliveryText = isPattan ? 'Free Pattan Delivery (₹0)' : 'Doorstep Kashmir Delivery';
+
+  const msg = `Hi JK Study Hub! I want to order this with Cash on Delivery:%0A%0A` +
+              `📦 *Product:* ${encodeURIComponent(productName)}%0A` +
+              `💵 *Price:* ₹${price} (${deliveryText})%0A` +
+              `📍 *Destination:* ${encodeURIComponent(info.district || 'Pattan / Baramulla')} (Pincode: ${pin})%0A` +
+              `💳 *Payment:* Cash on Delivery (Pay at Doorstep)%0A%0A` +
+              `Please confirm my order dispatch!`;
 
   window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
+}
+
+function orderBookViaWhatsApp(bookName, price) {
+  orderViaWhatsApp(bookName, price, 'books');
 }
 
 function orderCurrentBookViaWhatsApp() {
@@ -8671,7 +8690,9 @@ function openStoreCategorySection(catName, specificQuery) {
   // Scroll smoothly to target section or store search container
   setTimeout(() => {
     let target = null;
-    if (catName === 'novels') {
+    if (catName === 'exam-kits') {
+      target = document.getElementById('section-exam-kits') || document.getElementById('section-academic');
+    } else if (catName === 'novels') {
       target = document.getElementById('section-novels') || document.getElementById('storeSearchContainer');
     } else if (catName === 'academic') {
       target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
