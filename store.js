@@ -616,7 +616,19 @@ function getOrders() {
     const raw = localStorage.getItem('jk_orders');
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return autoHealOrders(Array.isArray(parsed) ? parsed : []);
+    const orders = Array.isArray(parsed) ? parsed : [];
+    const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
+    const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
+
+    const valid = orders.filter(o => {
+      if (!o || !o.orderId) return false;
+      const up = String(o.orderId || '').trim().toUpperCase();
+      if (purgedIds.includes(up)) return false;
+      if (o.timestamp && Number(o.timestamp) <= resetTs) return false;
+      return true;
+    });
+
+    return autoHealOrders(valid);
   } catch(e) {
     return [];
   }
@@ -631,6 +643,7 @@ function saveOrders(orders) {
 function clearAllStoreOrders(silent = false) {
   try {
     localStorage.setItem('jk_orders', '[]');
+    localStorage.removeItem('jk_orders_db');
     localStorage.removeItem('jk_locked_orders');
     localStorage.removeItem('jk_orders_purge_before');
   } catch(e) {}
@@ -646,11 +659,24 @@ function clearAllStoreOrders(silent = false) {
   }
 }
 
-// Automatically ensure any old purge blocker is unblocked so incoming Google Sheet orders sync
-(function unblockGoogleSheetOrdersSync() {
+// Automatically purge old test orders across all devices & users (Fresh Start)
+(function runStoreGlobalFreshPurge() {
+  const PURGE_FLAG = 'jk_fresh_start_purge_20261012_v6';
   try {
-    localStorage.removeItem('jk_orders_purge_before');
-    localStorage.removeItem('jk_fresh_start_purge_20261007_v3');
+    if (!localStorage.getItem(PURGE_FLAG)) {
+      localStorage.setItem('jk_orders', '[]');
+      localStorage.removeItem('jk_orders_db');
+      localStorage.setItem('jk_order_status_overrides', '{}');
+      localStorage.setItem('jk_locked_orders', '{}');
+      localStorage.removeItem('jk_last_checkout_details');
+      localStorage.removeItem('jk_customer_profile');
+      localStorage.removeItem('jk_cart');
+      localStorage.removeItem('cart');
+      localStorage.setItem('jk_purged_order_ids', '[]');
+      localStorage.setItem('jk_orders_reset_timestamp', String(Date.now()));
+      if (typeof JKAnalytics !== 'undefined') JKAnalytics.reset();
+      localStorage.setItem(PURGE_FLAG, 'true');
+    }
   } catch(e) {}
 })();
 
@@ -3428,12 +3454,33 @@ function syncOrdersWithGoogleSheet() {
           let localOrders = getOrders();
           let updated = false;
 
-          data.orders.forEach(remote => {
-            // Ignore catalog product fallback rows from being treated as customer purchase orders!
-            if (!remote.orderId || remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT' || String(remote.orderId).startsWith('PRD-')) {
-              return;
-            }
+          const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
+          const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
 
+          // Filter genuine valid remote orders from Google Sheets
+          const validRemoteOrders = data.orders.filter(remote => {
+            if (!remote || !remote.orderId || remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT' || String(remote.orderId).startsWith('PRD-')) {
+              return false;
+            }
+            const cleanOrderId = String(remote.orderId).trim().toUpperCase();
+            if (purgedIds.includes(cleanOrderId)) return false;
+            if (remote.timestamp && Number(remote.timestamp) <= resetTs) return false;
+            return true;
+          });
+
+          // Google Sheet is the master source of truth:
+          // If sheet was cleared or orders were deleted, remove them from local device storage!
+          const validRemoteIds = new Set(validRemoteOrders.map(r => String(r.orderId).trim().toUpperCase()));
+          if (localOrders.length > 0 && validRemoteOrders.length === 0) {
+            localOrders = [];
+            updated = true;
+          } else {
+            const beforeCount = localOrders.length;
+            localOrders = localOrders.filter(l => validRemoteIds.has(String(l.orderId).trim().toUpperCase()));
+            if (localOrders.length !== beforeCount) updated = true;
+          }
+
+          validRemoteOrders.forEach(remote => {
             const cleanOrderId = String(remote.orderId || '').trim();
             const match = localOrders.find(l => 
               String(l.orderId || '').trim().toUpperCase() === cleanOrderId.toUpperCase() || 

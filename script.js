@@ -1,5 +1,26 @@
 // JK STUDY HUB - Interactive Scripts & Dual Digital Syllabus Engine (Class 10th & 11th)
 
+// Global Fresh Start Purge (Runs once across all devices & users)
+(function runScriptGlobalFreshPurge() {
+  const PURGE_FLAG = 'jk_fresh_start_purge_20261012_v6';
+  try {
+    if (!localStorage.getItem(PURGE_FLAG)) {
+      localStorage.setItem('jk_orders', '[]');
+      localStorage.removeItem('jk_orders_db');
+      localStorage.setItem('jk_order_status_overrides', '{}');
+      localStorage.setItem('jk_locked_orders', '{}');
+      localStorage.removeItem('jk_last_checkout_details');
+      localStorage.removeItem('jk_customer_profile');
+      localStorage.removeItem('jk_cart');
+      localStorage.removeItem('cart');
+      localStorage.setItem('jk_purged_order_ids', '[]');
+      localStorage.setItem('jk_orders_reset_timestamp', String(Date.now()));
+      if (typeof JKAnalytics !== 'undefined') JKAnalytics.reset();
+      localStorage.setItem(PURGE_FLAG, 'true');
+    }
+  } catch(e) {}
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // Mobile Navigation Toggle
   const mobileToggle = document.getElementById('mobileToggle');

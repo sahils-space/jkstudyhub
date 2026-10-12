@@ -21,6 +21,26 @@ let currentChartMode = 'orders';
 let activePrintingOrderId = null;
 
 // =========================================================
+// GLOBAL FRESH START PURGE (RUNS ONCE ON EVERY CLIENT/DEVICE)
+// =========================================================
+(function runSellerGlobalFreshPurge() {
+  const PURGE_FLAG = 'jk_fresh_start_purge_20261012_v6';
+  try {
+    if (!localStorage.getItem(PURGE_FLAG)) {
+      localStorage.setItem('jk_orders', '[]');
+      localStorage.removeItem('jk_orders_db');
+      localStorage.setItem('jk_order_status_overrides', '{}');
+      localStorage.setItem('jk_locked_orders', '{}');
+      localStorage.removeItem('jk_last_checkout_details');
+      localStorage.setItem('jk_purged_order_ids', '[]');
+      localStorage.setItem('jk_orders_reset_timestamp', String(Date.now()));
+      if (typeof JKAnalytics !== 'undefined') JKAnalytics.reset();
+      localStorage.setItem(PURGE_FLAG, 'true');
+    }
+  } catch(e) {}
+})();
+
+// =========================================================
 // 1. WATERTIGHT SECURITY LOCK & OWNER-ONLY GATE
 // =========================================================
 
@@ -278,8 +298,19 @@ function getSellerOrders() {
     const raw = localStorage.getItem('jk_orders');
     const orders = raw ? JSON.parse(raw) : [];
     const overrides = getSellerStatusOverrides();
+    const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
+    const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
+
     if (Array.isArray(orders)) {
-      orders.forEach(o => {
+      const filtered = orders.filter(o => {
+        if (!o || !o.orderId) return false;
+        const up = String(o.orderId || '').trim().toUpperCase();
+        if (purgedIds.includes(up)) return false;
+        if (o.timestamp && Number(o.timestamp) <= resetTs) return false;
+        return true;
+      });
+
+      filtered.forEach(o => {
         if (isCodOrder(o)) {
           o.paymentMethod = 'cod';
         }
@@ -288,8 +319,9 @@ function getSellerOrders() {
           o.status = ov.status;
         }
       });
+      return filtered;
     }
-    return orders;
+    return [];
   } catch(e) {
     return [];
   }
@@ -314,70 +346,48 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
       if (data && data.status === 'success' && Array.isArray(data.orders)) {
         let localOrders = getSellerOrders();
         const overrides = getSellerStatusOverrides();
-        let updated = false;
 
         const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
         const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
 
-        data.orders.forEach(remote => {
-          if (!remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT') {
-            return;
+        // Filter valid remote orders from Google Sheets
+        const validRemoteOrders = data.orders.filter(remote => {
+          if (!remote || !remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT') {
+            return false;
           }
-
           const remoteUpperId = String(remote.orderId).trim().toUpperCase();
+          if (purgedIds.includes(remoteUpperId)) return false;
+          if (remote.timestamp && Number(remote.timestamp) <= resetTs) return false;
+          return true;
+        });
 
-          // Ignore any orders that were purged during fresh zero reset
-          if (purgedIds.includes(remoteUpperId)) {
-            return;
-          }
-          if (remote.timestamp && Number(remote.timestamp) <= resetTs) {
-            return;
-          }
+        // The remote Google Sheet is the master source of truth:
+        // Any order that was deleted from Google Sheets must be removed from local storage!
+        const validRemoteIds = new Set(validRemoteOrders.map(r => String(r.orderId).trim().toUpperCase()));
+        localOrders = localOrders.filter(l => validRemoteIds.has(String(l.orderId).trim().toUpperCase()));
 
+        validRemoteOrders.forEach(remote => {
+          const remoteUpperId = String(remote.orderId).trim().toUpperCase();
           const isRemoteCod = isCodOrder(remote);
           if (isRemoteCod) {
             remote.paymentMethod = 'cod';
           }
 
-          // Check if seller explicitly set a status override (e.g. Cancelled)
           const ov = overrides[remoteUpperId];
           const idx = localOrders.findIndex(l => String(l.orderId).trim().toUpperCase() === remoteUpperId);
 
-          // If local order exists and was cancelled, or override is Cancelled:
-          const isLocalCancelled = (idx >= 0 && String(localOrders[idx].status || '').toLowerCase().includes('cancel'));
-          const isOvCancelled = (ov && String(ov.status || '').toLowerCase().includes('cancel'));
-
-          if (isLocalCancelled || isOvCancelled) {
-            remote.status = 'Cancelled';
-            if (idx >= 0) {
-              localOrders[idx].status = 'Cancelled';
-            }
-            setSellerStatusOverride(remote.orderId, 'Cancelled');
-            pushStatusUpdateToGoogleSheet(remote.orderId, 'Cancelled');
-            updated = true;
-          } else if (ov && ov.status) {
+          if (ov && ov.status) {
             remote.status = ov.status;
-            if (idx >= 0) {
-              localOrders[idx].status = ov.status;
-            }
-            updated = true;
-          } else if (idx >= 0) {
-            if (isRemoteCod || isCodOrder(localOrders[idx])) {
-              localOrders[idx].paymentMethod = 'cod';
-            }
-            if (remote.status && remote.status !== localOrders[idx].status) {
-              localOrders[idx].status = remote.status;
-              updated = true;
-            }
+          }
+
+          if (idx >= 0) {
+            localOrders[idx] = { ...localOrders[idx], ...remote };
           } else {
             localOrders.push(remote);
-            updated = true;
           }
         });
 
-        if (updated) {
-          saveSellerOrders(localOrders);
-        }
+        saveSellerOrders(localOrders);
 
         renderSellerOrdersTable();
         calculateBusinessMetrics();
@@ -471,20 +481,28 @@ function renderSellerOrdersTable() {
   let pendingCount = 0;
   let readyCount = 0;
   let shippedCount = 0;
+  let cancelledCount = 0;
+  let onHoldCount = 0;
 
   orders.forEach(o => {
     const s = String(o.status || 'Confirmed').toLowerCase();
-    if (s.includes('confirm') || s.includes('process') || s.includes('pending')) pendingCount++;
+    if (s.includes('cancel')) cancelledCount++;
+    else if (s.includes('hold')) onHoldCount++;
     else if (s.includes('ready') || s.includes('dispatch') || s.includes('packed')) readyCount++;
     else if (s.includes('ship') || s.includes('way') || s.includes('out') || s.includes('deliver')) shippedCount++;
+    else pendingCount++;
   });
 
   const elPending = document.getElementById('countTabPending');
   const elReady = document.getElementById('countTabReady');
   const elShipped = document.getElementById('countTabShipped');
+  const elCancelled = document.getElementById('countTabCancelled');
+  const elOnHold = document.getElementById('countTabOnHold');
   if (elPending) elPending.innerText = pendingCount;
   if (elReady) elReady.innerText = readyCount;
   if (elShipped) elShipped.innerText = shippedCount;
+  if (elCancelled) elCancelled.innerText = cancelledCount;
+  if (elOnHold) elOnHold.innerText = onHoldCount;
 
   // Filter list
   const filtered = orders.filter(o => {

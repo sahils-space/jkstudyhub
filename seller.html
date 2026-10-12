@@ -252,7 +252,7 @@
           <!-- Fulfillment Tabs Strip -->
           <div class="hub-tabs-strip">
             <button type="button" class="hub-tab-btn" data-status="on_hold" onclick="setFulfillmentTab('on_hold', this)">
-              On Hold
+              On Hold (<span id="countTabOnHold">0</span>)
             </button>
             <button type="button" class="hub-tab-btn active" data-status="pending" onclick="setFulfillmentTab('pending', this)">
               Pending (<span id="countTabPending">0</span>)
@@ -264,7 +264,7 @@
               Shipped (<span id="countTabShipped">0</span>)
             </button>
             <button type="button" class="hub-tab-btn" data-status="cancelled" onclick="setFulfillmentTab('cancelled', this)">
-              Cancelled
+              Cancelled (<span id="countTabCancelled">0</span>)
             </button>
           </div>
 
