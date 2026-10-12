@@ -316,12 +316,24 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
         const overrides = getSellerStatusOverrides();
         let updated = false;
 
+        const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
+        const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
+
         data.orders.forEach(remote => {
           if (!remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT') {
             return;
           }
 
           const remoteUpperId = String(remote.orderId).trim().toUpperCase();
+
+          // Ignore any orders that were purged during fresh zero reset
+          if (purgedIds.includes(remoteUpperId)) {
+            return;
+          }
+          if (remote.timestamp && Number(remote.timestamp) <= resetTs) {
+            return;
+          }
+
           const isRemoteCod = isCodOrder(remote);
           if (isRemoteCod) {
             remote.paymentMethod = 'cod';
@@ -678,10 +690,13 @@ function updateOrderStatusFromSeller(orderId, newStatus) {
 
 function calculateBusinessMetrics() {
   const orders = getSellerOrders();
+  const analytics = (typeof JKAnalytics !== 'undefined') ? JKAnalytics.getData() : { totalViews: 0, totalClicks: 0, totalDownloads: 0 };
+
   let totalSales = 0;
   let totalOrdersCount = orders.length;
-  let totalViews = 151 + (totalOrdersCount * 12);
-  let totalClicks = 3 + (totalOrdersCount * 4);
+  let totalViews = Number(analytics.totalViews || 0);
+  let totalClicks = Number(analytics.totalClicks || 0);
+  let totalDownloads = Number(analytics.totalDownloads || (analytics.downloads ? analytics.downloads.length : 0));
   let cancelledCount = 0;
 
   orders.forEach(o => {
@@ -693,11 +708,12 @@ function calculateBusinessMetrics() {
     }
   });
 
-  const convRate = totalClicks > 0 ? ((totalOrdersCount / totalClicks) * 100).toFixed(1) : '0.0';
+  const convRate = totalViews > 0 ? ((totalOrdersCount / totalViews) * 100).toFixed(1) : (totalClicks > 0 ? ((totalOrdersCount / totalClicks) * 100).toFixed(1) : '0.0');
   const returnRate = totalOrdersCount > 0 ? ((cancelledCount / totalOrdersCount) * 100).toFixed(1) : '0.0';
 
   const elViews = document.getElementById('kpiTotalViews');
   const elClicks = document.getElementById('kpiTotalClicks');
+  const elDownloads = document.getElementById('kpiTotalDownloads');
   const elOrders = document.getElementById('kpiTotalOrders');
   const elConv = document.getElementById('kpiConversionRate');
   const elSales = document.getElementById('kpiTotalSales');
@@ -705,6 +721,7 @@ function calculateBusinessMetrics() {
 
   if (elViews) elViews.innerText = totalViews;
   if (elClicks) elClicks.innerText = totalClicks;
+  if (elDownloads) elDownloads.innerText = totalDownloads;
   if (elOrders) elOrders.innerText = totalOrdersCount;
   if (elConv) elConv.innerText = convRate + '%';
   if (elSales) elSales.innerText = '₹' + totalSales.toLocaleString('en-IN');
@@ -712,10 +729,17 @@ function calculateBusinessMetrics() {
 
   const summary = document.getElementById('chartSummaryText');
   if (summary) {
-    summary.innerText = `${totalOrdersCount} orders placed generating ₹${totalSales.toLocaleString('en-IN')} in gross fulfillment.`;
+    if (totalOrdersCount === 0 && totalViews === 0) {
+      summary.innerText = 'Fresh slate active (0 Metrics). Real visitor views, clicks, downloads, and orders will display here.';
+    } else {
+      summary.innerText = `${totalOrdersCount} orders placed generating ₹${totalSales.toLocaleString('en-IN')} gross revenue across ${totalViews} website visits.`;
+    }
   }
 
   renderProductPerformanceTable();
+  renderStudentDownloadsTable();
+  renderStudentSearchesTable();
+  renderLiveActivityStream();
 }
 
 function renderProductPerformanceTable() {
@@ -723,24 +747,44 @@ function renderProductPerformanceTable() {
   if (!tableBody) return;
 
   const orders = getSellerOrders();
+  const analytics = (typeof JKAnalytics !== 'undefined') ? JKAnalytics.getData() : {};
   const search = String(document.getElementById('perfSearchInput') ? document.getElementById('perfSearchInput').value : '').toLowerCase().trim();
 
-  // Aggregate product counts
+  // Aggregate genuine product stats from real orders and tracked clicks
   const productStats = {};
+
+  // 1. Add tracked products from visitor activity
+  if (analytics.productClicks) {
+    Object.values(analytics.productClicks).forEach(pc => {
+      const pName = pc.name;
+      productStats[pName] = {
+        name: pName,
+        views: pc.views || 0,
+        clicks: pc.clicks || 0,
+        orders: 0,
+        sales: 0,
+        image: 'images/books/lucent-gk-1.webp'
+      };
+    });
+  }
+
+  // 2. Add real customer orders
   orders.forEach(o => {
     const pName = o.product || 'General Textbook';
     if (!productStats[pName]) {
-      productStats[pName] = { name: pName, orders: 0, sales: 0, image: o.image || 'images/logo-app.png' };
+      productStats[pName] = {
+        name: pName,
+        views: 0,
+        clicks: 0,
+        orders: 0,
+        sales: 0,
+        image: o.image || 'images/logo-app.png'
+      };
     }
     productStats[pName].orders += 1;
     productStats[pName].sales += Number(o.amount || 0);
+    if (o.image) productStats[pName].image = o.image;
   });
-
-  // Default core books if empty
-  if (Object.keys(productStats).length === 0) {
-    productStats['JKBOSE Class 10th & 12th Solved PYQs'] = { name: 'JKBOSE Class 10th & 12th Solved PYQs', orders: 2, sales: 398, image: 'images/books/lucent-gk-1.webp' };
-    productStats['Atomic Habits Student Edition'] = { name: 'Atomic Habits Student Edition', orders: 1, sales: 249, image: 'images/books/atomic-habits-1.webp' };
-  }
 
   const list = Object.values(productStats).filter(item => {
     if (search && !item.name.toLowerCase().includes(search)) return false;
@@ -750,11 +794,24 @@ function renderProductPerformanceTable() {
   const countBadge = document.getElementById('countPerfAll');
   if (countBadge) countBadge.innerText = list.length;
 
+  if (list.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 36px 16px; color: #64748b;">
+          <div style="font-size: 30px; margin-bottom: 6px;">📊</div>
+          <div style="font-weight: 700; font-size: 14px; color: #1e293b;">Fresh Clean Slate (0 Products Tracked)</div>
+          <div style="font-size: 12px; margin-top: 2px;">No product views, clicks, or orders recorded yet. Visitor interactions and purchases will appear here live in real-time.</div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   let html = '';
   list.forEach(p => {
-    const views = p.orders * 19 + 14;
-    const clicks = p.orders * 3 + 2;
-    const conv = clicks > 0 ? ((p.orders / clicks) * 100).toFixed(1) : '0.0';
+    const views = p.views || (p.orders > 0 ? p.orders * 2 : 1);
+    const clicks = p.clicks || (p.orders > 0 ? p.orders : 0);
+    const conv = views > 0 ? ((p.orders / views) * 100).toFixed(1) : (clicks > 0 ? ((p.orders / clicks) * 100).toFixed(1) : '0.0');
 
     html += `
       <tr>
@@ -773,12 +830,238 @@ function renderProductPerformanceTable() {
         <td>${conv}%</td>
         <td><strong style="color: #059669;">₹${p.sales.toLocaleString('en-IN')}</strong></td>
         <td>0.0%</td>
-        <td><span style="color: #2563eb; font-size: 12px; font-weight: 700;">Boost stock</span></td>
+        <td><span style="color: #2563eb; font-size: 12px; font-weight: 700;">${p.orders > 0 ? 'High Demand' : 'Keep Stock Ready'}</span></td>
       </tr>
     `;
   });
 
   tableBody.innerHTML = html;
+}
+
+function renderStudentDownloadsTable() {
+  const tableBody = document.getElementById('studentDownloadsTableBody');
+  const countBadge = document.getElementById('countStudentDownloads');
+  if (!tableBody) return;
+
+  const analytics = (typeof JKAnalytics !== 'undefined') ? JKAnalytics.getData() : {};
+  const downloads = Array.isArray(analytics.downloads) ? analytics.downloads : [];
+
+  if (countBadge) countBadge.innerText = `${downloads.length} File${downloads.length === 1 ? '' : 's'}`;
+
+  if (downloads.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 28px 12px; color: #64748b; font-size: 12.5px;">
+          <div style="font-size: 24px; margin-bottom: 4px;">📥</div>
+          No study files downloaded yet. When students download PYQs, model papers, or syllabi, they appear here live.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  let html = '';
+  downloads.forEach(d => {
+    const timeAgo = formatTimeAgoSimple(d.timestamp);
+    html += `
+      <tr>
+        <td>
+          <div style="font-weight: 700; color: #0f172a; font-size: 13px;">${d.title}</div>
+        </td>
+        <td>
+          <span style="background: #eff6ff; color: #1e40af; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700;">
+            ${d.category || 'Study Material'}
+          </span>
+        </td>
+        <td>
+          <strong style="color: #2563eb; font-size: 13px;">${d.count}</strong>
+        </td>
+        <td style="font-size: 11.5px; color: #64748b;">
+          ${timeAgo}
+        </td>
+      </tr>
+    `;
+  });
+
+  tableBody.innerHTML = html;
+}
+
+function renderStudentSearchesTable() {
+  const tableBody = document.getElementById('studentSearchesTableBody');
+  const countBadge = document.getElementById('countStudentSearches');
+  if (!tableBody) return;
+
+  const analytics = (typeof JKAnalytics !== 'undefined') ? JKAnalytics.getData() : {};
+  const searches = Array.isArray(analytics.searches) ? analytics.searches : [];
+
+  if (countBadge) countBadge.innerText = `${searches.length} Search${searches.length === 1 ? '' : 'es'}`;
+
+  if (searches.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 28px 12px; color: #64748b; font-size: 12.5px;">
+          <div style="font-size: 24px; margin-bottom: 4px;">🔍</div>
+          No student searches logged yet. When visitors search for books or guides in the store, their exact queries will appear here.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  let html = '';
+  searches.forEach(s => {
+    const isUnmetDemand = (s.resultsCount === 0);
+    const demandBadge = isUnmetDemand 
+      ? '<span style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-size: 10.5px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">⚠️ 0 Results (Demand)</span>'
+      : '<span style="background: #f0fdf4; color: #166534; font-size: 10.5px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">✅ In Stock (' + (s.resultsCount || 1) + ')</span>';
+    
+    const timeAgo = formatTimeAgoSimple(s.timestamp);
+
+    html += `
+      <tr>
+        <td>
+          <div style="font-weight: 700; color: #0f172a; font-size: 13px;">"${s.query}"</div>
+        </td>
+        <td>
+          <strong style="color: #7c3aed; font-size: 13px;">${s.count}</strong>
+        </td>
+        <td>
+          ${demandBadge}
+        </td>
+        <td style="font-size: 11.5px; color: #64748b;">
+          ${timeAgo}
+        </td>
+      </tr>
+    `;
+  });
+
+  tableBody.innerHTML = html;
+}
+
+function renderLiveActivityStream() {
+  const container = document.getElementById('liveActivityStreamList');
+  if (!container) return;
+
+  const analytics = (typeof JKAnalytics !== 'undefined') ? JKAnalytics.getData() : {};
+  const activities = Array.isArray(analytics.activityLog) ? analytics.activityLog : [];
+
+  if (activities.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 24px 12px; color: #64748b; font-size: 12.5px;">
+        <div style="font-size: 22px; margin-bottom: 4px;">⚡</div>
+        No live activity yet. As visitors browse the site, click books, search, or place orders, their actions will stream here live.
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  activities.slice(0, 15).forEach(act => {
+    const timeAgo = formatTimeAgoSimple(act.timestamp);
+    let color = '#2563eb';
+    let bg = '#eff6ff';
+
+    if (act.type === 'order') { color = '#059669'; bg = '#ecfdf5'; }
+    else if (act.type === 'download') { color = '#d97706'; bg = '#fffbeb'; }
+    else if (act.type === 'search') { color = '#7c3aed'; bg = '#faf5ff'; }
+    else if (act.type === 'click') { color = '#0284c7'; bg = '#f0f9ff'; }
+
+    html += `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12.5px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 28px; height: 28px; border-radius: 6px; background: ${bg}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+            <i class="fa-solid ${act.icon || 'fa-circle-dot'}"></i>
+          </div>
+          <div>
+            <div style="font-weight: 700; color: #1e293b;">${act.label}</div>
+            <div style="font-size: 11px; color: #64748b;">${act.meta ? act.meta + ' &middot; ' : ''}${act.device || 'Visitor'}</div>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: #94a3b8; font-weight: 600;">
+          ${timeAgo}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function formatTimeAgoSimple(timestamp) {
+  if (!timestamp) return 'Just now';
+  const diffSec = Math.floor((Date.now() - Number(timestamp)) / 1000);
+  if (diffSec < 60) return 'Just now';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDays = Math.floor(diffHr / 24);
+  return `${diffDays}d ago`;
+}
+
+function confirmResetAllToZero() {
+  const proceed = confirm(
+    "⚠️ FRESH START CONFIRMATION:\n\n" +
+    "Are you sure you want to reset ALL dashboard metrics and orders to 0?\n\n" +
+    "• Total Views will reset to 0\n" +
+    "• Total Clicks will reset to 0\n" +
+    "• Study Downloads will reset to 0\n" +
+    "• Total Orders & Revenue will reset to 0\n" +
+    "• All past test orders will be permanently cleared from the dashboard\n\n" +
+    "Click OK to proceed with fresh zero start."
+  );
+
+  if (!proceed) return;
+  resetAllOrdersAndMetricsToZero();
+}
+
+function resetAllOrdersAndMetricsToZero() {
+  try {
+    // 1. Gather current order IDs and add to purged list so they are never re-imported from Google Sheets
+    const currentOrders = getSellerOrders();
+    const existingPurged = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
+    const newPurged = Array.from(new Set([
+      ...existingPurged,
+      ...currentOrders.map(o => String(o.orderId || '').trim().toUpperCase()).filter(Boolean)
+    ]));
+    localStorage.setItem('jk_purged_order_ids', JSON.stringify(newPurged));
+
+    // 2. Set reset timestamp
+    localStorage.setItem('jk_orders_reset_timestamp', String(Date.now()));
+
+    // 3. Clear local storage orders & overrides
+    localStorage.setItem('jk_orders', '[]');
+    localStorage.removeItem('jk_orders_db');
+    localStorage.setItem('jk_order_status_overrides', '{}');
+    localStorage.setItem('jk_locked_orders', '{}');
+
+    // 4. Reset analytics
+    if (typeof JKAnalytics !== 'undefined') {
+      JKAnalytics.reset();
+    } else {
+      localStorage.setItem('jk_analytics_v2', JSON.stringify({
+        totalViews: 0,
+        totalClicks: 0,
+        totalDownloads: 0,
+        totalOrders: 0,
+        pageViews: {},
+        productClicks: {},
+        downloads: [],
+        searches: [],
+        activityLog: []
+      }));
+    }
+
+    // 5. Re-render all views and tables
+    renderSellerOrdersTable();
+    calculateBusinessMetrics();
+    calculatePaymentsSummary();
+
+    alert("✅ Complete Fresh Start: All metrics, orders, downloads, and search stats have been reset to 0!");
+  } catch (err) {
+    console.error("Reset error:", err);
+    alert("Notice during reset: " + err.message);
+  }
 }
 
 function calculatePaymentsSummary() {

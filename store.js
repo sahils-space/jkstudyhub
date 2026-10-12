@@ -951,6 +951,9 @@ function addToCart(name, price, type, category) {
   }
 
   saveCart(cart);
+  if (window.JKAnalytics) {
+    JKAnalytics.trackClick(name, 'Add to Cart', finalCat);
+  }
   showToast(`🛒 "${name}" added to Cart!`, 'cart.html', 'View Cart ➔');
 }
 
@@ -4383,6 +4386,10 @@ function processOrder(txnId, customStatus) {
   orders.unshift(orderRecord);
   saveOrders(orders);
 
+  if (window.JKAnalytics) {
+    JKAnalytics.trackOrder(orderRecord.orderId, totalPaid, combinedProduct);
+  }
+
   // 2. DISPATCH TO GOOGLE SHEETS WEB APP
   const formData = new FormData();
   formData.append('name', name);
@@ -7165,6 +7172,11 @@ function openSamplePreviewModal(bookName) {
 
   renderSamplePreviewPage();
   modal.style.display = 'flex';
+
+  if (window.JKAnalytics) {
+    JKAnalytics.trackClick(resolvedName, 'Look Inside Preview', 'Preview');
+    JKAnalytics.trackDownload(`${resolvedName} (Sample Chapters)`, 'Book Sample', '');
+  }
 }
 
 function closeSamplePreviewModal() {
@@ -7856,6 +7868,16 @@ function handleStoreLiveSearch(query) {
 
   if (emptyState) {
     emptyState.style.display = (matchCount === 0) ? 'block' : 'none';
+  }
+
+  // Real Visitor Analytics: Track student search query & demand
+  if (q && q.length >= 2) {
+    if (window._storeSearchTimer) clearTimeout(window._storeSearchTimer);
+    window._storeSearchTimer = setTimeout(() => {
+      if (window.JKAnalytics) {
+        JKAnalytics.trackSearch(query, matchCount);
+      }
+    }, 700);
   }
 }
 

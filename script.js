@@ -829,6 +829,10 @@ const SYLLABUS_PDF_DATA = {
     const data = SYLLABUS_PDF_DATA[contextKey];
     if (!data || !syllabusModalOverlay) return;
 
+    if (window.JKAnalytics) {
+      JKAnalytics.trackClick(data.title, 'Open Syllabus', 'Syllabus');
+    }
+
     modalSyllabusTitle.textContent = data.title;
     modalSyllabusSubtitle.textContent = 'Official PDF Syllabus for Board Examination';
 
@@ -1038,6 +1042,10 @@ const SYLLABUS_PDF_DATA = {
   window.openModelModal = function(contextKey) {
     const data = MODEL_PAPERS_DATA[contextKey];
     if (!data || !modelModalOverlay) return;
+
+    if (window.JKAnalytics) {
+      JKAnalytics.trackClick(data.title, 'Open Model Papers', 'Model Paper');
+    }
 
     modalStreamTitle.textContent = data.title;
     modalStreamSubtitle.textContent = data.subtitle;
@@ -1641,6 +1649,9 @@ const SYLLABUS_PDF_DATA = {
     try {
       const paper = JSON.parse(decodeURIComponent(encodedData));
       StudyLibrary.recordHistory(paper, action);
+      if (window.JKAnalytics) {
+        JKAnalytics.trackDownload(paper.name, paper.type || (action === 'Downloaded' ? 'PDF Download' : 'PDF View'), paper.file);
+      }
     } catch (err) {
       console.warn("Record history error:", err);
     }
