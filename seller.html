@@ -29,6 +29,26 @@
         <i class="fa-solid fa-circle-exclamation"></i> Access Denied: Unauthorized account.
       </div>
 
+      <!-- Device Workspace Selector (Laptop vs Mobile) -->
+      <div class="seller-device-select-box" style="margin-bottom: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: left;">
+        <div style="font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+          <span><i class="fa-solid fa-sliders"></i> Choose Screen Layout</span>
+          <span id="detectedScreenHint" style="font-size: 10.5px; color: #2563eb; font-weight: 700;"></span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" id="btnModeDesktop" onclick="setSellerDeviceMode('desktop')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 8px; border-radius: 9px; border: 2px solid #2563eb; background: #eff6ff; cursor: pointer; transition: all 0.2s; text-align: center;">
+            <i class="fa-solid fa-laptop" style="font-size: 22px; color: #2563eb; margin-bottom: 4px;"></i>
+            <span style="font-size: 12.5px; font-weight: 800; color: #0f172a;">MacBook / Laptop</span>
+            <small style="font-size: 10.5px; color: #64748b;">Full Desktop UI</small>
+          </button>
+          <button type="button" id="btnModeMobile" onclick="setSellerDeviceMode('mobile')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 8px; border-radius: 9px; border: 2px solid #cbd5e1; background: #fff; cursor: pointer; transition: all 0.2s; text-align: center;">
+            <i class="fa-solid fa-mobile-screen-button" style="font-size: 22px; color: #10b981; margin-bottom: 4px;"></i>
+            <span style="font-size: 12.5px; font-weight: 800; color: #0f172a;">Mobile Phone</span>
+            <small style="font-size: 10.5px; color: #64748b;">Touch &amp; Card UI</small>
+          </button>
+        </div>
+      </div>
+
       <div id="sellerManualLoginWrap">
         <!-- 1-Click Google Sign In for Store Owner -->
         <button type="button" onclick="handleSellerGoogleAuth()" style="width: 100%; background: #ffffff; border: 2px solid #cbd5e1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14.5px; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; margin-bottom: 14px;">
@@ -69,6 +89,14 @@
 
     <!-- LEFT SIDEBAR -->
     <aside class="supplier-sidebar" id="sellerSidebar">
+      <!-- Mobile Close Drawer Button -->
+      <div class="sidebar-mobile-close-bar" id="sidebarMobileCloseBar">
+        <span style="font-size: 13px; font-weight: 800; color: #1e293b;">Navigation Menu</span>
+        <button type="button" class="sidebar-mobile-close-btn" onclick="toggleSellerMobileSidebar(false)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
       <!-- Store Header with Dropdown -->
       <div class="sidebar-store-picker" onclick="alert('Store: JK Study Hub Official Store\nHub: Main Logistics Hub, Pattan 193121\nStatus: Online & Synced')">
         <div class="store-picker-left">
@@ -189,6 +217,10 @@
         </div>
 
         <div class="top-navbar-actions">
+          <button type="button" id="btnQuickModeSwitch" class="btn-hub-secondary" onclick="toggleSellerDeviceMode()" title="Switch between Desktop and Mobile layout" style="font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; border-color: #93c5fd; background: #eff6ff; color: #1d4ed8;">
+            <i class="fa-solid fa-mobile-screen-button"></i> <span>Mobile View</span>
+          </button>
+
           <div class="sync-status-pill" id="sellerSyncPill">
             <i class="fa-solid fa-circle-check"></i>
             <span>Google Sheets Synced</span>
@@ -1102,6 +1134,35 @@
       <div id="sellerScannedResultCard" class="scanned-result-card" style="display:none;"></div>
     </div>
   </div>
+
+  <!-- =========================================================
+       SELLER MOBILE DEDICATED BOTTOM NAVIGATION BAR
+       ========================================================= -->
+  <nav class="seller-mobile-bottom-nav" id="sellerMobileBottomNav" style="display: none;">
+    <button type="button" class="mobile-nav-tab active" id="mob-tab-orders" onclick="switchSellerView('orders')">
+      <i class="fa-solid fa-box-archive"></i>
+      <span>Orders</span>
+    </button>
+    <button type="button" class="mobile-nav-tab" id="mob-tab-inventory" onclick="switchSellerView('inventory')">
+      <i class="fa-solid fa-boxes-stacked"></i>
+      <span>Stock</span>
+    </button>
+    <button type="button" class="mobile-nav-tab" id="mob-tab-delivery" onclick="switchSellerView('delivery')">
+      <i class="fa-solid fa-truck-ramp-box"></i>
+      <span>Rates</span>
+    </button>
+    <button type="button" class="mobile-nav-tab" id="mob-tab-pricing" onclick="switchSellerView('pricing')">
+      <i class="fa-solid fa-tags"></i>
+      <span>Pricing</span>
+    </button>
+    <button type="button" class="mobile-nav-tab" id="mob-tab-menu" onclick="toggleSellerMobileSidebar()">
+      <i class="fa-solid fa-bars"></i>
+      <span>Menu</span>
+    </button>
+  </nav>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="seller-mobile-drawer-backdrop" id="sellerMobileDrawerBackdrop" onclick="toggleSellerMobileSidebar(false)"></div>
 
   <!-- Firebase Compatibility SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>

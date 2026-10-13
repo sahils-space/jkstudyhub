@@ -140,12 +140,101 @@ function handleSellerGoogleAuth() {
   }
 }
 
+// =========================================================
+// 1B. DEDICATED DEVICE LAYOUT ENGINE (DESKTOP vs MOBILE)
+// =========================================================
+function getSellerDeviceMode() {
+  try {
+    const saved = localStorage.getItem('jk_seller_device_mode');
+    if (saved === 'mobile' || saved === 'desktop') return saved;
+  } catch(e) {}
+  // Auto-detect based on screen width if not chosen yet
+  return (window.innerWidth <= 768) ? 'mobile' : 'desktop';
+}
+
+function setSellerDeviceMode(mode) {
+  try {
+    localStorage.setItem('jk_seller_device_mode', mode);
+  } catch(e) {}
+  applySellerDeviceMode(mode);
+}
+
+function toggleSellerDeviceMode() {
+  const current = getSellerDeviceMode();
+  const next = (current === 'mobile') ? 'desktop' : 'mobile';
+  setSellerDeviceMode(next);
+  if (typeof showToast === 'function') {
+    showToast(next === 'mobile' ? '📱 Switched to Mobile Phone Touch Layout' : '💻 Switched to MacBook / Desktop Layout');
+  }
+}
+
+function applySellerDeviceMode(mode) {
+  const isMobile = (mode === 'mobile');
+  if (isMobile) {
+    document.body.classList.add('seller-mobile-mode');
+    document.body.classList.remove('seller-desktop-mode');
+  } else {
+    document.body.classList.remove('seller-mobile-mode');
+    document.body.classList.add('seller-desktop-mode');
+  }
+
+  // Update lock screen buttons style if present
+  const btnDesktop = document.getElementById('btnModeDesktop');
+  const btnMobile = document.getElementById('btnModeMobile');
+  const screenHint = document.getElementById('detectedScreenHint');
+  if (screenHint) {
+    const isSmallScreen = window.innerWidth <= 768;
+    screenHint.innerText = isSmallScreen ? '(Detected: Phone)' : '(Detected: Laptop)';
+  }
+
+  if (btnDesktop && btnMobile) {
+    if (isMobile) {
+      btnMobile.style.borderColor = '#10b981';
+      btnMobile.style.background = '#ecfdf5';
+      btnDesktop.style.borderColor = '#cbd5e1';
+      btnDesktop.style.background = '#ffffff';
+    } else {
+      btnDesktop.style.borderColor = '#2563eb';
+      btnDesktop.style.background = '#eff6ff';
+      btnMobile.style.borderColor = '#cbd5e1';
+      btnMobile.style.background = '#ffffff';
+    }
+  }
+
+  // Update navbar quick switch button
+  const quickSwitchBtn = document.getElementById('btnQuickModeSwitch');
+  if (quickSwitchBtn) {
+    if (isMobile) {
+      quickSwitchBtn.innerHTML = '<i class="fa-solid fa-laptop"></i> <span>Laptop Mode</span>';
+      quickSwitchBtn.title = 'Switch to full Desktop/MacBook layout';
+    } else {
+      quickSwitchBtn.innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> <span>Mobile Mode</span>';
+      quickSwitchBtn.title = 'Switch to Mobile Phone touch layout';
+    }
+  }
+
+  // Show/hide bottom nav
+  const bottomNav = document.getElementById('sellerMobileBottomNav');
+  if (bottomNav) {
+    bottomNav.style.display = isMobile ? 'flex' : 'none';
+  }
+
+  // Show/hide hamburger toggle
+  const toggleBtn = document.getElementById('sidebarToggleBtn');
+  if (toggleBtn) {
+    toggleBtn.style.display = (isMobile || window.innerWidth <= 768) ? 'inline-flex' : 'none';
+  }
+}
+
 function unlockSellerPanel() {
   const lockScreen = document.getElementById('sellerAuthLockScreen');
   const appShell = document.getElementById('sellerAppShell');
 
   if (lockScreen) lockScreen.style.display = 'none';
   if (appShell) appShell.style.display = 'flex';
+
+  // Apply device layout
+  applySellerDeviceMode(getSellerDeviceMode());
 
   // Initialize data
   initSellerSupplierPanel();
@@ -163,6 +252,8 @@ function handleSellerSignOut() {
 
 // Auto-check on page load
 window.addEventListener('DOMContentLoaded', () => {
+  applySellerDeviceMode(getSellerDeviceMode());
+
   if (isSellerUnlocked()) {
     unlockSellerPanel();
   } else {
@@ -416,6 +507,15 @@ function switchSellerView(viewName) {
   document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
   const activeNav = document.getElementById(`nav-link-${viewName}`);
   if (activeNav) activeNav.classList.add('active');
+
+  // Sync mobile bottom navigation bar active tab
+  document.querySelectorAll('.mobile-nav-tab').forEach(b => b.classList.remove('active'));
+  const mobTab = document.getElementById(`mob-tab-${viewName}`);
+  if (mobTab) mobTab.classList.add('active');
+
+  // Close mobile sidebar if open
+  toggleSellerMobileSidebar(false);
+  try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
 
   document.querySelectorAll('.seller-view-pane').forEach(p => p.style.display = 'none');
 
@@ -1920,9 +2020,18 @@ function exportOrdersToCSV() {
   document.body.removeChild(a);
 }
 
-function toggleSellerMobileSidebar() {
+function toggleSellerMobileSidebar(forceState) {
   const s = document.getElementById('sellerSidebar');
-  if (s) s.classList.toggle('open');
+  const backdrop = document.getElementById('sellerMobileDrawerBackdrop');
+  if (!s) return;
+  const shouldOpen = (typeof forceState === 'boolean') ? forceState : !s.classList.contains('open');
+  if (shouldOpen) {
+    s.classList.add('open');
+    if (backdrop) backdrop.classList.add('active');
+  } else {
+    s.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('active');
+  }
 }
 
 function initSellerSupplierPanel() {
