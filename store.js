@@ -4399,24 +4399,6 @@ function setupCheckoutModal(name, price, category) {
   });
   updateCheckoutInvoiceTotals();
 
-  // Display 1-Click Quick COD Order Banner if address already saved
-  const quickBox = document.getElementById('quickOneClickCodBox');
-  if (quickBox) {
-    const hasName = (nameInput && nameInput.value.trim());
-    const hasPhone = (phoneInput && phoneInput.value.trim());
-    const hasAddr = (addrInput && addrInput.value.trim()) || (savedProfile && savedProfile.address);
-    if (hasName && hasPhone && hasAddr) {
-      quickBox.style.display = 'flex';
-      const addrSum = document.getElementById('quickOneClickAddressSummary');
-      const nameSum = document.getElementById('quickOneClickNameSummary');
-      const cityVal = citySelect ? citySelect.value.split(' ')[0] : 'Kashmir';
-      if (addrSum) addrSum.innerText = `Saved: ${cityVal} (${pinInput ? pinInput.value : '193121'})`;
-      if (nameSum) nameSum.innerText = `Recipient: ${nameInput.value} • ${phoneInput.value}`;
-    } else {
-      quickBox.style.display = 'none';
-    }
-  }
-
   document.getElementById('step2').style.display = 'none';
   document.getElementById('step1').style.display = 'block';
 
