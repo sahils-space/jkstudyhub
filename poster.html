@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JK Study Hub — Big Flex Marketing Poster & Billboard Studio</title>
+  <link rel="icon" href="images/favicon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --navy: #0f172a;
+      --blue: #2563eb;
+      --gold: #f59e0b;
+      --green: #10b981;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0b1120;
+      color: #f8fafc;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-title i { color: #f59e0b; }
+    .badge-pill {
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: #f59e0b;
+      color: #000;
+    }
+    .btn-primary:hover {
+      background: #d97706;
+    }
+    .btn-secondary {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #334155;
+    }
+    .poster-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    .poster-card {
+      background: #131d33;
+      border: 1.5px solid #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .poster-card-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+    }
+    .poster-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .poster-img-wrap {
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .poster-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .poster-card-body {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      background: #0f172a;
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .spec-box {
+      background: #131d33;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .spec-box h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f59e0b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .spec-box p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    @media print {
+      body { background: white; color: black; padding: 0; }
+      header, .specs-grid, .btn-group { display: none !important; }
+      .poster-card { border: none; box-shadow: none; border-radius: 0; }
+      .poster-card-header, .poster-card-body { display: none !important; }
+      .poster-img-wrap img { width: 100vw; height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <div class="brand-title">
+          <i class="fa-solid fa-store"></i> JK STUDY HUB Marketing Poster Studio
+          <span class="badge-pill">300 DPI Flex Print Ready</span>
+        </div>
+        <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">
+          Customized promotional advertising posters with delivery bike, black t-shirt branding, and live store deals.
+        </p>
+      </div>
+
+      <div class="btn-group">
+        <a href="seller.html" class="btn btn-secondary">
+          <i class="fa-solid fa-arrow-left"></i> Back to Seller Hub
+        </a>
+        <a href="images/jk-flex-banner.jpg" download="JK-Study-Hub-Flex-Banner.jpg" class="btn btn-primary">
+          <i class="fa-solid fa-download"></i> Download Flex Artwork (JPG)
+        </a>
+        <button onclick="window.print()" class="btn btn-secondary">
+          <i class="fa-solid fa-print"></i> Print Poster
+        </button>
+      </div>
+    </header>
+
+    <div class="poster-grid">
+
+      <!-- Poster 1: Flat Direct Billboard Artwork -->
+      <div class="poster-card">
+        <div class="poster-card-header">
+          <div class="poster-card-title">
+            <i class="fa-solid fa-image" style="color: #38bdf8;"></i> Flat High-Resolution Billboard &amp; Flex Print File
+          </div>
+          <span class="badge-pill" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: #6ee7b7;">
+            Recommended for Printing Press
+          </span>
+        </div>
+        <div class="poster-img-wrap">
+          <img src="images/jk-flex-banner.jpg" alt="JK Study Hub Flat Flex Banner">
+        </div>
+        <div class="poster-card-body">
+          <div>
+            <div style="font-size: 14px; font-weight: 800; color: #fff;">Direct Flat Vector-Style Artwork</div>
+            <div style="font-size: 12.5px; color: #94a3b8; margin-top: 2px;">
+              Ideal for outdoor flex banners, shopfront glow signboards, and standees (16:9 widescreen ratio).
+            </div>
+          </div>
+          <a href="images/jk-flex-banner.jpg" download="JK-Study-Hub-Flat-Billboard.jpg" class="btn btn-primary">
+            <i class="fa-solid fa-file-arrow-down"></i> Save Flat Flex JPG
+          </a>
+        </div>
+      </div>
+
+      <!-- Poster 2: 3D Standee & Presentation Mockup -->
+      <div class="poster-card">
+        <div class="poster-card-header">
+          <div class="poster-card-title">
+            <i class="fa-solid fa-easel" style="color: #f59e0b;"></i> Real Outdoor Standee Display Mockup
+          </div>
+          <span class="badge-pill">
+            Social Media &amp; WhatsApp Story Ready
+          </span>
+        </div>
+        <div class="poster-img-wrap">
+          <img src="images/jk-poster-standee.jpg" alt="JK Study Hub Standee Display Mockup">
+        </div>
+        <div class="poster-card-body">
+          <div>
+            <div style="font-size: 14px; font-weight: 800; color: #fff;">Outdoor Standee / Easel Mockup</div>
+            <div style="font-size: 12.5px; color: #94a3b8; margin-top: 2px;">
+              Perfect for sharing on WhatsApp status, Instagram, Facebook promotions, and school noticeboards.
+            </div>
+          </div>
+          <a href="images/jk-poster-standee.jpg" download="JK-Study-Hub-Standee-Mockup.jpg" class="btn btn-secondary">
+            <i class="fa-solid fa-file-arrow-down"></i> Save Standee Mockup
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Print & Shop Guide -->
+    <div class="specs-grid">
+      <div class="spec-box">
+        <h4><i class="fa-solid fa-ruler-combined"></i> Recommended Flex Sizes</h4>
+        <p>
+          • <strong>6 ft &times; 3.5 ft</strong>: Ideal for shop entrances and tuition centers.<br>
+          • <strong>8 ft &times; 4.5 ft</strong>: Standard outdoor street flex board.<br>
+          • <strong>10 ft &times; 6 ft</strong>: Roadside billboard or highway banner.
+        </p>
+      </div>
+
+      <div class="spec-box">
+        <h4><i class="fa-solid fa-print"></i> Print Material Advice</h4>
+        <p>
+          • <strong>Outdoor Flex</strong>: Ask for <em>Star Flex</em> or <em>Black Back Flex (340+ GSM)</em> so the sun does not shine through.<br>
+          • <strong>Indoor / Coaching</strong>: Matte Vinyl on Sunboard (3mm or 5mm) for zero light reflections.
+        </p>
+      </div>
+
+      <div class="spec-box">
+        <h4><i class="fa-solid fa-bolt"></i> Key Offers Displayed</h4>
+        <p>
+          • <strong>₹199</strong>: JKBOSE 10th &amp; 12th Solved Board Books.<br>
+          • <strong>₹299</strong>: Semester School Notebooks &amp; Copies Bundle.<br>
+          • <strong>₹99</strong>: High-Yield Board Exam Guess Papers.<br>
+          • <strong>Cash on Delivery</strong> across Kashmir.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
