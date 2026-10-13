@@ -4733,23 +4733,39 @@
               <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
                 <div style="flex:1; min-width: 140px;">
                   <label class="form-label">District / Region</label>
-                  <select id="orderCity" class="form-input">
-                    <option value="Baramulla (Pattan/Sopore/Baramulla)" selected>Baramulla District</option>
-                    <option value="Srinagar">Srinagar District</option>
-                    <option value="Budgam">Budgam District</option>
-                    <option value="Anantnag (Islamabad)">Anantnag District</option>
-                    <option value="Pulwama">Pulwama District</option>
-                    <option value="Kupwara">Kupwara District</option>
-                    <option value="Ganderbal">Ganderbal District</option>
-                    <option value="Bandipora">Bandipora District</option>
-                    <option value="Kulgam">Kulgam District</option>
-                    <option value="Shopian">Shopian District</option>
-                    <option value="Other J&K Location">Other J&K Location</option>
+                  <select id="orderCity" class="form-input" onchange="updateCheckoutInvoiceTotals()">
+                    <optgroup label="── Kashmir Division (Local Hub) ──">
+                      <option value="Baramulla (Pattan/Sopore/Baramulla)" selected>Baramulla District (Pattan/Sopore/Baramulla)</option>
+                      <option value="Srinagar">Srinagar District</option>
+                      <option value="Budgam">Budgam District</option>
+                      <option value="Anantnag (Islamabad)">Anantnag District (Islamabad)</option>
+                      <option value="Pulwama">Pulwama District</option>
+                      <option value="Kupwara">Kupwara District</option>
+                      <option value="Ganderbal">Ganderbal District</option>
+                      <option value="Bandipora">Bandipora District</option>
+                      <option value="Kulgam">Kulgam District</option>
+                      <option value="Shopian">Shopian District</option>
+                    </optgroup>
+                    <optgroup label="── Jammu Division ──">
+                      <option value="Jammu">Jammu District</option>
+                      <option value="Kathua">Kathua District</option>
+                      <option value="Samba">Samba District</option>
+                      <option value="Udhampur">Udhampur District</option>
+                      <option value="Reasi">Reasi District (Katra)</option>
+                      <option value="Ramban">Ramban District (Banihal)</option>
+                      <option value="Doda">Doda District (Bhaderwah)</option>
+                      <option value="Kishtwar">Kishtwar District</option>
+                      <option value="Rajouri">Rajouri District</option>
+                      <option value="Poonch">Poonch District</option>
+                    </optgroup>
+                    <optgroup label="── Other ──">
+                      <option value="Other J&K Location">Other J&amp;K Location / Express</option>
+                    </optgroup>
                   </select>
                 </div>
                 <div style="flex:1; min-width: 120px;">
-                  <label class="form-label">Pincode (Any Kashmir PIN)</label>
-                  <input type="text" id="orderPin" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value)" required>
+                  <label class="form-label">Pincode (Any Kashmir / J&amp;K PIN)</label>
+                  <input type="text" id="orderPin" class="form-input" placeholder="e.g. 193121, 190001, 180001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();" required>
                   <div id="pinVerifiedBadge" style="display:none; margin-top:5px; font-size:11.5px; padding:4px 8px; border-radius:6px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;"></div>
                 </div>
               </div>
@@ -4828,8 +4844,12 @@
                 <span id="itemPrice">₹0</span>
               </div>
               <div class="invoice-row" style="font-weight: 700;" id="invoiceDeliveryRow">
-                <span>Delivery (All Kashmir)</span>
+                <span>Delivery Charges</span>
                 <span id="invoiceDeliveryFee">₹50</span>
+              </div>
+              <div class="invoice-row" id="invoiceCodRow" style="display: none; font-weight: 700; color: #166534;">
+                <span><i class="fa-solid fa-hand-holding-dollar"></i> Doorstep COD Fee</span>
+                <span id="invoiceCodFee">FREE (₹0)</span>
               </div>
               <div class="invoice-row">
                 <span>Platform Fee</span>

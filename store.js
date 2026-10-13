@@ -142,6 +142,169 @@ function applyCustomPricesToStorefront() {
   }
 }
 
+// District & PIN Code Delivery and COD Rates (All 20 J&K Districts)
+const DEFAULT_JK_DISTRICT_RATES = {
+  // Kashmir Division (10 Districts)
+  "Baramulla": { name: "Baramulla (Pattan/Sopore/Baramulla)", division: "Kashmir", deliveryFee: 0, codFee: 0, isFree: true, pins: "193121, 193201, 193101, 193103, 193108, 193109, 193401, 193402, 193403, 193404" },
+  "Srinagar": { name: "Srinagar", division: "Kashmir", deliveryFee: 40, codFee: 0, isFree: false, pins: "190001, 190002, 190003, 190004, 190005, 190006, 190008, 190009, 190010, 190011, 190014, 190015, 190018, 190020" },
+  "Budgam": { name: "Budgam", division: "Kashmir", deliveryFee: 40, codFee: 0, isFree: false, pins: "191111, 191112, 191113, 191114, 190017" },
+  "Ganderbal": { name: "Ganderbal", division: "Kashmir", deliveryFee: 45, codFee: 0, isFree: false, pins: "191201, 191202, 191131" },
+  "Bandipora": { name: "Bandipora", division: "Kashmir", deliveryFee: 45, codFee: 0, isFree: false, pins: "193501, 193502, 193504, 193503" },
+  "Pulwama": { name: "Pulwama", division: "Kashmir", deliveryFee: 50, codFee: 0, isFree: false, pins: "192301, 192121, 192122, 192123, 192302" },
+  "Anantnag": { name: "Anantnag (Islamabad)", division: "Kashmir", deliveryFee: 50, codFee: 0, isFree: false, pins: "192101, 192124, 192201, 192129, 192210" },
+  "Kulgam": { name: "Kulgam", division: "Kashmir", deliveryFee: 50, codFee: 0, isFree: false, pins: "192231, 192232, 192233" },
+  "Shopian": { name: "Shopian", division: "Kashmir", deliveryFee: 50, codFee: 0, isFree: false, pins: "192303, 192305, 192304" },
+  "Kupwara": { name: "Kupwara", division: "Kashmir", deliveryFee: 55, codFee: 0, isFree: false, pins: "193222, 193224, 193225, 193223, 193124" },
+
+  // Jammu Division (10 Districts)
+  "Jammu": { name: "Jammu", division: "Jammu", deliveryFee: 70, codFee: 0, isFree: false, pins: "180001, 180002, 180004, 180006, 180012, 180015, 181121" },
+  "Samba": { name: "Samba", division: "Jammu", deliveryFee: 75, codFee: 0, isFree: false, pins: "184121, 184141, 181133" },
+  "Kathua": { name: "Kathua", division: "Jammu", deliveryFee: 80, codFee: 0, isFree: false, pins: "184101, 184102, 184104, 184142" },
+  "Udhampur": { name: "Udhampur", division: "Jammu", deliveryFee: 75, codFee: 0, isFree: false, pins: "182101, 182121, 182124" },
+  "Reasi": { name: "Reasi (Katra)", division: "Jammu", deliveryFee: 80, codFee: 0, isFree: false, pins: "182311, 182301" },
+  "Ramban": { name: "Ramban (Banihal)", division: "Jammu", deliveryFee: 70, codFee: 0, isFree: false, pins: "182144, 182146, 182148" },
+  "Doda": { name: "Doda (Bhaderwah)", division: "Jammu", deliveryFee: 85, codFee: 0, isFree: false, pins: "182202, 182601, 182201" },
+  "Kishtwar": { name: "Kishtwar", division: "Jammu", deliveryFee: 90, codFee: 0, isFree: false, pins: "182204, 182205" },
+  "Rajouri": { name: "Rajouri", division: "Jammu", deliveryFee: 85, codFee: 0, isFree: false, pins: "185131, 185132, 185201" },
+  "Poonch": { name: "Poonch", division: "Jammu", deliveryFee: 90, codFee: 0, isFree: false, pins: "185101, 185121, 185102" }
+};
+
+function getStoreDistrictRates() {
+  try {
+    const raw = localStorage.getItem('jk_district_rates');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return Object.assign({}, DEFAULT_JK_DISTRICT_RATES, parsed);
+      }
+    }
+  } catch(e) {}
+  return Object.assign({}, DEFAULT_JK_DISTRICT_RATES);
+}
+
+// Live Product Stock & Inventory Engine
+function getProductStock(productName) {
+  try {
+    const raw = localStorage.getItem('jk_stock_overrides');
+    if (raw) {
+      const overrides = JSON.parse(raw);
+      if (overrides) {
+        if (overrides[productName]) return overrides[productName];
+        const lower = String(productName || '').toLowerCase().trim();
+        for (const k in overrides) {
+          if (k.toLowerCase().trim() === lower) return overrides[k];
+        }
+      }
+    }
+  } catch(e) {}
+  return { status: 'in_stock', qty: 25 };
+}
+
+function isProductOutOfStock(productName) {
+  const s = getProductStock(productName);
+  if (!s) return false;
+  if (s.status === 'out_of_stock') return true;
+  if (s.qty !== undefined && Number(s.qty) <= 0) return true;
+  return false;
+}
+
+function applyStockOverridesToStorefront() {
+  try {
+    const raw = localStorage.getItem('jk_stock_overrides');
+    if (!raw) return;
+    const overrides = JSON.parse(raw);
+    if (!overrides || typeof overrides !== 'object') return;
+
+    const cards = document.querySelectorAll('.product-card, .book-product-card');
+    cards.forEach(card => {
+      const titleEl = card.querySelector('.product-title');
+      if (!titleEl) return;
+      const title = titleEl.textContent.trim();
+
+      let stock = null;
+      for (const k in overrides) {
+        if (k.toLowerCase().trim() === title.toLowerCase().trim()) {
+          stock = overrides[k];
+          break;
+        }
+      }
+      if (!stock) return;
+
+      const isOut = (stock.status === 'out_of_stock' || (stock.qty !== undefined && Number(stock.qty) <= 0));
+      const isLow = (!isOut && (stock.status === 'low_stock' || (stock.qty !== undefined && Number(stock.qty) > 0 && Number(stock.qty) <= 5)));
+      const qtyNum = (stock.qty !== undefined) ? Number(stock.qty) : (isOut ? 0 : 25);
+
+      // Clean up previous dynamic stock badge
+      const prevBadge = card.querySelector('.jk-dynamic-stock-badge');
+      if (prevBadge) prevBadge.remove();
+
+      if (isOut) {
+        card.setAttribute('data-stock-status', 'out_of_stock');
+        const badge = document.createElement('span');
+        badge.className = 'jk-dynamic-stock-badge out-of-stock-badge';
+        badge.style.cssText = 'position: absolute; top: 10px; right: 10px; z-index: 12; background: #fee2e2; color: #dc2626; border: 1.5px solid #ef4444; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; box-shadow: 0 4px 10px rgba(220,38,38,0.25); display: flex; align-items: center; gap: 5px;';
+        badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> OUT OF STOCK';
+        card.style.position = 'relative';
+        card.appendChild(badge);
+
+        // Update Buy Buttons to Out of Stock
+        const buyBtn = card.querySelector('.buy-btn');
+        if (buyBtn) {
+          if (!buyBtn.dataset.originalHtml) buyBtn.dataset.originalHtml = buyBtn.innerHTML;
+          buyBtn.innerHTML = '<i class="fa-solid fa-ban"></i> Out of Stock';
+          buyBtn.style.background = '#94a3b8';
+          buyBtn.style.color = '#ffffff';
+          buyBtn.style.cursor = 'not-allowed';
+          buyBtn.disabled = true;
+        }
+        const cartBtn = card.querySelector('.btn-icon[title="Add to Cart"]');
+        if (cartBtn) {
+          cartBtn.disabled = true;
+          cartBtn.style.opacity = '0.45';
+          cartBtn.style.cursor = 'not-allowed';
+        }
+      } else if (isLow) {
+        card.setAttribute('data-stock-status', 'low_stock');
+        const badge = document.createElement('span');
+        badge.className = 'jk-dynamic-stock-badge low-stock-badge';
+        badge.style.cssText = 'position: absolute; top: 10px; right: 10px; z-index: 12; background: #fef3c7; color: #b45309; border: 1.5px solid #f59e0b; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; box-shadow: 0 4px 10px rgba(180,83,9,0.2); display: flex; align-items: center; gap: 5px;';
+        badge.innerHTML = `<i class="fa-solid fa-fire-flame-curved" style="color:#d97706;"></i> Only ${qtyNum} Left!`;
+        card.style.position = 'relative';
+        card.appendChild(badge);
+
+        const buyBtn = card.querySelector('.buy-btn');
+        if (buyBtn && buyBtn.disabled && buyBtn.dataset.originalHtml) {
+          buyBtn.innerHTML = buyBtn.dataset.originalHtml;
+          buyBtn.disabled = false;
+          buyBtn.style.cursor = 'pointer';
+        }
+        const cartBtn = card.querySelector('.btn-icon[title="Add to Cart"]');
+        if (cartBtn) {
+          cartBtn.disabled = false;
+          cartBtn.style.opacity = '1';
+          cartBtn.style.cursor = 'pointer';
+        }
+      } else {
+        card.setAttribute('data-stock-status', 'in_stock');
+        const buyBtn = card.querySelector('.buy-btn');
+        if (buyBtn && buyBtn.disabled && buyBtn.dataset.originalHtml) {
+          buyBtn.innerHTML = buyBtn.dataset.originalHtml;
+          buyBtn.disabled = false;
+          buyBtn.style.cursor = 'pointer';
+        }
+        const cartBtn = card.querySelector('.btn-icon[title="Add to Cart"]');
+        if (cartBtn) {
+          cartBtn.disabled = false;
+          cartBtn.style.opacity = '1';
+          cartBtn.style.cursor = 'pointer';
+        }
+      }
+    });
+  } catch(e) {
+    console.warn("Could not apply stock overrides:", e);
+  }
+}
+
 // Master Catalog
 const PRODUCT_CATALOG = {
   "Atomic Habits": {
@@ -942,6 +1105,10 @@ function showToast(message, linkUrl, linkText) {
 
 // --- CART ACTIONS ---
 function addToCart(name, price, type, category) {
+  if (typeof isProductOutOfStock === 'function' && isProductOutOfStock(name)) {
+    alert(`⚠️ Sorry! "${name}" is currently Out of Stock.\nThe seller is replenishing inventory shortly. You can contact us on WhatsApp for emergency book reservations.`);
+    return;
+  }
   const card = event && event.target ? event.target.closest('.product-card') : null;
   const catalog = PRODUCT_CATALOG[name] || {};
 
@@ -3603,6 +3770,10 @@ let activeRepeatDiscountAmount = 0;
 let activeRedeemedPrevOrderId = null;
 
 function openCheckout(name, price, type, category) {
+  if (typeof isProductOutOfStock === 'function' && isProductOutOfStock(name)) {
+    alert(`⚠️ Sorry! "${name}" is currently Out of Stock.\nThe seller is replenishing inventory shortly. You can contact us on WhatsApp for emergency book reservations.`);
+    return;
+  }
   isCartCheckoutSession = false;
   const effectivePrice = getCustomPrice(name, price);
   currentCheckoutProduct = name;
@@ -3664,20 +3835,78 @@ function getCheckoutDeliveryInfo() {
   const city = citySelect ? citySelect.value : '';
   const addr = addrInput ? addrInput.value : '';
 
-  const isSchoolOrder = (currentCheckoutCategory === 'school-books' || currentCheckoutCategory === 'copies' || 
-                         (currentCheckoutProduct && (currentCheckoutProduct.includes('Book Set') || currentCheckoutProduct.includes('Copies') || 
-                          currentCheckoutProduct.includes('Register') || currentCheckoutProduct.includes('Class '))));
-
-  if (!isSchoolOrder) {
-    return { fee: 0, html: '<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>' };
+  // Digital services / form filling do not incur shipping fee
+  if (currentCheckoutCategory === 'form' || currentCheckoutCategory === 'digital') {
+    return { fee: 0, codFee: 0, isFree: true, districtName: 'Digital', html: '<span style="color:#16a34a; font-weight:800;">FREE (₹0 • Digital Service)</span>' };
   }
 
-  const isPattan = (pin === '193121') || city.toLowerCase().includes('pattan') || addr.toLowerCase().includes('pattan');
-  if (isPattan) {
-    return { fee: 0, html: '<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • Pattan Hometown Delivery)</span>' };
+  // Load seller's district & PIN rates
+  const rates = (typeof getStoreDistrictRates === 'function') ? getStoreDistrictRates() : DEFAULT_JK_DISTRICT_RATES;
+  let matchedDistrict = null;
+
+  // 1. PIN-based direct lookup
+  if (pin && pin.length >= 5) {
+    for (const key in rates) {
+      const d = rates[key];
+      if (d && d.pins) {
+        const pinList = d.pins.split(',').map(p => p.trim());
+        if (pinList.includes(pin)) {
+          matchedDistrict = d;
+          break;
+        }
+      }
+    }
   }
 
-  return { fee: 50, html: '<span style="color:#b45309; font-weight:800;">₹50 (Kashmir Express Dispatch)</span>' };
+  // 2. City dropdown / address keyword lookup
+  if (!matchedDistrict) {
+    const searchTarget = (city + ' ' + addr).toLowerCase();
+    for (const key in rates) {
+      const d = rates[key];
+      const dName = (d.name || key).toLowerCase();
+      const simpleKey = key.toLowerCase();
+      if (searchTarget.includes(simpleKey) || searchTarget.includes(dName.split(' ')[0])) {
+        matchedDistrict = d;
+        break;
+      }
+    }
+  }
+
+  // 3. Fallback to default Baramulla if Pattan / local
+  if (!matchedDistrict) {
+    if (pin === '193121' || city.toLowerCase().includes('baramulla') || addr.toLowerCase().includes('pattan')) {
+      matchedDistrict = rates["Baramulla"] || { name: "Baramulla (Pattan Hub)", deliveryFee: 0, codFee: 0, isFree: true };
+    }
+  }
+
+  // 4. Fallback default
+  if (!matchedDistrict) {
+    matchedDistrict = {
+      name: "J&K Standard Express",
+      deliveryFee: 50,
+      codFee: 0,
+      isFree: false
+    };
+  }
+
+  const isFree = Boolean(matchedDistrict.isFree);
+  const deliveryFee = isFree ? 0 : (Number(matchedDistrict.deliveryFee) || 0);
+  const codFee = Number(matchedDistrict.codFee) || 0;
+
+  let feeHtml = '';
+  if (deliveryFee === 0) {
+    feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ${matchedDistrict.name.split('(')[0].trim()})</span>`;
+  } else {
+    feeHtml = `<span style="color:#b45309; font-weight:800;">₹${deliveryFee} (${matchedDistrict.name.split('(')[0].trim()} Dispatch)</span>`;
+  }
+
+  return {
+    fee: deliveryFee,
+    codFee: codFee,
+    isFree: (deliveryFee === 0),
+    districtName: matchedDistrict.name,
+    html: feeHtml
+  };
 }
 
 function setupCheckoutModal(name, price, category) {
@@ -4137,11 +4366,31 @@ function updateCheckoutInvoiceTotals() {
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
   const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
-  const totalAmount = finalPrice + deliveryFee + platformFee;
+
+  const methodRadio = document.querySelector('input[name="paymentMethod"]:checked');
+  const isCod = methodRadio ? (methodRadio.value === 'cod') : false;
+  const codFee = isCod ? (Number(deliveryInfo.codFee) || 0) : 0;
+
+  const totalAmount = finalPrice + deliveryFee + platformFee + codFee;
 
   const deliveryFeeEl = document.getElementById('invoiceDeliveryFee');
   if (deliveryFeeEl) {
     deliveryFeeEl.innerHTML = deliveryInfo.html;
+  }
+
+  const codRow = document.getElementById('invoiceCodRow');
+  const codFeeEl = document.getElementById('invoiceCodFee');
+  if (codRow && codFeeEl) {
+    if (isCod) {
+      codRow.style.display = 'flex';
+      if (codFee === 0) {
+        codFeeEl.innerHTML = '<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>';
+      } else {
+        codFeeEl.innerHTML = `<span style="color:#b45309; font-weight:800;">₹${codFee}</span>`;
+      }
+    } else {
+      codRow.style.display = 'none';
+    }
   }
 
   const discountRow = document.getElementById('invoiceRepeatDiscountRow');
@@ -4226,6 +4475,9 @@ function togglePaymentMethod(method) {
       note.innerHTML = '<i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Books • Priority Fast Dispatch';
     }
   }
+
+  // Instantly re-calculate totals and COD row
+  updateCheckoutInvoiceTotals();
 }
 
 function handlePaymentSubmit() {
@@ -4369,8 +4621,10 @@ function processOrder(txnId, customStatus) {
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
+  const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId === 'Cash on Delivery' || String(txnId).startsWith('COD') || String(txnId).toUpperCase().includes('CASH');
+  const codFee = isCod ? (Number(deliveryInfo.codFee) || 0) : 0;
   const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
-  const totalPaid = finalItemPrice + deliveryFee + platformFee;
+  const totalPaid = finalItemPrice + deliveryFee + platformFee + codFee;
 
   let schoolName = '';
   let studentClass = '';
@@ -4382,7 +4636,6 @@ function processOrder(txnId, customStatus) {
     finalProductDesc += ` [School: ${schoolName}${studentClass ? ', ' + studentClass : ''}]`;
   }
 
-  const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId === 'Cash on Delivery' || String(txnId).startsWith('COD') || String(txnId).toUpperCase().includes('CASH');
   const cleanTxnId = isCod ? 'Cash on Delivery' : txnId;
   const orderStatus = customStatus || (isCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed');
   const combinedProduct = `${finalProductDesc} | Total: ₹${totalPaid} | ${isCod ? 'Payment: Cash on Delivery (Pay at Doorstep)' : 'TXN: ' + cleanTxnId}`;
@@ -4411,10 +4664,35 @@ function processOrder(txnId, customStatus) {
     schoolName: schoolName || '',
     studentClass: studentClass || '',
     deliveryFee: deliveryFee,
+    codFee: codFee,
     amount: totalPaid,
     userEmail: orderEmail,
     status: orderStatus
   };
+
+  // Live stock auto-deduction
+  try {
+    const rawStock = localStorage.getItem('jk_stock_overrides');
+    if (rawStock) {
+      const stockMap = JSON.parse(rawStock);
+      Object.keys(stockMap).forEach(pName => {
+        if (finalProductDesc && finalProductDesc.toLowerCase().includes(pName.toLowerCase())) {
+          if (stockMap[pName].qty !== undefined && Number(stockMap[pName].qty) > 0) {
+            stockMap[pName].qty = Number(stockMap[pName].qty) - 1;
+            if (stockMap[pName].qty <= 0) {
+              stockMap[pName].status = 'out_of_stock';
+            } else if (stockMap[pName].qty <= 5) {
+              stockMap[pName].status = 'low_stock';
+            }
+          }
+        }
+      });
+      localStorage.setItem('jk_stock_overrides', JSON.stringify(stockMap));
+      if (typeof applyStockOverridesToStorefront === 'function') {
+        applyStockOverridesToStorefront();
+      }
+    }
+  } catch(e) {}
 
   if (activeRepeatDiscountAmount > 0 && activeRedeemedPrevOrderId) {
     orderRecord.discount = activeRepeatDiscountAmount;
@@ -9051,6 +9329,7 @@ function checkoutCalculatedBundle() {
 
 document.addEventListener('DOMContentLoaded', () => {
   applyCustomPricesToStorefront();
+  applyStockOverridesToStorefront();
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
   }

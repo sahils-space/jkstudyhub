@@ -435,8 +435,18 @@ function switchSellerView(viewName) {
     const pane = document.getElementById('view-pricing');
     if (pane) pane.style.display = 'block';
     renderSellerPricingTable();
-  } else if (viewName === 'catalog' || viewName === 'inventory') {
-    if (pageTitle) pageTitle.innerText = 'Catalog & Inventory';
+  } else if (viewName === 'inventory') {
+    if (pageTitle) pageTitle.innerText = 'Stock & Inventory Management';
+    const pane = document.getElementById('view-inventory');
+    if (pane) pane.style.display = 'block';
+    renderSellerInventoryTable();
+  } else if (viewName === 'delivery') {
+    if (pageTitle) pageTitle.innerText = 'District & PIN Delivery / COD Rates';
+    const pane = document.getElementById('view-delivery');
+    if (pane) pane.style.display = 'block';
+    renderDistrictRatesTable();
+  } else if (viewName === 'catalog') {
+    if (pageTitle) pageTitle.innerText = 'Catalog Uploads';
     const pane = document.getElementById('view-catalog');
     if (pane) pane.style.display = 'block';
   } else if (viewName === 'payments') {
@@ -1919,6 +1929,9 @@ function initSellerSupplierPanel() {
   renderSellerOrdersTable();
   calculateBusinessMetrics();
   calculatePaymentsSummary();
+  if (typeof updateLeadsBadgeCount === 'function') updateLeadsBadgeCount();
+  if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
+  if (typeof updateSellerDeliveryBadges === 'function') updateSellerDeliveryBadges();
   syncSellerWithGoogleSheets(false);
 }
 
@@ -2221,7 +2234,18 @@ function renderSellerPricingTable() {
         </td>
         <td>
           <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.name}</div>
-          ${isCustom ? '<span style="font-size: 10px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">Custom Rate Live</span>' : ''}
+          <div style="display: flex; gap: 4px; align-items: center; margin-top: 3px; flex-wrap: wrap;">
+            ${isCustom ? '<span style="font-size: 10px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">Custom Rate Live</span>' : ''}
+            ${(() => {
+              const stock = (typeof getSellerStockOverrides === 'function') ? (getSellerStockOverrides()[p.name] || { status: 'in_stock', qty: 25 }) : { status: 'in_stock', qty: 25 };
+              if (stock.status === 'out_of_stock' || (stock.qty !== undefined && Number(stock.qty) <= 0)) {
+                return '<span style="font-size: 10px; font-weight: 800; color: #dc2626; background: #fee2e2; padding: 1px 6px; border-radius: 4px;"><i class="fa-solid fa-circle-xmark"></i> Out of Stock</span>';
+              } else if (stock.status === 'low_stock' || (stock.qty !== undefined && Number(stock.qty) > 0 && Number(stock.qty) <= 5)) {
+                return `<span style="font-size: 10px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 1px 6px; border-radius: 4px;"><i class="fa-solid fa-triangle-exclamation"></i> Only ${stock.qty} left</span>`;
+              }
+              return '';
+            })()}
+          </div>
         </td>
         <td>
           <span style="font-size: 11.5px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">${p.categoryLabel || p.category}</span>
@@ -2315,4 +2339,616 @@ function resetAllSellerPricesToDefault() {
     renderSellerPricingTable();
   }
 }
+
+// =========================================================
+// 10. STOCK & INVENTORY MANAGEMENT ENGINE
+// =========================================================
+
+function getSellerStockOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem('jk_stock_overrides') || '{}');
+  } catch(e) {
+    return {};
+  }
+}
+
+function updateSellerInventoryBadges() {
+  const overrides = getSellerStockOverrides();
+  const products = getAllSellerPricingProducts();
+  let outCount = 0;
+  let lowCount = 0;
+  let inCount = 0;
+
+  products.forEach(p => {
+    const s = overrides[p.name] || { status: 'in_stock', qty: 25 };
+    if (s.status === 'out_of_stock' || (s.qty !== undefined && Number(s.qty) <= 0)) {
+      outCount++;
+    } else if (s.status === 'low_stock' || (s.qty !== undefined && Number(s.qty) > 0 && Number(s.qty) <= 5)) {
+      lowCount++;
+    } else {
+      inCount++;
+    }
+  });
+
+  const badgeEl = document.getElementById('outOfStockBadgeCount');
+  if (badgeEl) {
+    badgeEl.innerText = `${outCount} Out`;
+    badgeEl.style.background = outCount > 0 ? '#fee2e2' : '#e0f2fe';
+    badgeEl.style.color = outCount > 0 ? '#dc2626' : '#0369a1';
+  }
+
+  const totEl = document.getElementById('inventoryTotalCount');
+  if (totEl) totEl.innerText = products.length;
+  const inEl = document.getElementById('inventoryInStockCount');
+  if (inEl) inEl.innerText = inCount;
+  const lowEl = document.getElementById('inventoryLowStockCount');
+  if (lowEl) lowEl.innerText = lowCount;
+  const outEl = document.getElementById('inventoryOutOfStockCount');
+  if (outEl) outEl.innerText = outCount;
+}
+
+function renderSellerInventoryTable() {
+  const tbody = document.getElementById('sellerInventoryTableBody');
+  if (!tbody) return;
+
+  const products = getAllSellerPricingProducts();
+  const stockOverrides = getSellerStockOverrides();
+  const priceOverrides = getSellerCustomPriceOverrides();
+
+  updateSellerInventoryBadges();
+
+  const searchQuery = String(document.getElementById('inventorySearchInput') ? document.getElementById('inventorySearchInput').value : '').toLowerCase().trim();
+  const catFilter = document.getElementById('inventoryCategoryFilter') ? document.getElementById('inventoryCategoryFilter').value : 'all';
+  const statusFilter = document.getElementById('inventoryStatusFilter') ? document.getElementById('inventoryStatusFilter').value : 'all';
+
+  let html = '';
+  products.forEach((p, index) => {
+    if (catFilter !== 'all' && p.category !== catFilter) return;
+    if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return;
+
+    const stock = stockOverrides[p.name] || { status: 'in_stock', qty: 25 };
+    const currentPrice = (priceOverrides[p.name] !== undefined) ? Number(priceOverrides[p.name]) : p.defaultPrice;
+
+    const isOut = (stock.status === 'out_of_stock' || (stock.qty !== undefined && Number(stock.qty) <= 0));
+    const isLow = (!isOut && (stock.status === 'low_stock' || (stock.qty !== undefined && Number(stock.qty) > 0 && Number(stock.qty) <= 5)));
+    const actualStatus = isOut ? 'out_of_stock' : (isLow ? 'low_stock' : 'in_stock');
+    const currentQty = (stock.qty !== undefined) ? Number(stock.qty) : (isOut ? 0 : 25);
+
+    if (statusFilter !== 'all' && actualStatus !== statusFilter) return;
+
+    const safeEscapedName = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    // Live preview badge
+    let badgeHtml = '';
+    if (isOut) {
+      badgeHtml = `<span style="font-size: 11px; font-weight: 800; color: #dc2626; background: #fee2e2; border: 1px solid #fca5a5; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-xmark"></i> OUT OF STOCK</span>`;
+    } else if (isLow) {
+      badgeHtml = `<span style="font-size: 11px; font-weight: 800; color: #b45309; background: #fef3c7; border: 1px solid #fcd34d; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-triangle-exclamation"></i> Only ${currentQty} Left!</span>`;
+    } else {
+      badgeHtml = `<span style="font-size: 11px; font-weight: 800; color: #16a34a; background: #dcfce7; border: 1px solid #86efac; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> In Stock (${currentQty})</span>`;
+    }
+
+    const rowBg = isOut ? 'background: #fef2f2;' : (isLow ? 'background: #fffbeb;' : '');
+
+    html += `
+      <tr style="${rowBg}">
+        <td>
+          <img src="${p.image}" alt="${p.name}" onerror="this.src='images/logo-app.png'" style="width: 38px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">
+        </td>
+        <td>
+          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.name}</div>
+          <div style="font-size: 11.5px; color: #64748b;">${p.categoryLabel || p.category} &bull; ₹${currentPrice}</div>
+        </td>
+        <td>
+          <span style="font-size: 11.5px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">${p.categoryLabel || p.category}</span>
+        </td>
+        <td>
+          <select id="seller-stock-status-${index}" style="padding: 5px 8px; border: 1.5px solid ${isOut ? '#ef4444' : (isLow ? '#f59e0b' : '#22c55e')}; border-radius: 6px; font-weight: 700; font-size: 12.5px; background: white; color: #0f172a; width: 100%;">
+            <option value="in_stock" ${actualStatus === 'in_stock' ? 'selected' : ''}>🟢 In Stock</option>
+            <option value="low_stock" ${actualStatus === 'low_stock' ? 'selected' : ''}>🟡 Low Stock</option>
+            <option value="out_of_stock" ${actualStatus === 'out_of_stock' ? 'selected' : ''}>🔴 Out of Stock</option>
+          </select>
+        </td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <input type="number" id="seller-stock-qty-${index}" value="${currentQty}" min="0" step="1"
+                   style="width: 75px; padding: 5px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 13.5px; color: #0f172a;">
+            <span style="font-size: 11px; color: #64748b; font-weight: 600;">units</span>
+          </div>
+        </td>
+        <td style="text-align: center;">
+          ${badgeHtml}
+        </td>
+        <td style="text-align: center;">
+          <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn-hub-primary" onclick="saveSellerProductStock('${safeEscapedName}', ${index})" style="padding: 5px 10px; font-size: 12px; font-weight: 700; border-radius: 6px;">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+            ${isOut ? `
+              <button type="button" class="btn-hub-secondary" onclick="quickSetStockStatus('${safeEscapedName}', 'in_stock', 25)" title="Quickly restore to 25 in stock" style="padding: 4px 8px; font-size: 11px; color: #16a34a; border-color: #86efac; background: #f0fdf4;">
+                <i class="fa-solid fa-rotate-left"></i> Restock
+              </button>
+            ` : `
+              <button type="button" class="btn-hub-secondary" onclick="quickSetStockStatus('${safeEscapedName}', 'out_of_stock', 0)" title="Quickly mark Out of Stock" style="padding: 4px 8px; font-size: 11px; color: #dc2626; border-color: #fecaca; background: #fef2f2;">
+                <i class="fa-solid fa-ban"></i> Mark Out
+              </button>
+            `}
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html || '<tr><td colspan="7" style="text-align: center; padding: 24px; color: #64748b;">No products matched your inventory filter.</td></tr>';
+}
+
+function saveSellerProductStock(productName, index) {
+  const statusSelect = document.getElementById(`seller-stock-status-${index}`);
+  const qtyInput = document.getElementById(`seller-stock-qty-${index}`);
+  if (!statusSelect || !qtyInput) return;
+
+  let status = statusSelect.value;
+  let qty = Number(qtyInput.value);
+  if (isNaN(qty) || qty < 0) qty = 0;
+
+  // Auto-align status if qty is 0
+  if (qty === 0) {
+    status = 'out_of_stock';
+  } else if (status === 'out_of_stock' && qty > 0) {
+    status = qty <= 5 ? 'low_stock' : 'in_stock';
+  }
+
+  const overrides = getSellerStockOverrides();
+  overrides[productName] = {
+    status: status,
+    qty: qty,
+    updatedAt: Date.now()
+  };
+  localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
+
+  const msgEl = document.getElementById('inventoryFeedbackMessage');
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    const statusLabel = status === 'out_of_stock' ? '🔴 Out of Stock (Sold Out)' : (status === 'low_stock' ? `🟡 Low Stock (${qty} left)` : `🟢 In Stock (${qty} left)`);
+    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved! "${productName}" is now <strong>${statusLabel}</strong>.`;
+    setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(`Stock updated: ${productName} (${status})`);
+  }
+
+  renderSellerInventoryTable();
+}
+
+function quickSetStockStatus(productName, status, qty) {
+  const overrides = getSellerStockOverrides();
+  overrides[productName] = {
+    status: status,
+    qty: qty,
+    updatedAt: Date.now()
+  };
+  localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
+  if (typeof showToast === 'function') {
+    showToast(`✅ "${productName}" is now ${status === 'out_of_stock' ? 'Out of Stock' : 'In Stock (' + qty + ')'}!`);
+  }
+  renderSellerInventoryTable();
+}
+
+function bulkRestockAll(units) {
+  if (confirm(`Restock all items to ${units} units (In Stock)?`)) {
+    const products = getAllSellerPricingProducts();
+    const overrides = getSellerStockOverrides();
+    products.forEach(p => {
+      overrides[p.name] = { status: 'in_stock', qty: units, updatedAt: Date.now() };
+    });
+    localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
+    if (typeof showToast === 'function') {
+      showToast(`All products restocked to ${units} units.`);
+    }
+    renderSellerInventoryTable();
+  }
+}
+
+function resetAllSellerStockToDefault() {
+  if (confirm("Reset all stock overrides to defaults? (All items will return to In Stock 25 units).")) {
+    localStorage.removeItem('jk_stock_overrides');
+    if (typeof showToast === 'function') {
+      showToast("All inventory levels reset to default.");
+    }
+    renderSellerInventoryTable();
+  }
+}
+
+// =========================================================
+// 11. DISTRICT & PIN CODE DELIVERY & COD ENGINE (ALL 20 J&K DISTRICTS)
+// =========================================================
+
+const DEFAULT_JK_DISTRICT_RATES = {
+  // Kashmir Division (10 Districts)
+  "Baramulla": {
+    name: "Baramulla (Pattan/Sopore/Baramulla)",
+    division: "Kashmir",
+    deliveryFee: 0,
+    codFee: 0,
+    isFree: true,
+    pins: "193121, 193201, 193101, 193103, 193108, 193109, 193401, 193402, 193403, 193404"
+  },
+  "Srinagar": {
+    name: "Srinagar",
+    division: "Kashmir",
+    deliveryFee: 40,
+    codFee: 0,
+    isFree: false,
+    pins: "190001, 190002, 190003, 190004, 190005, 190006, 190008, 190009, 190010, 190011, 190014, 190015, 190018, 190020"
+  },
+  "Budgam": {
+    name: "Budgam",
+    division: "Kashmir",
+    deliveryFee: 40,
+    codFee: 0,
+    isFree: false,
+    pins: "191111, 191112, 191113, 191114, 190017"
+  },
+  "Ganderbal": {
+    name: "Ganderbal",
+    division: "Kashmir",
+    deliveryFee: 45,
+    codFee: 0,
+    isFree: false,
+    pins: "191201, 191202, 191131"
+  },
+  "Bandipora": {
+    name: "Bandipora",
+    division: "Kashmir",
+    deliveryFee: 45,
+    codFee: 0,
+    isFree: false,
+    pins: "193501, 193502, 193504, 193503"
+  },
+  "Pulwama": {
+    name: "Pulwama",
+    division: "Kashmir",
+    deliveryFee: 50,
+    codFee: 0,
+    isFree: false,
+    pins: "192301, 192121, 192122, 192123, 192302"
+  },
+  "Anantnag": {
+    name: "Anantnag (Islamabad)",
+    division: "Kashmir",
+    deliveryFee: 50,
+    codFee: 0,
+    isFree: false,
+    pins: "192101, 192124, 192201, 192129, 192210"
+  },
+  "Kulgam": {
+    name: "Kulgam",
+    division: "Kashmir",
+    deliveryFee: 50,
+    codFee: 0,
+    isFree: false,
+    pins: "192231, 192232, 192233"
+  },
+  "Shopian": {
+    name: "Shopian",
+    division: "Kashmir",
+    deliveryFee: 50,
+    codFee: 0,
+    isFree: false,
+    pins: "192303, 192305, 192304"
+  },
+  "Kupwara": {
+    name: "Kupwara",
+    division: "Kashmir",
+    deliveryFee: 55,
+    codFee: 0,
+    isFree: false,
+    pins: "193222, 193224, 193225, 193223, 193124"
+  },
+
+  // Jammu Division (10 Districts)
+  "Jammu": {
+    name: "Jammu",
+    division: "Jammu",
+    deliveryFee: 70,
+    codFee: 0,
+    isFree: false,
+    pins: "180001, 180002, 180004, 180006, 180012, 180015, 181121"
+  },
+  "Samba": {
+    name: "Samba",
+    division: "Jammu",
+    deliveryFee: 75,
+    codFee: 0,
+    isFree: false,
+    pins: "184121, 184141, 181133"
+  },
+  "Kathua": {
+    name: "Kathua",
+    division: "Jammu",
+    deliveryFee: 80,
+    codFee: 0,
+    isFree: false,
+    pins: "184101, 184102, 184104, 184142"
+  },
+  "Udhampur": {
+    name: "Udhampur",
+    division: "Jammu",
+    deliveryFee: 75,
+    codFee: 0,
+    isFree: false,
+    pins: "182101, 182121, 182124"
+  },
+  "Reasi": {
+    name: "Reasi (Katra)",
+    division: "Jammu",
+    deliveryFee: 80,
+    codFee: 0,
+    isFree: false,
+    pins: "182311, 182301"
+  },
+  "Ramban": {
+    name: "Ramban (Banihal)",
+    division: "Jammu",
+    deliveryFee: 70,
+    codFee: 0,
+    isFree: false,
+    pins: "182144, 182146, 182148"
+  },
+  "Doda": {
+    name: "Doda (Bhaderwah)",
+    division: "Jammu",
+    deliveryFee: 85,
+    codFee: 0,
+    isFree: false,
+    pins: "182202, 182601, 182201"
+  },
+  "Kishtwar": {
+    name: "Kishtwar",
+    division: "Jammu",
+    deliveryFee: 90,
+    codFee: 0,
+    isFree: false,
+    pins: "182204, 182205"
+  },
+  "Rajouri": {
+    name: "Rajouri",
+    division: "Jammu",
+    deliveryFee: 85,
+    codFee: 0,
+    isFree: false,
+    pins: "185131, 185132, 185201"
+  },
+  "Poonch": {
+    name: "Poonch",
+    division: "Jammu",
+    deliveryFee: 90,
+    codFee: 0,
+    isFree: false,
+    pins: "185101, 185121, 185102"
+  }
+};
+
+function getSellerDistrictRates() {
+  try {
+    const raw = localStorage.getItem('jk_district_rates');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return Object.assign({}, DEFAULT_JK_DISTRICT_RATES, parsed);
+      }
+    }
+  } catch(e) {}
+  return Object.assign({}, DEFAULT_JK_DISTRICT_RATES);
+}
+
+function updateSellerDeliveryBadges() {
+  const rates = getSellerDistrictRates();
+  const keys = Object.keys(rates);
+  let freeCount = 0;
+  let codOverrideCount = 0;
+
+  keys.forEach(k => {
+    if (rates[k].isFree) freeCount++;
+    if (Number(rates[k].codFee) > 0) codOverrideCount++;
+  });
+
+  const freeBadge = document.getElementById('freeDistrictsBadgeCount');
+  if (freeBadge) {
+    freeBadge.innerText = `${freeCount} FREE`;
+    freeBadge.style.background = freeCount > 0 ? '#dcfce7' : '#f1f5f9';
+    freeBadge.style.color = freeCount > 0 ? '#16a34a' : '#64748b';
+  }
+
+  const freeDistCountEl = document.getElementById('deliveryFreeDistrictsCount');
+  if (freeDistCountEl) freeDistCountEl.innerText = freeCount;
+  const codCountEl = document.getElementById('deliveryCodOverridesCount');
+  if (codCountEl) codCountEl.innerText = codOverrideCount;
+  const totDistEl = document.getElementById('deliveryTotalDistrictsCount');
+  if (totDistEl) totDistEl.innerText = keys.length;
+}
+
+function renderDistrictRatesTable() {
+  const tbody = document.getElementById('sellerDeliveryTableBody');
+  if (!tbody) return;
+
+  const rates = getSellerDistrictRates();
+  updateSellerDeliveryBadges();
+
+  const searchQuery = String(document.getElementById('deliverySearchInput') ? document.getElementById('deliverySearchInput').value : '').toLowerCase().trim();
+  const divFilter = document.getElementById('deliveryDivisionFilter') ? document.getElementById('deliveryDivisionFilter').value : 'all';
+  const statusFilter = document.getElementById('deliveryStatusFilter') ? document.getElementById('deliveryStatusFilter').value : 'all';
+
+  let html = '';
+  const keys = Object.keys(rates);
+
+  keys.forEach((key, index) => {
+    const item = rates[key];
+    if (divFilter !== 'all' && item.division !== divFilter) return;
+    if (statusFilter === 'free' && !item.isFree) return;
+    if (statusFilter === 'paid' && item.isFree) return;
+
+    if (searchQuery) {
+      const matchName = item.name.toLowerCase().includes(searchQuery) || key.toLowerCase().includes(searchQuery);
+      const matchPins = (item.pins || '').toLowerCase().includes(searchQuery);
+      if (!matchName && !matchPins) return;
+    }
+
+    const isFree = Boolean(item.isFree);
+    const delFee = isFree ? 0 : Number(item.deliveryFee || 0);
+    const codFee = Number(item.codFee || 0);
+    const safeEscapedKey = key.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    html += `
+      <tr style="${isFree ? 'background: #f0fdf4;' : ''}">
+        <td>
+          <div style="font-weight: 800; font-size: 14px; color: #0f172a;">${item.name}</div>
+          <span style="font-size: 11px; font-weight: 700; color: ${item.division === 'Kashmir' ? '#0284c7' : '#9333ea'}; background: ${item.division === 'Kashmir' ? '#f0f9ff' : '#faf5ff'}; padding: 1px 6px; border-radius: 4px;">
+            ${item.division} Division
+          </span>
+          ${isFree ? '<span style="font-size: 10.5px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 4px; margin-left: 4px;">FREE Delivery Active</span>' : ''}
+        </td>
+        <td>
+          <input type="text" id="seller-district-pins-${index}" value="${item.pins || ''}" title="Comma-separated PIN codes for this district"
+                 style="width: 100%; min-width: 180px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; color: #334155; font-family: monospace;">
+        </td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 14px; font-weight: 800; color: #0f172a;">₹</span>
+            <input type="number" id="seller-delivery-fee-${index}" value="${delFee}" min="0" step="5"
+                   ${isFree ? 'disabled style="width: 75px; padding: 5px 8px; border: 1.5px solid #86efac; border-radius: 6px; font-weight: 800; font-size: 13.5px; background: #f0fdf4; color: #16a34a;"' : 'style="width: 75px; padding: 5px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 13.5px; color: #0f172a;"'}>
+          </div>
+        </td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 14px; font-weight: 800; color: #0f172a;">₹</span>
+            <input type="number" id="seller-cod-fee-${index}" value="${codFee}" min="0" step="5"
+                   style="width: 75px; padding: 5px 8px; border: 1.5px solid ${codFee > 0 ? '#3b82f6' : '#cbd5e1'}; border-radius: 6px; font-weight: 800; font-size: 13.5px; color: #0f172a;">
+          </div>
+        </td>
+        <td style="text-align: center;">
+          <button type="button" onclick="toggleDistrictFreeDelivery('${safeEscapedKey}')" 
+                  style="cursor: pointer; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 800; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; ${isFree ? 'background: #16a34a; color: white; border: 1.5px solid #15803d; box-shadow: 0 2px 6px rgba(22,163,74,0.3);' : 'background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1;'}">
+            ${isFree ? '<i class="fa-solid fa-gift"></i> FREE ACTIVE (₹0)' : '<i class="fa-solid fa-tag"></i> Set FREE'}
+          </button>
+        </td>
+        <td style="text-align: center;">
+          <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+            <button type="button" class="btn-hub-primary" onclick="saveDistrictRate('${safeEscapedKey}', ${index})" style="padding: 5px 10px; font-size: 12px; font-weight: 700; border-radius: 6px;">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+            <button type="button" onclick="resetSingleDistrictRate('${safeEscapedKey}')" title="Reset district to factory default rate" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 11px; text-decoration: underline; padding: 2px;">
+              Reset
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html || '<tr><td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">No districts matched your search.</td></tr>';
+}
+
+function saveDistrictRate(districtKey, index) {
+  const feeInput = document.getElementById(`seller-delivery-fee-${index}`);
+  const codInput = document.getElementById(`seller-cod-fee-${index}`);
+  const pinsInput = document.getElementById(`seller-district-pins-${index}`);
+  if (!feeInput || !codInput) return;
+
+  const rates = getSellerDistrictRates();
+  if (!rates[districtKey]) return;
+
+  const newFee = Number(feeInput.value);
+  const newCod = Number(codInput.value);
+  const newPins = pinsInput ? pinsInput.value.trim() : (rates[districtKey].pins || '');
+
+  rates[districtKey].deliveryFee = isNaN(newFee) || newFee < 0 ? 0 : newFee;
+  rates[districtKey].codFee = isNaN(newCod) || newCod < 0 ? 0 : newCod;
+  rates[districtKey].pins = newPins;
+  if (newFee > 0 && rates[districtKey].isFree) {
+    rates[districtKey].isFree = false;
+  }
+
+  localStorage.setItem('jk_district_rates', JSON.stringify(rates));
+
+  const msgEl = document.getElementById('deliveryFeedbackMessage');
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved! <strong>${rates[districtKey].name}</strong>: Delivery ₹${rates[districtKey].deliveryFee}, COD Fee ₹${rates[districtKey].codFee}. Live on checkout.`;
+    setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(`✅ Rates saved for ${rates[districtKey].name}`);
+  }
+
+  renderDistrictRatesTable();
+}
+
+function toggleDistrictFreeDelivery(districtKey) {
+  const rates = getSellerDistrictRates();
+  if (!rates[districtKey]) return;
+
+  const current = Boolean(rates[districtKey].isFree);
+  rates[districtKey].isFree = !current;
+  if (!current) {
+    rates[districtKey]._prevFee = rates[districtKey].deliveryFee;
+    rates[districtKey].deliveryFee = 0;
+  } else {
+    rates[districtKey].deliveryFee = rates[districtKey]._prevFee || 40;
+  }
+
+  localStorage.setItem('jk_district_rates', JSON.stringify(rates));
+
+  if (typeof showToast === 'function') {
+    showToast(`District ${rates[districtKey].name}: Delivery is now ${rates[districtKey].isFree ? 'FREE (₹0)' : '₹' + rates[districtKey].deliveryFee}`);
+  }
+
+  renderDistrictRatesTable();
+}
+
+function setAllDistrictsFree(makeFree) {
+  const rates = getSellerDistrictRates();
+  Object.keys(rates).forEach(k => {
+    rates[k].isFree = makeFree;
+    if (makeFree) {
+      rates[k]._prevFee = rates[k].deliveryFee || 50;
+      rates[k].deliveryFee = 0;
+    } else {
+      rates[k].deliveryFee = rates[k]._prevFee || (rates[k].division === 'Kashmir' ? 45 : 75);
+    }
+  });
+
+  localStorage.setItem('jk_district_rates', JSON.stringify(rates));
+
+  if (typeof showToast === 'function') {
+    showToast(makeFree ? "🎉 FREE Delivery enabled for ALL 20 J&K districts!" : "Standard delivery charges applied to all districts.");
+  }
+
+  renderDistrictRatesTable();
+}
+
+function resetSingleDistrictRate(districtKey) {
+  const rates = getSellerDistrictRates();
+  if (DEFAULT_JK_DISTRICT_RATES[districtKey]) {
+    rates[districtKey] = Object.assign({}, DEFAULT_JK_DISTRICT_RATES[districtKey]);
+    localStorage.setItem('jk_district_rates', JSON.stringify(rates));
+    if (typeof showToast === 'function') {
+      showToast(`Restored default rate for ${districtKey}`);
+    }
+    renderDistrictRatesTable();
+  }
+}
+
+function resetAllDistrictRatesToDefault() {
+  if (confirm("Reset delivery rates for all 20 J&K districts to factory defaults?")) {
+    localStorage.removeItem('jk_district_rates');
+    if (typeof showToast === 'function') {
+      showToast("All district delivery and COD rates reset to defaults.");
+    }
+    renderDistrictRatesTable();
+  }
+}
+
 
