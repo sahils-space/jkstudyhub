@@ -2572,7 +2572,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 0,
     codFee: 0,
     isFree: true,
-    pins: "193121, 193201, 193101, 193103, 193108, 193109, 193401, 193402, 193403, 193404"
+    pins: "193101, 193103, 193108, 193109, 193121, 193122, 193123, 193129, 193141, 193161, 193201, 193202, 193301, 193303, 193401, 193402, 193403, 193404"
   },
   "Srinagar": {
     name: "Srinagar",
@@ -2580,7 +2580,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 40,
     codFee: 0,
     isFree: false,
-    pins: "190001, 190002, 190003, 190004, 190005, 190006, 190008, 190009, 190010, 190011, 190014, 190015, 190018, 190020"
+    pins: "190001, 190002, 190003, 190004, 190005, 190006, 190007, 190008, 190009, 190010, 190011, 190012, 190014, 190015, 190017, 190018, 190019, 190020, 190021, 190023, 190024, 190025"
   },
   "Budgam": {
     name: "Budgam",
@@ -2588,7 +2588,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 40,
     codFee: 0,
     isFree: false,
-    pins: "191111, 191112, 191113, 191114, 190017"
+    pins: "191111, 191112, 191113, 191114, 191115, 191116, 191121, 193401, 193411, 190015, 190007, 190021"
   },
   "Ganderbal": {
     name: "Ganderbal",
@@ -2596,7 +2596,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 45,
     codFee: 0,
     isFree: false,
-    pins: "191201, 191202, 191131"
+    pins: "191201, 191202, 191131, 191203, 191204"
   },
   "Bandipora": {
     name: "Bandipora",
@@ -2604,7 +2604,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 45,
     codFee: 0,
     isFree: false,
-    pins: "193501, 193502, 193504, 193503"
+    pins: "193501, 193502, 193503, 193504, 193505"
   },
   "Pulwama": {
     name: "Pulwama",
@@ -2612,7 +2612,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 50,
     codFee: 0,
     isFree: false,
-    pins: "192301, 192121, 192122, 192123, 192302"
+    pins: "192301, 192121, 192122, 192123, 192302, 192305, 192306, 192307, 191112"
   },
   "Anantnag": {
     name: "Anantnag (Islamabad)",
@@ -2620,7 +2620,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 50,
     codFee: 0,
     isFree: false,
-    pins: "192101, 192124, 192201, 192129, 192210"
+    pins: "192101, 192102, 192122, 192124, 192125, 192126, 192129, 192201, 192202, 192210, 192211, 192244, 192401"
   },
   "Kulgam": {
     name: "Kulgam",
@@ -2628,7 +2628,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 50,
     codFee: 0,
     isFree: false,
-    pins: "192231, 192232, 192233"
+    pins: "192231, 192232, 192233, 192234, 192235"
   },
   "Shopian": {
     name: "Shopian",
@@ -2636,7 +2636,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 50,
     codFee: 0,
     isFree: false,
-    pins: "192303, 192305, 192304"
+    pins: "192303, 192304, 192305, 192306, 192124"
   },
   "Kupwara": {
     name: "Kupwara",
@@ -2644,7 +2644,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 55,
     codFee: 0,
     isFree: false,
-    pins: "193222, 193224, 193225, 193223, 193124"
+    pins: "193222, 193221, 193223, 193224, 193225, 193124, 193153, 193228, 193301, 193302, 193303"
   },
 
   // Jammu Division (10 Districts)
@@ -2654,7 +2654,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 70,
     codFee: 0,
     isFree: false,
-    pins: "180001, 180002, 180004, 180006, 180012, 180015, 181121"
+    pins: "180001, 180002, 180003, 180004, 180005, 180006, 180007, 180008, 180009, 180010, 180011, 180012, 180015, 180016, 180017, 180018, 181101, 181102, 181121, 181201, 181205, 181206"
   },
   "Samba": {
     name: "Samba",
@@ -2662,7 +2662,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 75,
     codFee: 0,
     isFree: false,
-    pins: "184121, 184141, 181133"
+    pins: "184121, 184141, 181133, 181141, 181143, 184120"
   },
   "Kathua": {
     name: "Kathua",
@@ -2670,7 +2670,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 80,
     codFee: 0,
     isFree: false,
-    pins: "184101, 184102, 184104, 184142"
+    pins: "184101, 184102, 184104, 184121, 184133, 184141, 184142, 184143, 184151, 184201, 184202, 184203, 184206"
   },
   "Udhampur": {
     name: "Udhampur",
@@ -2678,7 +2678,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 75,
     codFee: 0,
     isFree: false,
-    pins: "182101, 182121, 182124"
+    pins: "182101, 182104, 182108, 182118, 182121, 182122, 182124, 182125, 182126, 182141"
   },
   "Reasi": {
     name: "Reasi (Katra)",
@@ -2686,7 +2686,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 80,
     codFee: 0,
     isFree: false,
-    pins: "182311, 182301"
+    pins: "182311, 182301, 182312, 182313, 182315, 185203"
   },
   "Ramban": {
     name: "Ramban (Banihal)",
@@ -2694,7 +2694,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 70,
     codFee: 0,
     isFree: false,
-    pins: "182144, 182146, 182148"
+    pins: "182144, 182146, 182148, 182143, 182145, 182147"
   },
   "Doda": {
     name: "Doda (Bhaderwah)",
@@ -2702,7 +2702,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 85,
     codFee: 0,
     isFree: false,
-    pins: "182202, 182601, 182201"
+    pins: "182202, 182601, 182201, 182203, 182205, 182221, 182222"
   },
   "Kishtwar": {
     name: "Kishtwar",
@@ -2710,7 +2710,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 90,
     codFee: 0,
     isFree: false,
-    pins: "182204, 182205"
+    pins: "182204, 182205, 182206, 182207, 182132"
   },
   "Rajouri": {
     name: "Rajouri",
@@ -2718,7 +2718,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 85,
     codFee: 0,
     isFree: false,
-    pins: "185131, 185132, 185201"
+    pins: "185131, 185132, 185135, 185151, 185153, 185201, 185202, 185211, 185212, 185233"
   },
   "Poonch": {
     name: "Poonch",
@@ -2726,7 +2726,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     deliveryFee: 90,
     codFee: 0,
     isFree: false,
-    pins: "185101, 185121, 185102"
+    pins: "185101, 185102, 185111, 185121, 185211"
   }
 };
 
