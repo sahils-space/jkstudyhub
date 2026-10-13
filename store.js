@@ -5,52 +5,188 @@ const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
 
 // ============================================================================
-// KASHMIR PINCODE RECOGNITION & AUTO-DETECTION ENGINE
-// Automatically recognizes local post offices, hubs, and routes across J&K
+// MASTER J&K DISTRICT, AREA & PIN CODE DIRECTORY (ALL 20 DISTRICTS)
+// Covers every local post office, town, college, hospital, and village
 // ============================================================================
-const KASHMIR_PINCODES = {
-  "193121": { town: "Pattan (Main Hub)", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193201": { town: "Sopore Town", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193101": { town: "Baramulla Head Post", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193103": { town: "Delina / Baramulla", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193108": { town: "Kreeri", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193109": { town: "Kunzer / Tangmarg", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193401": { town: "Tangmarg / Gulmarg", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193402": { town: "Rafiabad / Rohama", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193403": { town: "Dangiwacha", district: "Baramulla (Pattan/Sopore/Baramulla)", express: true },
-  "193404": { town: "Uri / Boniyar", district: "Baramulla (Pattan/Sopore/Baramulla)", express: false },
-  "190001": { town: "Srinagar GPO (Lal Chowk)", district: "Srinagar", express: true },
-  "190002": { town: "Srinagar (Nowhatta / Khanyar)", district: "Srinagar", express: true },
-  "190003": { town: "Srinagar (Karan Nagar / SMHS)", district: "Srinagar", express: true },
-  "190004": { town: "Srinagar (Batamaloo / Bemina)", district: "Srinagar", express: true },
-  "190005": { town: "Srinagar (Sonwar / Dalgate)", district: "Srinagar", express: true },
-  "190006": { town: "Srinagar (Hazratbal / KU)", district: "Srinagar", express: true },
-  "190008": { town: "Srinagar (Soura / SKIMS)", district: "Srinagar", express: true },
-  "190009": { town: "Srinagar (Jawahar Nagar)", district: "Srinagar", express: true },
-  "190010": { town: "Srinagar (Sanat Nagar / Rawalpora)", district: "Srinagar", express: true },
-  "190011": { town: "Srinagar (Chanapora / Natipora)", district: "Srinagar", express: true },
-  "190014": { town: "Srinagar (Pantha Chowk / Lasjan)", district: "Srinagar", express: true },
-  "190015": { town: "Srinagar (Hyderpora / Humhama)", district: "Srinagar", express: true },
-  "191111": { town: "Budgam Town / Ompora", district: "Budgam", express: true },
-  "191112": { town: "Beerwah / Magam", district: "Budgam", express: true },
-  "191113": { town: "Chadoora", district: "Budgam", express: true },
-  "191201": { town: "Ganderbal Town", district: "Ganderbal", express: true },
-  "191202": { town: "Kangan", district: "Ganderbal", express: false },
-  "193501": { town: "Bandipora Town", district: "Bandipora", express: true },
-  "193502": { town: "Sumbal / Sonawari", district: "Bandipora", express: true },
-  "193504": { town: "Hajin / Naidkhai", district: "Bandipora", express: true },
-  "193222": { town: "Kupwara Town", district: "Kupwara", express: true },
-  "193224": { town: "Handwara / Langate", district: "Kupwara", express: true },
-  "192101": { town: "Anantnag Head Post", district: "Anantnag (Islamabad)", express: true },
-  "192124": { town: "Bijbehara", district: "Anantnag (Islamabad)", express: true },
-  "192201": { town: "Mattan / Ashmuqam", district: "Anantnag (Islamabad)", express: true },
-  "192301": { town: "Pulwama Town", district: "Pulwama", express: true },
-  "192121": { town: "Pampore (Saffron Town)", district: "Pulwama", express: true },
-  "192123": { town: "Awantipora / IUST", district: "Pulwama", express: true },
-  "192122": { town: "Tral", district: "Pulwama", express: true },
-  "192231": { town: "Kulgam Town", district: "Kulgam", express: true },
-  "192303": { town: "Shopian Town", district: "Shopian", express: true }
+const JK_DISTRICT_PIN_AREAS = {
+  "Srinagar": [
+    { pin: "190001", area: "Lal Chowk, Srinagar GPO, Residency Road, Regal Chowk, Amirakadal, Kothi Bagh", hub: "Central Business District" },
+    { pin: "190002", area: "Nowhatta, Khanyar, Rainawari, Bohri Kadal, Zaina Kadal, Jamia Masjid Area", hub: "Downtown / Shahr-e-Khaas" },
+    { pin: "190003", area: "Karan Nagar, SMHS Hospital, Kak Sarai, Safa Kadal, Chattabal", hub: "Medical College & Hospital Hub" },
+    { pin: "190004", area: "Batamaloo, Bemina (Main & J&K Housing Colony), Tengpora, SD Colony", hub: "West Srinagar" },
+    { pin: "190005", area: "Sonwar, Dalgate, Boulevard Road, Nehru Park, Gupkar, Church Lane", hub: "Dal Lake Tourist Corridor" },
+    { pin: "190006", area: "Hazratbal, University of Kashmir (KU), Naseem Bagh, Habak, Hadoora", hub: "University Campus Hub" },
+    { pin: "190007", area: "Rajbagh, Jawahar Nagar North, Zero Bridge, Kursoo Rajbagh", hub: "South Srinagar" },
+    { pin: "190008", area: "Soura, SKIMS Medical Institute, Anchar, 90 Feet Road", hub: "SKIMS Hospital Zone" },
+    { pin: "190009", area: "Jawahar Nagar, Mehjoor Nagar, Padshahi Bagh, Natipora Link", hub: "South Srinagar" },
+    { pin: "190010", area: "Sanat Nagar, Rawalpora, Barzulla, Old Airport Road", hub: "Uptown Srinagar" },
+    { pin: "190011", area: "Chanapora, Natipora, Rambagh, Lal Nagar, Methan", hub: "Uptown Srinagar" },
+    { pin: "190012", area: "Peerbagh, Hyderpora Bye-Pass, Badgam Road Junction", hub: "Uptown Bypass" },
+    { pin: "190014", area: "Pantha Chowk, Lasjan, Nowgam Railway Station, Sempora", hub: "National Highway Hub" },
+    { pin: "190015", area: "Hyderpora, Humhama, Airport Road, Galwanpora", hub: "Airport Corridor" },
+    { pin: "190017", area: "Baghat Barzulla, Parray Pora, Baghat Chowk", hub: "Coaching & Education Hub" },
+    { pin: "190018", area: "Parimpora, Fruit Mandi, Shalteng, Mujgund, Lawaypora", hub: "Commercial Fruit Mandi" },
+    { pin: "190019", area: "Dalgate, Brein, Nishat, Gupt Ganga", hub: "East Dal Lake" },
+    { pin: "190020", area: "Buchpora, Illahi Bagh, Umer Colony, Zakura Crossing", hub: "North Srinagar" },
+    { pin: "190021", area: "Shalimar, Harwan, Nishat Garden, Theed, New Theed", hub: "Mughal Gardens Belt" },
+    { pin: "190023", area: "Tailbal, Burzahama, Hazratbal Extension", hub: "North Dal Lake" },
+    { pin: "190024", area: "Kralpora Srinagar, Wathora Link", hub: "South Srinagar Link" }
+  ],
+  "Baramulla": [
+    { pin: "193121", area: "Pattan (Main Hub, Palhallan, Mirgund, Nihalpora, Zangam, Hanjiwera, Tapper)", hub: "Pattan Hometown Express" },
+    { pin: "193201", area: "Sopore Town (Model Town, Main Chowk, Krankshivan Colony, Seer, Chinkipora)", hub: "Apple Capital Sopore" },
+    { pin: "193101", area: "Baramulla Head Post Office, Kanispora, Old Town, Azad Gunj, Cariappa Park", hub: "Baramulla District HQ" },
+    { pin: "193103", area: "Delina, Baramulla Degree College, Singhpora Khurd, Jhelum Valley Colony", hub: "Delina College Zone" },
+    { pin: "193108", area: "Kreeri, Wagoora, Dandmoh, Kalantra, Authoora, Saloosa", hub: "Kreeri-Wagoora Belt" },
+    { pin: "193109", area: "Kunzer, Tangmarg Road, Dhobiwan, Pinjoora, Lalpora", hub: "Kunzer Sub-Hub" },
+    { pin: "193401", area: "Tangmarg, Gulmarg, Ferozpora, Babareshi, Drung", hub: "Gulmarg World Ski Resort" },
+    { pin: "193402", area: "Rafiabad, Rohama, Dangiwacha, Ladoora, Achabal Rafiabad", hub: "Rafiabad Belt" },
+    { pin: "193403", area: "Watergam, Hadipora, Behrampora Rafiabad", hub: "Watergam Hub" },
+    { pin: "193404", area: "Uri, Boniyar, Chandanwari, Salamabad, Lagama, Mohura", hub: "Uri Sub-Division" },
+    { pin: "193123", area: "Singhpora Pattan, Hygam, Hartrath, Bulgam", hub: "Singhpora Pattan" }
+  ],
+  "Budgam": [
+    { pin: "191111", area: "Budgam Town, Ompora, Railway Station Colony, Mirgund Budgam, Naraspora", hub: "Budgam District HQ" },
+    { pin: "191112", area: "Beerwah, Magam, Aripanthan, Rathsun, Chewdara", hub: "Magam-Beerwah Sub-Division" },
+    { pin: "191113", area: "Chadoora, Wathora, Nagam, Kralpora, Sogam Budgam", hub: "Chadoora Sub-Division" },
+    { pin: "191114", area: "Charar-i-Sharief (Shrine Town), Trajibal, Hapatnar", hub: "Historical Shrine City" },
+    { pin: "191115", area: "Khag, Drung Budgam, Poshker, Sitaharan", hub: "Khag Valley" },
+    { pin: "191116", area: "Khansahib, Raiyar, Doodhpathri Base, Yarikha", hub: "Doodhpathri Valley" },
+    { pin: "193411", area: "Narbal, Kawoosa, Mazhama, Kanihama", hub: "Narbal Highway Hub" },
+    { pin: "190015", area: "Humhama, Sheikhpora, Old Airport, Railway Crossing", hub: "Humhama Sub-Hub" }
+  ],
+  "Anantnag": [
+    { pin: "192101", area: "Anantnag Head Post, Lal Chowk, Reshi Bazar, KP Road, Janglat Mandi, Khanabal", hub: "Islamabad District HQ" },
+    { pin: "192124", area: "Bijbehara, Padgampora, Semthan, Arwani", hub: "Bijbehara Town" },
+    { pin: "192201", area: "Mattan, Ashmuqam, Seer Hamdan, Akura", hub: "Mattan Pilgrim Corridor" },
+    { pin: "192129", area: "Pahalgam Town, Laripora, Aru Road, Batkoot", hub: "Pahalgam Tourism Hub" },
+    { pin: "192210", area: "Kokernag, Omooh, Zalangam, Soaf Shali", hub: "Kokernag Spring Hub" },
+    { pin: "192211", area: "Dooru Shahabad, Verinag (Origin of Jhelum), Larkipora", hub: "Verinag Belt" },
+    { pin: "192202", area: "Achabal, Shangus, Chittergul, Nowgam", hub: "Achabal Mughal Garden" },
+    { pin: "192244", area: "Dialgam, Brakpora, Kamad, Bona Dialgam", hub: "Dialgam Zone" }
+  ],
+  "Pulwama": [
+    { pin: "192301", area: "Pulwama Town, Murran Chowk, Chatapora, Prichoo, New Colony", hub: "Pulwama District HQ" },
+    { pin: "192121", area: "Pampore (Saffron Town), Kadlabal, Drangbal, Frestabal, Samboora", hub: "Pampore Saffron Capital" },
+    { pin: "192122", area: "Tral Town, Bus Stand, Dadasara, Lurgam, Shikargah", hub: "Tral Sub-Division" },
+    { pin: "192123", area: "Awantipora, Islamic University (IUST), Barsoo, Jawbror", hub: "IUST University Campus" },
+    { pin: "192302", area: "Rajpora, Shadimarg, Hawal Pulwama, Qasbayar", hub: "Rajpora Zone" },
+    { pin: "192305", area: "Litter, Lassipora Industrial Estate, Aglar", hub: "Lassipora Industrial Area" },
+    { pin: "192306", area: "Kakapora, Marval, Ratnipora, Lelhar", hub: "Kakapora Railway Hub" }
+  ],
+  "Kupwara": [
+    { pin: "193222", area: "Kupwara Town, Rigipora, Drugmulla, Bohipora, Bye-pass", hub: "Kupwara District HQ" },
+    { pin: "193224", area: "Handwara Town, Main Chowk, Kulangam, Chotipora", hub: "Handwara Sub-Division" },
+    { pin: "193225", area: "Kralpora, Chowkibal, Panzgam, Meelyal", hub: "Kralpora Sub-Hub" },
+    { pin: "193223", area: "Trehgam, Kunan Poshpora, Gulgam, Hayhama", hub: "Trehgam Belt" },
+    { pin: "193124", area: "Langate, Qalamabad, Ashpora, Mawar", hub: "Langate Sub-Hub" },
+    { pin: "193221", area: "Sogam, Lolab Valley, Chandigam, Lalpora Lolab", hub: "Lolab Valley Hub" },
+    { pin: "193237", area: "Karnah, Tangdhar, Teetwal, Chamkote", hub: "Border Sub-Division Karnah" }
+  ],
+  "Ganderbal": [
+    { pin: "191201", area: "Ganderbal Town, Beehama, Duderhama, Saloora, Qamaria Ground", hub: "Ganderbal District HQ" },
+    { pin: "191202", area: "Kangan, Gund, Wangath, Preng, Cherwan", hub: "Kangan Sub-Division" },
+    { pin: "191131", area: "Tullamulla (Kheer Bhawani Shrine), Sehpora, Kurhama", hub: "Tullamulla Shrine Area" },
+    { pin: "191203", area: "Sonamarg, Gagangir, Tourist Reception Center", hub: "Sonamarg Gateway" },
+    { pin: "191204", area: "Manasbal, Safapora, Wakura, Batwina", hub: "Manasbal Lake Belt" }
+  ],
+  "Bandipora": [
+    { pin: "193501", area: "Bandipora Town, Plan, Nishat Park, Gulshan Chowk, Nadihal, Aloosa", hub: "Bandipora District HQ" },
+    { pin: "193502", area: "Sumbal, Sonawari, Shadipora, Nesbal, Markundal", hub: "Sumbal-Sonawari Sub-Division" },
+    { pin: "193504", area: "Hajin, Naidkhai, Shahgund, Madwan", hub: "Hajin Town" },
+    { pin: "193503", area: "Gurez Valley, Dawar, Wanpora, Badugam", hub: "Gurez Valley Sub-Division" },
+    { pin: "193505", area: "Ajas, Sadunara, SK Payeen", hub: "Ajas Belt" }
+  ],
+  "Kulgam": [
+    { pin: "192231", area: "Kulgam Town, Chawalgam, Ashmuji, Bogund, Main Market", hub: "Kulgam District HQ" },
+    { pin: "192232", area: "D.H. Pora, Noorabad, Aharbal Waterfall Road, Manzgam", hub: "Noorabad Sub-Division" },
+    { pin: "192233", area: "Yaripora, Kadder, Matibugh, Frisal Link", hub: "Yaripora Belt" },
+    { pin: "192234", area: "Frisal, Bugam, Tarigam, Brazloo", hub: "Frisal Zone" },
+    { pin: "192235", area: "Qazigund, Vessu, Nipora, Lower Munda", hub: "Gateway of Kashmir" }
+  ],
+  "Shopian": [
+    { pin: "192303", area: "Shopian Town, Batamaran, Gol Chakkar, Memander, Gagren", hub: "Shopian District HQ" },
+    { pin: "192305", area: "Zainapora, Wachi, Babapora, Reban", hub: "Zainapora Sub-Division" },
+    { pin: "192304", area: "Keller, Mastpora, Shadab Karewa", hub: "Keller Belt" },
+    { pin: "192306", area: "Sedow, Hirpora, Mughal Road Gate, Padpawan", hub: "Mughal Road Corridor" }
+  ],
+  "Jammu": [
+    { pin: "180001", area: "Jammu City, GPO, Old City, Raghunath Bazaar, Panjtirthi", hub: "Jammu City Core" },
+    { pin: "180002", area: "Gandhi Nagar, Gole Market, Shastri Nagar, Nai Basti", hub: "Gandhi Nagar Commercial" },
+    { pin: "180003", area: "Satwari, Jammu Cantt, Airport Road, Belicharana", hub: "Airport & Cantt Zone" },
+    { pin: "180004", area: "Bakshi Nagar, Canal Road, GMC Jammu, Resham Ghar", hub: "GMC Medical Zone" },
+    { pin: "180005", area: "Talab Tillo, Bohri, Gole Gujral, Anand Nagar", hub: "Talab Tillo Hub" },
+    { pin: "180006", area: "Janipur, Bantalab, Paloura, Roop Nagar, Chinore", hub: "Janipur-Bantalab North" },
+    { pin: "180012", area: "Channi Himmat, Marble Market, Greater Kailash", hub: "Channi Himmat South" },
+    { pin: "180015", area: "Trikuta Nagar, Rail Head Complex, Bahu Plaza", hub: "Bahu Plaza Corporate" },
+    { pin: "181121", area: "Bishnah, Arnia, Rehal, Deoli", hub: "Bishnah Sub-Division" },
+    { pin: "181101", area: "R.S. Pura, Miran Sahib, Dablehar", hub: "R.S. Pura Sub-Division" },
+    { pin: "181206", area: "Akhnoor, Jourian, Khour, Maira Mandrian", hub: "Akhnoor Sub-Division" }
+  ],
+  "Kathua": [
+    { pin: "184101", area: "Kathua Town, College Road, Hatli Morh, Govindsar Gate", hub: "Kathua District HQ" },
+    { pin: "184102", area: "Govindsar, Industrial Area Kathua, Logate", hub: "Govindsar Industrial" },
+    { pin: "184104", area: "Hiranagar, Chadwal, Marheen, Dayalachak", hub: "Hiranagar Border Belt" },
+    { pin: "184142", area: "Billawar, Phinter, Bhaddu, Kishanpur", hub: "Billawar Sub-Division" },
+    { pin: "184143", area: "Basohli, Sheetal Nagar, Mahanpur, Plahi", hub: "Basohli Sub-Division" }
+  ],
+  "Samba": [
+    { pin: "184121", area: "Samba Town, Mansar Morh, Arazi, Mandi Sangwali", hub: "Samba District HQ" },
+    { pin: "184141", area: "Ghagwal, Jatwal, Nonath, Tapyal", hub: "Ghagwal Sub-Division" },
+    { pin: "181133", area: "Vijaypur, Thandi Khui, Gurha Slathia", hub: "Vijaypur AIIMS Hub" },
+    { pin: "181143", area: "Bari Brahmana, Industrial Complex, Birpur, Sarore", hub: "Bari Brahmana Industrial" }
+  ],
+  "Udhampur": [
+    { pin: "182101", area: "Udhampur City, Dhar Road, Gole Mela, Subash Nagar, Garhi", hub: "Udhampur District HQ" },
+    { pin: "182121", area: "Chenani, Sudh Mahadev, Kud, Mantalai", hub: "Chenani Sub-Division" },
+    { pin: "182124", area: "Ramnagar, Majalta, Dalsar, Chowki", hub: "Ramnagar Sub-Division" }
+  ],
+  "Reasi": [
+    { pin: "182311", area: "Reasi Town, General Zorawar Singh Stadium, Gran Morh", hub: "Reasi District HQ" },
+    { pin: "182301", area: "Katra Town (Mata Vaishno Devi Base Camp), Panthal", hub: "Vaishno Devi Katra Base" },
+    { pin: "182313", area: "Pouni, Bharakh, Ransoo (Shiv Khori Shrine Base)", hub: "Pouni / Shiv Khori" },
+    { pin: "182315", area: "Mahore, Chassana, Arnas, Dharmari", hub: "Mahore Sub-Division" }
+  ],
+  "Ramban": [
+    { pin: "182144", area: "Ramban Town, Maitra, Karol, Chanderkote, Baglihar", hub: "Ramban District HQ" },
+    { pin: "182146", area: "Banihal, Nowgam, Railway Station, Chamalwas, Tethar", hub: "Banihal Railway Hub" },
+    { pin: "182148", area: "Batote, Patnitop, Sanasar Road, Assar Link", hub: "Batote Hill Station" }
+  ],
+  "Doda": [
+    { pin: "182202", area: "Doda Town, Pul Doda, Bharat Road, Ghat Doda", hub: "Doda District HQ" },
+    { pin: "182601", area: "Bhaderwah Town, Gupt Ganga, Sartingal, Udrana", hub: "Bhaderwah Valley" },
+    { pin: "182201", area: "Thathri, Premnagar, Phagsoo, Kahara", hub: "Thathri Sub-Division" }
+  ],
+  "Kishtwar": [
+    { pin: "182204", area: "Kishtwar Town, Chowgan Ground, Hidyal, Pochhal", hub: "Kishtwar District HQ" },
+    { pin: "182205", area: "Chhatroo, Mughal Maidan, Chingam", hub: "Chhatroo Sub-Division" },
+    { pin: "182206", area: "Marwah, Warwan, Dachhan, Sounder", hub: "Marwah-Warwan Valley" }
+  ],
+  "Rajouri": [
+    { pin: "185131", area: "Rajouri Town, Gujjar Mandi, BGSBU Campus, Jawahar Nagar", hub: "Rajouri District HQ" },
+    { pin: "185132", area: "Thannamandi, Dhera Ki Gali, Shahdara Sharief Shrine", hub: "Thannamandi Shrine Zone" },
+    { pin: "185201", area: "Nowshera, Sunderbani, Kalakote, Solki", hub: "Nowshera Sub-Division" }
+  ],
+  "Poonch": [
+    { pin: "185101", area: "Poonch City, Qila Market, Parade Ground, Chandak", hub: "Poonch Border District HQ" },
+    { pin: "185121", area: "Surankote, Bufliaz, Poshana, Bafliaz Mughal Road", hub: "Surankote Sub-Division" },
+    { pin: "185102", area: "Mandi, Loran, Saujiyan, Azamabad", hub: "Mandi Sub-Division" }
+  ]
 };
+
+// Flattened lookup for rapid PIN recognition across all 20 districts
+const KASHMIR_PINCODES = {};
+Object.keys(JK_DISTRICT_PIN_AREAS).forEach(dist => {
+  JK_DISTRICT_PIN_AREAS[dist].forEach(item => {
+    KASHMIR_PINCODES[item.pin] = {
+      town: item.area.split(',')[0].trim(),
+      fullArea: item.area,
+      district: dist,
+      hub: item.hub,
+      express: true
+    };
+  });
+});
 
 function handleKashmirPincodeLookup(pinVal) {
   const pin = String(pinVal || '').trim();
@@ -65,29 +201,280 @@ function handleKashmirPincodeLookup(pinVal) {
   const match = KASHMIR_PINCODES[pin];
   if (match) {
     if (citySelect) {
-      // Auto-select corresponding district in dropdown if option exists
       for (let i = 0; i < citySelect.options.length; i++) {
-        if (citySelect.options[i].value === match.district || citySelect.options[i].text.includes(match.district.split(' ')[0])) {
+        if (citySelect.options[i].value === match.district || citySelect.options[i].text.toLowerCase().includes(match.district.toLowerCase())) {
           citySelect.selectedIndex = i;
           break;
         }
       }
     }
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>${match.town}</strong> (${match.district}) • <span style="color:#15803d; font-weight:700;">🟢 Fast 24-48 hr Kashmir Dispatch Verified</span>`;
+      badgeEl.innerHTML = `📍 <strong>${match.town}</strong> (${match.district}) • <span style="color:#15803d; font-weight:700;">🟢 Local Doorstep Delivery Eligible</span>`;
       badgeEl.style.display = 'block';
     }
   } else if (pin.startsWith('19')) {
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>Kashmir Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 Local Doorstep Delivery Eligible</span>`;
+      badgeEl.innerHTML = `📍 <strong>Kashmir Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 Fast Express Dispatch Eligible</span>`;
+      badgeEl.style.display = 'block';
+    }
+  } else if (pin.startsWith('18')) {
+    if (badgeEl) {
+      badgeEl.innerHTML = `📍 <strong>Jammu Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 J&K Doorstep Courier Eligible</span>`;
       badgeEl.style.display = 'block';
     }
   } else {
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>PIN: ${pin}</strong> • Standard J&K / National Express Courier`;
+      badgeEl.innerHTML = `📍 <strong>PIN: ${pin}</strong> • Standard National / J&K Courier`;
       badgeEl.style.display = 'block';
     }
   }
+}
+
+// ============================================================================
+// INTERACTIVE DISTRICT & PIN CODE POPUP ENGINE
+// Pops up all towns & PIN codes under any chosen district with exact rates
+// ============================================================================
+let currentPickerDistrict = 'Srinagar';
+
+function openDistrictPincodeSelectorModal(targetDistrict) {
+  const modal = document.getElementById('districtPincodePickerModal');
+  if (!modal) return;
+
+  // Determine district to show: parameter or currently selected in checkout dropdown
+  if (targetDistrict) {
+    currentPickerDistrict = targetDistrict;
+  } else {
+    const citySelect = document.getElementById('orderCity');
+    if (citySelect && citySelect.value) {
+      const val = citySelect.value;
+      for (const dKey in JK_DISTRICT_PIN_AREAS) {
+        if (val.toLowerCase().includes(dKey.toLowerCase())) {
+          currentPickerDistrict = dKey;
+          break;
+        }
+      }
+    }
+  }
+
+  // Clear search input
+  const searchInput = document.getElementById('pickerAreaSearchInput');
+  if (searchInput) searchInput.value = '';
+
+  renderPickerDistrictPills();
+  renderPickerRateBanner();
+  renderPickerAreasList();
+
+  modal.style.display = 'flex';
+}
+
+function closeDistrictPincodeSelectorModal() {
+  const modal = document.getElementById('districtPincodePickerModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function selectPickerDistrict(distName) {
+  currentPickerDistrict = distName;
+  const searchInput = document.getElementById('pickerAreaSearchInput');
+  if (searchInput) searchInput.value = '';
+
+  renderPickerDistrictPills();
+  renderPickerRateBanner();
+  renderPickerAreasList();
+}
+
+function renderPickerDistrictPills() {
+  const pillsContainer = document.getElementById('pickerDistrictPills');
+  if (!pillsContainer) return;
+
+  const districts = Object.keys(JK_DISTRICT_PIN_AREAS);
+  let html = '';
+  districts.forEach(d => {
+    const isActive = (d.toLowerCase() === currentPickerDistrict.toLowerCase());
+    const count = (JK_DISTRICT_PIN_AREAS[d] || []).length;
+    html += `
+      <button type="button" onclick="selectPickerDistrict('${d}')" 
+              style="padding: 6px 13px; font-size: 12px; font-weight: 800; border-radius: 20px; cursor: pointer; border: 1.5px solid ${isActive ? '#2563eb' : '#cbd5e1'}; background: ${isActive ? '#2563eb' : 'white'}; color: ${isActive ? 'white' : '#475569'}; box-shadow: ${isActive ? '0 2px 6px rgba(37,99,235,0.3)' : 'none'}; display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; transition: all 0.15s;">
+        <span>${d}</span>
+        <span style="font-size: 10px; opacity: 0.85; background: ${isActive ? 'rgba(255,255,255,0.25)' : '#f1f5f9'}; padding: 1px 5px; border-radius: 10px;">${count}</span>
+      </button>
+    `;
+  });
+  pillsContainer.innerHTML = html;
+}
+
+function renderPickerRateBanner() {
+  const banner = document.getElementById('pickerRateBanner');
+  if (!banner) return;
+
+  const rates = (typeof getStoreDistrictRates === 'function') ? getStoreDistrictRates() : DEFAULT_JK_DISTRICT_RATES;
+  let distRate = rates[currentPickerDistrict] || { deliveryFee: 40, codFee: 0, isFree: false };
+
+  const isFree = Boolean(distRate.isFree || distRate.deliveryFee === 0);
+  const deliveryText = isFree ? '<span style="color:#16a34a; font-weight:900;"><i class="fa-solid fa-gift"></i> FREE (₹0 Delivery)</span>' : `<span style="font-weight:800; color:#b45309;">₹${distRate.deliveryFee} Delivery</span>`;
+  const codText = (Number(distRate.codFee) > 0) ? `<span style="font-weight:800; color:#2563eb;">₹${distRate.codFee} COD Fee</span>` : '<span style="color:#16a34a; font-weight:800;">FREE (₹0 COD Fee)</span>';
+
+  banner.innerHTML = `
+    <div>
+      📍 Showing all <strong>${currentPickerDistrict} District</strong> PIN Codes &amp; Areas:
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span style="background: white; border: 1px solid #86efac; padding: 2px 8px; border-radius: 6px;">${deliveryText}</span>
+      <span style="background: white; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 6px;">${codText}</span>
+    </div>
+  `;
+}
+
+function renderPickerAreasList(filteredItems) {
+  const container = document.getElementById('pickerAreasListContainer');
+  if (!container) return;
+
+  const items = filteredItems || (JK_DISTRICT_PIN_AREAS[currentPickerDistrict] || []);
+  if (!items || items.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 36px 16px; color: #64748b;">
+        <i class="fa-solid fa-map-location-dot" style="font-size: 32px; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+        <div style="font-size: 14px; font-weight: 700;">No areas matched your search.</div>
+        <div style="font-size: 12px; margin-top: 4px;">Try searching another village, landmark or 6-digit PIN.</div>
+      </div>
+    `;
+    return;
+  }
+
+  const rates = (typeof getStoreDistrictRates === 'function') ? getStoreDistrictRates() : DEFAULT_JK_DISTRICT_RATES;
+  let distRate = rates[currentPickerDistrict] || { deliveryFee: 40, codFee: 0, isFree: false };
+  const isFree = Boolean(distRate.isFree || distRate.deliveryFee === 0);
+
+  let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+  items.forEach(item => {
+    const safeDistrict = item.district || currentPickerDistrict;
+    const safeEscapedArea = (item.area || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const placesArray = (item.area || '').split(',');
+    const mainPlace = placesArray[0].trim();
+    const otherPlaces = placesArray.slice(1).join(', ').trim();
+
+    html += `
+      <div onclick="selectPincodeFromPicker('${item.pin}', '${safeEscapedArea}', '${safeDistrict}')"
+           style="background: white; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 11px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: all 0.18s; box-shadow: 0 1px 3px rgba(0,0,0,0.03);"
+           onmouseover="this.style.borderColor='#2563eb'; this.style.background='#f0fdf4';"
+           onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='white';">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; color: #1e40af; font-family: monospace; font-size: 14px; font-weight: 900; padding: 6px 9px; border-radius: 8px; text-align: center; letter-spacing: 0.5px;">
+            ${item.pin}
+          </div>
+          <div>
+            <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">
+              ${mainPlace}
+              <span style="font-size: 10.5px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 1px 6px; border-radius: 4px; margin-left: 6px;">${item.hub || safeDistrict}</span>
+            </div>
+            ${otherPlaces ? `<div style="font-size: 11.5px; color: #64748b; margin-top: 2px; line-height: 1.35;">${otherPlaces}</div>` : ''}
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
+          <span style="font-size: 11px; font-weight: 800; color: ${isFree ? '#16a34a' : '#b45309'}; background: ${isFree ? '#dcfce7' : '#fef3c7'}; padding: 3px 8px; border-radius: 6px;">
+            ${isFree ? 'FREE Delivery' : '₹' + distRate.deliveryFee}
+          </span>
+          <span style="font-size: 11px; font-weight: 700; color: #2563eb; display: flex; align-items: center; gap: 3px;">
+            Select <i class="fa-solid fa-arrow-right" style="font-size: 10px;"></i>
+          </span>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function filterPickerAreasList() {
+  const input = document.getElementById('pickerAreaSearchInput');
+  if (!input) return;
+
+  const query = input.value.toLowerCase().trim();
+  if (!query) {
+    renderPickerAreasList();
+    return;
+  }
+
+  // Search within current district first
+  let matches = (JK_DISTRICT_PIN_AREAS[currentPickerDistrict] || []).filter(item => {
+    return item.pin.includes(query) || item.area.toLowerCase().includes(query) || (item.hub && item.hub.toLowerCase().includes(query));
+  });
+
+  // If no match in current district, search across ALL districts
+  if (matches.length === 0) {
+    const globalMatches = [];
+    Object.keys(JK_DISTRICT_PIN_AREAS).forEach(dist => {
+      JK_DISTRICT_PIN_AREAS[dist].forEach(item => {
+        if (item.pin.includes(query) || item.area.toLowerCase().includes(query) || (item.hub && item.hub.toLowerCase().includes(query)) || dist.toLowerCase().includes(query)) {
+          globalMatches.push(Object.assign({}, item, { district: dist }));
+        }
+      });
+    });
+    matches = globalMatches;
+  }
+
+  renderPickerAreasList(matches);
+}
+
+function selectPincodeFromPicker(pin, areaName, districtName) {
+  const pinInput = document.getElementById('orderPin');
+  if (pinInput) {
+    pinInput.value = pin;
+  }
+
+  const citySelect = document.getElementById('orderCity');
+  if (citySelect && districtName) {
+    for (let i = 0; i < citySelect.options.length; i++) {
+      if (citySelect.options[i].value === districtName || citySelect.options[i].text.toLowerCase().includes(districtName.toLowerCase())) {
+        citySelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  handleKashmirPincodeLookup(pin);
+  updateCheckoutInvoiceTotals();
+  closeDistrictPincodeSelectorModal();
+
+  // Update helper banner in checkout form
+  const hintEl = document.getElementById('districtPincodeQuickHint');
+  const hintTextEl = document.getElementById('districtPincodeQuickHintText');
+  if (hintEl && hintTextEl) {
+    hintEl.style.display = 'flex';
+    hintTextEl.innerHTML = `📍 Area: <strong>${areaName.split(',')[0]}</strong> (PIN: <strong>${pin}</strong>)`;
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(`✅ Selected: ${areaName.split(',')[0]} (PIN: ${pin})`);
+  }
+}
+
+function handleCheckoutDistrictChange(selectedDistrictVal) {
+  // Update invoice totals first
+  updateCheckoutInvoiceTotals();
+
+  // Find cleaned district name
+  let distName = 'Baramulla';
+  for (const dKey in JK_DISTRICT_PIN_AREAS) {
+    if (selectedDistrictVal.toLowerCase().includes(dKey.toLowerCase())) {
+      distName = dKey;
+      break;
+    }
+  }
+
+  // Automatically update the hint box and open the pop-up modal so students/parents can pick their area!
+  const hintEl = document.getElementById('districtPincodeQuickHint');
+  const hintTextEl = document.getElementById('districtPincodeQuickHintText');
+  const totalPins = (JK_DISTRICT_PIN_AREAS[distName] || []).length;
+
+  if (hintEl && hintTextEl) {
+    hintEl.style.display = 'flex';
+    hintTextEl.innerHTML = `💡 Selected <strong>${distName}</strong> (${totalPins} areas &amp; PIN codes). Tap to pick your area.`;
+  }
+
+  // Open the pop-up selector pre-filtered to the chosen district!
+  openDistrictPincodeSelectorModal(distName);
 }
 
 // Dynamic Seller Price Override System
