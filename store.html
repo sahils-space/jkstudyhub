@@ -72,26 +72,190 @@
     }
     .product-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.03);
       border: 1px solid #e2e8f0;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.25s, box-shadow 0.25s;
       display: flex;
       flex-direction: column;
       width: 100%;
       box-sizing: border-box;
     }
-    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
-    .product-img { width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #e2e8f0; }
-    .product-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(15,23,42,0.08); }
+    
+    /* P4: Consistent 1:1 Aspect Ratio for all product photos */
+    .product-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto;
+      max-height: 240px;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 12px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #f1f5f9;
+      transition: transform 0.25s ease;
+    }
+    .product-card:hover .product-img {
+      transform: scale(1.03);
+    }
+    .product-info { padding: 18px; display: flex; flex-direction: column; flex-grow: 1; }
     .product-badge { background: #dcfce7; color: #16a34a; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; align-self: flex-start; }
-    .product-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
-    .product-desc { font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 15px; flex-grow: 1; }
+    .product-title { font-size: 17px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+    .product-desc { font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 14px; flex-grow: 1; }
     .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
     .product-price { font-size: 20px; font-weight: 800; color: #0f172a; }
-    .buy-btn { background: #2563eb; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .buy-btn { background: #2563eb; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .buy-btn:hover { background: #1d4ed8; }
+
+    /* P2: Storefront Trust Banner Strip */
+    .store-trust-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 12px 0 16px 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 6px;
+    }
+    .store-trust-strip::-webkit-scrollbar { display: none; }
+    .trust-pill {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 7px 14px;
+      font-size: 12px;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+      flex-shrink: 0;
+    }
+    .trust-pill i {
+      color: #2563eb;
+      font-size: 13px;
+    }
+    .trust-pill.cod {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+    .trust-pill.cod i {
+      color: #16a34a;
+    }
+
+    /* P3: Floating Sticky Mobile Cart Bar */
+    .sticky-mobile-cart-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 520px;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+      animation: slideUpCart 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUpCart {
+      from { transform: translate(-50%, 60px); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
+    .sticky-cart-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sticky-cart-icon-wrap {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(37, 99, 235, 0.25);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #60a5fa;
+      font-size: 18px;
+    }
+    .sticky-cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid #0f172a;
+    }
+    .sticky-cart-count-label {
+      font-size: 11.5px;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sticky-cart-total-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .sticky-cart-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sticky-cart-btn-view {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    .sticky-cart-btn-view:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .sticky-cart-btn-checkout {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: transform 0.15s, background 0.15s;
+    }
+    .sticky-cart-btn-checkout:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
+    }
 
     /* Checkout Modal */
     .checkout-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
@@ -2430,6 +2594,14 @@
       </div>
     </div>
 
+    <!-- P2: Trust & Cash on Delivery Guarantee Strip -->
+    <div class="store-trust-strip">
+      <div class="trust-pill cod"><i class="fa-solid fa-hand-holding-dollar"></i> <span><strong>Cash on Delivery (COD)</strong> Available Across J&amp;K</span></div>
+      <div class="trust-pill"><i class="fa-solid fa-truck-fast"></i> <span><strong>Fast 24–48h Delivery</strong> Across All 20 Districts</span></div>
+      <div class="trust-pill"><i class="fa-solid fa-box-open"></i> <span><strong>Doorstep Verification</strong> Inspect Before Paying</span></div>
+      <div class="trust-pill"><i class="fa-solid fa-certificate"></i> <span><strong>100% Genuine</strong> Books, Guides &amp; Solved Papers</span></div>
+    </div>
+
     <!-- Dedicated Top Ranked Search Results Section (Shows matched items at the very top) -->
     <div id="topSearchResultsSection" style="display: none; margin-bottom: 35px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 18px; border-bottom: 2px solid #2563eb; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
@@ -4672,18 +4844,55 @@
       
       <div class="checkout-body">
         
-        <div class="checkout-progress">
-          <span id="progressStep1" class="active-step"><i class="fa-solid fa-address-card"></i> 1. Address</span>
-          <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
-          <span id="progressStep2"><i class="fa-solid fa-credit-card"></i> 2. Pay</span>
+        <!-- P2: Trust Guarantee Strip in Checkout -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 9px 12px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+          <div style="font-size: 12px; color: #166534; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-shield-halved" style="color: #16a34a; font-size: 14px;"></i> 
+            <span><strong>1-Step Fast Checkout</strong> &bull; Cash on Delivery Available</span>
+          </div>
+          <span style="background: #16a34a; color: white; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">
+            <i class="fa-solid fa-check"></i> 100% Genuine
+          </span>
+        </div>
+
+        <!-- Hidden backward-compatibility elements -->
+        <div style="display: none;">
+          <span id="progressStep1" class="active-step"></span>
+          <span id="progressStep2"></span>
+          <div id="step2"></div>
         </div>
 
         <form id="checkoutForm" onsubmit="return false;">
           
-          <!-- STEP 1: Details & Address -->
           <div id="step1">
 
-                        <!-- Dynamic Field: School Books (Class 1st to 10th School Name Verification) -->
+            <!-- Top Order Summary & Pricing Preview -->
+            <div class="invoice-box" style="margin-bottom: 15px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 8px;">
+                <h4 style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 6px;">
+                  <i class="fa-solid fa-receipt" style="color: #2563eb;"></i> Order Summary
+                </h4>
+                <span id="itemPrice" style="font-size: 13px; font-weight: 700; color: #475569;">₹0</span>
+              </div>
+              <div class="invoice-row" style="font-size: 13px; margin-bottom: 4px;">
+                <span id="itemName" style="font-weight: 700; color: #1e293b; max-width: 75%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Item Name</span>
+                <span style="color: #16a34a; font-weight: 700;" id="invoiceDeliveryFee">₹0</span>
+              </div>
+              <div class="invoice-row" id="invoiceCodRow" style="display: none; font-size: 12px; color: #166534; font-weight: 700; margin-bottom: 4px;">
+                <span><i class="fa-solid fa-hand-holding-dollar"></i> Doorstep COD Fee:</span>
+                <span id="invoiceCodFee">FREE (₹0)</span>
+              </div>
+              <div class="invoice-row" id="invoiceRepeatDiscountRow" style="display: none; color: #16a34a; font-weight: 800; font-size: 12px; margin-bottom: 4px;">
+                <span>Repeat Student Discount:</span>
+                <span id="invoiceRepeatDiscountAmount">-₹0</span>
+              </div>
+              <div class="invoice-total" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+                <span style="font-size: 13px; font-weight: 700; color: #475569;">Total Payable:</span>
+                <span id="totalPrice" style="font-size: 19px; font-weight: 900; color: #16a34a;">₹0</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Field: School Books (Class 1st to 10th School Name Verification) -->
             <div id="schoolBooksSpecificFields" style="display:none; background:#fefce8; padding:15px; border-radius:8px; border:1.5px solid #fef08a; margin-bottom:15px;">
               <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                 <span style="font-size:20px;">🏫</span>
@@ -4717,7 +4926,7 @@
 
             <!-- Dynamic Field: Notes & PYQs -->
             <div id="notesSpecificFields" style="display:none; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 15px;">
-              <h4 style="font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">Select Class & Subject Details</h4>
+              <h4 style="font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">Select Class &amp; Subject Details</h4>
               <div class="form-group">
                 <label class="form-label">Select Class</label>
                 <select id="notesClass" class="form-input">
@@ -4756,34 +4965,29 @@
               </div>
             </div>
 
-            <!-- Universal User Details -->
-            <div class="form-group">
-              <label class="form-label">Full Name</label>
-              <input type="text" id="orderName" required class="form-input" placeholder="Your name">
-            </div>
+            <!-- Universal Student Details -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+              <div style="flex: 1; min-width: 140px;" class="form-group">
+                <label class="form-label" style="font-weight: 700;">Full Name *</label>
+                <input type="text" id="orderName" required class="form-input" placeholder="Your full name">
+              </div>
 
-            <div class="form-group">
-              <label class="form-label">WhatsApp Number</label>
-              <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit Indian number" pattern="[6789][0-9]{9}" title="Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9">
-            </div>
-
-            <div class="form-group" id="orderEmailGroup">
-              <label class="form-label">Email Address (for Order Updates &amp; My Orders Tracking)</label>
-              <input type="email" id="orderEmail" required class="form-input" placeholder="e.g. yourname@gmail.com">
+              <div style="flex: 1; min-width: 140px;" class="form-group">
+                <label class="form-label" style="font-weight: 700;">WhatsApp Number *</label>
+                <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit mobile number" pattern="[6789][0-9]{9}" title="Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9">
+              </div>
             </div>
 
             <!-- Dynamic Field: Physical Address -->
-            <div id="addressFields" style="display:none; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
-              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 6px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-gift" style="color:#10b981; font-size:15px;"></i>
+            <div id="addressFields" style="display:none; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11.5px; font-weight: 700; padding: 6px 10px; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-gift" style="color:#10b981; font-size:14px;"></i>
                 <span><strong>FREE SHIPPING ACTIVE:</strong> ₹0 Delivery fee for all Kashmir districts!</span>
               </div>
 
-              <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 10px;">Delivery Location</h4>
-              
               <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
                 <div style="flex:1; min-width: 140px;">
-                  <label class="form-label">District / Region</label>
+                  <label class="form-label" style="font-weight: 700;">District / Region *</label>
                   <select id="orderCity" class="form-input" onchange="handleCheckoutDistrictChange(this.value)">
                     <optgroup label="── Kashmir Division (Local Hub) ──">
                       <option value="Baramulla (Pattan/Sopore/Baramulla)" selected>Baramulla District (Pattan/Sopore/Baramulla)</option>
@@ -4815,155 +5019,123 @@
                   </select>
                 </div>
                 <div style="flex:1; min-width: 120px;">
-                  <label class="form-label">Pincode (Any Kashmir / J&amp;K PIN)</label>
-                  <input type="text" id="orderPin" class="form-input" placeholder="e.g. 193121, 190001, 180001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();" required>
-                  <div id="pinVerifiedBadge" style="display:none; margin-top:5px; font-size:11.5px; padding:4px 8px; border-radius:6px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;"></div>
+                  <label class="form-label" style="font-weight: 700;">Pincode *</label>
+                  <input type="text" id="orderPin" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();" required>
+                  <div id="pinVerifiedBadge" style="display:none; margin-top:5px; font-size:11px; padding:3px 6px; border-radius:4px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;"></div>
                 </div>
               </div>
 
               <!-- PIN CODE & AREA PICKER TRIGGER -->
-              <div style="margin-top: 2px; margin-bottom: 12px;">
+              <div style="margin-top: 2px; margin-bottom: 10px;">
                 <button type="button" class="btn-find-pincode" onclick="openDistrictPincodeSelectorModal()" 
-                        style="width: 100%; background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #93c5fd; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 700; color: #1e40af; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: 0 2px 5px rgba(37,99,235,0.06); transition: all 0.2s;">
-                  <span style="display: flex; align-items: center; gap: 7px; text-align: left;">
-                    <i class="fa-solid fa-map-location-dot" style="font-size: 15px; color: #2563eb;"></i>
-                    <span>Don't know your PIN code? <strong>Click to choose Village / Area</strong></span>
+                        style="width: 100%; background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #93c5fd; border-radius: 8px; padding: 7px 10px; font-size: 11.5px; font-weight: 700; color: #1e40af; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 6px; box-shadow: 0 1px 3px rgba(37,99,235,0.06);">
+                  <span style="display: flex; align-items: center; gap: 6px; text-align: left;">
+                    <i class="fa-solid fa-map-location-dot" style="font-size: 14px; color: #2563eb;"></i>
+                    <span>Don't know PIN? <strong>Tap to choose Village / Area</strong></span>
                   </span>
-                  <span style="background: #2563eb; color: white; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 20px; white-space: nowrap;">
-                    Browse PINs &amp; Cost ▾
+                  <span style="background: #2563eb; color: white; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">
+                    Pick Area ▾
                   </span>
                 </button>
-                <div id="districtPincodeQuickHint" onclick="openDistrictPincodeSelectorModal()" style="display: none; cursor: pointer; margin-top: 6px; font-size: 11.5px; color: #1e40af; background: #eff6ff; border: 1px dashed #93c5fd; padding: 6px 12px; border-radius: 6px; font-weight: 700; display: none; align-items: center; justify-content: space-between;">
+                <div id="districtPincodeQuickHint" onclick="openDistrictPincodeSelectorModal()" style="display: none; cursor: pointer; margin-top: 6px; font-size: 11px; color: #1e40af; background: #eff6ff; border: 1px dashed #93c5fd; padding: 5px 10px; border-radius: 6px; font-weight: 700; display: none; align-items: center; justify-content: space-between;">
                   <span id="districtPincodeQuickHintText"></span>
                   <span style="color: #2563eb; text-decoration: underline;">Open List 📍</span>
                 </div>
               </div>
 
               <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label">Village / Mohalla, Street & Landmark</label>
+                <label class="form-label" style="font-weight: 700;">Village / Mohalla, Street &amp; Landmark *</label>
                 <input type="text" id="orderAddress" class="form-input" placeholder="e.g. Near Jamia Masjid, Main Market, House No...">
               </div>
             </div>
 
+            <!-- Optional Email -->
+            <div class="form-group" id="orderEmailGroup" style="margin-bottom: 12px;">
+              <label class="form-label" style="font-size: 12.5px;">Email Address <span style="font-weight: 400; color: #64748b;">(Optional - for invoice PDF copy)</span></label>
+              <input type="email" id="orderEmail" class="form-input" placeholder="e.g. yourname@gmail.com (Optional)">
+            </div>
+
             <!-- REPEAT STUDENT REWARD (ONE-TIME 20% DISCOUNT) -->
-            <div class="repeat-student-reward-card" style="background: #f8fafc; border: 1.5px dashed #94a3b8; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;">
+            <div class="repeat-student-reward-card" style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px;">
               <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="haveOrderedBeforeCheck" onchange="toggleRepeatCustomerReward(this.checked)" style="width: 18px; height: 18px; accent-color: #2563eb; cursor: pointer; margin-top: 2px;">
+                <input type="checkbox" id="haveOrderedBeforeCheck" onchange="toggleRepeatCustomerReward(this.checked)" style="width: 17px; height: 17px; accent-color: #2563eb; cursor: pointer; margin-top: 2px;">
                 <div style="flex: 1;">
-                  <span style="font-size: 13px; font-weight: 800; color: #1e293b;">
+                  <span style="font-size: 12.5px; font-weight: 800; color: #1e293b;">
                     🎓 Have you ordered from JK Study Hub before?
                   </span>
-                  <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0; line-height: 1.4;">
-                    Tick this box to claim your verified <strong>₹20 Repeat Student Discount</strong> using your previous Order ID &amp; Card Coupon.
+                  <p style="font-size: 11px; color: #64748b; margin: 1px 0 0; line-height: 1.3;">
+                    Tick this box to claim your verified <strong>₹20 Repeat Student Discount</strong>.
                   </p>
                 </div>
               </label>
 
               <!-- Expandable Verification Box -->
-              <div id="repeatCustomerFormFields" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
-                <div style="font-size: 12px; font-weight: 700; color: #1e40af; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                  <i class="fa-solid fa-ticket"></i> Enter Your Previous Order Credentials:
-                </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                  <div style="flex: 1; min-width: 140px;">
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Previous Order ID *</label>
-                    <input type="text" id="repeatPrevOrderId" placeholder="e.g. OD179163" class="form-input" style="font-size: 12.5px; padding: 8px 10px; text-transform: uppercase;">
+              <div id="repeatCustomerFormFields" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <div style="flex: 1; min-width: 120px;">
+                    <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Previous Order ID *</label>
+                    <input type="text" id="repeatPrevOrderId" placeholder="e.g. OD179163" class="form-input" style="font-size: 12px; padding: 6px 8px; text-transform: uppercase;">
                   </div>
-                  <div style="flex: 1; min-width: 140px;">
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Coupon Code *</label>
-                    <input type="text" id="repeatCouponCode" placeholder="e.g. STUDENT20" class="form-input" style="font-size: 12.5px; padding: 8px 10px; text-transform: uppercase;">
+                  <div style="flex: 1; min-width: 120px;">
+                    <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Coupon Code *</label>
+                    <input type="text" id="repeatCouponCode" placeholder="e.g. STUDENT20" class="form-input" style="font-size: 12px; padding: 6px 8px; text-transform: uppercase;">
                   </div>
                 </div>
-                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                  <button type="button" id="btnApplyRepeatCoupon" onclick="verifyAndApplyRepeatDiscount()" class="btn-primary" style="padding: 7px 16px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; width: auto;">
+                <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+                  <button type="button" id="btnApplyRepeatCoupon" onclick="verifyAndApplyRepeatDiscount()" class="btn-primary" style="padding: 6px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer; width: auto;">
                     <i class="fa-solid fa-check-circle"></i> Verify &amp; Apply ₹20 Off
                   </button>
-                  <div id="repeatCouponMessage" style="font-size: 11.5px; font-weight: 700; display: none;"></div>
+                  <div id="repeatCouponMessage" style="font-size: 11px; font-weight: 700; display: none;"></div>
                 </div>
               </div>
             </div>
-            
-            <button type="button" class="btn-primary" style="width:100%; margin-top: 10px;" onclick="goToStep2()">Continue to Review &amp; Payment <i class="fa-solid fa-arrow-right"></i></button>
+
+            <!-- PAYMENT METHOD CHOICE (CASH ON DELIVERY DEFAULT) -->
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+              <h4 style="font-size: 13px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-wallet" style="color: #16a34a;"></i> Choose Payment Option:
+              </h4>
+              
+              <!-- COD Option (Default & Recommended) -->
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 2px solid #16a34a; border-radius: 8px; margin-bottom: 8px; cursor: pointer;" id="payMethodCodLabel">
+                <input type="radio" name="paymentMethod" value="cod" checked onchange="togglePaymentMethod('cod')">
+                <div style="flex: 1;">
+                  <strong style="font-size: 13px; color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
+                  <p style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Inspect your parcel before paying cash or scanning UPI</p>
+                </div>
+                <span style="background: #dcfce7; color: #16a34a; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">COD</span>
+              </label>
+
+              <!-- Online Payment Option -->
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer;" id="payMethodOnlineLabel">
+                <input type="radio" name="paymentMethod" value="online" onchange="togglePaymentMethod('online')">
+                <div style="flex: 1;">
+                  <strong style="font-size: 13px; color: #1e293b;">Online Payment (UPI / QR / Cards / NetBanking)</strong>
+                  <p style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Instant confirmation &amp; priority fast dispatch</p>
+                </div>
+                <div style="display:flex; gap:4px;">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="height:12px;">
+                </div>
+              </label>
+            </div>
+
+            <!-- ONE-STEP INSTANT ACTION BUTTON -->
+            <button type="button" id="submitOrderBtn" class="btn-primary" onclick="handlePaymentSubmit()" style="width: 100%; background: #16a34a; padding: 13px; font-size: 15px; font-weight: 800; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery)
+            </button>
 
             <!-- 1-TAP ORDER DIRECTLY ON WHATSAPP ALTERNATIVE -->
-            <div style="margin-top: 12px; text-align: center;">
-              <button type="button" onclick="orderDirectlyViaWhatsApp()" style="width:100%; background:#f0fdf4; color:#166534; border:1.5px solid #86efac; border-radius:10px; padding:10px 14px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+            <div style="margin-top: 10px; text-align: center;">
+              <button type="button" onclick="orderDirectlyViaWhatsApp()" style="width:100%; background:#f0fdf4; color:#166534; border:1.5px solid #86efac; border-radius:10px; padding:9px 12px; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
                 <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25d366;"></i> Prefer WhatsApp? Order via 1-Tap WhatsApp
               </button>
             </div>
-          </div>
 
-          <!-- STEP 2: Review & Payment Options (Online & Cash on Delivery) -->
-          <div id="step2" style="display:none;">
-            
-            <!-- DOORSTEP VERIFICATION GUARANTEE BANNER -->
-            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px solid #86efac; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 20px;">🛡️</span>
-              <div>
-                <div style="font-size: 12.5px; font-weight: 800; color: #166534;">Doorstep Verification Guarantee</div>
-                <div style="font-size: 11px; color: #15803d; margin-top: 1px;">Inspect book condition &amp; print quality in front of delivery executive before paying cash.</div>
-              </div>
-            </div>
+            <!-- DOORSTEP GUARANTEE NOTE -->
+            <p id="checkoutFooterNote" style="text-align: center; font-size: 11.5px; color: #166534; margin: 10px 0 0; font-weight: 600;">
+              <i class="fa-solid fa-shield-halved" style="color: #16a34a;"></i> 100% Genuine Books &bull; Inspect at doorstep before paying
+            </p>
 
-            <!-- Invoice Box -->
-            <div class="invoice-box" style="margin-bottom: 15px;">
-              <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Order Summary</h4>
-              <div class="invoice-row">
-                <span id="itemName">Item Name</span>
-                <span id="itemPrice">₹0</span>
-              </div>
-              <div class="invoice-row" style="font-weight: 700;" id="invoiceDeliveryRow">
-                <span>Delivery Charges</span>
-                <span id="invoiceDeliveryFee">₹50</span>
-              </div>
-              <div class="invoice-row" id="invoiceCodRow" style="display: none; font-weight: 700; color: #166534;">
-                <span><i class="fa-solid fa-hand-holding-dollar"></i> Doorstep COD Fee</span>
-                <span id="invoiceCodFee">FREE (₹0)</span>
-              </div>
-              <div class="invoice-row">
-                <span>Platform Fee</span>
-                <span>₹5</span>
-              </div>
-              <div class="invoice-row" id="invoiceRepeatDiscountRow" style="display: none; color: #16a34a; font-weight: 800;">
-                <span>Repeat Student Discount (₹20 OFF)</span>
-                <span id="invoiceRepeatDiscountAmount">-₹0</span>
-              </div>
-              <div class="invoice-total">
-                <span>Total Amount to Pay</span>
-                <span id="totalPrice" style="color: #2563eb;">₹5</span>
-              </div>
-            </div>
-
-            <!-- Payment Method Choice (Online vs Cash on Delivery) -->
-            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 15px;">
-              <h4 style="font-size: 13.5px; font-weight: 700; color: #1e293b; margin-bottom: 10px;">Choose How You Want to Pay:</h4>
-              
-              <label style="display: flex; align-items: center; gap: 12px; padding: 11px; background: white; border: 2px solid #2563eb; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" id="payMethodOnlineLabel">
-                <input type="radio" name="paymentMethod" value="online" checked onchange="togglePaymentMethod('online')">
-                <div style="flex: 1;">
-                  <strong style="font-size: 13.5px; color: #1e293b;">Online Payment (UPI / Cards / NetBanking)</strong>
-                  <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Instant confirmation &amp; priority fast dispatch</p>
-                </div>
-                <div style="display:flex; gap:4px;">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="height:14px;">
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: center; gap: 12px; padding: 11px; background: white; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer;" id="payMethodCodLabel">
-                <input type="radio" name="paymentMethod" value="cod" onchange="togglePaymentMethod('cod')">
-                <div style="flex: 1;">
-                  <strong style="font-size: 13.5px; color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
-                  <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Pay in cash or UPI scan when delivery boy hands over books</p>
-                </div>
-                <span style="background:#dcfce7; color:#16a34a; font-size:11px; font-weight:800; padding:3px 7px; border-radius:4px;">COD</span>
-              </label>
-            </div>
-
-            <div class="step-actions">
-              <button type="button" class="btn-secondary" onclick="backToStep1()">Back</button>
-              <button type="button" id="submitOrderBtn" class="btn-primary" onclick="handlePaymentSubmit()">Pay Securely Online</button>
-            </div>
-            <p id="checkoutFooterNote" style="text-align:center; font-size:11px; color:#64748b; margin-top:10px;"><i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Books • Same-Day Dispatch in Kashmir</p>
           </div>
 
         </form>
@@ -5017,6 +5189,26 @@
       <div style="padding: 10px 16px; background: white; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11.5px; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 6px;">
         <i class="fa-solid fa-shield-halved" style="color: #2563eb;"></i> 100% Genuine Books &amp; Guaranteed Doorstep Delivery across all 20 Districts of Jammu &amp; Kashmir.
       </div>
+    </div>
+  </div>
+
+  <!-- P3: Floating Sticky Mobile Cart Bar -->
+  <div id="stickyMobileCartBar" class="sticky-mobile-cart-bar" style="display: none;">
+    <div class="sticky-cart-left">
+      <div class="sticky-cart-icon-wrap">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="stickyCartBadge" class="sticky-cart-badge">0</span>
+      </div>
+      <div>
+        <div class="sticky-cart-count-label" id="stickyCartCountLabel">0 Items in Cart</div>
+        <div class="sticky-cart-total-price" id="stickyCartTotalPrice">₹0</div>
+      </div>
+    </div>
+    <div class="sticky-cart-right">
+      <a href="cart.html" class="sticky-cart-btn-view">View Cart</a>
+      <button type="button" class="sticky-cart-btn-checkout" onclick="openCartCheckout()">
+        Checkout <i class="fa-solid fa-arrow-right"></i>
+      </button>
     </div>
   </div>
 

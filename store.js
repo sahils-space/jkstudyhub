@@ -1383,7 +1383,25 @@ function updateNavBadges() {
   }
 
   const totalCartQty = cart.reduce((acc, item) => acc + (parseInt(item.qty) || 1), 0);
+  const totalCartValue = cart.reduce((acc, item) => acc + ((Number(item.price) || 0) * (parseInt(item.qty) || 1)), 0);
   const totalWishlistCount = wishlist.length;
+
+  // P3: Floating Sticky Mobile Cart Bar Live Updates
+  const stickyCartBar = document.getElementById('stickyMobileCartBar');
+  const stickyCartBadge = document.getElementById('stickyCartBadge');
+  const stickyCartCountLabel = document.getElementById('stickyCartCountLabel');
+  const stickyCartTotalPrice = document.getElementById('stickyCartTotalPrice');
+
+  if (stickyCartBar) {
+    if (totalCartQty > 0) {
+      stickyCartBar.style.display = 'flex';
+      if (stickyCartBadge) stickyCartBadge.innerText = totalCartQty;
+      if (stickyCartCountLabel) stickyCartCountLabel.innerText = `${totalCartQty} Item${totalCartQty === 1 ? '' : 's'} in Cart`;
+      if (stickyCartTotalPrice) stickyCartTotalPrice.innerText = `₹${totalCartValue}`;
+    } else {
+      stickyCartBar.style.display = 'none';
+    }
+  }
 
   const cartBadges = document.querySelectorAll('.nav-badge-count, #cartCount');
   cartBadges.forEach(el => {
@@ -4479,13 +4497,17 @@ function setupCheckoutModal(name, price, category) {
   });
   updateCheckoutInvoiceTotals();
 
-  document.getElementById('step2').style.display = 'none';
-  document.getElementById('step1').style.display = 'block';
+  // Default to Cash on Delivery (COD) for fastest student checkout
+  const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
+  if (codRadio) {
+    codRadio.checked = true;
+  }
+  togglePaymentMethod('cod');
 
-  const p1 = document.getElementById('progressStep1');
-  const p2 = document.getElementById('progressStep2');
-  if (p1) p1.classList.add('active-step');
-  if (p2) p2.classList.remove('active-step');
+  const step1 = document.getElementById('step1');
+  if (step1) step1.style.display = 'block';
+  const step2 = document.getElementById('step2');
+  if (step2) step2.style.display = 'none';
 
   const notesFields = document.getElementById('notesSpecificFields');
   const schoolFields = document.getElementById('schoolBooksSpecificFields');
@@ -5330,6 +5352,20 @@ function showOrderConfirmationModal(orderRecord, isCod) {
   }
 
   const delInfo = getEstimatedDeliveryInfo(orderRecord.address);
+  const studentPhone = String(orderRecord.phone || '').replace(/\D/g, '').slice(-10);
+
+  const studentWaReceiptText = `*📚 JK STUDY HUB - ORDER CONFIRMED!*%0A%0A` +
+    `Hello *${encodeURIComponent(orderRecord.name)}*, your order has been received!%0A%0A` +
+    `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
+    `📖 *Item:* ${encodeURIComponent(orderRecord.product)}%0A` +
+    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery - Pay at Doorstep' : 'Prepaid Online'})%0A` +
+    `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A` +
+    `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
+    (orderRecord.deliveryOtp ? `🔐 *Doorstep OTP:* ${orderRecord.deliveryOtp}%0A` : '') +
+    `%0A✨ *Doorstep Guarantee:* Inspect book condition before paying cash. Thank you for choosing JK Study Hub!`;
+
+  const studentWaUrl = studentPhone ? `https://wa.me/91${studentPhone}?text=${studentWaReceiptText}` : `https://wa.me/919622605714?text=${studentWaReceiptText}`;
+
   const waText = `*📦 New Order Confirmation - JK Study Hub*%0A%0A` +
     `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
     `👤 *Student Name:* ${encodeURIComponent(orderRecord.name)}%0A` +
@@ -5377,9 +5413,12 @@ function showOrderConfirmationModal(orderRecord, isCod) {
           </div>
         ` : ''}
 
-        <!-- WhatsApp Action Button -->
-        <a href="${waUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:white; text-decoration:none; padding:13px; border-radius:10px; font-weight:800; font-size:14px; box-shadow:0 4px 14px rgba(37,211,102,0.3); margin-bottom:10px;">
-          <i class="fa-brands fa-whatsapp" style="font-size:19px;"></i> Receive Tracking on WhatsApp
+        <!-- P5: WhatsApp Instant Notification Slip Buttons -->
+        <a href="${studentWaUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:white; text-decoration:none; padding:13px; border-radius:10px; font-weight:800; font-size:14px; box-shadow:0 4px 14px rgba(37,211,102,0.3); margin-bottom:8px;">
+          <i class="fa-brands fa-whatsapp" style="font-size:19px;"></i> Send Order Slip to My WhatsApp (${studentPhone || 'Student'})
+        </a>
+        <a href="${waUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:6px; background:#f0fdf4; color:#166534; border:1.5px solid #86efac; text-decoration:none; padding:9px; border-radius:10px; font-weight:700; font-size:12px; margin-bottom:12px;">
+          <i class="fa-solid fa-headset"></i> Need Help? Chat with JK Study Hub Dispatch Team
         </a>
 
         <div style="display:flex; gap:10px;">
@@ -5395,6 +5434,13 @@ function showOrderConfirmationModal(orderRecord, isCod) {
   `;
 
   modal.style.display = 'flex';
+
+  // Automatically open WhatsApp order slip for the student after short delay
+  setTimeout(() => {
+    try {
+      window.open(studentWaUrl, '_blank');
+    } catch(e) {}
+  }, 700);
 }
 
 function closeOrderConfirmationModal() {
