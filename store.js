@@ -8745,8 +8745,10 @@ function registerAllCustomProducts(products) {
 }
 
 function registerCustomProductInCatalogs(p) {
-  if (!p || !p.name) return;
-  const prodName = p.name;
+  if (!p || (!p.name && !p.title)) return;
+  const prodName = p.name || p.title;
+  p.name = prodName;
+  p.title = prodName;
   const mainPhoto = (p.photos && p.photos[0]) || p.image || 'images/logo-app.png';
   const allPhotos = (p.photos && p.photos.length > 0) ? p.photos : [mainPhoto];
   const price = Number(p.price) || 0;
