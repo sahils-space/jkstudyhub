@@ -1818,9 +1818,17 @@ function renderCartPage() {
       <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 16px; display: flex; gap: 18px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
         <img src="${item.image || 'images/icon.svg'}" alt="${item.name}" style="width: 85px; height: 85px; object-fit: cover; border-radius: 10px; border: 1px solid #f1f5f9; flex-shrink: 0;">
         <div style="flex-grow: 1;">
+          ${(item.isCombo || (item.name && item.name.startsWith('[COMBO PACK]'))) ? `
+            <div style="margin-bottom: 5px;">
+              <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="fa-solid fa-gift"></i> Verified Combo Pack (Save ₹50)
+              </span>
+            </div>
+          ` : ''}
           <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px;">${item.name}</h4>
+          ${item.comboDetails ? `<div style="font-size: 12px; color: #475569; margin-bottom: 6px;">📦 Package includes: <strong>${item.comboDetails}</strong></div>` : ''}
           <div style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
-            <span>Price: <strong>₹${item.price}</strong> each</span>
+            <span>${(item.isCombo || (item.name && item.name.startsWith('[COMBO PACK]'))) ? 'Combo Price:' : 'Price:'} <strong>₹${item.price}</strong></span>
           </div>
           <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden;">
@@ -4500,6 +4508,18 @@ function setupCheckoutModal(name, price, category) {
   if (formType) formType.removeAttribute('required');
   if (addr) addr.removeAttribute('required');
 
+  // Physical vs Digital Delivery:
+  // All physical products (books, stationery, academic guides, novels, paper, copies, bundles, etc.) require delivery address & PIN!
+  const isDigitalService = (category === 'form' || category === 'digital');
+
+  if (!isDigitalService) {
+    if (addressFields) addressFields.style.display = 'block';
+    if (addr) addr.setAttribute('required', 'true');
+  } else {
+    if (formFields) formFields.style.display = 'block';
+    if (formType) formType.setAttribute('required', 'true');
+  }
+
   // School Books (Class 1st–10th requires School Name)
   if (category === 'school-books' || name.includes('Book Set') || (name.includes('Class ') && !name.includes('11th') && !name.includes('12th'))) {
     if (schoolFields) schoolFields.style.display = 'block';
@@ -4518,29 +4538,18 @@ function setupCheckoutModal(name, price, category) {
     if (!isHigherSec && schoolNameInput) {
       schoolNameInput.setAttribute('required', 'true');
     }
-    if (addressFields) addressFields.style.display = 'block';
-    if (addr) addr.setAttribute('required', 'true');
   }
 
-  // School Copies & Registers
-  if (category === 'copies' || name.includes('Copies') || name.includes('Register')) {
-    if (addressFields) addressFields.style.display = 'block';
-    if (addr) addr.setAttribute('required', 'true');
-  }
-
+  // Notes & Guides with specific subject
   if (category === 'notes' || category === 'both') {
     if (notesFields) notesFields.style.display = 'block';
     if (notesSub) notesSub.setAttribute('required', 'true');
-    if (addressFields) addressFields.style.display = 'block';
-    if (addr) addr.setAttribute('required', 'true');
   }
-  if (category === 'form' || category === 'both') {
+
+  // Dual service (physical book + online form)
+  if (category === 'both') {
     if (formFields) formFields.style.display = 'block';
     if (formType) formType.setAttribute('required', 'true');
-  }
-  if (category === 'standard' || category === 'both' || category === 'books') {
-    if (addressFields) addressFields.style.display = 'block';
-    if (addr) addr.setAttribute('required', 'true');
   }
 
   modal.classList.add('active');
@@ -7100,53 +7109,86 @@ function renderFrequentlyBoughtTogether(bookName) {
   if (!container) return;
 
   const bundle = BOOK_BUNDLES_DATA[bookName] || BOOK_BUNDLES_DATA['default'];
-  const mainBook = BOOK_CATALOG_DATA.find(b => b.name === bookName) || { name: bookName, price: 249, allImages: ['images/books/atomic-habits-1.webp'] };
+  const mainBook = BOOK_CATALOG_DATA.find(b => b.name === bookName) || (PRODUCT_CATALOG[bookName] ? { name: bookName, ...PRODUCT_CATALOG[bookName] } : { name: bookName, price: 249, allImages: ['images/books/atomic-habits-1.webp'] });
   const mainImg = (mainBook.allImages && mainBook.allImages[0]) || mainBook.image || 'images/books/atomic-habits-1.webp';
 
-  const regTotal = (Number(mainBook.price) || 249) + bundle.companionPrice;
-  const comboPrice = bundle.comboPrice;
-  const savings = regTotal - comboPrice;
+  const p1 = Number(mainBook.price) || 249;
+  const p2 = Number(bundle.companionPrice) || 249;
+  const regTotal = p1 + p2;
+
+  // Controlled, safe bundle discount of ₹50 (buyer saves ₹50, seller guarantees profit)
+  const savings = (bundle.savings && bundle.savings <= 60) ? bundle.savings : 50;
+  const comboPrice = Math.max(99, regTotal - savings);
+
+  const safeMainName = safeEscape(mainBook.name);
+  const safeCompanionName = safeEscape(bundle.companion);
+  const comboTitle = `[COMBO PACK] ${safeMainName} + ${safeCompanionName}`;
 
   container.innerHTML = `
     <div class="frequently-bought-card">
       <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
-        <span style="font-size:13px; font-weight:800; color:#1e3a8a;">📚 Frequently Bought Together</span>
+        <span style="font-size:13px; font-weight:800; color:#1e3a8a;"><i class="fa-solid fa-gift" style="color:#2563eb;"></i> Frequently Bought Together</span>
         <span style="background:#dcfce7; color:#166534; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">
           Save ₹${savings} Combo Discount
         </span>
       </div>
 
       <div class="bundle-products-strip">
-        <img src="${mainImg}" class="bundle-item-thumb" alt="${safeEscape(mainBook.name)}">
+        <img src="${mainImg}" class="bundle-item-thumb" alt="${safeMainName}">
         <span class="bundle-plus-icon">+</span>
-        <img src="${bundle.companionImg}" class="bundle-item-thumb" alt="${safeEscape(bundle.companion)}">
+        <img src="${bundle.companionImg}" class="bundle-item-thumb" alt="${safeCompanionName}">
         
         <div style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end;">
-          <div style="font-size:12px; color:#64748b; text-decoration:line-through;">Regular: ₹${regTotal}</div>
-          <div style="font-size:19px; font-weight:800; color:#0f172a;">Combo: ₹${comboPrice}</div>
+          <div style="font-size:12px; color:#64748b; text-decoration:line-through;">Regular Total: ₹${regTotal}</div>
+          <div style="font-size:19px; font-weight:800; color:#0f172a;">Combo Price: ₹${comboPrice}</div>
         </div>
       </div>
 
       <div style="font-size:12px; color:#475569; margin-bottom:10px;">
-        • <strong>${safeEscape(mainBook.name)}</strong> (₹${mainBook.price})<br>
-        • <strong>${safeEscape(bundle.companion)}</strong> (₹${bundle.companionPrice})
+        • <strong>${safeMainName}</strong> (₹${p1})<br>
+        • <strong>${safeCompanionName}</strong> (₹${p2})
       </div>
 
-      <button type="button" onclick="addBundleToCart('${safeEscape(mainBook.name)}', '${safeEscape(bundle.companion)}', ${comboPrice})" class="bundle-cta-btn" style="width:100%; justify-content:center;">
-        <i class="fa-solid fa-cart-plus"></i> Add Both to Cart &amp; Save ₹${savings}
-      </button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" onclick="addBundleToCart('${safeMainName}', '${safeCompanionName}', ${comboPrice})" class="bundle-cta-btn" style="flex:1; justify-content:center; padding:10px 14px; font-size:12.5px;">
+          <i class="fa-solid fa-cart-plus"></i> Add Combo to Cart
+        </button>
+        <button type="button" onclick="openCheckout('${comboTitle.replace(/'/g, "\\'")}', ${comboPrice}, 'physical', 'books')" class="buy-btn" style="padding:10px 16px; font-size:12.5px; font-weight:800; border-radius:8px;">
+          ⚡ Buy Combo (COD)
+        </button>
+      </div>
     </div>
   `;
 }
 
 function addBundleToCart(book1Name, book2Name, bundlePrice) {
-  // Add book 1
-  addToCart(book1Name, Math.round(bundlePrice / 2), 'physical', 'books');
-  // Add companion book
-  addToCart(book2Name, Math.round(bundlePrice / 2), 'physical', 'books');
+  const comboName = `[COMBO PACK] ${book1Name} + ${book2Name}`;
+  const comboPrice = Number(bundlePrice);
 
+  const mainBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA.find(b => b.name === book1Name) : null) || (PRODUCT_CATALOG[book1Name] ? { name: book1Name, ...PRODUCT_CATALOG[book1Name] } : null);
+  const img = (mainBook && (mainBook.image || (mainBook.allImages && mainBook.allImages[0]))) || 'images/logo-app.png';
+
+  let cart = getCart();
+  const existingIdx = cart.findIndex(i => i.name === comboName);
+
+  if (existingIdx > -1) {
+    cart[existingIdx].qty = (parseInt(cart[existingIdx].qty) || 1) + 1;
+  } else {
+    cart.push({
+      name: comboName,
+      price: comboPrice,
+      category: 'books',
+      image: img,
+      qty: 1,
+      isCombo: true,
+      comboDetails: `${book1Name} + ${book2Name}`
+    });
+  }
+
+  saveCart(cart);
+  if (typeof updateCartCount === 'function') updateCartCount();
   if (typeof showToast === 'function') {
-    showToast(`🎉 Semester Bundle added! Both books in cart for ₹${bundlePrice}`);
+    showToast(`🎉 "${comboName}" added to Cart together!`, 'cart.html', 'View Cart ➔');
   }
 }
 

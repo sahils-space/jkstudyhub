@@ -637,11 +637,19 @@
                 <div class="seller-photo-grid">
                   <!-- Photo Slot 1 (Required) -->
                   <div class="seller-photo-slot" id="sellerPhotoSlot1">
-                    <input type="file" id="sellerPhotoInput1" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 1)">
-                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder1" onclick="document.getElementById('sellerPhotoInput1').click()">
-                      <i class="fa-solid fa-camera"></i>
+                    <input type="file" id="sellerPhotoGallery1" accept="image/*" style="display: none;" onchange="handleSellerPhotoSelected(event, 1)">
+                    <input type="file" id="sellerPhotoCamera1" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 1)">
+                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder1" onclick="document.getElementById('sellerPhotoGallery1').click()">
+                      <i class="fa-solid fa-cloud-arrow-up" style="font-size:22px; color:#2563eb; margin-bottom:4px;"></i>
                       <div class="slot-title">Photo 1 (Front Cover) *</div>
-                      <div class="slot-hint">Tap to take photo or browse</div>
+                      <div style="display: flex; gap: 6px; margin-top: 8px; justify-content: center;">
+                        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoGallery1').click()" title="Choose photo from gallery or computer">
+                          <i class="fa-solid fa-images"></i> Gallery
+                        </button>
+                        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoCamera1').click()" title="Take photo with camera">
+                          <i class="fa-solid fa-camera"></i> Camera
+                        </button>
+                      </div>
                     </div>
                     <img id="sellerSlotPreview1" class="seller-slot-img" alt="Photo 1" style="display: none;">
                     <button type="button" class="seller-slot-remove-btn" id="sellerSlotRemove1" title="Remove Photo 1" onclick="removeSellerPhoto(event, 1)" style="display: none;">
@@ -651,11 +659,19 @@
 
                   <!-- Photo Slot 2 (Optional) -->
                   <div class="seller-photo-slot" id="sellerPhotoSlot2">
-                    <input type="file" id="sellerPhotoInput2" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 2)">
-                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder2" onclick="document.getElementById('sellerPhotoInput2').click()">
-                      <i class="fa-solid fa-images"></i>
+                    <input type="file" id="sellerPhotoGallery2" accept="image/*" style="display: none;" onchange="handleSellerPhotoSelected(event, 2)">
+                    <input type="file" id="sellerPhotoCamera2" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 2)">
+                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder2" onclick="document.getElementById('sellerPhotoGallery2').click()">
+                      <i class="fa-solid fa-images" style="font-size:22px; color:#2563eb; margin-bottom:4px;"></i>
                       <div class="slot-title">Photo 2 (Back / Index)</div>
-                      <div class="slot-hint">Optional • Extra angle</div>
+                      <div style="display: flex; gap: 6px; margin-top: 8px; justify-content: center;">
+                        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoGallery2').click()" title="Choose photo from gallery or computer">
+                          <i class="fa-solid fa-images"></i> Gallery
+                        </button>
+                        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoCamera2').click()" title="Take photo with camera">
+                          <i class="fa-solid fa-camera"></i> Camera
+                        </button>
+                      </div>
                     </div>
                     <img id="sellerSlotPreview2" class="seller-slot-img" alt="Photo 2" style="display: none;">
                     <button type="button" class="seller-slot-remove-btn" id="sellerSlotRemove2" title="Remove Photo 2" onclick="removeSellerPhoto(event, 2)" style="display: none;">
@@ -665,11 +681,19 @@
 
                   <!-- Photo Slot 3 (Optional) -->
                   <div class="seller-photo-slot" id="sellerPhotoSlot3">
-                    <input type="file" id="sellerPhotoInput3" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 3)">
-                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder3" onclick="document.getElementById('sellerPhotoInput3').click()">
-                      <i class="fa-solid fa-book-open"></i>
+                    <input type="file" id="sellerPhotoGallery3" accept="image/*" style="display: none;" onchange="handleSellerPhotoSelected(event, 3)">
+                    <input type="file" id="sellerPhotoCamera3" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 3)">
+                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder3" onclick="document.getElementById('sellerPhotoGallery3').click()">
+                      <i class="fa-solid fa-book-open" style="font-size:22px; color:#2563eb; margin-bottom:4px;"></i>
                       <div class="slot-title">Photo 3 (Inside / Sample)</div>
-                      <div class="slot-hint">Optional • Sample page</div>
+                      <div style="display: flex; gap: 6px; margin-top: 8px; justify-content: center;">
+                        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoGallery3').click()" title="Choose photo from gallery or computer">
+                          <i class="fa-solid fa-images"></i> Gallery
+                        </button>
+                        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoCamera3').click()" title="Take photo with camera">
+                          <i class="fa-solid fa-camera"></i> Camera
+                        </button>
+                      </div>
                     </div>
                     <img id="sellerSlotPreview3" class="seller-slot-img" alt="Photo 3" style="display: none;">
                     <button type="button" class="seller-slot-remove-btn" id="sellerSlotRemove3" title="Remove Photo 3" onclick="removeSellerPhoto(event, 3)" style="display: none;">

@@ -2045,8 +2045,12 @@ function removeSellerPhoto(event, slotNum) {
   }
   sellerUploadedPhotos[slotNum - 1] = null;
 
-  const fileInput = document.getElementById(`sellerPhotoInput${slotNum}`);
-  if (fileInput) fileInput.value = '';
+  const galInput = document.getElementById(`sellerPhotoGallery${slotNum}`);
+  if (galInput) galInput.value = '';
+  const camInput = document.getElementById(`sellerPhotoCamera${slotNum}`);
+  if (camInput) camInput.value = '';
+  const oldInput = document.getElementById(`sellerPhotoInput${slotNum}`);
+  if (oldInput) oldInput.value = '';
 
   const previewImg = document.getElementById(`sellerSlotPreview${slotNum}`);
   const placeholder = document.getElementById(`sellerSlotPlaceholder${slotNum}`);
@@ -2059,10 +2063,20 @@ function removeSellerPhoto(event, slotNum) {
   if (removeBtn) removeBtn.style.display = 'none';
   if (placeholder) {
     placeholder.style.display = 'flex';
+    const iconClass = slotNum === 1 ? 'fa-cloud-arrow-up' : (slotNum === 2 ? 'fa-images' : 'fa-book-open');
+    const titleText = slotNum === 1 ? 'Photo 1 (Front Cover) *' : (slotNum === 2 ? 'Photo 2 (Back / Index)' : 'Photo 3 (Inside / Sample)');
+
     placeholder.innerHTML = `
-      <i class="fa-solid ${slotNum === 1 ? 'fa-camera' : (slotNum === 2 ? 'fa-images' : 'fa-book-open')}"></i>
-      <div class="slot-title">${slotNum === 1 ? 'Photo 1 (Front Cover) *' : (slotNum === 2 ? 'Photo 2 (Back / Index)' : 'Photo 3 (Inside / Sample)')}</div>
-      <div class="slot-hint">${slotNum === 1 ? 'Tap to take photo or browse' : 'Optional • Extra angle'}</div>
+      <i class="fa-solid ${iconClass}" style="font-size:22px; color:#2563eb; margin-bottom:4px;"></i>
+      <div class="slot-title">${titleText}</div>
+      <div style="display: flex; gap: 6px; margin-top: 8px; justify-content: center;">
+        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoGallery${slotNum}').click()" title="Choose photo from gallery or computer">
+          <i class="fa-solid fa-images"></i> Gallery
+        </button>
+        <button type="button" class="btn-slot-upload-opt" onclick="event.stopPropagation(); document.getElementById('sellerPhotoCamera${slotNum}').click()" title="Take photo with camera">
+          <i class="fa-solid fa-camera"></i> Camera
+        </button>
+      </div>
     `;
   }
 }
