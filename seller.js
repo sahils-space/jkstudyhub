@@ -549,6 +549,7 @@ function switchSellerView(viewName) {
     if (pageTitle) pageTitle.innerText = 'Catalog Uploads';
     const pane = document.getElementById('view-catalog');
     if (pane) pane.style.display = 'block';
+    if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
   } else if (viewName === 'payments') {
     if (pageTitle) pageTitle.innerText = 'Payments & Doorstep COD';
     const pane = document.getElementById('view-payments');
@@ -1955,42 +1956,518 @@ function processScannedPacketBarcode() {
 }
 
 // =========================================================
-// 7. CATALOG UPLOADER SUBMISSION
+// 7. CATALOG UPLOADER & MULTI-PHOTO SYSTEM (2-3 PHOTOS)
 // =========================================================
 
-function handleSellerCatalogSubmit(e) {
-  if (e) e.preventDefault();
+let sellerUploadedPhotos = [null, null, null];
 
-  const title = document.getElementById('catTitle').value;
-  const category = document.getElementById('catCategory').value;
-  const price = document.getElementById('catPrice').value;
-  const mrp = document.getElementById('catMrp').value || Math.round(price * 1.4);
-  const stock = document.getElementById('catStock').value || 20;
-  const img = document.getElementById('catImageUrl').value || 'images/books/lucent-gk-1.webp';
-  const desc = document.getElementById('catDescription').value || '';
+// Compress photo using HTML5 Canvas to keep file lightweight (<90KB) and preserve aspect ratio
+async function compressSellerPhotoFile(file, maxWidth = 900, maxHeight = 1100, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        let width = img.width;
+        let height = img.height;
 
-  const newProduct = {
-    id: 'PRD-' + Date.now(),
-    name: title,
-    category: category,
-    price: Number(price),
-    originalPrice: Number(mrp),
-    stock: Number(stock),
-    image: img,
-    description: desc,
-    dateAdded: new Date().toLocaleDateString()
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Handle Photo Selected for slot (1, 2, or 3)
+async function handleSellerPhotoSelected(event, slotNum) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const previewImg = document.getElementById(`sellerSlotPreview${slotNum}`);
+  const placeholder = document.getElementById(`sellerSlotPlaceholder${slotNum}`);
+  const removeBtn = document.getElementById(`sellerSlotRemove${slotNum}`);
+
+  try {
+    if (placeholder) {
+      placeholder.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="font-size:24px; color:#2563eb; margin-bottom:6px;"></i><span style="font-size:11px; color:#2563eb; font-weight:700;">Optimizing Photo...</span>`;
+    }
+
+    const compressedDataUrl = await compressSellerPhotoFile(file, 900, 1100, 0.8);
+    sellerUploadedPhotos[slotNum - 1] = compressedDataUrl;
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (previewImg) {
+      previewImg.src = compressedDataUrl;
+      previewImg.style.display = 'block';
+    }
+    if (removeBtn) removeBtn.style.display = 'flex';
+
+    if (typeof showToast === 'function') {
+      showToast(`📸 Photo ${slotNum} ready for live catalog!`);
+    }
+  } catch (err) {
+    console.error("Seller photo compression error:", err);
+    if (placeholder) {
+      placeholder.style.display = 'flex';
+      placeholder.innerHTML = `
+        <i class="fa-solid fa-camera"></i>
+        <div class="slot-title">${slotNum === 1 ? 'Photo 1 (Front Cover) *' : `Photo ${slotNum}`}</div>
+        <div class="slot-hint">Try selecting another image</div>
+      `;
+    }
+    alert("Could not process this photo. Please try a different image.");
+  }
+}
+
+// Remove photo from slot
+function removeSellerPhoto(event, slotNum) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  sellerUploadedPhotos[slotNum - 1] = null;
+
+  const fileInput = document.getElementById(`sellerPhotoInput${slotNum}`);
+  if (fileInput) fileInput.value = '';
+
+  const previewImg = document.getElementById(`sellerSlotPreview${slotNum}`);
+  const placeholder = document.getElementById(`sellerSlotPlaceholder${slotNum}`);
+  const removeBtn = document.getElementById(`sellerSlotRemove${slotNum}`);
+
+  if (previewImg) {
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+  }
+  if (removeBtn) removeBtn.style.display = 'none';
+  if (placeholder) {
+    placeholder.style.display = 'flex';
+    placeholder.innerHTML = `
+      <i class="fa-solid ${slotNum === 1 ? 'fa-camera' : (slotNum === 2 ? 'fa-images' : 'fa-book-open')}"></i>
+      <div class="slot-title">${slotNum === 1 ? 'Photo 1 (Front Cover) *' : (slotNum === 2 ? 'Photo 2 (Back / Index)' : 'Photo 3 (Inside / Sample)')}</div>
+      <div class="slot-hint">${slotNum === 1 ? 'Tap to take photo or browse' : 'Optional • Extra angle'}</div>
+    `;
+  }
+}
+
+// Upload photo to reliable CDN with fallback
+async function uploadSellerPhotoToCdn(photoDataUrl) {
+  if (!photoDataUrl || !photoDataUrl.startsWith('data:')) {
+    return photoDataUrl;
+  }
+  const base64Data = photoDataUrl.split(',')[1];
+  if (!base64Data) return photoDataUrl;
+
+  const fetchWithTimeout = (url, options, timeout = 6000) => {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('CDN upload timeout')), timeout))
+    ]);
   };
 
-  // Save to catalog in localStorage
+  // Primary: FreeImage.host
   try {
-    let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-    cat.unshift(newProduct);
-    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
+    const formData = new FormData();
+    formData.append('key', '6d207e02198a847aa98d0a2a901485a5');
+    formData.append('action', 'upload');
+    formData.append('source', base64Data);
+    formData.append('format', 'json');
+
+    const res = await fetchWithTimeout('https://freeimage.host/api/1/upload', {
+      method: 'POST',
+      body: formData
+    }, 6000);
+    const result = await res.json();
+    if (result && result.status_code === 200 && result.image && result.image.url) {
+      return result.image.url;
+    }
+  } catch (e) {
+    console.warn("FreeImage upload notice:", e);
+  }
+
+  // Secondary: ImgBB Public API
+  try {
+    const bbForm = new FormData();
+    bbForm.append('image', base64Data);
+    const bbRes = await fetchWithTimeout('https://api.imgbb.com/1/upload?key=52bf46960d70b80f74fb060411a0cb79', {
+      method: 'POST',
+      body: bbForm
+    }, 6000);
+    const bbData = await bbRes.json();
+    if (bbData && bbData.data && (bbData.data.url || bbData.data.display_url)) {
+      return bbData.data.url || bbData.data.display_url;
+    }
+  } catch (e) {
+    console.warn("ImgBB upload notice:", e);
+  }
+
+  return photoDataUrl;
+}
+
+// Handle Catalog Submission & Live Publishing
+async function handleSellerCatalogSubmit(e) {
+  if (e) e.preventDefault();
+
+  const title = (document.getElementById('catTitle')?.value || '').trim();
+  const category = document.getElementById('catCategory')?.value || 'academic';
+  const price = parseFloat(document.getElementById('catPrice')?.value) || 0;
+  const mrpInput = document.getElementById('catMrp')?.value;
+  const mrp = mrpInput ? parseFloat(mrpInput) : Math.round(price * 1.35);
+  const stock = parseInt(document.getElementById('catStock')?.value || '20', 10);
+  const badge = document.getElementById('catBadge')?.value || '✨ Fresh Stock';
+  const desc = (document.getElementById('catDescription')?.value || '').trim();
+  const statusNotice = document.getElementById('sellerCatalogStatusNotice');
+
+  if (!title || price <= 0 || !desc) {
+    alert("⚠️ Please provide Title, Selling Price, and Description.");
+    return;
+  }
+
+  // Ensure at least Photo 1 is uploaded
+  if (!sellerUploadedPhotos[0]) {
+    alert("⚠️ Please take or upload at least Photo 1 (Front Cover) for the product.");
+    const slot1 = document.getElementById('sellerPhotoSlot1');
+    if (slot1) slot1.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const btnPublish = document.getElementById('btnSellerPublishCatalog');
+  const originalBtnHtml = btnPublish ? btnPublish.innerHTML : '';
+  if (btnPublish) {
+    btnPublish.disabled = true;
+    btnPublish.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading Photos & Publishing...`;
+  }
+
+  if (statusNotice) {
+    statusNotice.style.display = 'block';
+    statusNotice.style.background = '#eff6ff';
+    statusNotice.style.color = '#1d4ed8';
+    statusNotice.style.border = '1px solid #bfdbfe';
+    statusNotice.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing images and broadcasting product to Google Sheets and live store...`;
+  }
+
+  try {
+    const rawPhotos = sellerUploadedPhotos.filter(p => !!p);
+    const cdnPhotos = [];
+    for (let i = 0; i < rawPhotos.length; i++) {
+      try {
+        const cdnUrl = await uploadSellerPhotoToCdn(rawPhotos[i]);
+        cdnPhotos.push(cdnUrl);
+      } catch (err) {
+        cdnPhotos.push(rawPhotos[i]);
+      }
+    }
+
+    const finalPhotos = cdnPhotos.length > 0 ? cdnPhotos : rawPhotos;
+    const prodId = 'PRD-' + Date.now();
+
+    const newProduct = {
+      id: prodId,
+      productId: prodId,
+      name: title,
+      title: title,
+      category: category,
+      price: price,
+      mrp: mrp,
+      badge: badge,
+      stock: stock,
+      desc: desc,
+      description: desc,
+      photos: finalPhotos,
+      image: finalPhotos[0] || 'images/logo-app.png',
+      allImages: finalPhotos,
+      status: 'Active',
+      dateAdded: new Date().toLocaleDateString("en-IN"),
+      timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+    };
+
+    // 1. Save to local storage for store.js and seller.js
+    try {
+      let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
+      customProds.unshift(newProduct);
+      localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
+    } catch (e) {
+      console.warn("Storage quota warning on jk_custom_products:", e);
+    }
+
+    try {
+      let uploadedCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+      uploadedCat.unshift(newProduct);
+      localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
+    } catch (e) {
+      console.warn("Storage quota warning on jk_uploaded_catalog:", e);
+    }
+
+    // 2. Set stock override in seller inventory
+    try {
+      const stockMap = getSellerStockOverrides();
+      stockMap[title] = { status: stock > 0 ? 'in_stock' : 'out_of_stock', qty: stock };
+      localStorage.setItem('jk_stock_overrides', JSON.stringify(stockMap));
+    } catch(e) {}
+
+    // 3. Dispatch to Google Apps Script
+    try {
+      const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+
+      // Call A: action=add_product
+      const postData = new URLSearchParams();
+      postData.append('action', 'add_product');
+      postData.append('product_id', prodId);
+      postData.append('title', title);
+      postData.append('category', category);
+      postData.append('price', String(price));
+      postData.append('mrp', String(mrp));
+      postData.append('badge', badge);
+      postData.append('description', desc);
+      postData.append('photo1', finalPhotos[0] || '');
+      postData.append('photo2', finalPhotos[1] || '');
+      postData.append('photo3', finalPhotos[2] || '');
+      postData.append('stock', String(stock));
+      postData.append('status', 'Active');
+      postData.append('uploader', 'seller');
+
+      fetch(endpoint, {
+        method: 'POST',
+        body: postData,
+        mode: 'no-cors'
+      }).catch(err => console.warn("Seller add_product sync:", err));
+
+      // Call B: Universal Fallback Row in Main Sheet
+      const catalogMeta = JSON.stringify({
+        id: prodId,
+        productId: prodId,
+        name: title,
+        title: title,
+        category: category,
+        price: price,
+        mrp: mrp,
+        badge: badge,
+        stock: stock,
+        desc: desc,
+        description: desc,
+        photos: finalPhotos,
+        image: finalPhotos[0] || 'images/logo-app.png',
+        status: 'Active'
+      });
+
+      const fallbackData = new URLSearchParams();
+      fallbackData.append('order_id', prodId);
+      fallbackData.append('name', title);
+      fallbackData.append('phone', 'CATALOG_PRODUCT');
+      fallbackData.append('address', catalogMeta);
+      fallbackData.append('product', title);
+      fallbackData.append('amount', String(price));
+      fallbackData.append('txn_id', 'CATALOG_PRODUCT');
+      fallbackData.append('status', 'Active');
+      fallbackData.append('notes', 'Seller Catalog Listing');
+
+      fetch(endpoint, {
+        method: 'POST',
+        body: fallbackData,
+        mode: 'no-cors'
+      }).catch(err => console.warn("Seller fallback row sync:", err));
+
+    } catch (err) {
+      console.warn("Sheet post error:", err);
+    }
+
+    // 4. Reset form & photo slots
+    const form = document.getElementById('sellerCatalogForm');
+    if (form) form.reset();
+    for (let s = 1; s <= 3; s++) {
+      removeSellerPhoto(null, s);
+    }
+
+    if (statusNotice) {
+      statusNotice.style.background = '#f0fdf4';
+      statusNotice.style.color = '#15803d';
+      statusNotice.style.border = '1px solid #bbf7d0';
+      statusNotice.innerHTML = `🎉 <strong>Success!</strong> "${title}" is published live to the storefront with ${finalPhotos.length} photo(s) and synced to Google Sheets.`;
+      setTimeout(() => {
+        if (statusNotice) statusNotice.style.display = 'none';
+      }, 7000);
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(`🎉 "${title}" published live with ${finalPhotos.length} photos!`);
+    }
+
+    // 5. Update listings and inventory views
+    renderSellerPublishedCatalog();
+    if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
+    if (typeof renderSellerInventoryTable === 'function') renderSellerInventoryTable();
+    if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
+
+  } catch (err) {
+    console.error("Catalog upload error:", err);
+    alert("An error occurred while publishing the product. Please try again.");
+    if (statusNotice) statusNotice.style.display = 'none';
+  } finally {
+    if (btnPublish) {
+      btnPublish.disabled = false;
+      btnPublish.innerHTML = originalBtnHtml;
+    }
+  }
+}
+
+// Get all published catalog products (combining jk_custom_products and jk_uploaded_catalog)
+function getSellerAllPublishedProducts() {
+  const mergedMap = new Map();
+  try {
+    const list1 = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
+    if (Array.isArray(list1)) {
+      list1.forEach(p => {
+        const key = p.id || p.productId || p.name;
+        if (key) mergedMap.set(key, p);
+      });
+    }
   } catch(e) {}
 
-  alert(`✅ Published "${title}" to your store catalog!`);
-  document.getElementById('sellerCatalogForm').reset();
-  switchSellerView('dashboard');
+  try {
+    const list2 = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+    if (Array.isArray(list2)) {
+      list2.forEach(p => {
+        const key = p.id || p.productId || p.name;
+        if (key && !mergedMap.has(key)) mergedMap.set(key, p);
+      });
+    }
+  } catch(e) {}
+
+  return Array.from(mergedMap.values());
+}
+
+// Render Published Products Table in seller.html
+function renderSellerPublishedCatalog() {
+  const tbody = document.getElementById('sellerPublishedProductsTableBody');
+  const countBadge = document.getElementById('sellerCatalogTotalBadge');
+  if (!tbody) return;
+
+  const products = getSellerAllPublishedProducts();
+
+  if (countBadge) {
+    countBadge.innerText = `${products.length} Live Product${products.length === 1 ? '' : 's'}`;
+  }
+
+  if (products.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 36px 16px; color: #64748b;">
+          <span style="font-size: 32px; display: block; margin-bottom: 8px;">📦</span>
+          <div style="font-size: 14px; font-weight: 700; color: #334155;">No custom products published yet</div>
+          <div style="font-size: 12.5px; margin-top: 4px;">Use the form above to snap 2-3 photos and list your first book or guide!</div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  let html = '';
+  products.forEach(p => {
+    const photos = (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : ['images/logo-app.png']);
+    const mainImg = photos[0] || 'images/logo-app.png';
+    const prodId = p.id || p.productId || '';
+    const safeTitle = (p.title || p.name || 'Untitled').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const price = Number(p.price) || 0;
+    const mrp = Number(p.mrp || p.originalPrice) || Math.round(price * 1.35);
+    const stock = (p.stock !== undefined) ? p.stock : 20;
+
+    html += `
+      <tr>
+        <td>
+          <div style="position: relative; width: 50px; height: 50px;">
+            <img src="${mainImg}" alt="${p.title || p.name}" onerror="this.src='images/logo-app.png'" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+            ${photos.length > 1 ? `
+              <span style="position: absolute; bottom: 2px; right: 2px; background: rgba(15,23,42,0.85); color: #fff; font-size: 9.5px; font-weight: 800; padding: 1px 4px; border-radius: 4px;">
+                ${photos.length} 📸
+              </span>
+            ` : ''}
+          </div>
+        </td>
+        <td>
+          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.title || p.name}</div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            ${p.desc || p.description || ''}
+          </div>
+          <div style="display: flex; gap: 5px; margin-top: 4px;">
+            <span style="font-size: 10px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 1px 6px; border-radius: 4px;">
+              ${p.badge || '✨ Fresh Stock'}
+            </span>
+          </div>
+        </td>
+        <td>
+          <span style="font-size: 11.5px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">
+            ${p.category || 'academic'}
+          </span>
+        </td>
+        <td>
+          <div style="font-size: 14px; font-weight: 800; color: #0f172a;">₹${price}</div>
+          ${mrp > price ? `<div style="font-size: 11.5px; color: #94a3b8; text-decoration: line-through;">₹${mrp}</div>` : ''}
+        </td>
+        <td>
+          <span style="font-size: 12px; font-weight: 700; color: ${stock > 0 ? '#15803d' : '#dc2626'}; background: ${stock > 0 ? '#dcfce7' : '#fee2e2'}; padding: 2px 7px; border-radius: 4px;">
+            ${stock > 0 ? `${stock} in stock` : 'Out of stock'}
+          </span>
+        </td>
+        <td>
+          <span style="font-size: 11px; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Live Synced
+          </span>
+        </td>
+        <td style="text-align: center;">
+          <button type="button" onclick="deleteSellerPublishedProduct('${prodId}', '${safeTitle}')" title="Remove from store" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-trash-can"></i> Remove
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+// Delete / Unpublish Product
+function deleteSellerPublishedProduct(prodId, prodName) {
+  if (!confirm(`Are you sure you want to remove "${prodName || 'this product'}" from the live store?`)) {
+    return;
+  }
+
+  try {
+    let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
+    customProds = customProds.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
+    localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
+  } catch(e) {}
+
+  try {
+    let uploadedCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+    uploadedCat = uploadedCat.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
+    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
+  } catch(e) {}
+
+  renderSellerPublishedCatalog();
+  if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
+  if (typeof renderSellerInventoryTable === 'function') renderSellerInventoryTable();
+  if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
+
+  if (typeof showToast === 'function') {
+    showToast(`Removed "${prodName}" from catalog.`);
+  }
 }
 
 // =========================================================
@@ -2041,6 +2518,7 @@ function initSellerSupplierPanel() {
   if (typeof updateLeadsBadgeCount === 'function') updateLeadsBadgeCount();
   if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
   if (typeof updateSellerDeliveryBadges === 'function') updateSellerDeliveryBadges();
+  if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
   syncSellerWithGoogleSheets(false);
 }
 
@@ -2278,17 +2756,18 @@ const SELLER_MANAGED_PRODUCTS = [
 function getAllSellerPricingProducts() {
   const list = [...SELLER_MANAGED_PRODUCTS];
   try {
-    const uploaded = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+    const uploaded = (typeof getSellerAllPublishedProducts === 'function') ? getSellerAllPublishedProducts() : JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
     if (Array.isArray(uploaded)) {
       uploaded.forEach(u => {
-        if (!list.some(p => p.name === u.name)) {
+        const prodName = u.title || u.name;
+        if (prodName && !list.some(p => p.name === prodName)) {
           list.push({
-            name: u.name,
+            name: prodName,
             category: u.category || 'academic',
             categoryLabel: 'Custom Upload',
-            mrp: Number(u.originalPrice || Math.round(u.price * 1.3)),
-            defaultPrice: Number(u.price),
-            image: u.image || 'images/logo-app.png'
+            mrp: Number(u.mrp || u.originalPrice || Math.round((u.price || 0) * 1.3)),
+            defaultPrice: Number(u.price || 0),
+            image: (Array.isArray(u.photos) && u.photos[0]) ? u.photos[0] : (u.image || 'images/logo-app.png')
           });
         }
       });

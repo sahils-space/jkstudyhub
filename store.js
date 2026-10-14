@@ -8710,13 +8710,31 @@ window.addEventListener('hashchange', handleUrlCategoryHash);
 let CUSTOM_PRODUCTS = [];
 let ownerUploadedPhotos = [null, null, null, null];
 
-// Initialize and load custom products from cache
+// Initialize and load custom products from cache (combining jk_custom_products and jk_uploaded_catalog)
 try {
+  let initialProducts = [];
   const cachedProducts = localStorage.getItem('jk_custom_products');
   if (cachedProducts) {
-    CUSTOM_PRODUCTS = JSON.parse(cachedProducts);
-    registerAllCustomProducts(CUSTOM_PRODUCTS);
+    try {
+      const parsed = JSON.parse(cachedProducts);
+      if (Array.isArray(parsed)) initialProducts = parsed;
+    } catch(e) {}
   }
+  const uploadedCat = localStorage.getItem('jk_uploaded_catalog');
+  if (uploadedCat) {
+    try {
+      const parsedCat = JSON.parse(uploadedCat);
+      if (Array.isArray(parsedCat)) {
+        parsedCat.forEach(p => {
+          if (!initialProducts.some(ip => (ip.id === p.id || ip.name === (p.title || p.name)))) {
+            initialProducts.push(p);
+          }
+        });
+      }
+    } catch(e) {}
+  }
+  CUSTOM_PRODUCTS = initialProducts;
+  registerAllCustomProducts(CUSTOM_PRODUCTS);
 } catch (e) {
   console.warn("Could not parse cached custom products:", e);
 }

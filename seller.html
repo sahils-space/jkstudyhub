@@ -614,22 +614,121 @@
                   <input type="number" id="catStock" class="seller-lock-input" placeholder="e.g. 25" value="20" min="0">
                 </div>
                 <div>
-                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Cover Photo Image URL</label>
-                  <input type="url" id="catImageUrl" class="seller-lock-input" placeholder="https://... (or leave blank for default)">
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Badge / Highlight Tag</label>
+                  <select id="catBadge" class="seller-lock-input">
+                    <option value="✨ Fresh Stock">✨ Fresh Stock</option>
+                    <option value="🔥 Bestseller">🔥 Bestseller</option>
+                    <option value="⚡ Fast Dispatch">⚡ Fast Dispatch</option>
+                    <option value="📚 Board Exam 2026">📚 Board Exam 2026</option>
+                    <option value="⭐ Top Rated">⭐ Top Rated</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Multi-Photo Direct Upload Cards (2 to 3 photos) -->
+              <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; flex-wrap: wrap; gap: 4px;">
+                  <label style="font-size: 13px; font-weight: 800; color: #0f172a;">
+                    📸 Product Photos (Upload 2 to 3 Photos directly from Camera or Gallery) *
+                  </label>
+                  <span style="font-size: 11.5px; color: #64748b;">No image link needed • Auto-compressed • Swipe preview on store</span>
+                </div>
+
+                <div class="seller-photo-grid">
+                  <!-- Photo Slot 1 (Required) -->
+                  <div class="seller-photo-slot" id="sellerPhotoSlot1">
+                    <input type="file" id="sellerPhotoInput1" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 1)">
+                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder1" onclick="document.getElementById('sellerPhotoInput1').click()">
+                      <i class="fa-solid fa-camera"></i>
+                      <div class="slot-title">Photo 1 (Front Cover) *</div>
+                      <div class="slot-hint">Tap to take photo or browse</div>
+                    </div>
+                    <img id="sellerSlotPreview1" class="seller-slot-img" alt="Photo 1" style="display: none;">
+                    <button type="button" class="seller-slot-remove-btn" id="sellerSlotRemove1" title="Remove Photo 1" onclick="removeSellerPhoto(event, 1)" style="display: none;">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+
+                  <!-- Photo Slot 2 (Optional) -->
+                  <div class="seller-photo-slot" id="sellerPhotoSlot2">
+                    <input type="file" id="sellerPhotoInput2" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 2)">
+                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder2" onclick="document.getElementById('sellerPhotoInput2').click()">
+                      <i class="fa-solid fa-images"></i>
+                      <div class="slot-title">Photo 2 (Back / Index)</div>
+                      <div class="slot-hint">Optional • Extra angle</div>
+                    </div>
+                    <img id="sellerSlotPreview2" class="seller-slot-img" alt="Photo 2" style="display: none;">
+                    <button type="button" class="seller-slot-remove-btn" id="sellerSlotRemove2" title="Remove Photo 2" onclick="removeSellerPhoto(event, 2)" style="display: none;">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+
+                  <!-- Photo Slot 3 (Optional) -->
+                  <div class="seller-photo-slot" id="sellerPhotoSlot3">
+                    <input type="file" id="sellerPhotoInput3" accept="image/*" capture="environment" style="display: none;" onchange="handleSellerPhotoSelected(event, 3)">
+                    <div class="seller-slot-placeholder" id="sellerSlotPlaceholder3" onclick="document.getElementById('sellerPhotoInput3').click()">
+                      <i class="fa-solid fa-book-open"></i>
+                      <div class="slot-title">Photo 3 (Inside / Sample)</div>
+                      <div class="slot-hint">Optional • Sample page</div>
+                    </div>
+                    <img id="sellerSlotPreview3" class="seller-slot-img" alt="Photo 3" style="display: none;">
+                    <button type="button" class="seller-slot-remove-btn" id="sellerSlotRemove3" title="Remove Photo 3" onclick="removeSellerPhoto(event, 3)" style="display: none;">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Description / Exam Details</label>
-                <textarea id="catDescription" class="seller-lock-input" rows="3" placeholder="Features, syllabus coverage, edition details..."></textarea>
+                <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Description / Exam Details *</label>
+                <textarea id="catDescription" class="seller-lock-input" rows="3" placeholder="Features, syllabus coverage, edition details..." required></textarea>
               </div>
 
-              <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                <button type="submit" class="btn-hub-primary" style="padding: 10px 24px; font-size: 14px;">
-                  <i class="fa-solid fa-cloud-arrow-up"></i> Publish to Store &amp; Google Sheets
+              <div id="sellerCatalogStatusNotice" style="display: none; margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 700;"></div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+                <button type="submit" id="btnSellerPublishCatalog" class="btn-hub-primary" style="padding: 11px 26px; font-size: 14px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Publish Live to Store &amp; Google Sheets
                 </button>
               </div>
             </form>
+          </div>
+
+          <!-- =======================================================
+               LIVE PUBLISHED PRODUCTS ON STORE
+               ======================================================= -->
+          <div style="background: white; border: 1px solid var(--hub-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">Live Products on Storefront</h3>
+                <p style="font-size: 12.5px; color: #64748b; margin: 2px 0 0;">Products currently visible to all students on JK Study Hub store.</p>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span id="sellerCatalogTotalBadge" style="background: #eff6ff; color: #2563eb; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">0 Live Products</span>
+                <a href="store.html" target="_blank" class="btn-hub-secondary" style="font-size: 12px; padding: 6px 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Store
+                </a>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="supplier-data-table" style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="width: 70px;">Photos</th>
+                    <th>Product Title &amp; Details</th>
+                    <th>Category</th>
+                    <th>Selling Price</th>
+                    <th>Stock</th>
+                    <th>Sync Status</th>
+                    <th style="text-align: center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="sellerPublishedProductsTableBody">
+                  <!-- Populated dynamically via renderSellerPublishedCatalog() -->
+                </tbody>
+              </table>
+            </div>
           </div>
         
             <!-- =======================================================
