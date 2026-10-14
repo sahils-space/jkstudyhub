@@ -5352,31 +5352,22 @@ function showOrderConfirmationModal(orderRecord, isCod) {
   }
 
   const delInfo = getEstimatedDeliveryInfo(orderRecord.address);
-  const studentPhone = String(orderRecord.phone || '').replace(/\D/g, '').slice(-10);
 
-  const studentWaReceiptText = `*📚 JK STUDY HUB - ORDER CONFIRMED!*%0A%0A` +
-    `Hello *${encodeURIComponent(orderRecord.name)}*, your order has been received!%0A%0A` +
+  // Send formatted order slip to JK Study Hub Dispatch (+91 9622605714)
+  const waReceiptText = `*📦 NEW ORDER CONFIRMATION - JK STUDY HUB*%0A%0A` +
+    `Hello JK Study Hub! I have placed an order on your website:%0A%0A` +
     `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
     `📖 *Item:* ${encodeURIComponent(orderRecord.product)}%0A` +
     `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery - Pay at Doorstep' : 'Prepaid Online'})%0A` +
-    `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A` +
-    `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
-    (orderRecord.deliveryOtp ? `🔐 *Doorstep OTP:* ${orderRecord.deliveryOtp}%0A` : '') +
-    `%0A✨ *Doorstep Guarantee:* Inspect book condition before paying cash. Thank you for choosing JK Study Hub!`;
-
-  const studentWaUrl = studentPhone ? `https://wa.me/91${studentPhone}?text=${studentWaReceiptText}` : `https://wa.me/919622605714?text=${studentWaReceiptText}`;
-
-  const waText = `*📦 New Order Confirmation - JK Study Hub*%0A%0A` +
-    `🆔 *Order ID:* ${orderRecord.orderId}%0A` +
     `👤 *Student Name:* ${encodeURIComponent(orderRecord.name)}%0A` +
-    `📞 *Phone:* ${encodeURIComponent(orderRecord.phone)}%0A` +
+    `📞 *Phone Number:* ${encodeURIComponent(orderRecord.phone)}%0A` +
     `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
-    `📚 *Product:* ${encodeURIComponent(orderRecord.product)}%0A` +
-    `💵 *Total Amount:* ₹${orderRecord.amount} (${isCod ? 'Cash on Delivery' : 'Paid Online'})%0A` +
-    `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A%0A` +
-    `_Hello JK Study Hub! Please send me live order tracking and dispatch updates._`;
+    `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A` +
+    (orderRecord.deliveryOtp ? `🔐 *Doorstep OTP:* ${orderRecord.deliveryOtp}%0A` : '') +
+    `%0APlease confirm my order and send dispatch tracking!`;
 
-  const waUrl = `https://wa.me/919622605714?text=${waText}`;
+  // Universal WhatsApp Link (works reliably across Android, iOS, and PC browsers)
+  const waUrl = `https://api.whatsapp.com/send?phone=919622605714&text=${waReceiptText}`;
 
   modal.innerHTML = `
     <div style="background:white; border-radius:18px; max-width:480px; width:100%; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.2); animation:popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-sizing:border-box;">
@@ -5413,12 +5404,9 @@ function showOrderConfirmationModal(orderRecord, isCod) {
           </div>
         ` : ''}
 
-        <!-- P5: WhatsApp Instant Notification Slip Buttons -->
-        <a href="${studentWaUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:white; text-decoration:none; padding:13px; border-radius:10px; font-weight:800; font-size:14px; box-shadow:0 4px 14px rgba(37,211,102,0.3); margin-bottom:8px;">
-          <i class="fa-brands fa-whatsapp" style="font-size:19px;"></i> Send Order Slip to My WhatsApp (${studentPhone || 'Student'})
-        </a>
-        <a href="${waUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:6px; background:#f0fdf4; color:#166534; border:1.5px solid #86efac; text-decoration:none; padding:9px; border-radius:10px; font-weight:700; font-size:12px; margin-bottom:12px;">
-          <i class="fa-solid fa-headset"></i> Need Help? Chat with JK Study Hub Dispatch Team
+        <!-- High-Reliability WhatsApp Direct Launch Button -->
+        <a href="${waUrl}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:10px; background:#25D366; color:white; text-decoration:none; padding:14px 16px; border-radius:12px; font-weight:900; font-size:15px; box-shadow:0 6px 20px rgba(37,211,102,0.4); margin-bottom:12px; cursor:pointer;">
+          <i class="fa-brands fa-whatsapp" style="font-size:22px;"></i> Open WhatsApp &amp; Send Order Slip
         </a>
 
         <div style="display:flex; gap:10px;">
@@ -5434,13 +5422,6 @@ function showOrderConfirmationModal(orderRecord, isCod) {
   `;
 
   modal.style.display = 'flex';
-
-  // Automatically open WhatsApp order slip for the student after short delay
-  setTimeout(() => {
-    try {
-      window.open(studentWaUrl, '_blank');
-    } catch(e) {}
-  }, 700);
 }
 
 function closeOrderConfirmationModal() {
@@ -8441,7 +8422,11 @@ function orderDirectlyViaWhatsApp() {
               `🏡 *Address:* ${encodeURIComponent(addr ? addr + ', ' + city : city)}%0A%0A` +
               `Please confirm my doorstep order with Kashmir Express dispatch!`;
 
-  window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
+  const url = `https://api.whatsapp.com/send?phone=919622605714&text=${msg}`;
+  const win = window.open(url, '_blank');
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    window.location.href = url;
+  }
 }
 
 // --- STUDENT RATINGS & VERIFIED REVIEWS ENGINE ---
