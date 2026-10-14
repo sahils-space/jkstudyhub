@@ -26,7 +26,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { background-color: #f8fafc; }
+    body {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.04) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.04) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(241, 245, 249, 0.7) 0px, transparent 50%),
+        radial-gradient(#cbd5e1 0.75px, transparent 0.75px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
+      background-position: 0 0, 0 0, 0 0, 0 0;
+      color: #0f172a;
+    }
     .store-nav { background: white; padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
     .store-nav .logo { font-size: 20px; font-weight: 800; color: #1e293b; text-decoration: none; }
     .store-nav .back-btn { background: #f1f5f9; color: #475569; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; }
@@ -1202,6 +1212,45 @@
       background: #cbd5e1;
       color: #0f172a;
     }
+    .search-suggestions-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1.5px solid #93c5fd;
+      border-radius: 14px;
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.14);
+      max-height: 380px;
+      overflow-y: auto;
+      z-index: 9999;
+      padding: 6px 0;
+    }
+    .search-sugg-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid #f1f5f9;
+      text-decoration: none;
+      color: inherit;
+    }
+    .search-sugg-item:last-child {
+      border-bottom: none;
+    }
+    .search-sugg-item:hover {
+      background: #eff6ff;
+    }
+    .search-sugg-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
     .store-category-filter-strip {
       display: flex;
       gap: 8px;
@@ -2343,8 +2392,9 @@
     <div class="store-search-container" id="storeSearchContainer">
       <div class="store-search-box">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="storeSearchInput" placeholder="Search 50+ books, bestselling novels, authors, study kits, stationery..." oninput="handleStoreLiveSearch(this.value)" autocomplete="off">
+        <input type="text" id="storeSearchInput" placeholder="Search 50+ books, pen stand, guides, stationery, PYQs..." oninput="handleStoreLiveSearch(this.value)" autocomplete="off">
         <button id="storeSearchClear" onclick="clearStoreSearch()" style="display: none;" title="Clear Search">&times;</button>
+        <div id="storeSearchSuggestions" class="search-suggestions-dropdown" style="display: none;"></div>
       </div>
 
       <div class="store-category-filter-strip">
@@ -2377,6 +2427,24 @@
       <div id="storeSearchFeedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; color: #475569; justify-content: space-between; align-items: center;">
         <span id="searchResultCountText">Found 0 items</span>
         <button onclick="clearStoreSearch()" style="background: none; border: none; color: #2563eb; font-weight: 700; cursor: pointer; font-size: 12.5px;">Show All Items</button>
+      </div>
+    </div>
+
+    <!-- Dedicated Top Ranked Search Results Section (Shows matched items at the very top) -->
+    <div id="topSearchResultsSection" style="display: none; margin-bottom: 35px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 18px; border-bottom: 2px solid #2563eb; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-magnifying-glass" style="color: #2563eb;"></i> <span id="topSearchResultsHeading">Matching Search Results</span>
+          </h2>
+          <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;" id="topSearchResultsSubtitle">Showing best matching items sorted by relevance.</p>
+        </div>
+        <button type="button" onclick="clearStoreSearch()" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-xmark"></i> Clear Search &amp; Show Store
+        </button>
+      </div>
+      <div class="product-grid" id="topSearchResultsGrid">
+        <!-- Live top matches populated by store.js -->
       </div>
     </div>
 

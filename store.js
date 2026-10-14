@@ -8592,33 +8592,92 @@ function getCardCategoryType(card) {
   return 'stationery';
 }
 
+const SEARCH_SYNONYMS = {
+  'stand': ['desk pen stand', 'folding study table', 'holder', 'pen stand'],
+  'penstand': ['desk pen stand'],
+  'pen stand': ['desk pen stand'],
+  'pen': ['desk pen stand', 'gel pen', 'ball pen', 'pen set', 'stationery', 'highlighter'],
+  'holder': ['desk pen stand'],
+  'desk': ['desk pen stand', 'folding study table'],
+  'table': ['folding study table', 'study desk'],
+  'paper': ['a4 sheet paper', 'copier paper', 'jk copier', 'paper rim', 'solved papers', 'pyq'],
+  'papers': ['a4 sheet paper', 'copier paper', 'jk copier', 'paper rim', 'solved papers', 'pyq'],
+  'a4': ['a4 sheet paper', 'copier paper', 'jk copier'],
+  'rim': ['a4 sheet paper', 'copier paper'],
+  'sheet': ['a4 sheet paper'],
+  'sheets': ['a4 sheet paper'],
+  'copy': ['copies', 'register', 'exercise copy', 'notebook'],
+  'copies': ['exercise copies', 'college register', 'practical lab copy'],
+  'notebook': ['exercise copies', 'college register', 'practical lab copy', 'diary'],
+  'register': ['college register', 'hardcover register'],
+  'pyq': ['pyqs', 'previous year question papers', 'solved papers', 'printed pyqs & syllabus', 'jkbose board solved papers & guide'],
+  'pyqs': ['pyqs', 'previous year question papers', 'solved papers', 'printed pyqs & syllabus', 'jkbose board solved papers & guide'],
+  'solved': ['jkbose board solved papers & guide', 'pyqs', 'solved papers'],
+  'jkbose': ['jkbose board solved papers & guide', 'printed pyqs & syllabus', '10th', '11th', '12th'],
+  'notes': ['instant notes', 'handwritten notes', 'quick revision', 'survival kit'],
+  'novel': ['atomic habits', 'psychology of money', 'ikigai', 'rich dad poor dad', 'alchemist'],
+  'novels': ['atomic habits', 'psychology of money', 'ikigai', 'rich dad poor dad', 'alchemist'],
+  'book': ['books', 'ncert', 'novel', 'guide', 'textbook'],
+  'books': ['books', 'ncert', 'novel', 'guide', 'textbook'],
+  'atomic': ['atomic habits'],
+  'habits': ['atomic habits'],
+  'money': ['psychology of money'],
+  'ikigai': ['ikigai'],
+  'alchemist': ['the alchemist'],
+  'lamp': ['rechargeable study lamp', 'led lamp', 'study lamp'],
+  'light': ['rechargeable study lamp'],
+  'diary': ['executive student diary & planner', 'diary'],
+  'planner': ['executive student diary & planner'],
+  'geometry': ['mathematical drawing geometry box', 'geometry box'],
+  'scale': ['mathematical drawing geometry box'],
+  'compass': ['mathematical drawing geometry box'],
+  'calculator': ['fx-991ex scientific calculator', 'scientific calculator'],
+  'bottle': ['vacuum insulated stainless steel bottle', 'water bottle'],
+  'water bottle': ['vacuum insulated stainless steel bottle'],
+  'highlighter': ['pastel highlighter set (6 shades)'],
+  'highlighters': ['pastel highlighter set (6 shades)'],
+  'quran': ['the holy quran', 'quran pak with urdu translation']
+};
+
+function selectSearchSuggestion(productName) {
+  const input = document.getElementById('storeSearchInput');
+  const suggestionsBox = document.getElementById('storeSearchSuggestions');
+  if (input) input.value = productName;
+  if (suggestionsBox) suggestionsBox.style.display = 'none';
+  handleStoreLiveSearch(productName);
+  const sec = document.getElementById('topSearchResultsSection');
+  if (sec) {
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+window.selectSearchSuggestion = selectSearchSuggestion;
+
+document.addEventListener('click', function(e) {
+  const container = document.getElementById('storeSearchContainer');
+  const suggestionsBox = document.getElementById('storeSearchSuggestions');
+  if (suggestionsBox && container && !container.contains(e.target)) {
+    suggestionsBox.style.display = 'none';
+  }
+});
+
 function handleStoreLiveSearch(query) {
   const q = String(query || '').trim().toLowerCase();
   const clearBtn = document.getElementById('storeSearchClear');
   const feedback = document.getElementById('storeSearchFeedback');
   const countText = document.getElementById('searchResultCountText');
   const emptyState = document.getElementById('noStoreResults');
+  const topResultsSec = document.getElementById('topSearchResultsSection');
+  const topResultsGrid = document.getElementById('topSearchResultsGrid');
+  const topResultsHeading = document.getElementById('topSearchResultsHeading');
+  const topResultsSubtitle = document.getElementById('topSearchResultsSubtitle');
+  const suggestionsBox = document.getElementById('storeSearchSuggestions');
 
   if (clearBtn) clearBtn.style.display = q ? 'flex' : 'none';
 
-  const allCards = document.querySelectorAll('.book-product-card, .product-card');
-  let matchCount = 0;
+  // Base cards in store (exclude any search clones in top results section)
+  const allCards = Array.from(document.querySelectorAll('.book-product-card, .product-card')).filter(c => !c.closest('#topSearchResultsSection'));
 
-  allCards.forEach(card => {
-    const text = card.textContent.toLowerCase();
-    const queryMatch = !q || text.includes(q);
-    const cardCat = getCardCategoryType(card);
-    const catMatch = (currentStoreCategory === 'all' || currentStoreCategory === cardCat);
-
-    if (queryMatch && catMatch) {
-      card.style.display = 'flex';
-      matchCount++;
-    } else {
-      card.style.display = 'none';
-    }
-  });
-
-  // Section titles visibility
+  // Section titles
   const secNovels = document.getElementById('section-novels');
   const secCopies = document.getElementById('section-copies');
   const secSchoolBooks = document.getElementById('section-school-books');
@@ -8626,56 +8685,227 @@ function handleStoreLiveSearch(query) {
   const secComingSoon = document.getElementById('section-coming-soon');
   const secDigital = document.getElementById('section-digital');
 
-  if (secComingSoon) {
-    const parentHeading = secComingSoon.closest('div');
-    const hasVisibleComingSoon = Array.from(document.querySelectorAll('#comingSoonGrid .product-card')).some(c => c.style.display !== 'none');
-    if (parentHeading) parentHeading.style.display = hasVisibleComingSoon ? 'flex' : 'none';
-  }
-
-  if (secCopies) {
-    const parentHeading = secCopies.closest('div');
-    const hasVisibleCopies = Array.from(document.querySelectorAll('#copiesGrid .product-card')).some(c => c.style.display !== 'none');
-    if (parentHeading) parentHeading.style.display = hasVisibleCopies ? 'flex' : 'none';
-  }
-  if (secSchoolBooks) {
-    const parentHeading = secSchoolBooks.closest('div');
-    const hasVisibleSchoolBooks = Array.from(document.querySelectorAll('#schoolBooksGrid .product-card')).some(c => c.style.display !== 'none');
-    if (parentHeading) parentHeading.style.display = hasVisibleSchoolBooks ? 'flex' : 'none';
-  }
-
-  if (secNovels) {
-    const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).some(c => c.style.display !== 'none');
-    secNovels.style.display = hasVisibleNovels ? 'flex' : 'none';
-  }
-  if (secAcademic) {
-    const hasVisibleAcademic = Array.from(document.querySelectorAll('.product-card')).some(c => {
-      const cat = getCardCategoryType(c);
-      return (cat === 'academic' || cat === 'stationery') && c.style.display !== 'none';
-    });
-    secAcademic.style.display = hasVisibleAcademic ? 'block' : 'none';
-  }
-  if (secDigital) {
-    const hasVisibleDigital = Array.from(document.querySelectorAll('.product-card')).some(c => {
-      const cat = getCardCategoryType(c);
-      return (cat === 'digital') && c.style.display !== 'none';
-    });
-    secDigital.style.display = hasVisibleDigital ? 'block' : 'none';
-  }
-
-  if (feedback && countText) {
-    if (q) {
-      feedback.style.display = 'flex';
-      countText.innerText = `Found ${matchCount} item${matchCount === 1 ? '' : 's'} matching "${query}"`;
-    } else if (currentStoreCategory !== 'all') {
-      feedback.style.display = 'flex';
-      countText.innerText = `Showing ${currentStoreCategory.toUpperCase()} (${matchCount} items)`;
-    } else {
-      feedback.style.display = 'none';
+  if (!q) {
+    // Search is inactive: restore standard category view
+    if (topResultsSec) topResultsSec.style.display = 'none';
+    if (topResultsGrid) topResultsGrid.innerHTML = '';
+    if (suggestionsBox) {
+      suggestionsBox.style.display = 'none';
+      suggestionsBox.innerHTML = '';
     }
+    if (emptyState) emptyState.style.display = 'none';
+
+    let matchCount = 0;
+    allCards.forEach(card => {
+      const cardCat = getCardCategoryType(card);
+      const catMatch = (currentStoreCategory === 'all' || currentStoreCategory === cardCat);
+      if (catMatch) {
+        card.style.display = 'flex';
+        matchCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (secComingSoon) {
+      const parentHeading = secComingSoon.closest('div');
+      const hasVisibleComingSoon = Array.from(document.querySelectorAll('#comingSoonGrid .product-card')).some(c => c.style.display !== 'none');
+      if (parentHeading) parentHeading.style.display = hasVisibleComingSoon ? 'flex' : 'none';
+    }
+    if (secCopies) {
+      const parentHeading = secCopies.closest('div');
+      const hasVisibleCopies = Array.from(document.querySelectorAll('#copiesGrid .product-card')).some(c => c.style.display !== 'none');
+      if (parentHeading) parentHeading.style.display = hasVisibleCopies ? 'flex' : 'none';
+    }
+    if (secSchoolBooks) {
+      const parentHeading = secSchoolBooks.closest('div');
+      const hasVisibleSchoolBooks = Array.from(document.querySelectorAll('#schoolBooksGrid .product-card')).some(c => c.style.display !== 'none');
+      if (parentHeading) parentHeading.style.display = hasVisibleSchoolBooks ? 'flex' : 'none';
+    }
+    if (secNovels) {
+      const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).some(c => c.style.display !== 'none');
+      secNovels.style.display = hasVisibleNovels ? 'flex' : 'none';
+    }
+    if (secAcademic) {
+      const hasVisibleAcademic = Array.from(document.querySelectorAll('.product-card')).some(c => {
+        const cat = getCardCategoryType(c);
+        return (cat === 'academic' || cat === 'stationery') && c.style.display !== 'none';
+      });
+      secAcademic.style.display = hasVisibleAcademic ? 'block' : 'none';
+    }
+    if (secDigital) {
+      const hasVisibleDigital = Array.from(document.querySelectorAll('.product-card')).some(c => {
+        const cat = getCardCategoryType(c);
+        return (cat === 'digital') && c.style.display !== 'none';
+      });
+      secDigital.style.display = hasVisibleDigital ? 'block' : 'none';
+    }
+
+    if (feedback && countText) {
+      if (currentStoreCategory !== 'all') {
+        feedback.style.display = 'flex';
+        countText.innerText = `Showing ${currentStoreCategory.toUpperCase()} (${matchCount} items)`;
+      } else {
+        feedback.style.display = 'none';
+      }
+    }
+    return;
   }
 
-  if (emptyState) {
-    emptyState.style.display = (matchCount === 0) ? 'block' : 'none';
+  // Active query: Tokenize and score cards
+  const tokens = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const scoredMatches = [];
+
+  allCards.forEach(card => {
+    const titleEl = card.querySelector('.product-title, .book-title, h3, h4');
+    const title = titleEl ? titleEl.textContent.trim() : '';
+    const descEl = card.querySelector('.product-desc, .book-author, p');
+    const desc = descEl ? descEl.textContent.trim() : '';
+    const priceEl = card.querySelector('.product-price, .book-price');
+    const price = priceEl ? priceEl.textContent.trim() : '';
+    const imgEl = card.querySelector('img');
+    const img = imgEl ? (imgEl.getAttribute('src') || '') : '';
+    const cardCat = getCardCategoryType(card);
+
+    const titleLower = title.toLowerCase();
+    const descLower = desc.toLowerCase();
+    const fullText = (titleLower + ' ' + descLower + ' ' + cardCat);
+
+    let score = 0;
+
+    // Direct title phrase matches
+    if (titleLower === q) {
+      score += 350;
+    } else if (titleLower.startsWith(q)) {
+      score += 220;
+    } else if (titleLower.includes(q)) {
+      score += 160;
+    }
+
+    // Token analysis
+    let matchedTitleTokens = 0;
+    let matchedAnyTokens = 0;
+    tokens.forEach(tok => {
+      if (titleLower.includes(tok)) {
+        matchedTitleTokens++;
+        matchedAnyTokens++;
+        score += 45;
+      } else if (descLower.includes(tok)) {
+        matchedAnyTokens++;
+        score += 20;
+      } else if (fullText.includes(tok)) {
+        matchedAnyTokens++;
+        score += 10;
+      }
+    });
+
+    if (tokens.length > 1 && matchedTitleTokens === tokens.length) {
+      score += 140; // All tokens in title (e.g., "pen stand" in "Desk Pen Stand")
+    }
+
+    // Synonym expansion
+    for (const [synKey, targetList] of Object.entries(SEARCH_SYNONYMS)) {
+      const isSynActive = (q === synKey || q.includes(synKey) || tokens.includes(synKey));
+      if (isSynActive) {
+        for (const target of targetList) {
+          if (titleLower.includes(target)) {
+            score += 90;
+            break;
+          }
+        }
+      }
+    }
+
+    // Category affinity bonus if user was viewing that category
+    if (currentStoreCategory !== 'all' && cardCat === currentStoreCategory) {
+      score += 15;
+    }
+
+    if (score > 0 && matchedAnyTokens > 0) {
+      scoredMatches.push({
+        card,
+        title,
+        desc,
+        price,
+        img,
+        cardCat,
+        score
+      });
+    }
+  });
+
+  // Sort descending by highest score
+  scoredMatches.sort((a, b) => b.score - a.score);
+
+  // Hide all original cards and standard section headings during search to avoid duplication and clutter
+  allCards.forEach(c => c.style.display = 'none');
+  if (secNovels) secNovels.style.display = 'none';
+  if (secCopies) { const p = secCopies.closest('div'); if (p) p.style.display = 'none'; }
+  if (secSchoolBooks) { const p = secSchoolBooks.closest('div'); if (p) p.style.display = 'none'; }
+  if (secAcademic) secAcademic.style.display = 'none';
+  if (secComingSoon) { const p = secComingSoon.closest('div'); if (p) p.style.display = 'none'; }
+  if (secDigital) secDigital.style.display = 'none';
+
+  if (scoredMatches.length > 0) {
+    if (topResultsSec && topResultsGrid) {
+      topResultsSec.style.display = 'block';
+      if (topResultsHeading) {
+        topResultsHeading.innerHTML = `Matching Products for "<span style="color:#2563eb;">${query}</span>" (${scoredMatches.length})`;
+      }
+      if (topResultsSubtitle) {
+        topResultsSubtitle.innerText = `Top-ranked items surfaced first. Tap Buy Now or Add to Cart to order.`;
+      }
+
+      topResultsGrid.innerHTML = '';
+      scoredMatches.forEach(item => {
+        const clone = item.card.cloneNode(true);
+        clone.style.display = 'flex';
+        topResultsGrid.appendChild(clone);
+      });
+    }
+
+    // Populate auto-suggestions dropdown (top 5)
+    if (suggestionsBox) {
+      const topSuggestions = scoredMatches.slice(0, 5);
+      suggestionsBox.innerHTML = topSuggestions.map(item => {
+        const safeTitle = item.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return `
+          <div class="search-sugg-item" onclick="selectSearchSuggestion('${safeTitle}')">
+            <img src="${item.img || 'images/favicon.png'}" class="search-sugg-thumb" alt="${safeTitle}" onerror="this.src='images/favicon.png'">
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 700; font-size: 14px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title}</div>
+              <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+                <span style="font-weight: 800; color: #16a34a;">${item.price}</span>
+                <span style="background: #eff6ff; color: #2563eb; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: capitalize;">${item.cardCat}</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right" style="color: #94a3b8; font-size: 12px;"></i>
+          </div>
+        `;
+      }).join('');
+      suggestionsBox.style.display = 'block';
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+
+    if (feedback && countText) {
+      feedback.style.display = 'flex';
+      countText.innerText = `Found ${scoredMatches.length} item${scoredMatches.length === 1 ? '' : 's'} matching "${query}"`;
+    }
+  } else {
+    // No matches
+    if (topResultsSec) topResultsSec.style.display = 'none';
+    if (topResultsGrid) topResultsGrid.innerHTML = '';
+    if (suggestionsBox) {
+      suggestionsBox.style.display = 'none';
+      suggestionsBox.innerHTML = '';
+    }
+    if (emptyState) emptyState.style.display = 'block';
+
+    if (feedback && countText) {
+      feedback.style.display = 'flex';
+      countText.innerText = `0 items found for "${query}"`;
+    }
   }
 
   // Real Visitor Analytics: Track student search query & demand
@@ -8683,7 +8913,7 @@ function handleStoreLiveSearch(query) {
     if (window._storeSearchTimer) clearTimeout(window._storeSearchTimer);
     window._storeSearchTimer = setTimeout(() => {
       if (window.JKAnalytics) {
-        JKAnalytics.trackSearch(query, matchCount);
+        JKAnalytics.trackSearch(query, scoredMatches.length);
       }
     }, 700);
   }
@@ -8705,7 +8935,24 @@ function setStoreCategoryFilter(cat, btnEl) {
 
 function clearStoreSearch() {
   const input = document.getElementById('storeSearchInput');
+  const clearBtn = document.getElementById('storeSearchClear');
+  const topResultsSec = document.getElementById('topSearchResultsSection');
+  const topResultsGrid = document.getElementById('topSearchResultsGrid');
+  const suggestionsBox = document.getElementById('storeSearchSuggestions');
+  const emptyState = document.getElementById('noStoreResults');
+  const feedback = document.getElementById('storeSearchFeedback');
+
   if (input) input.value = '';
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (suggestionsBox) {
+    suggestionsBox.style.display = 'none';
+    suggestionsBox.innerHTML = '';
+  }
+  if (topResultsSec) topResultsSec.style.display = 'none';
+  if (topResultsGrid) topResultsGrid.innerHTML = '';
+  if (emptyState) emptyState.style.display = 'none';
+  if (feedback) feedback.style.display = 'none';
+
   setStoreCategoryFilter('all', document.querySelector('.store-filter-btn[data-category="all"]'));
 }
 
