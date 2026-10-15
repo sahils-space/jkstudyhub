@@ -3020,7 +3020,7 @@
     </div>
 
     <!-- Newly Added Custom Products Section (Live from Owner Catalog) -->
-    <div id="dynamicProductsSection" style="display: none; margin-bottom: 35px;">
+    <div id="dynamicProductsSection" style="display: block; margin-bottom: 35px;">
       <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 15px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
         <div>
           <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
@@ -3033,7 +3033,420 @@
         </span>
       </div>
       <div class="product-grid" id="dynamicProductsGrid">
-        <!-- Rendered by store.js -->
+        <div class="book-product-card" data-category="stationery">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'Spectra paper A4')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-0">
+            <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-dyn-0', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+            <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-dyn-0', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+            <div class="carousel-track">
+            <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4 - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Spectra paper A4')">
+            <img src="images/products/spectra-paper-a4-2.jpg" alt="Spectra paper A4 - Photo 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Spectra paper A4')">
+            </div>
+          <div class="carousel-dots">              <span class="carousel-dot active" onclick="setCardPhoto('carousel-dyn-0', 0, event)"></span>
+              <span class="carousel-dot " onclick="setCardPhoto('carousel-dyn-0', 1, event)"></span>
+</div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('Spectra paper A4')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 2 Photos
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              STATIONERY
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Spectra paper A4')">Spectra paper A4</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Spectra paper A4')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Spectra paper A4', 249)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">Premium A4 sheets, best for printing notes and documents</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹249</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹349</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 29% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Spectra paper A4', 249, 'physical', 'stationery')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('Spectra paper A4', 249, 'physical', 'stationery')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('Spectra paper A4')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="stationery">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'DOMS COLOUR PENCILS')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-1">
+            <div class="carousel-track">
+            <img src="images/products/doms-colour-pencils-1.jpg" alt="DOMS COLOUR PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              STATIONERY
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')">DOMS COLOUR PENCILS</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('DOMS COLOUR PENCILS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('DOMS COLOUR PENCILS', 39)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">Doms colour pencils For Good drawing Unbreakable,premium, original.</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹39</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹59</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 34% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('DOMS COLOUR PENCILS', 39, 'physical', 'stationery')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('DOMS COLOUR PENCILS', 39, 'physical', 'stationery')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="academic">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'DOMS SMALL COLOUR PENCILS')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-2">
+            <div class="carousel-track">
+            <img src="images/products/doms-small-colour-pencils-1.jpg" alt="DOMS SMALL COLOUR PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              ACADEMIC
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')">DOMS SMALL COLOUR PENCILS</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('DOMS SMALL COLOUR PENCILS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('DOMS SMALL COLOUR PENCILS', 26)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">DOMS highly demanded Small Pencil colours, Original high Quality Colour.</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹26</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹39</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 33% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('DOMS SMALL COLOUR PENCILS', 26, 'physical', 'academic')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('DOMS SMALL COLOUR PENCILS', 26, 'physical', 'academic')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="academic">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'Classmate Geometry Box')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ⭐ Top Rated</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-3">
+            <div class="carousel-track">
+            <img src="images/products/classmate-geometry-box-1.jpg" alt="Classmate Geometry Box - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Classmate Geometry Box')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('Classmate Geometry Box')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              ACADEMIC
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Classmate Geometry Box')">Classmate Geometry Box</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Classmate Geometry Box')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Classmate Geometry Box', 185)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹185</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹200</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 8% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Classmate Geometry Box', 185, 'physical', 'academic')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('Classmate Geometry Box', 185, 'physical', 'academic')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('Classmate Geometry Box')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="academic">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'WATER COLOURS DOMS')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-4">
+            <div class="carousel-track">
+            <img src="images/products/water-colours-doms-1.jpg" alt="WATER COLOURS DOMS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('WATER COLOURS DOMS')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('WATER COLOURS DOMS')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              ACADEMIC
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('WATER COLOURS DOMS')">WATER COLOURS DOMS</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('WATER COLOURS DOMS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('WATER COLOURS DOMS', 59)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">Water colours Doms, For water drawing painting and diagrams...</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹59</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹70</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 16% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('WATER COLOURS DOMS', 59, 'physical', 'academic')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('WATER COLOURS DOMS', 59, 'physical', 'academic')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('WATER COLOURS DOMS')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="academic">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'DOMS GLUE STICK 10 PCS')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-5">
+            <div class="carousel-track">
+            <img src="images/products/doms-glue-stick-10-pcs-1.jpg" alt="DOMS GLUE STICK 10 PCS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              ACADEMIC
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')">DOMS GLUE STICK 10 PCS</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('DOMS GLUE STICK 10 PCS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('DOMS GLUE STICK 10 PCS', 110)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">Newly launched,good quality Glue For sticking the notes diagrams and photographs</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹110</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹149</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 26% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('DOMS GLUE STICK 10 PCS', 110, 'physical', 'academic')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('DOMS GLUE STICK 10 PCS', 110, 'physical', 'academic')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="stationery">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'NIXON DOMS PEN BUNDLE')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-6">
+            <div class="carousel-track">
+            <img src="images/products/nixon-doms-pen-bundle-1.jpg" alt="NIXON DOMS PEN BUNDLE - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              STATIONERY
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')">NIXON DOMS PEN BUNDLE</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('NIXON DOMS PEN BUNDLE')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('NIXON DOMS PEN BUNDLE', 112)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹112</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹149</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 25% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('NIXON DOMS PEN BUNDLE', 112, 'physical', 'stationery')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('NIXON DOMS PEN BUNDLE', 112, 'physical', 'stationery')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="book-product-card" data-category="stationery">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, 'PENCILS')"><i class="fa-solid fa-heart"></i></button>
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ⭐ Top Rated</span>
+          
+          <div class="swipe-photo-container" id="carousel-dyn-7">
+            <div class="carousel-track">
+            <img src="images/products/pencils-1.jpg" alt="PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('PENCILS')">
+            </div>
+            <div class="card-dim-tag" onclick="openBookDetailsModal('PENCILS')" title="Tap to inspect product">
+              <i class="fa-solid fa-images"></i> 1 Photo
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+              STATIONERY
+            </div>
+            <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('PENCILS')">PENCILS</h3>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
+              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+              <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            </div>
+
+            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
+
+            <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+              <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('PENCILS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+              <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('PENCILS', 79)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            </div>
+
+            <p class="product-desc">DOMS PENCILS FOR THE GOOD WRITING PURPOSE AND DIAGRAMS AND OTHER THINGS</p>
+            
+            <div class="product-footer">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price">₹79</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹99</span>
+                </div>
+                <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 20% Today</span>
+              </div>
+
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('PENCILS', 79, 'physical', 'stationery')">Buy Now</button>
+                <button class="btn-icon" onclick="addToCart('PENCILS', 79, 'physical', 'stationery')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                <button class="btn-icon" onclick="openBookDetailsModal('PENCILS')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

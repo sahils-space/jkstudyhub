@@ -452,6 +452,53 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           return true;
         });
 
+        // Also sync any catalog products from Google Sheets into seller catalog!
+        try {
+          const remoteCatalogItems = [];
+          data.orders.forEach(remote => {
+            if (!remote) return;
+            const values = Object.values(remote).map(v => typeof v === 'string' ? v.trim() : String(v || ''));
+            const isCatalog = values.some(v => v === 'CATALOG_PRODUCT' || v.startsWith('PRD-') || (v.startsWith('{') && v.includes('"productId"')));
+            if (!isCatalog) return;
+            
+            let meta = null;
+            const fields = [remote.product, remote.address, remote.notes];
+            for (const f of fields) {
+              if (typeof f === 'string' && f.startsWith('{') && f.endsWith('}')) {
+                try {
+                  meta = JSON.parse(f);
+                  if (meta && (meta.name || meta.title)) break;
+                } catch(e) {}
+              }
+            }
+            if (meta) remoteCatalogItems.push(meta);
+          });
+
+          if (remoteCatalogItems.length > 0) {
+            let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+            const curIds = new Set(curCat.map(c => c.id || c.productId || c.name));
+            let changed = false;
+            remoteCatalogItems.forEach(rc => {
+              const k = rc.id || rc.productId || rc.name;
+              if (k && !curIds.has(k)) {
+                curCat.unshift(rc);
+                curIds.add(k);
+                changed = true;
+              }
+            });
+            if (changed) {
+              try {
+                localStorage.setItem('jk_uploaded_catalog', JSON.stringify(curCat));
+              } catch(e) {
+                console.warn("Storage quota warning on jk_uploaded_catalog:", e);
+              }
+              if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
+            }
+          }
+        } catch(e) {
+          console.warn("Seller catalog remote sync:", e);
+        }
+
         // The remote Google Sheet is the master source of truth:
         // Any order that was deleted from Google Sheets must be removed from local storage!
         const validRemoteIds = new Set(validRemoteOrders.map(r => String(r.orderId).trim().toUpperCase()));
@@ -2010,7 +2057,7 @@ async function handleSellerPhotoSelected(event, slotNum) {
       placeholder.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="font-size:24px; color:#2563eb; margin-bottom:6px;"></i><span style="font-size:11px; color:#2563eb; font-weight:700;">Optimizing Photo...</span>`;
     }
 
-    const compressedDataUrl = await compressSellerPhotoFile(file, 900, 1100, 0.8);
+    const compressedDataUrl = await compressSellerPhotoFile(file, 640, 750, 0.72);
     sellerUploadedPhotos[slotNum - 1] = compressedDataUrl;
 
     if (placeholder) placeholder.style.display = 'none';
@@ -2216,6 +2263,7 @@ async function handleSellerCatalogSubmit(e) {
     try {
       let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
       customProds.unshift(newProduct);
+      if (customProds.length > 25) customProds = customProds.slice(0, 25);
       localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
     } catch (e) {
       console.warn("Storage quota warning on jk_custom_products:", e);
@@ -2224,6 +2272,7 @@ async function handleSellerCatalogSubmit(e) {
     try {
       let uploadedCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
       uploadedCat.unshift(newProduct);
+      if (uploadedCat.length > 25) uploadedCat = uploadedCat.slice(0, 25);
       localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
     } catch (e) {
       console.warn("Storage quota warning on jk_uploaded_catalog:", e);
@@ -2341,15 +2390,135 @@ async function handleSellerCatalogSubmit(e) {
   }
 }
 
-// Get all published catalog products (combining jk_custom_products and jk_uploaded_catalog)
+const DEFAULT_SELLER_PRODUCTS = [
+  {
+    "id": "PRD-1792043438782",
+    "name": "Spectra paper A4",
+    "title": "Spectra paper A4",
+    "category": "stationery",
+    "price": 249,
+    "mrp": 349,
+    "badge": "✨ Fresh Stock",
+    "desc": "Premium A4 sheets, best for printing notes and documents",
+    "photos": [
+      "images/products/spectra-paper-a4-1.jpg",
+      "images/products/spectra-paper-a4-2.jpg"
+    ],
+    "image": "images/products/spectra-paper-a4-1.jpg"
+  },
+  {
+    "id": "PRD-1792077265980",
+    "name": "DOMS COLOUR PENCILS",
+    "title": "DOMS COLOUR PENCILS",
+    "category": "stationery",
+    "price": 39,
+    "mrp": 59,
+    "badge": "🔥 Bestseller",
+    "desc": "Doms colour pencils For Good drawing Unbreakable,premium, original.",
+    "photos": [
+      "images/products/doms-colour-pencils-1.jpg"
+    ],
+    "image": "images/products/doms-colour-pencils-1.jpg"
+  },
+  {
+    "id": "PRD-1792077365690",
+    "name": "DOMS SMALL COLOUR PENCILS",
+    "title": "DOMS SMALL COLOUR PENCILS",
+    "category": "stationery",
+    "price": 26,
+    "mrp": 39,
+    "badge": "🔥 Bestseller",
+    "desc": "DOMS highly demanded Small Pencil colours, Original high Quality Colour.",
+    "photos": [
+      "images/products/doms-small-colour-pencils-1.jpg"
+    ],
+    "image": "images/products/doms-small-colour-pencils-1.jpg"
+  },
+  {
+    "id": "PRD-1792077436674",
+    "name": "Classmate Geometry Box",
+    "title": "Classmate Geometry Box",
+    "category": "stationery",
+    "price": 185,
+    "mrp": 200,
+    "badge": "⭐ Top Rated",
+    "desc": "CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.",
+    "photos": [
+      "images/products/classmate-geometry-box-1.jpg"
+    ],
+    "image": "images/products/classmate-geometry-box-1.jpg"
+  },
+  {
+    "id": "PRD-1792077512334",
+    "name": "WATER COLOURS DOMS",
+    "title": "WATER COLOURS DOMS",
+    "category": "stationery",
+    "price": 59,
+    "mrp": 70,
+    "badge": "✨ Fresh Stock",
+    "desc": "Water colours Doms, For water drawing painting and diagrams...",
+    "photos": [
+      "images/products/water-colours-doms-1.jpg"
+    ],
+    "image": "images/products/water-colours-doms-1.jpg"
+  },
+  {
+    "id": "PRD-1792077609528",
+    "name": "DOMS GLUE STICK 10 PCS",
+    "title": "DOMS GLUE STICK 10 PCS",
+    "category": "stationery",
+    "price": 110,
+    "mrp": 149,
+    "badge": "🔥 Bestseller",
+    "desc": "Newly launched,good quality Glue For sticking the notes diagrams and photographs",
+    "photos": [
+      "images/products/doms-glue-stick-10-pcs-1.jpg"
+    ],
+    "image": "images/products/doms-glue-stick-10-pcs-1.jpg"
+  },
+  {
+    "id": "PRD-1792077729941",
+    "name": "NIXON DOMS PEN BUNDLE",
+    "title": "NIXON DOMS PEN BUNDLE",
+    "category": "stationery",
+    "price": 112,
+    "mrp": 149,
+    "badge": "✨ Fresh Stock",
+    "desc": "SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS",
+    "photos": [
+      "images/products/nixon-doms-pen-bundle-1.jpg"
+    ],
+    "image": "images/products/nixon-doms-pen-bundle-1.jpg"
+  },
+  {
+    "id": "PRD-1792077813239",
+    "name": "PENCILS",
+    "title": "PENCILS",
+    "category": "stationery",
+    "price": 79,
+    "mrp": 99,
+    "badge": "✨ Fresh Stock",
+    "desc": "DOMS PENCILS PACK, Dark and neat handwriting pencils for students",
+    "photos": [
+      "images/products/pencils-1.jpg"
+    ],
+    "image": "images/products/pencils-1.jpg"
+  }
+];
+
+// Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
 function getSellerAllPublishedProducts() {
   const mergedMap = new Map();
+  DEFAULT_SELLER_PRODUCTS.forEach(p => {
+    mergedMap.set(p.id, p);
+  });
+
   try {
     const list1 = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
     if (Array.isArray(list1)) {
       list1.forEach(p => {
         const key = p.id || p.productId || p.name;
-        if (key) mergedMap.set(key, p);
+        if (key && !mergedMap.has(key)) mergedMap.set(key, p);
       });
     }
   } catch(e) {}

@@ -5903,6 +5903,10 @@ function initShop() {
     }
   }
 
+  if (typeof renderDynamicStoreProducts === 'function') {
+    renderDynamicStoreProducts();
+  }
+
   if (typeof syncCustomProductsWithSheet === 'function') {
     syncCustomProductsWithSheet();
   }
@@ -9492,17 +9496,139 @@ window.addEventListener('hashchange', handleUrlCategoryHash);
 // STORE OWNER PRODUCT CATALOG MANAGEMENT (4-PHOTO UPLOAD & SYNC)
 // =========================================================
 
-let CUSTOM_PRODUCTS = [];
+const DEFAULT_PUBLISHED_PRODUCTS = [
+  {
+    "id": "PRD-1792043438782",
+    "name": "Spectra paper A4",
+    "title": "Spectra paper A4",
+    "category": "stationery",
+    "price": 249,
+    "mrp": 349,
+    "badge": "✨ Fresh Stock",
+    "desc": "Premium A4 sheets, best for printing notes and documents",
+    "photos": [
+      "images/products/spectra-paper-a4-1.jpg",
+      "images/products/spectra-paper-a4-2.jpg"
+    ],
+    "image": "images/products/spectra-paper-a4-1.jpg"
+  },
+  {
+    "id": "PRD-1792077265980",
+    "name": "DOMS COLOUR PENCILS",
+    "title": "DOMS COLOUR PENCILS",
+    "category": "stationery",
+    "price": 39,
+    "mrp": 59,
+    "badge": "🔥 Bestseller",
+    "desc": "Doms colour pencils For Good drawing Unbreakable,premium, original.",
+    "photos": [
+      "images/products/doms-colour-pencils-1.jpg"
+    ],
+    "image": "images/products/doms-colour-pencils-1.jpg"
+  },
+  {
+    "id": "PRD-1792077365690",
+    "name": "DOMS SMALL COLOUR PENCILS",
+    "title": "DOMS SMALL COLOUR PENCILS",
+    "category": "stationery",
+    "price": 26,
+    "mrp": 39,
+    "badge": "🔥 Bestseller",
+    "desc": "DOMS highly demanded Small Pencil colours, Original high Quality Colour.",
+    "photos": [
+      "images/products/doms-small-colour-pencils-1.jpg"
+    ],
+    "image": "images/products/doms-small-colour-pencils-1.jpg"
+  },
+  {
+    "id": "PRD-1792077436674",
+    "name": "Classmate Geometry Box",
+    "title": "Classmate Geometry Box",
+    "category": "stationery",
+    "price": 185,
+    "mrp": 200,
+    "badge": "⭐ Top Rated",
+    "desc": "CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.",
+    "photos": [
+      "images/products/classmate-geometry-box-1.jpg"
+    ],
+    "image": "images/products/classmate-geometry-box-1.jpg"
+  },
+  {
+    "id": "PRD-1792077512334",
+    "name": "WATER COLOURS DOMS",
+    "title": "WATER COLOURS DOMS",
+    "category": "stationery",
+    "price": 59,
+    "mrp": 70,
+    "badge": "✨ Fresh Stock",
+    "desc": "Water colours Doms, For water drawing painting and diagrams...",
+    "photos": [
+      "images/products/water-colours-doms-1.jpg"
+    ],
+    "image": "images/products/water-colours-doms-1.jpg"
+  },
+  {
+    "id": "PRD-1792077609528",
+    "name": "DOMS GLUE STICK 10 PCS",
+    "title": "DOMS GLUE STICK 10 PCS",
+    "category": "stationery",
+    "price": 110,
+    "mrp": 149,
+    "badge": "🔥 Bestseller",
+    "desc": "Newly launched,good quality Glue For sticking the notes diagrams and photographs",
+    "photos": [
+      "images/products/doms-glue-stick-10-pcs-1.jpg"
+    ],
+    "image": "images/products/doms-glue-stick-10-pcs-1.jpg"
+  },
+  {
+    "id": "PRD-1792077729941",
+    "name": "NIXON DOMS PEN BUNDLE",
+    "title": "NIXON DOMS PEN BUNDLE",
+    "category": "stationery",
+    "price": 112,
+    "mrp": 149,
+    "badge": "✨ Fresh Stock",
+    "desc": "SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS",
+    "photos": [
+      "images/products/nixon-doms-pen-bundle-1.jpg"
+    ],
+    "image": "images/products/nixon-doms-pen-bundle-1.jpg"
+  },
+  {
+    "id": "PRD-1792077813239",
+    "name": "PENCILS",
+    "title": "PENCILS",
+    "category": "stationery",
+    "price": 79,
+    "mrp": 99,
+    "badge": "✨ Fresh Stock",
+    "desc": "DOMS PENCILS PACK, Dark and neat handwriting pencils for students",
+    "photos": [
+      "images/products/pencils-1.jpg"
+    ],
+    "image": "images/products/pencils-1.jpg"
+  }
+];
+
+let CUSTOM_PRODUCTS = [...DEFAULT_PUBLISHED_PRODUCTS];
 let ownerUploadedPhotos = [null, null, null, null];
 
-// Initialize and load custom products from cache (combining jk_custom_products and jk_uploaded_catalog)
+// Initialize and load custom products from cache (combining DEFAULT_PUBLISHED_PRODUCTS, jk_custom_products, and jk_uploaded_catalog)
 try {
-  let initialProducts = [];
+  let initialProducts = [...DEFAULT_PUBLISHED_PRODUCTS];
   const cachedProducts = localStorage.getItem('jk_custom_products');
   if (cachedProducts) {
     try {
       const parsed = JSON.parse(cachedProducts);
-      if (Array.isArray(parsed)) initialProducts = parsed;
+      if (Array.isArray(parsed)) {
+        parsed.forEach(p => {
+          if (!initialProducts.some(ip => (ip.id === p.id || ip.name === (p.title || p.name)))) {
+            initialProducts.push(p);
+          }
+        });
+      }
     } catch(e) {}
   }
   const uploadedCat = localStorage.getItem('jk_uploaded_catalog');
@@ -10069,15 +10195,37 @@ async function syncCustomProductsWithSheet() {
     if (sheetProducts.length > 0) {
       // Combine Sheet products with local products (avoid duplicate productIds)
       const mergedMap = new Map();
-      sheetProducts.forEach(p => mergedMap.set(p.id, p));
+      
+      // Seed with current products (which have clean local images)
       CUSTOM_PRODUCTS.forEach(p => {
-        if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
+        mergedMap.set(p.id, p);
+      });
+
+      // Merge incoming sheet products
+      sheetProducts.forEach(sp => {
+        if (!mergedMap.has(sp.id)) {
+          mergedMap.set(sp.id, sp);
+        } else {
+          const existing = mergedMap.get(sp.id);
+          // If existing already has clean images/ path, preserve it!
+          if (existing.image && existing.image.startsWith('images/')) {
+            mergedMap.set(sp.id, { ...sp, photos: existing.photos, image: existing.image, allImages: existing.photos });
+          } else {
+            mergedMap.set(sp.id, sp);
+          }
+        }
       });
 
       CUSTOM_PRODUCTS = Array.from(mergedMap.values());
       try {
-        localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
-      } catch (e) {}
+        const lightProducts = CUSTOM_PRODUCTS.map(cp => {
+          const isLargeB64 = cp.image && cp.image.length > 50000;
+          return isLargeB64 ? { ...cp, photos: ['images/logo-app.png'], image: 'images/logo-app.png' } : cp;
+        });
+        localStorage.setItem('jk_custom_products', JSON.stringify(lightProducts));
+      } catch (e) {
+        console.warn("Storage quota warning on jk_custom_products:", e);
+      }
 
       registerAllCustomProducts(CUSTOM_PRODUCTS);
       renderDynamicStoreProducts();
