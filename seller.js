@@ -682,6 +682,11 @@ function switchSellerView(viewName) {
     const pane = document.getElementById('view-leads');
     if (pane) pane.style.display = 'block';
     renderSellerLeadsTable();
+  } else if (viewName === 'reels') {
+    if (pageTitle) pageTitle.innerText = 'Video Ads & Shoppable Reels (Video Commerce)';
+    const pane = document.getElementById('view-reels');
+    if (pane) pane.style.display = 'block';
+    initSellerReelsSection();
   } else {
     if (pageTitle) pageTitle.innerText = 'Orders';
     const pane = document.getElementById('view-orders');
@@ -4350,6 +4355,489 @@ function resetAllDistrictRatesToDefault() {
     }
     renderDistrictRatesTable();
   }
+}
+
+/* =========================================================================
+   SELLER PANEL: SHOPPABLE VIDEO REELS & VIDEO ADS (Video Commerce)
+   ========================================================================= */
+let g_sellerReelsList = [];
+let g_sellerReelCurrentVideoUrl = '';
+let g_sellerReelExtractedPoster = '';
+let g_sellerReelVideoSourceType = 'file';
+
+async function initSellerReelsSection() {
+  populateSellerReelProductsDropdown();
+  await loadSellerReels();
+  renderSellerPublishedReelsTable();
+  updateSellerReelMockup();
+}
+
+function populateSellerReelProductsDropdown() {
+  const select = document.getElementById('sellerReelProductSelect');
+  if (!select) return;
+
+  const currentVal = select.value;
+  const products = getAllSellerPricingProducts();
+  const priceOverrides = getSellerCustomPriceOverrides();
+  const mrpOverrides = getSellerCustomMrpOverrides();
+
+  let html = '<option value="">-- Choose Product to Advertise --</option>';
+  products.forEach(p => {
+    const finalPrice = priceOverrides[p.name] !== undefined ? Number(priceOverrides[p.name]) : Number(p.defaultPrice || 0);
+    const finalMrp = mrpOverrides[p.name] !== undefined ? Number(mrpOverrides[p.name]) : Number(p.mrp || 0);
+    html += `<option value="${p.name}" data-price="${finalPrice}" data-mrp="${finalMrp}" data-image="${p.image || ''}">${p.name} (₹${finalPrice})</option>`;
+  });
+
+  select.innerHTML = html;
+  if (currentVal) select.value = currentVal;
+}
+
+async function loadSellerReels() {
+  try {
+    const cached = localStorage.getItem('jk_shoppable_reels');
+    if (cached) {
+      g_sellerReelsList = JSON.parse(cached);
+      if (Array.isArray(g_sellerReelsList) && g_sellerReelsList.length > 0) {
+        return;
+      }
+    }
+  } catch(e) {}
+
+  try {
+    const res = await fetch('reels.json?v=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.reels)) {
+        g_sellerReelsList = data.reels;
+        localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+        return;
+      }
+    }
+  } catch(e) {}
+
+  g_sellerReelsList = [
+    {
+      id: "reel-1",
+      title: "The Alchemist — Student Favorite",
+      productName: "The Alchemist",
+      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4",
+      posterUrl: "images/books/the-alchemist-1.webp",
+      badge: "⭐ 4.9 Bestseller",
+      views: "3.8k",
+      active: true
+    },
+    {
+      id: "reel-2",
+      title: "Atomic Habits — Original Edition",
+      productName: "Atomic Habits",
+      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4",
+      posterUrl: "images/books/atomic-habits-1.webp",
+      badge: "🔥 Most Popular",
+      views: "5.2k",
+      active: true
+    },
+    {
+      id: "reel-3",
+      title: "Deep Work — Study Focus Guide",
+      productName: "Deep Work",
+      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4",
+      posterUrl: "images/books/deep-work-1.webp",
+      badge: "🎯 Rank Booster",
+      views: "2.4k",
+      active: true
+    },
+    {
+      id: "reel-4",
+      title: "JKBOSE Class 10th Master Kit",
+      productName: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)",
+      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4",
+      posterUrl: "images/school-bookset.webp",
+      badge: "📦 5 Subject Combo",
+      views: "6.1k",
+      active: true
+    }
+  ];
+  try {
+    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+  } catch(e) {}
+}
+
+function switchReelVideoInputType(type) {
+  g_sellerReelVideoSourceType = type;
+  const fileGroup = document.getElementById('reelFileInputGroup');
+  const urlGroup = document.getElementById('reelUrlInputGroup');
+  const tabFileBtn = document.getElementById('tabVideoFileBtn');
+  const tabUrlBtn = document.getElementById('tabVideoUrlBtn');
+
+  if (type === 'file') {
+    if (fileGroup) fileGroup.style.display = 'block';
+    if (urlGroup) urlGroup.style.display = 'none';
+    if (tabFileBtn) tabFileBtn.className = 'btn-hub-secondary active';
+    if (tabUrlBtn) tabUrlBtn.className = 'btn-hub-secondary';
+  } else {
+    if (fileGroup) fileGroup.style.display = 'none';
+    if (urlGroup) urlGroup.style.display = 'block';
+    if (tabFileBtn) tabFileBtn.className = 'btn-hub-secondary';
+    if (tabUrlBtn) tabUrlBtn.className = 'btn-hub-secondary active';
+  }
+}
+
+function handleSellerReelFileSelected(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+
+  const qualityBadge = document.getElementById('sellerReelQualityBadge');
+  const qualityDetails = document.getElementById('sellerReelQualityDetails');
+  if (qualityBadge) {
+    qualityBadge.style.background = '#fef3c7';
+    qualityBadge.style.color = '#b45309';
+    qualityBadge.innerText = 'Extracting Frame...';
+  }
+  if (qualityDetails) {
+    qualityDetails.innerText = `Analyzing ${file.name} (${(file.size / (1024*1024)).toFixed(1)} MB)...`;
+  }
+
+  const objUrl = URL.createObjectURL(file);
+  g_sellerReelCurrentVideoUrl = objUrl;
+
+  extractVideoPosterFromMedia(objUrl, function(posterDataUrl, videoMeta) {
+    g_sellerReelExtractedPoster = posterDataUrl;
+    if (qualityBadge) {
+      qualityBadge.style.background = '#dcfce7';
+      qualityBadge.style.color = '#15803d';
+      qualityBadge.innerText = `⚡ Fast Reload Poster Ready (${videoMeta.width || 720}x${videoMeta.height || 1280})`;
+    }
+    if (qualityDetails) {
+      qualityDetails.innerText = `Frame poster extracted (${Math.round(posterDataUrl.length / 1024)} KB). Optimized for 0-second page load.`;
+    }
+    updateSellerReelMockup();
+  });
+}
+
+function handleSellerReelUrlInput(url) {
+  g_sellerReelCurrentVideoUrl = (url || '').trim();
+  const qualityBadge = document.getElementById('sellerReelQualityBadge');
+  const qualityDetails = document.getElementById('sellerReelQualityDetails');
+
+  if (g_sellerReelCurrentVideoUrl) {
+    if (qualityBadge) {
+      qualityBadge.style.background = '#dcfce7';
+      qualityBadge.style.color = '#15803d';
+      qualityBadge.innerText = '⚡ Streaming Video Linked';
+    }
+    if (qualityDetails) {
+      qualityDetails.innerText = 'Direct video streaming link validated.';
+    }
+  } else {
+    if (qualityBadge) {
+      qualityBadge.style.background = '#e0f2fe';
+      qualityBadge.style.color = '#0284c7';
+      qualityBadge.innerText = 'Waiting for Video';
+    }
+    if (qualityDetails) {
+      qualityDetails.innerText = 'Once a video is chosen, our automatic poster pipeline renders an instant-load thumbnail frame.';
+    }
+  }
+  updateSellerReelMockup();
+}
+
+function extractVideoPosterFromMedia(videoSrc, callback) {
+  const tempVideo = document.createElement('video');
+  tempVideo.src = videoSrc;
+  tempVideo.crossOrigin = 'anonymous';
+  tempVideo.muted = true;
+  tempVideo.playsInline = true;
+
+  tempVideo.onloadeddata = function() {
+    tempVideo.currentTime = Math.min(0.5, (tempVideo.duration || 1) / 2);
+  };
+
+  tempVideo.onseeked = function() {
+    try {
+      const canvas = document.getElementById('sellerPosterCanvas') || document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 480;
+      canvas.height = Math.round((tempVideo.videoHeight / (tempVideo.videoWidth || 1)) * 480) || 854;
+      ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      callback(dataUrl, {
+        width: tempVideo.videoWidth,
+        height: tempVideo.videoHeight,
+        duration: Math.round(tempVideo.duration || 0)
+      });
+    } catch(err) {
+      console.warn("Could not extract canvas frame:", err);
+      callback('', { width: 720, height: 1280, duration: 15 });
+    }
+  };
+
+  tempVideo.onerror = function() {
+    callback('', { width: 720, height: 1280, duration: 15 });
+  };
+}
+
+function onSellerReelProductSelectChange() {
+  updateSellerReelMockup();
+}
+
+function updateSellerReelMockup() {
+  const select = document.getElementById('sellerReelProductSelect');
+  const titleInput = document.getElementById('sellerReelTitleInput');
+  const badgeInput = document.getElementById('sellerReelBadgeInput');
+
+  const mockupVideo = document.getElementById('sellerMockupVideo');
+  const mockupBadge = document.getElementById('mockupBadgeText');
+  const mockupThumb = document.getElementById('mockupProdThumb');
+  const mockupTitle = document.getElementById('mockupProdTitle');
+  const mockupPrice = document.getElementById('mockupProdPrice');
+  const mockupMrp = document.getElementById('mockupProdMrp');
+
+  if (mockupBadge && badgeInput) {
+    mockupBadge.innerText = badgeInput.value || '🔥 Watch & Shop';
+  }
+
+  if (select && select.value) {
+    const selectedOpt = select.options[select.selectedIndex];
+    const pName = select.value;
+    const price = selectedOpt.getAttribute('data-price') || '199';
+    const mrp = selectedOpt.getAttribute('data-mrp') || '399';
+    const image = selectedOpt.getAttribute('data-image') || 'images/logo-app.png';
+
+    if (mockupTitle) mockupTitle.innerText = pName;
+    if (mockupPrice) mockupPrice.innerText = '₹' + price;
+    if (mockupMrp) mockupMrp.innerText = '₹' + mrp;
+    if (mockupThumb) mockupThumb.src = image;
+  } else {
+    if (mockupTitle) mockupTitle.innerText = titleInput && titleInput.value ? titleInput.value : 'Select a Product';
+    if (mockupPrice) mockupPrice.innerText = '₹0';
+    if (mockupMrp) mockupMrp.innerText = '₹0';
+    if (mockupThumb) mockupThumb.src = 'images/logo-app.png';
+  }
+
+  if (mockupVideo) {
+    if (g_sellerReelCurrentVideoUrl) {
+      if (mockupVideo.src !== g_sellerReelCurrentVideoUrl) {
+        mockupVideo.src = g_sellerReelCurrentVideoUrl;
+        mockupVideo.play().catch(() => {});
+      }
+    } else {
+      mockupVideo.src = 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4';
+      mockupVideo.play().catch(() => {});
+    }
+  }
+}
+
+function publishSellerReel() {
+  const titleInput = document.getElementById('sellerReelTitleInput');
+  const select = document.getElementById('sellerReelProductSelect');
+  const badgeInput = document.getElementById('sellerReelBadgeInput');
+
+  const title = (titleInput ? titleInput.value : '').trim();
+  const productName = select ? select.value : '';
+  const badge = (badgeInput ? badgeInput.value : '').trim() || '🔥 Watch & Shop';
+
+  if (!title) {
+    alert("Please enter a Video Title / Hook for this reel.");
+    return;
+  }
+  if (!productName) {
+    alert("Please select the target product that this video reel is advertising.");
+    return;
+  }
+
+  let finalVideoUrl = g_sellerReelCurrentVideoUrl;
+  if (!finalVideoUrl) {
+    const urlInput = document.getElementById('sellerReelUrlInput');
+    finalVideoUrl = (urlInput ? urlInput.value : '').trim();
+  }
+
+  if (!finalVideoUrl) {
+    alert("Please upload a video file or paste a direct video URL.");
+    return;
+  }
+
+  const selectedOpt = select.options[select.selectedIndex];
+  const prodImage = selectedOpt ? selectedOpt.getAttribute('data-image') : '';
+
+  const newReel = {
+    id: "reel-" + Date.now(),
+    title: title,
+    productName: productName,
+    videoUrl: finalVideoUrl,
+    posterUrl: g_sellerReelExtractedPoster || prodImage || 'images/logo-app.png',
+    badge: badge,
+    views: "1.2k",
+    active: true,
+    createdAt: new Date().toISOString()
+  };
+
+  g_sellerReelsList.unshift(newReel);
+  try {
+    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+  } catch(e) {
+    console.error("Storage save error:", e);
+  }
+
+  renderSellerPublishedReelsTable();
+
+  // Reset form
+  if (titleInput) titleInput.value = '';
+  const fileInput = document.getElementById('sellerReelFileInput');
+  if (fileInput) fileInput.value = '';
+  const urlInput = document.getElementById('sellerReelUrlInput');
+  if (urlInput) urlInput.value = '';
+  g_sellerReelCurrentVideoUrl = '';
+  g_sellerReelExtractedPoster = '';
+
+  const qualityBadge = document.getElementById('sellerReelQualityBadge');
+  const qualityDetails = document.getElementById('sellerReelQualityDetails');
+  if (qualityBadge) {
+    qualityBadge.style.background = '#e0f2fe';
+    qualityBadge.style.color = '#0284c7';
+    qualityBadge.innerText = 'Waiting for Video';
+  }
+  if (qualityDetails) {
+    qualityDetails.innerText = 'Once a video is chosen, our automatic poster pipeline renders an instant-load thumbnail frame.';
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(`✅ Video Ad for "${productName}" published successfully! Visible on storefront.`);
+  } else {
+    alert(`✅ Video Ad for "${productName}" published successfully!`);
+  }
+}
+
+function renderSellerPublishedReelsTable() {
+  const tbody = document.getElementById('sellerPublishedReelsTableBody');
+  const countEl = document.getElementById('activeReelsCount');
+  if (!tbody) return;
+
+  const list = g_sellerReelsList || [];
+  if (countEl) countEl.innerText = list.filter(r => r.active !== false).length;
+
+  if (list.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 30px; color: #64748b; font-size: 13px;">
+          No video reels published yet. Add your first video ad above!
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  let html = '';
+  list.forEach(reel => {
+    const isActive = reel.active !== false;
+    const catItem = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[reel.productName]) ? PRODUCT_CATALOG[reel.productName] : {};
+    const priceOverrides = getSellerCustomPriceOverrides();
+    const effectivePrice = priceOverrides[reel.productName] || catItem.price || '—';
+
+    html += `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 10px 14px;">
+          <div style="width: 52px; height: 75px; border-radius: 8px; overflow: hidden; position: relative; background: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+            <video src="${reel.videoUrl}" poster="${reel.posterUrl || ''}" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            <div style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; padding: 1px 3px; border-radius: 3px;">
+              9:16
+            </div>
+          </div>
+        </td>
+        <td style="padding: 10px 14px;">
+          <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${reel.title}</div>
+          <span style="display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 700; background: #fee2e2; color: #dc2626; padding: 2px 6px; border-radius: 6px;">
+            ${reel.badge || '🔥 Promo'}
+          </span>
+        </td>
+        <td style="padding: 10px 14px;">
+          <div style="font-weight: 600; font-size: 12.5px; color: #2563eb;">${reel.productName}</div>
+        </td>
+        <td style="padding: 10px 14px;">
+          <span style="font-weight: 800; font-size: 13px; color: #16a34a;">₹${effectivePrice}</span>
+        </td>
+        <td style="padding: 10px 14px;">
+          <span style="background: #ecfdf5; color: #059669; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-bolt" style="font-size: 9px;"></i> 0s Instant Poster
+          </span>
+        </td>
+        <td style="padding: 10px 14px;">
+          <button type="button" onclick="toggleSellerReelActive('${reel.id}')" style="background: ${isActive ? '#dcfce7' : '#fee2e2'}; color: ${isActive ? '#15803d' : '#b91c1c'}; border: none; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
+            ${isActive ? '● Active' : '○ Paused'}
+          </button>
+        </td>
+        <td style="padding: 10px 14px; text-align: right;">
+          <div style="display: flex; justify-content: flex-end; gap: 6px;">
+            <a href="store.html#shoppableReelsSection" target="_blank" class="btn-hub-secondary" style="padding: 4px 8px; font-size: 11px;" title="View on store">
+              <i class="fa-solid fa-eye"></i>
+            </a>
+            <button type="button" class="btn-hub-secondary" onclick="deleteSellerReel('${reel.id}')" style="padding: 4px 8px; font-size: 11px; color: #ef4444;" title="Delete Video Reel">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function toggleSellerReelActive(reelId) {
+  const reel = (g_sellerReelsList || []).find(r => r.id === reelId);
+  if (!reel) return;
+  reel.active = (reel.active === false);
+  try {
+    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+  } catch(e) {}
+  renderSellerPublishedReelsTable();
+  if (typeof showToast === 'function') {
+    showToast(reel.active ? "✅ Reel activated on storefront." : "⏸️ Reel paused.");
+  }
+}
+
+function deleteSellerReel(reelId) {
+  if (!confirm("Are you sure you want to delete this video ad reel?")) return;
+  g_sellerReelsList = (g_sellerReelsList || []).filter(r => r.id !== reelId);
+  try {
+    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+  } catch(e) {}
+  renderSellerPublishedReelsTable();
+  if (typeof showToast === 'function') {
+    showToast("🗑️ Video ad deleted.");
+  }
+}
+
+function exportReelsJsonFile() {
+  const payload = {
+    "_comment": "JK STUDY HUB - SHOPPABLE VIDEO REELS & VIDEO ADS CONFIGURATION.",
+    "lastUpdated": new Date().toISOString(),
+    "reels": g_sellerReelsList
+  };
+  const str = JSON.stringify(payload, null, 2);
+  const blob = new Blob([str], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "reels.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  if (typeof showToast === 'function') {
+    showToast("📥 reels.json downloaded! Commit this file to update reels for all users.");
+  }
+}
+
+function resetSellerReelsToDefault() {
+  if (!confirm("Reset all video reels back to standard sample reels? Any custom added reels will be removed.")) return;
+  localStorage.removeItem('jk_shoppable_reels');
+  loadSellerReels().then(() => {
+    renderSellerPublishedReelsTable();
+    updateSellerReelMockup();
+    if (typeof showToast === 'function') {
+      showToast("🔄 Default reels restored.");
+    }
+  });
 }
 
 

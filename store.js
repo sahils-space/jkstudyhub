@@ -885,6 +885,11 @@ function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps) {
         }
       }
     });
+
+    // 7. Sync Shoppable Reels prices
+    if (typeof syncShoppableReelsPrices === 'function') {
+      syncShoppableReelsPrices();
+    }
   } catch(e) {
     console.warn("Could not apply live price/MRP overrides to storefront:", e);
   }
@@ -11151,12 +11156,312 @@ function checkoutCalculatedBundle() {
   openCheckout(bundleName, bundle.ourPrice, 'physical', 'bundle');
 }
 
+/* =========================================================================
+   SHOPPABLE VIDEO REELS & VIDEO ADS (Instagram/TikTok Video Commerce)
+   ========================================================================= */
+let g_shoppableReelsData = [];
+let g_currentActiveFullscreenReel = null;
+let g_reelsIntersectionObserver = null;
+
+async function loadShoppableReels() {
+  const container = document.getElementById('shoppableReelsTrack');
+  if (!container) return;
+
+  // 1. Try local storage first (instant cached render)
+  try {
+    const cached = localStorage.getItem('jk_shoppable_reels');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        g_shoppableReelsData = parsed;
+        renderShoppableReels(g_shoppableReelsData);
+      }
+    }
+  } catch(e) {}
+
+  // 2. Fetch fresh reels.json from server / repo in background
+  try {
+    const res = await fetch('reels.json?v=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.reels) && data.reels.length > 0) {
+        if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) {
+          g_shoppableReelsData = data.reels;
+          renderShoppableReels(g_shoppableReelsData);
+        }
+      }
+    }
+  } catch(e) {}
+
+  // 3. Fallback starter reels if still empty
+  if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) {
+    g_shoppableReelsData = [
+      {
+        id: "reel-1",
+        title: "The Alchemist — Student Favorite",
+        productName: "The Alchemist",
+        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4",
+        posterUrl: "images/books/the-alchemist-1.webp",
+        badge: "⭐ 4.9 Bestseller",
+        active: true
+      },
+      {
+        id: "reel-2",
+        title: "Atomic Habits — Original Edition",
+        productName: "Atomic Habits",
+        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4",
+        posterUrl: "images/books/atomic-habits-1.webp",
+        badge: "🔥 Most Popular",
+        active: true
+      },
+      {
+        id: "reel-3",
+        title: "Deep Work — Study Focus Guide",
+        productName: "Deep Work",
+        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4",
+        posterUrl: "images/books/deep-work-1.webp",
+        badge: "🎯 Rank Booster",
+        active: true
+      },
+      {
+        id: "reel-4",
+        title: "JKBOSE Class 10th Master Kit",
+        productName: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)",
+        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4",
+        posterUrl: "images/school-bookset.webp",
+        badge: "📦 5 Subject Combo",
+        active: true
+      }
+    ];
+    renderShoppableReels(g_shoppableReelsData);
+  }
+}
+
+function renderShoppableReels(reels) {
+  const container = document.getElementById('shoppableReelsTrack');
+  if (!container) return;
+
+  const activeReels = (reels || []).filter(r => r.active !== false);
+  if (activeReels.length === 0) {
+    const parent = document.getElementById('shoppableReelsSection');
+    if (parent) parent.style.display = 'none';
+    return;
+  }
+  const parent = document.getElementById('shoppableReelsSection');
+  if (parent) parent.style.display = 'block';
+
+  let html = '';
+  activeReels.forEach(reel => {
+    const pName = reel.productName;
+    const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
+    const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
+    const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
+    const thumb = reel.posterUrl || cat.image || 'images/logo-app.png';
+
+    html += `
+      <div class="shoppable-reel-card" data-reel-id="${reel.id}" onclick="openFullscreenReel('${reel.id}')">
+        <video class="reel-video-element" src="${reel.videoUrl}" poster="${thumb}" preload="metadata" playsinline webkit-playsinline loop muted></video>
+        <div class="reel-top-bar">
+          <span class="reel-badge-pill">${reel.badge || '🔥 Watch & Shop'}</span>
+          <button type="button" class="reel-mute-btn" onclick="event.stopPropagation(); toggleReelCardSound(this)" title="Mute/Unmute">
+            <i class="fa-solid fa-volume-xmark"></i>
+          </button>
+        </div>
+        <div class="reel-play-indicator">
+          <i class="fa-solid fa-play"></i>
+        </div>
+        <div class="reel-bottom-overlay">
+          <div class="reel-product-chip" onclick="event.stopPropagation(); buyReelProduct('${encodeURIComponent(pName)}')">
+            <img src="${thumb}" alt="${pName}" class="reel-thumb-img" onerror="this.src='images/logo-app.png'">
+            <div class="reel-prod-meta">
+              <div class="reel-prod-title" title="${pName}">${pName}</div>
+              <div class="reel-prod-price-row">
+                <span class="reel-price-now" data-reel-prod-price="${pName}">₹${price}</span>
+                <span class="reel-price-mrp" data-reel-prod-mrp="${pName}" style="text-decoration:line-through; opacity:0.65; font-size:10.5px;">₹${mrp}</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="reel-shop-now-btn" onclick="event.stopPropagation(); buyReelProduct('${encodeURIComponent(pName)}')">
+            <i class="fa-solid fa-bag-shopping"></i> Shop now
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  initReelsIntersectionObserver(container);
+}
+
+function initReelsIntersectionObserver(container) {
+  if (g_reelsIntersectionObserver) {
+    try { g_reelsIntersectionObserver.disconnect(); } catch(e) {}
+  }
+  if (!('IntersectionObserver' in window)) return;
+
+  g_reelsIntersectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const card = entry.target;
+      const video = card.querySelector('video');
+      if (!video) return;
+
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
+        const p = video.play();
+        if (p !== undefined) {
+          p.catch(() => {});
+        }
+        card.classList.remove('paused');
+      } else {
+        video.pause();
+        card.classList.add('paused');
+      }
+    });
+  }, {
+    threshold: [0.1, 0.4, 0.8]
+  });
+
+  container.querySelectorAll('.shoppable-reel-card').forEach(card => {
+    g_reelsIntersectionObserver.observe(card);
+  });
+}
+
+function toggleReelCardSound(btn) {
+  const card = btn.closest('.shoppable-reel-card');
+  if (!card) return;
+  const video = card.querySelector('video');
+  if (!video) return;
+  video.muted = !video.muted;
+  const icon = btn.querySelector('i');
+  if (icon) {
+    icon.className = video.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+  }
+}
+
+function buyReelProduct(encodedName) {
+  const pName = decodeURIComponent(encodedName);
+  const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
+  const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
+  const catType = cat.category || 'books';
+  if (typeof openCheckout === 'function') {
+    openCheckout(pName, price, 'physical', catType);
+  }
+}
+
+function scrollReelsTrack(dir) {
+  const track = document.getElementById('shoppableReelsTrack');
+  if (!track) return;
+  const scrollAmount = 260 * dir;
+  track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+}
+
+function openFullscreenReel(reelId) {
+  const reel = (g_shoppableReelsData || []).find(r => r.id === reelId);
+  if (!reel) return;
+  g_currentActiveFullscreenReel = reel;
+
+  const modal = document.getElementById('fullscreenReelModal');
+  const video = document.getElementById('fullscreenReelVideo');
+  const thumb = document.getElementById('fullscreenReelThumb');
+  const title = document.getElementById('fullscreenReelProdTitle');
+  const priceEl = document.getElementById('fullscreenReelPrice');
+  const mrpEl = document.getElementById('fullscreenReelMrp');
+
+  const pName = reel.productName;
+  const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
+  const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
+  const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
+
+  if (title) title.innerText = pName;
+  if (priceEl) priceEl.innerText = '₹' + price;
+  if (mrpEl) mrpEl.innerText = '₹' + mrp;
+  if (thumb) {
+    thumb.src = reel.posterUrl || cat.image || 'images/logo-app.png';
+  }
+
+  // Pause card videos in the background
+  document.querySelectorAll('#shoppableReelsTrack video').forEach(v => v.pause());
+
+  if (video) {
+    video.src = reel.videoUrl;
+    video.poster = reel.posterUrl || cat.image || '';
+    video.muted = false;
+    const muteIcon = document.getElementById('fullscreenMuteIcon');
+    if (muteIcon) muteIcon.className = 'fa-solid fa-volume-high';
+
+    const p = video.play();
+    if (p !== undefined) {
+      p.catch(() => {
+        video.muted = true;
+        if (muteIcon) muteIcon.className = 'fa-solid fa-volume-xmark';
+        video.play().catch(() => {});
+      });
+    }
+  }
+
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeFullscreenReel() {
+  const modal = document.getElementById('fullscreenReelModal');
+  const video = document.getElementById('fullscreenReelVideo');
+  if (video) {
+    video.pause();
+    video.src = '';
+  }
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  g_currentActiveFullscreenReel = null;
+}
+
+function closeFullscreenReelOnBackdrop(e) {
+  if (e.target && e.target.id === 'fullscreenReelModal') {
+    closeFullscreenReel();
+  }
+}
+
+function toggleFullscreenReelSound() {
+  const video = document.getElementById('fullscreenReelVideo');
+  const icon = document.getElementById('fullscreenMuteIcon');
+  if (!video) return;
+  video.muted = !video.muted;
+  if (icon) {
+    icon.className = video.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+  }
+}
+
+function handleFullscreenReelShopNow() {
+  if (!g_currentActiveFullscreenReel) return;
+  const pName = g_currentActiveFullscreenReel.productName;
+  closeFullscreenReel();
+  buyReelProduct(encodeURIComponent(pName));
+}
+
+function syncShoppableReelsPrices() {
+  if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) return;
+  g_shoppableReelsData.forEach(reel => {
+    const pName = reel.productName;
+    const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
+    const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
+    const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
+    const priceEl = document.querySelector(`[data-reel-prod-price="${pName}"]`);
+    const mrpEl = document.querySelector(`[data-reel-prod-mrp="${pName}"]`);
+    if (priceEl) priceEl.innerText = '₹' + price;
+    if (mrpEl) mrpEl.innerText = '₹' + mrp;
+  });
+}
+
 function onStoreReady() {
   applyCustomPricesToStorefront();
   applyStockOverridesToStorefront();
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
   }
+  loadShoppableReels();
 }
 
 if (document.readyState === 'loading') {

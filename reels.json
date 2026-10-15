@@ -1,0 +1,46 @@
+{
+  "_comment": "JK STUDY HUB - SHOPPABLE VIDEO REELS & VIDEO ADS CONFIGURATION. Add or update your shoppable video ads here.",
+  "lastUpdated": "2026-10-16T00:26:00Z",
+  "reels": [
+    {
+      "id": "reel-1",
+      "title": "The Alchemist — Student Favorite",
+      "productName": "The Alchemist",
+      "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4",
+      "posterUrl": "images/books/the-alchemist-1.webp",
+      "badge": "⭐ 4.9 Bestseller",
+      "views": "3.8k",
+      "active": true
+    },
+    {
+      "id": "reel-2",
+      "title": "Atomic Habits — Original Edition",
+      "productName": "Atomic Habits",
+      "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4",
+      "posterUrl": "images/books/atomic-habits-1.webp",
+      "badge": "🔥 Most Popular",
+      "views": "5.2k",
+      "active": true
+    },
+    {
+      "id": "reel-3",
+      "title": "Deep Work — Study Focus Guide",
+      "productName": "Deep Work",
+      "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4",
+      "posterUrl": "images/books/deep-work-1.webp",
+      "badge": "🎯 Rank Booster",
+      "views": "2.4k",
+      "active": true
+    },
+    {
+      "id": "reel-4",
+      "title": "JKBOSE Class 10th Master Kit",
+      "productName": "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)",
+      "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4",
+      "posterUrl": "images/school-bookset.webp",
+      "badge": "📦 5 Subject Combo",
+      "views": "6.1k",
+      "active": true
+    }
+  ]
+}

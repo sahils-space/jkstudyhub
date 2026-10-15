@@ -166,6 +166,12 @@
           <span>Catalog Uploads</span>
         </a>
 
+        <a href="javascript:void(0)" class="sidebar-nav-link" id="nav-link-reels" onclick="switchSellerView('reels')">
+          <i class="fa-solid fa-circle-play" style="color: #ef4444;"></i>
+          <span>Video Ads &amp; Reels</span>
+          <span class="nav-pill-badge" style="background:#fee2e2; color:#ef4444; font-weight:800;">LIVE</span>
+        </a>
+
         <a href="javascript:void(0)" class="sidebar-nav-link" id="nav-link-payments" onclick="switchSellerView('payments')">
           <i class="fa-solid fa-wallet"></i>
           <span>Payments</span>
@@ -1185,6 +1191,218 @@
           </div>
         </section>
 
+        <!-- =======================================================
+             VIEW 6: VIDEO ADS & SHOPPABLE REELS (VIDEO COMMERCE)
+             ======================================================= -->
+        <section class="seller-view-pane" id="view-reels" style="display: none;">
+          <div style="background: white; border: 1px solid var(--hub-border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                  <span style="background:#fee2e2; color:#dc2626; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">
+                    <i class="fa-solid fa-bolt"></i> HIGH CONVERSION ADS
+                  </span>
+                  <span style="font-size:12px; color:#2563eb; font-weight:700;">⚡ Instant 0-Sec Reload Optimized</span>
+                </div>
+                <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 4px; display:flex; align-items:center; gap:8px;">
+                  <i class="fa-solid fa-circle-play" style="color: #ef4444;"></i> Video Ads &amp; Shoppable Reels Manager
+                </h2>
+                <p style="font-size: 13px; color: #64748b; margin: 0;">
+                  Upload product review, unboxing, and demo video reels. Each video links directly to a specific catalog product with live prices and one-tap checkout.
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="store.html#shoppableReelsSection" target="_blank" class="btn-hub-secondary" style="font-weight:700; color:#2563eb; border-color:#bfdbfe; background:#eff6ff; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview on Store
+                </a>
+                <button type="button" class="btn-hub-secondary" onclick="exportReelsJsonFile()" title="Download reels.json for repository commit" style="font-weight:700;">
+                  <i class="fa-solid fa-file-arrow-down"></i> Export reels.json
+                </button>
+                <button type="button" class="btn-hub-secondary" onclick="resetSellerReelsToDefault()" style="color:#ef4444;" title="Reset back to starter sample reels">
+                  <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+                </button>
+              </div>
+            </div>
+
+            <!-- Two-Column Layout: Upload & Configuration (Left) + Live 9:16 Mockup (Right) -->
+            <div style="display: grid; grid-template-columns: 1.25fr 0.85fr; gap: 24px; align-items: start;" id="sellerReelsGrid">
+              
+              <!-- Form Panel -->
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 0 0 16px; display:flex; align-items:center; gap:8px;">
+                  <i class="fa-solid fa-cloud-arrow-up" style="color: #2563eb;"></i> Upload or Link New Video Ad
+                </h3>
+
+                <form id="sellerReelForm" onsubmit="event.preventDefault(); publishSellerReel();">
+                  <!-- 1. Reel Title / Caption -->
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">
+                      Reel Hook / Video Title <span style="color:#ef4444;">*</span>
+                    </label>
+                    <input type="text" id="sellerReelTitleInput" class="form-control" placeholder="e.g. Unboxing The Alchemist &middot; Page &amp; Print Quality Tour" required oninput="updateSellerReelMockup()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
+                  </div>
+
+                  <!-- 2. Target Product Dropdown -->
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">
+                      Target Product for Video Ad <span style="color:#ef4444;">*</span>
+                      <span style="font-weight:400; color:#64748b; font-size:11px;">(Live price and thumbnail sync automatically)</span>
+                    </label>
+                    <select id="sellerReelProductSelect" class="form-control" required onchange="onSellerReelProductSelectChange()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px; font-weight:600;">
+                      <option value="">-- Choose Product to Advertise --</option>
+                    </select>
+                  </div>
+
+                  <!-- 3. Video Source (File Upload or Stream URL) -->
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">
+                      Video File or Direct Video URL <span style="color:#ef4444;">*</span>
+                    </label>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                      <button type="button" id="tabVideoFileBtn" class="btn-hub-secondary active" onclick="switchReelVideoInputType('file')" style="flex:1; font-size:12px; font-weight:700;">
+                        <i class="fa-solid fa-file-video"></i> Upload MP4 / MOV
+                      </button>
+                      <button type="button" id="tabVideoUrlBtn" class="btn-hub-secondary" onclick="switchReelVideoInputType('url')" style="flex:1; font-size:12px; font-weight:700;">
+                        <i class="fa-solid fa-link"></i> Paste Video URL
+                      </button>
+                    </div>
+
+                    <!-- File input -->
+                    <div id="reelFileInputGroup">
+                      <input type="file" id="sellerReelFileInput" accept="video/mp4,video/webm,video/quicktime" onchange="handleSellerReelFileSelected(this)" style="display:block; width:100%; font-size:12.5px; padding:8px; background:white; border:1px dashed #94a3b8; border-radius:8px; cursor:pointer;">
+                      <div style="font-size:11px; color:#64748b; margin-top:4px;">
+                        💡 Tip: Vertical 9:16 reels under 30MB work best. First frame is automatically extracted for lightning-fast page loading.
+                      </div>
+                    </div>
+
+                    <!-- URL input -->
+                    <div id="reelUrlInputGroup" style="display: none;">
+                      <input type="url" id="sellerReelUrlInput" class="form-control" placeholder="https://assets.mixkit.co/... or Cloudinary / Supabase MP4 direct link" oninput="handleSellerReelUrlInput(this.value)" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
+                    </div>
+                  </div>
+
+                  <!-- 4. Quality & Fast Reload Extraction Box -->
+                  <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                      <span style="font-size: 12px; font-weight: 700; color: #1e293b;">
+                        ⚡ Fast Reload &amp; Poster Extraction
+                      </span>
+                      <span id="sellerReelQualityBadge" style="font-size: 10.5px; font-weight: 800; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px;">
+                        Waiting for Video
+                      </span>
+                    </div>
+                    <div style="font-size: 11.5px; color: #64748b;" id="sellerReelQualityDetails">
+                      Once a video is chosen, our automatic poster pipeline renders an instant-load thumbnail frame so customers experience 0-sec lag.
+                    </div>
+                  </div>
+
+                  <!-- 5. Promotional Badge Tag -->
+                  <div style="margin-bottom: 18px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">
+                      Overlay Badge
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                      <input type="text" id="sellerReelBadgeInput" class="form-control" value="🔥 Most Popular" placeholder="e.g. ⭐ 4.9 Bestseller, 📦 5 Subject Combo" oninput="updateSellerReelMockup()" style="flex:1; padding:8px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
+                      <button type="button" class="btn-hub-secondary" onclick="document.getElementById('sellerReelBadgeInput').value='⭐ 4.9 Bestseller'; updateSellerReelMockup();" style="font-size:11px; padding:6px 10px;">⭐ Star</button>
+                      <button type="button" class="btn-hub-secondary" onclick="document.getElementById('sellerReelBadgeInput').value='🔥 Trending Now'; updateSellerReelMockup();" style="font-size:11px; padding:6px 10px;">🔥 Fire</button>
+                    </div>
+                  </div>
+
+                  <!-- Hidden canvas for poster extraction -->
+                  <canvas id="sellerPosterCanvas" style="display:none;"></canvas>
+
+                  <!-- Submit button -->
+                  <button type="submit" id="btnPublishSellerReel" class="btn-hub-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; justify-content: center; background: #2563eb; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
+                    <i class="fa-solid fa-circle-check"></i> Publish Video Ad to Storefront
+                  </button>
+                </form>
+              </div>
+
+              <!-- Right: Live 9:16 Mockup Preview -->
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; display:flex; align-items:center; gap:6px;">
+                  <i class="fa-solid fa-mobile-screen"></i> Live 9:16 Storefront Mockup
+                </div>
+                
+                <!-- Mockup Card Container -->
+                <div id="sellerReelMockupCard" style="width: 230px; height: 410px; background: #0f172a; border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.1); border: 2px solid #334155;">
+                  
+                  <!-- Video element in mockup -->
+                  <video id="sellerMockupVideo" style="width: 100%; height: 100%; object-fit: cover; background: #000;" playsinline autoplay muted loop></video>
+
+                  <!-- Top Bar -->
+                  <div style="position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; z-index: 5;">
+                    <span id="mockupBadgeText" style="background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); color: #fff; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
+                      🔥 Most Popular
+                    </span>
+                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">
+                      <i class="fa-solid fa-volume-xmark"></i>
+                    </div>
+                  </div>
+
+                  <!-- Play button indicator -->
+                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; pointer-events: none;">
+                    <i class="fa-solid fa-play"></i>
+                  </div>
+
+                  <!-- Bottom product chip & Shop Now button matching screenshot -->
+                  <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 10px 10px 10px; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.96) 100%); z-index: 6; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.14); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 5px 8px;">
+                      <img id="mockupProdThumb" src="images/logo-app.png" alt="Preview" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; background: #fff; flex-shrink: 0;">
+                      <div style="overflow: hidden; flex: 1;">
+                        <div id="mockupProdTitle" style="font-size: 11px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Select a Product</div>
+                        <div style="display: flex; align-items: baseline; gap: 5px; margin-top: 1px;">
+                          <span id="mockupProdPrice" style="font-size: 11px; font-weight: 800; color: #fff;">₹0</span>
+                          <span id="mockupProdMrp" style="font-size: 9.5px; text-decoration: line-through; opacity: 0.65; color: #cbd5e1;">₹0</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="width: 100%; background: #2563eb; color: #fff; border-radius: 6px; padding: 7px 0; font-size: 11.5px; font-weight: 800; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                      <i class="fa-solid fa-bag-shopping" style="font-size:10px;"></i> Shop now
+                    </div>
+                  </div>
+                </div>
+
+                <div style="font-size: 11.5px; color: #64748b; margin-top: 10px; text-align: center;">
+                  Exact 9:16 vertical card with synchronized store pricing
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Published Video Reels Table -->
+            <div style="margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; display:flex; align-items:center; gap:8px;">
+                  <i class="fa-solid fa-list-check" style="color: #2563eb;"></i> Currently Active Shoppable Video Reels (<span id="activeReelsCount">0</span>)
+                </h3>
+                <span style="font-size: 12px; color: #64748b;">Instant live update on storefront upon change</span>
+              </div>
+
+              <div style="overflow-x: auto;">
+                <table class="hub-table" style="width: 100%; border-collapse: collapse;">
+                  <thead>
+                    <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left;">
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">PREVIEW</th>
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">REEL TITLE &amp; BADGE</th>
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">ADVERTISED PRODUCT</th>
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">STORE RATE</th>
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">RELOAD SPEED</th>
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">STATUS</th>
+                      <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569; text-align: right;">ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sellerPublishedReelsTableBody">
+                    <!-- Populated by seller.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
       </div>
     </main>
   </div>
@@ -1329,6 +1547,6 @@
   <!-- Real-Time Visitor Analytics Tracker -->
   <script src="analytics.js?v=1"></script>
   <!-- External Script -->
-  <script src="seller.js?v=85.0"></script>
+  <script src="seller.js?v=86.0"></script>
 </body>
 </html>
