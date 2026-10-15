@@ -5280,11 +5280,6 @@
                 <span style="color: #16a34a; font-weight: 700;" id="invoiceDeliveryFee">FREE (₹0)</span>
               </div>
 
-              <div class="invoice-row" id="invoiceCodRow" style="font-size: 12px; color: #166534; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between;">
-                <span><i class="fa-solid fa-hand-holding-dollar"></i> Doorstep Cash Handling:</span>
-                <span id="invoiceCodFee">FREE (₹0)</span>
-              </div>
-
               <div class="invoice-row" style="font-size: 12.5px; color: #475569; margin-bottom: 4px; display: flex; justify-content: space-between;">
                 <span><i class="fa-solid fa-shield-check"></i> Platform &amp; Handling:</span>
                 <span id="invoicePlatformFee" style="font-weight: 700; color: #334155;">₹5</span>
@@ -5304,7 +5299,7 @@
             <!-- Guarantee Note -->
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; font-size: 11.5px; color: #166534; display: flex; align-items: center; gap: 8px;">
               <i class="fa-solid fa-shield-halved" style="color: #16a34a; font-size: 16px;"></i>
-              <span>No advance payment needed for Cash on Delivery orders. Inspect books at doorstep!</span>
+              <span>Review your order details. In the next step, select Cash on Delivery or Online Payment.</span>
             </div>
 
             <!-- Step 2 Actions -->
@@ -5330,26 +5325,33 @@
               </h4>
               
               <!-- COD Option (Default & Recommended) -->
-              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 2px solid #16a34a; border-radius: 8px; margin-bottom: 8px; cursor: pointer;" id="payMethodCodLabel">
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 2px solid #16a34a; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" id="payMethodCodLabel">
                 <input type="radio" name="paymentMethod" value="cod" checked onchange="togglePaymentMethod('cod')">
                 <div style="flex: 1;">
                   <strong style="font-size: 13px; color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
-                  <p style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Inspect your parcel before paying cash or scanning UPI</p>
+                  <p id="payMethodCodDesc" style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Inspect your parcel before paying cash or scanning UPI</p>
                 </div>
-                <span style="background: #dcfce7; color: #16a34a; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">COD</span>
+                <span id="payMethodCodBadge" style="background: #dcfce7; color: #16a34a; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px; white-space: nowrap;">COD</span>
               </label>
 
               <!-- Online Payment Option -->
-              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer;" id="payMethodOnlineLabel">
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.2s;" id="payMethodOnlineLabel">
                 <input type="radio" name="paymentMethod" value="online" onchange="togglePaymentMethod('online')">
                 <div style="flex: 1;">
                   <strong style="font-size: 13px; color: #1e293b;">Online Payment (UPI / QR / Cards / NetBanking)</strong>
-                  <p style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Instant confirmation &amp; priority fast dispatch</p>
+                  <p id="payMethodOnlineDesc" style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Instant confirmation &amp; priority fast dispatch</p>
                 </div>
-                <div style="display:flex; gap:4px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+                  <span id="payMethodOnlineBadge" style="background: #dcfce7; color: #15803d; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px; white-space: nowrap;">₹0 Extra</span>
                   <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="height:12px;">
                 </div>
               </label>
+
+              <!-- Payment Breakdown Notice in Step 3 -->
+              <div id="step3PaymentBreakdownNotice" style="margin-top: 8px; padding: 8px 10px; background: white; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 11.5px; display: flex; justify-content: space-between; align-items: center;">
+                <span id="step3BreakdownLabel" style="color: #475569;">Doorstep Cash Handling Fee:</span>
+                <span id="step3BreakdownAmount" style="font-weight: 800; color: #166534;">FREE (₹0)</span>
+              </div>
             </div>
 
             <!-- REPEAT STUDENT REWARD (ONE-TIME 20% DISCOUNT) -->
@@ -5391,7 +5393,7 @@
             <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
               <div>
                 <span style="font-size: 12px; font-weight: 700; color: #166534; display: block;">Final Amount Payable:</span>
-                <span style="font-size: 11px; color: #15803d;">Free delivery &bull; No advance risk</span>
+                <span id="payStepTotalSubtext" style="font-size: 11px; color: #15803d;">Free delivery &bull; No advance risk</span>
               </div>
               <span id="payStepTotalBadge" style="font-size: 22px; font-weight: 900; color: #16a34a;">₹0</span>
             </div>
@@ -5512,7 +5514,7 @@
   </script>
   <!-- Real-Time Visitor Analytics Tracker -->
   <script src="analytics.js?v=2"></script>
-  <script src="store.js?v=34.0"></script>
+  <script src="store.js?v=35.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">

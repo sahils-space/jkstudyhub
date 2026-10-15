@@ -4975,30 +4975,26 @@ function updateCheckoutInvoiceTotals() {
   const platformFee = 5;
   const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
 
-  const methodRadio = document.querySelector('input[name="paymentMethod"]:checked');
-  const isCod = methodRadio ? (methodRadio.value === 'cod') : false;
-  const codFee = isCod ? (Number(deliveryInfo.codFee) || 0) : 0;
+  // Base Order Amount (Item Price + Delivery Fee + Platform Fee - Repeat Discount)
+  // This is shown cleanly on Step 2 (Order Summary) BEFORE the customer chooses their payment method.
+  const baseOrderAmount = finalPrice + deliveryFee + platformFee;
 
-  const totalAmount = finalPrice + deliveryFee + platformFee + codFee;
+  const methodRadio = document.querySelector('input[name="paymentMethod"]:checked');
+  const isCod = methodRadio ? (methodRadio.value === 'cod') : true;
+  const codFee = Number(deliveryInfo.codFee) || 0;
+
+  // Step 3 Total includes COD charges only if the customer chooses Cash on Delivery
+  const step3Total = isCod ? (baseOrderAmount + codFee) : baseOrderAmount;
 
   const deliveryFeeEl = document.getElementById('invoiceDeliveryFee');
   if (deliveryFeeEl) {
     deliveryFeeEl.innerHTML = deliveryInfo.html;
   }
 
+  // Remove/hide COD row from Step 2 summary
   const codRow = document.getElementById('invoiceCodRow');
-  const codFeeEl = document.getElementById('invoiceCodFee');
-  if (codRow && codFeeEl) {
-    if (isCod) {
-      codRow.style.display = 'flex';
-      if (codFee === 0) {
-        codFeeEl.innerHTML = '<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>';
-      } else {
-        codFeeEl.innerHTML = `<span style="color:#b45309; font-weight:800;">₹${codFee}</span>`;
-      }
-    } else {
-      codRow.style.display = 'none';
-    }
+  if (codRow) {
+    codRow.style.display = 'none';
   }
 
   const discountRow = document.getElementById('invoiceRepeatDiscountRow');
@@ -5012,11 +5008,85 @@ function updateCheckoutInvoiceTotals() {
     }
   }
 
+  // Step 2 Total: Clean base order price (WITHOUT premature COD charges)
   const totalEl = document.getElementById('totalPrice');
-  if (totalEl) totalEl.innerText = '₹' + totalAmount;
+  if (totalEl) totalEl.innerText = '₹' + baseOrderAmount;
 
+  // Step 3: Final Payable Amount Badge
   const payStepBadge = document.getElementById('payStepTotalBadge');
-  if (payStepBadge) payStepBadge.innerText = '₹' + totalAmount;
+  if (payStepBadge) payStepBadge.innerText = '₹' + step3Total;
+
+  // Step 3: Dynamic Breakdown Subtext under Final Amount
+  const paySubtext = document.getElementById('payStepTotalSubtext');
+  if (paySubtext) {
+    if (isCod) {
+      paySubtext.innerHTML = (codFee > 0)
+        ? `Order: ₹${baseOrderAmount} + Doorstep COD Fee: ₹${codFee} &bull; Pay at doorstep`
+        : `Free doorstep delivery &bull; ₹0 COD Fee`;
+    } else {
+      paySubtext.innerHTML = (codFee > 0)
+        ? `Order: ₹${baseOrderAmount} &bull; <strong style="color:#166534;">Saved ₹${codFee} on COD charges!</strong>`
+        : `Instant confirmation &bull; Priority fast dispatch`;
+    }
+  }
+
+  // Step 3: Update badges and descriptions on COD vs Online payment cards
+  const codBadge = document.getElementById('payMethodCodBadge');
+  const codDesc = document.getElementById('payMethodCodDesc');
+  const onlineBadge = document.getElementById('payMethodOnlineBadge');
+  const onlineDesc = document.getElementById('payMethodOnlineDesc');
+  const noticeLabel = document.getElementById('step3BreakdownLabel');
+  const noticeAmount = document.getElementById('step3BreakdownAmount');
+
+  if (codBadge) {
+    if (codFee > 0) {
+      codBadge.innerHTML = `+₹${codFee} COD Fee`;
+      codBadge.style.background = '#fef3c7';
+      codBadge.style.color = '#b45309';
+      codBadge.style.border = '1px solid #fde68a';
+    } else {
+      codBadge.innerHTML = `FREE COD`;
+      codBadge.style.background = '#dcfce7';
+      codBadge.style.color = '#16a34a';
+      codBadge.style.border = 'none';
+    }
+  }
+
+  if (codDesc) {
+    codDesc.innerHTML = (codFee > 0)
+      ? `Doorstep cash collection & handling: <strong style="color:#b45309;">+₹${codFee}</strong> (Inspect parcel at doorstep)`
+      : `Inspect your parcel before paying cash or scanning UPI (₹0 extra)`;
+  }
+
+  if (onlineBadge) {
+    if (codFee > 0) {
+      onlineBadge.innerHTML = `SAVE ₹${codFee} &bull; ₹0 COD`;
+      onlineBadge.style.background = '#dcfce7';
+      onlineBadge.style.color = '#15803d';
+      onlineBadge.style.border = '1px solid #86efac';
+    } else {
+      onlineBadge.innerHTML = `₹0 Extra`;
+      onlineBadge.style.background = '#eff6ff';
+      onlineBadge.style.color = '#1e40af';
+      onlineBadge.style.border = 'none';
+    }
+  }
+
+  if (onlineDesc) {
+    onlineDesc.innerHTML = (codFee > 0)
+      ? `Instant confirmation &bull; <strong style="color:#16a34a;">Save ₹${codFee}</strong> (Zero cash handling charge for prepaid)`
+      : `Instant confirmation & priority fast dispatch`;
+  }
+
+  if (noticeLabel && noticeAmount) {
+    if (isCod) {
+      noticeLabel.innerHTML = `<span><i class="fa-solid fa-hand-holding-dollar"></i> Doorstep Cash Handling Fee:</span>`;
+      noticeAmount.innerHTML = (codFee > 0) ? `<span style="color:#b45309; font-weight:800;">+₹${codFee} (Total: ₹${step3Total})</span>` : `<span style="color:#16a34a; font-weight:800;">FREE (₹0)</span>`;
+    } else {
+      noticeLabel.innerHTML = `<span><i class="fa-solid fa-circle-check" style="color:#16a34a;"></i> Online Payment Mode:</span>`;
+      noticeAmount.innerHTML = (codFee > 0) ? `<span style="color:#16a34a; font-weight:800;">₹0 COD Fee (Saved ₹${codFee}!)</span>` : `<span style="color:#16a34a; font-weight:800;">₹0 Extra</span>`;
+    }
+  }
 }
 
 function updateChecklist() {
@@ -5191,10 +5261,21 @@ function updateCheckoutReviewData() {
   if (rAddr) {
     const isPhysical = (currentCheckoutCategory !== 'form' && currentCheckoutCategory !== 'digital');
     if (isPhysical) {
-      const street = addrInput ? addrInput.value.trim() : '';
-      const city = citySelect ? citySelect.value : '';
+      let street = addrInput ? addrInput.value.trim() : '';
+      const rawCity = citySelect ? citySelect.value : '';
       const pin = pinInput ? pinInput.value.trim() : '';
-      rAddr.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${street ? street + ', ' : ''}${city} &bull; PIN: <strong>${pin}</strong>`;
+      const cleanCity = rawCity.split('(')[0].trim();
+
+      // Avoid duplicating district or PIN if already present in street text
+      if (pin) {
+        street = street.replace(new RegExp(`[,\\s-]*${pin}\\b`, 'gi'), '');
+      }
+      if (cleanCity) {
+        street = street.replace(new RegExp(`[,\\s-]*${cleanCity}\\b.*$`, 'gi'), '');
+      }
+      street = street.replace(/,\s*$/, '').trim();
+
+      rAddr.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${street ? street + ', ' : ''}<strong>${cleanCity || rawCity}</strong> &bull; PIN: <strong>${pin}</strong>`;
     } else {
       rAddr.innerHTML = `<i class="fa-solid fa-cloud-arrow-down" style="color:#2563eb;"></i> Digital Service (Instant WhatsApp / Online Delivery)`;
     }
@@ -5249,13 +5330,20 @@ function togglePaymentMethod(method) {
   const codLabel = document.getElementById('payMethodCodLabel');
   const submitBtn = document.getElementById('submitOrderBtn');
   const note = document.getElementById('checkoutFooterNote');
-  const totalEl = document.getElementById('totalPrice');
+
+  const deliveryInfo = getCheckoutDeliveryInfo();
+  const deliveryFee = deliveryInfo.fee;
+  const platformFee = 5;
+  const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const baseOrderAmount = finalPrice + deliveryFee + platformFee;
+  const codFee = Number(deliveryInfo.codFee) || 0;
 
   if (method === 'cod') {
     if (onlineLabel) onlineLabel.style.border = '1.5px solid #cbd5e1';
     if (codLabel) codLabel.style.border = '2px solid #16a34a';
+    const totalWithCod = baseOrderAmount + codFee;
     if (submitBtn) {
-      submitBtn.innerHTML = '<i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery)';
+      submitBtn.innerHTML = `<i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery) • ₹${totalWithCod}`;
       submitBtn.style.backgroundColor = '#16a34a';
     }
     if (note) {
@@ -5265,8 +5353,7 @@ function togglePaymentMethod(method) {
     if (onlineLabel) onlineLabel.style.border = '2px solid #2563eb';
     if (codLabel) codLabel.style.border = '1.5px solid #cbd5e1';
     if (submitBtn) {
-      const totText = totalEl ? totalEl.innerText : '';
-      submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online (${totText})`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online • ₹${baseOrderAmount}`;
       submitBtn.style.backgroundColor = '#2563eb';
     }
     if (note) {
@@ -5274,7 +5361,7 @@ function togglePaymentMethod(method) {
     }
   }
 
-  // Instantly re-calculate totals and COD row
+  // Instantly re-calculate totals and Step 3 labels
   updateCheckoutInvoiceTotals();
 }
 
