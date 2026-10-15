@@ -32,7 +32,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=16">
+  <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 
@@ -109,9 +109,6 @@
   <header class="main-header">
     <div class="top-brand-wrapper" id="autumnWrapper">
       <div class="brand-logo-container">
-        <div class="brand-icon" style="background: transparent; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">
-          <img src="images/logo-app.png" alt="JK Study Hub Logo" style="width: 52px; height: 52px; border-radius: 14px; object-fit: cover;">
-        </div>
         <h1 class="hub-title">JK STUDY HUB</h1>
         <p class="hub-tagline">Excellence in Learning for Class 10th &amp; 11th</p>
       </div>
@@ -133,8 +130,9 @@
 
         <!-- Study Library & User Auth Cluster -->
         <div class="nav-auth-cluster">
-          <button type="button" class="nav-library-btn" id="installAppBtn" onclick="installApp()" title="Install JK Study Hub App on your Phone or PC" style="background: #2563eb; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-right: 8px;">
-            <i class="fa-solid fa-download"></i> <span>Install App</span>
+          <button type="button" class="nav-library-btn" id="installAppBtn" onclick="openAppInstallModal()" title="Install JK Study Hub App on your Phone or PC" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: white; border: 1px solid rgba(147, 197, 253, 0.4); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; margin-right: 8px; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);">
+            <img src="images/app-install-logo.png" alt="JK" style="width: 17px; height: 17px; border-radius: 4px; object-fit: cover;">
+            <span>Install App</span>
           </button>
           <button type="button" class="nav-library-btn" id="navLibraryBtn" onclick="openLibraryModal()" title="View your study history and bookmarked papers">
             <i class="fa-solid fa-book-bookmark"></i>
@@ -189,29 +187,60 @@
     </nav>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero Section (First Window - Premium Dark Kashmiri Study Hub) -->
   <section class="hero-section" id="home">
+    <!-- Cosmic Glowing Rings (Speedy Kart & Store Section Style) -->
+    <div class="hero-ambient-rings" aria-hidden="true">
+      <div class="hero-ring-outer"></div>
+      <div class="hero-ring-inner"></div>
+      <div class="hero-ring-core"></div>
+    </div>
+
+    <!-- Floating Academic Watermark Icons in Background -->
+    <div class="hero-study-watermark pos-top-left" aria-hidden="true" title="Study &amp; Knowledge">
+      <i class="fa-solid fa-book-open"></i>
+    </div>
+    <div class="hero-study-watermark pos-top-right" aria-hidden="true" title="Academic Excellence">
+      <i class="fa-solid fa-graduation-cap"></i>
+    </div>
+    <div class="hero-study-watermark pos-mid-left" aria-hidden="true" title="Science &amp; Curiosity">
+      <i class="fa-solid fa-atom"></i>
+    </div>
+    <div class="hero-study-watermark pos-mid-right" aria-hidden="true" title="Mathematics &amp; Precision">
+      <i class="fa-solid fa-compass-drafting"></i>
+    </div>
+
     <!-- Free WhatsApp Community Strip -->
-    <div style="background: rgba(30, 58, 138, 0.45); border-bottom: 1px solid rgba(255, 255, 255, 0.15); padding: 7px 16px; text-align: center; font-size: 13px; color: #ffffff;">
-      <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-        <span><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> Join <strong>5,000+ JKBOSE Students</strong> for Free Date Sheets, Notes &amp; Solved Papers:</span>
-        <a href="https://wa.me/919622605714?text=Hi%20JK%20Study%20Hub!%20Please%20add%20me%20to%20the%20JKBOSE%20Students%20Study%20Group%20for%20Notes%20and%20Updates." target="_blank" style="background: #22c55e; color: white; padding: 3px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-          Join WhatsApp Group &rarr;
-        </a>
-      </div>
+    <div class="hero-community-strip">
+      <span><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> Join <strong>5,000+ JKBOSE Students</strong> for Free Date Sheets, Notes &amp; Solved Papers:</span>
+      <a href="https://wa.me/919622605714?text=Hi%20JK%20Study%20Hub!%20Please%20add%20me%20to%20the%20JKBOSE%20Students%20Study%20Group%20for%20Notes%20and%20Updates." target="_blank">
+        Join WhatsApp Group &rarr;
+      </a>
     </div>
 
     <div class="container hero-content">
-      <span class="badge">Your Dedicated Learning Partner</span>
-      <h2 class="hero-heading">Welcome to <span class="text-highlight">JK STUDY HUB</span></h2>
+      <span class="badge"><span class="badge-dot-glow"></span> Official Academic &amp; Exam Platform</span>
+      <h2 class="hero-heading">Welcome to <span class="hero-title-accent">JK STUDY HUB</span></h2>
       <p class="hero-description">
-        A structured academic portal crafted to support <strong>Class 10th</strong> and <strong>Class 11th</strong> students with official digital syllabi, curated notes, solved examples, and exam preparation resources.
+        A structured academic portal crafted to support <strong>Class 10th, 11th &amp; 12th</strong> students with official digital syllabi, curated notes, solved examples, and exam preparation resources.
       </p>
       <div class="hero-actions">
         <a href="#subjects" class="btn btn-primary"><i class="fa-solid fa-layer-group"></i> Explore Subject Portals</a>
-        <a href="store.html#novels" target="_blank" rel="noopener" class="btn btn-secondary" style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.18); color:white; border:1px solid rgba(255,255,255,0.35); padding:10px 20px; border-radius:8px; font-weight:700; text-decoration:none;">
-          <i class="fa-solid fa-book-open"></i> Novels Store <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+        <button type="button" class="btn btn-secondary" onclick="openAppInstallModal()" style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.12); color:white; border:1px solid rgba(255,255,255,0.25); padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer;">
+          <img src="images/app-install-logo.png" alt="JK" style="width:20px; height:20px; border-radius:5px; object-fit:cover;">
+          <span>Install Official App</span>
+        </button>
+        <a href="store.html" target="_blank" rel="noopener" class="btn" style="display:inline-flex; align-items:center; gap:8px; background:rgba(37,99,235,0.18); color:#93c5fd; border:1px solid rgba(96,165,250,0.35); padding:10px 20px; border-radius:8px; font-weight:700; text-decoration:none;">
+          <i class="fa-solid fa-store"></i> Visit Book Store <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
         </a>
+      </div>
+
+      <!-- Feature Highlights Row -->
+      <div class="hero-highlights-row">
+        <div class="hero-stat-pill"><i class="fa-solid fa-book-bookmark"></i> <span>Official 2026 Syllabi</span></div>
+        <div class="hero-stat-pill"><i class="fa-solid fa-file-circle-check"></i> <span>Curated Notes &amp; PYQs</span></div>
+        <div class="hero-stat-pill"><i class="fa-solid fa-truck-fast"></i> <span>Kashmir Doorstep Delivery</span></div>
+        <div class="hero-stat-pill"><i class="fa-solid fa-shield-halved"></i> <span>100% Free Digital Access</span></div>
       </div>
     </div>
   </section>
@@ -926,6 +955,46 @@
     </div>
   </div>
 
+  <!-- Dedicated App Install Modal with New 3D JK Logo -->
+  <div class="app-install-modal-overlay" id="appInstallModalOverlay" onclick="closeAppInstallModal(event)">
+    <div class="app-install-card" id="appInstallCard" onclick="event.stopPropagation()">
+      <button type="button" class="app-install-close" onclick="closeAppInstallModalDirect()" aria-label="Close modal">&times;</button>
+      
+      <div class="app-install-logo-wrap">
+        <img src="images/app-install-logo.png" alt="JK Study Hub App Icon">
+      </div>
+      
+      <h3 class="app-install-title">JK STUDY HUB</h3>
+      <p class="app-install-tagline">Official JKBOSE Class 10th &amp; 11th Digital Learning Portal</p>
+      
+      <div class="app-install-badges">
+        <span class="app-badge-item"><i class="fa-solid fa-star" style="color: #facc15;"></i> 4.9 Rating</span>
+        <span class="app-badge-item"><i class="fa-solid fa-bolt" style="color: #60a5fa;"></i> Instant Notes Access</span>
+        <span class="app-badge-item"><i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> Offline Ready</span>
+      </div>
+      
+      <button type="button" class="btn-app-install-action" id="btnExecuteInstall" onclick="executeAppInstall()">
+        <i class="fa-solid fa-download"></i>
+        <span>Install App on Your Device</span>
+      </button>
+
+      <div class="app-install-guide-grid">
+        <div class="app-guide-box">
+          <h4><i class="fa-brands fa-android" style="color: #4ade80;"></i> Android (Chrome)</h4>
+          <p>Tap <strong>3 dots (⋮)</strong> at top right &rarr; select <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong>.</p>
+        </div>
+        <div class="app-guide-box">
+          <h4><i class="fa-brands fa-apple" style="color: #ffffff;"></i> iPhone / iPad (Safari)</h4>
+          <p>Tap <strong>Share (⎋)</strong> at bottom &rarr; scroll down &rarr; tap <strong>"Add to Home Screen" (+)</strong>.</p>
+        </div>
+        <div class="app-guide-box" style="grid-column: span 2;">
+          <h4><i class="fa-solid fa-laptop" style="color: #93c5fd;"></i> Laptop / PC (Chrome &amp; Edge)</h4>
+          <p>Look at the right side of your address bar and click the <strong>Install Icon (💻 with down arrow)</strong> to pin the app to your desktop.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase SDK (Compat Libraries for Web) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -1000,23 +1069,45 @@
       window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
     }
 
-    function installApp() {
+    function openAppInstallModal() {
+      const overlay = document.getElementById('appInstallModalOverlay');
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeAppInstallModalDirect() {
+      const overlay = document.getElementById('appInstallModalOverlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function closeAppInstallModal(e) {
+      if (e && e.target && e.target.id === 'appInstallModalOverlay') {
+        closeAppInstallModalDirect();
+      }
+    }
+
+    function executeAppInstall() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
-            document.getElementById('installAppBtn').style.display = 'none';
+            const installBtn = document.getElementById('installAppBtn');
+            if (installBtn) installBtn.style.display = 'none';
+            closeAppInstallModalDirect();
           }
           deferredPrompt = null;
         });
       } else {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         if (isIOS) {
-          alert("📱 How to Install on iPhone:\n\n1. Tap the Share button (square with arrow ↑) at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen' (+).\n3. Tap 'Add' in the top right.\n\nJK Study Hub will be added right to your home screen like a real app!");
+          alert("📱 How to Install on iPhone:\n\n1. Tap the Share button (square with arrow ↑) at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen' (+).\n3. Tap 'Add' in the top right.\n\nJK Study Hub will be added right to your home screen with the new JK 3D icon!");
         } else {
           alert("📲 How to Install JK Study Hub App:\n\n• Android (Chrome): Tap the 3 dots (⋮) in the top right and tap 'Install app' or 'Add to Home screen'.\n\n• Laptop/Mac (Chrome): Look at the right side of the address bar at the top and click the Install icon (computer with down arrow)!");
         }
       }
+    }
+
+    function installApp() {
+      openAppInstallModal();
     }
   </script>
 

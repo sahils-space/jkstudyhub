@@ -92,31 +92,33 @@ body {
    Top Centered Branding Header & Navigation
    =================================================== */
 .main-header {
-  background: var(--bg-white);
-  border-bottom: 1px solid var(--border-color);
+  background: #060a17;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
 }
 
 .top-brand-wrapper {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-  padding: 24px 20px 20px;
+  background: radial-gradient(circle at 50% 45%, rgba(37, 99, 235, 0.28) 0%, rgba(14, 165, 233, 0.06) 50%, transparent 72%),
+              linear-gradient(180deg, #050813 0%, #0a122c 55%, #0e1b42 100%);
+  padding: 34px 20px 24px;
   text-align: center;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .top-brand-wrapper::after {
   content: "";
   position: absolute;
-  top: -50%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 500px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+  transform: translate(-50%, -50%);
+  width: 650px;
+  height: 180px;
+  background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -128,45 +130,51 @@ body {
   z-index: 2;
 }
 
-.brand-icon {
-  width: 52px;
-  height: 52px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
-  color: #ffffff;
-  font-size: 24px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.35);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
 .hub-title {
-  font-family: var(--font-heading);
-  font-size: 32px;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(40px, 6.5vw, 66px);
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
   color: #ffffff;
   text-transform: uppercase;
-  margin-bottom: 4px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 0 0 8px 0;
+  line-height: 1.1;
+  background: linear-gradient(180deg, #ffffff 30%, #e2e8f0 75%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 32px rgba(37, 99, 235, 0.3));
 }
 
 .hub-tagline {
-  font-size: 13px;
-  font-weight: 500;
-  color: #cbd5e1;
-  letter-spacing: 1px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0;
+}
+
+.hub-tagline::before,
+.hub-tagline::after {
+  content: "";
+  display: inline-block;
+  width: 35px;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.35);
 }
 
 /* Navbar */
 .navbar {
-  background: var(--bg-white);
+  background: rgba(8, 14, 30, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 10px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .nav-container {
@@ -183,25 +191,30 @@ body {
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 32px;
+  gap: 28px;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-item {
   text-decoration: none;
   font-weight: 600;
-  font-size: 15px;
-  color: var(--text-muted);
-  padding: 8px 16px;
+  font-size: 14.5px;
+  color: #cbd5e1;
+  padding: 7px 16px;
   border-radius: var(--radius-full);
-  transition: var(--transition);
+  transition: all 0.25s ease;
   display: inline-block;
+  border: 1px solid transparent;
 }
 
 .nav-item:hover,
 .nav-item.active {
-  color: var(--primary-blue);
-  background-color: var(--primary-light);
+  color: #ffffff;
+  background-color: rgba(37, 99, 235, 0.18);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
 }
 
 .nav-item.jkbose-btn {
@@ -212,6 +225,7 @@ body {
   gap: 6px;
   box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
   font-weight: 700;
+  border: none;
 }
 
 .nav-item.jkbose-btn:hover {
@@ -233,133 +247,423 @@ body {
 }
 
 /* ===================================================
-   Hero Section
+   Hero Section - Premium Dark Kashmiri Study Hub
    =================================================== */
 .hero-section {
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%),
-              url('hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #ffffff;
-  padding: 80px 0 95px;
-  text-align: center;
   position: relative;
+  background: radial-gradient(circle at 50% 18%, rgba(37, 99, 235, 0.22) 0%, transparent 60%),
+              radial-gradient(circle at 12% 50%, rgba(14, 165, 233, 0.12) 0%, transparent 45%),
+              radial-gradient(circle at 88% 50%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
+              linear-gradient(180deg, #070c1b 0%, #050813 55%, #04060e 100%);
+  color: #ffffff;
+  padding: 60px 0 85px;
+  text-align: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Cosmic Ambient Glowing Rings (Speedy & Store Section Style) */
+.hero-ambient-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 900px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-ring-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 760px;
+  height: 760px;
+  border-radius: 50%;
+  border: 1px dashed rgba(96, 165, 250, 0.14);
+  animation: heroRingSpin 120s linear infinite;
+}
+
+.hero-ring-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 540px;
+  height: 540px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(59, 130, 246, 0.22);
+  box-shadow: 0 0 70px rgba(37, 99, 235, 0.18), inset 0 0 50px rgba(37, 99, 235, 0.08);
+}
+
+.hero-ring-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+}
+
+@keyframes heroRingSpin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Floating Study Watermark Elements */
+.hero-study-watermark {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  color: rgba(147, 197, 253, 0.12);
+  filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.2));
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+.hero-study-watermark.pos-top-left {
+  top: 12%;
+  left: 5%;
+  font-size: 54px;
+  animation: floatStudy1 6s ease-in-out infinite alternate;
+}
+
+.hero-study-watermark.pos-top-right {
+  top: 15%;
+  right: 6%;
+  font-size: 58px;
+  animation: floatStudy2 7s ease-in-out infinite alternate;
+}
+
+.hero-study-watermark.pos-mid-left {
+  bottom: 24%;
+  left: 7%;
+  font-size: 46px;
+  animation: floatStudy2 6.5s ease-in-out infinite alternate;
+}
+
+.hero-study-watermark.pos-mid-right {
+  bottom: 22%;
+  right: 8%;
+  font-size: 50px;
+  animation: floatStudy1 7.5s ease-in-out infinite alternate;
+}
+
+@keyframes floatStudy1 {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-16px) rotate(6deg); }
+}
+
+@keyframes floatStudy2 {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(14px) rotate(-6deg); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .badge {
-  display: inline-block;
-  background: rgba(15, 23, 42, 0.6);
-  color: #38bdf8;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(37, 99, 235, 0.14);
+  color: #93c5fd;
   font-weight: 700;
-  font-size: 13px;
-  padding: 6px 16px;
+  font-size: 12.5px;
+  padding: 7px 18px;
   border-radius: var(--radius-full);
-  margin-bottom: 20px;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  margin-bottom: 22px;
+  border: 1px solid rgba(96, 165, 250, 0.35);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  backdrop-filter: blur(4px);
+  letter-spacing: 1.2px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+}
+
+.badge-dot-glow {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  display: inline-block;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
 }
 
 .hero-heading {
-  font-family: var(--font-heading);
-  font-size: 42px;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(34px, 5.2vw, 54px);
   font-weight: 800;
-  line-height: 1.25;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+  line-height: 1.2;
+  margin-bottom: 18px;
+  letter-spacing: -0.5px;
+  color: #ffffff;
 }
 
-/* ===================================================
-   KASHMIRI HEADER: Kangri & Chinar Animations
-   =================================================== */
-.kashmir-header-layout {
+.hero-title-accent {
+  background: linear-gradient(135deg, #ffffff 20%, #93c5fd 60%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 14px rgba(37, 99, 235, 0.3));
+}
+
+/* WhatsApp Community Strip - Sleek Dark Aesthetic */
+.hero-community-strip {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+  padding: 6px 18px;
+  margin: 0 auto 24px auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #cbd5e1;
+  backdrop-filter: blur(8px);
+}
+
+.hero-community-strip a {
+  background: #22c55e;
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.hero-community-strip a:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+/* Feature Highlights Grid in Hero */
+.hero-highlights-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 36px;
+}
+
+.hero-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+}
+
+.hero-stat-pill i {
+  color: #60a5fa;
+  font-size: 14px;
+}
+
+.hero-stat-pill:hover {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(96, 165, 250, 0.25);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Clean disabled leaf animation */
+.falling-leaf {
+  display: none !important;
+}
+
+/* App Install Modal Styling */
+.app-install-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 6, 14, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.app-install-modal-overlay.active {
+  display: flex;
+}
+
+.app-install-card {
+  background: linear-gradient(180deg, #0d1733 0%, #070c1b 100%);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 28px;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(37, 99, 235, 0.22);
+  text-align: center;
+  color: #ffffff;
+  animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.app-install-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 30px;
-  position: relative;
-  z-index: 2;
+  transition: all 0.2s ease;
 }
 
-.brand-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.app-install-close:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  transform: rotate(90deg);
 }
 
-.chinar-tree {
-  font-size: 55px;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-  animation: sway 4s infinite alternate ease-in-out;
-}
-
-@keyframes sway {
-  0% { transform: rotate(-8deg); }
-  100% { transform: rotate(8deg); }
-}
-
-.kangri-icon {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  width: auto !important;
-  height: auto !important;
-  margin-bottom: 5px;
-}
-
-/* Kangri Animations */
-.coal { animation: coalGlow 1.5s infinite alternate; }
-.coal-alt { animation: coalGlow 1s infinite alternate-reverse; }
-
-@keyframes coalGlow {
-  0% { opacity: 0.8; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 4px #ff4500); }
-}
-
-.flame {
-  transform-origin: 50% 40px;
-  animation: flicker 0.6s infinite alternate;
-}
-.flame-1 { animation-delay: 0.1s; }
-.flame-2 { animation-delay: 0.3s; }
-.flame-3 { animation-delay: 0.5s; }
-
-@keyframes flicker {
-  0% { transform: scaleY(1) rotate(-3deg); opacity: 0.8; }
-  100% { transform: scaleY(1.3) rotate(3deg); opacity: 1; filter: drop-shadow(0 -3px 5px #ff4500); }
-}
-
-/* Falling Leaves */
-#autumnWrapper {
-  position: relative;
+.app-install-logo-wrap {
+  margin: 0 auto 16px auto;
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
   overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 24px rgba(37, 99, 235, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  background: #000000;
 }
 
-.falling-leaf {
-  position: absolute;
-  top: -35px;
-  font-size: 22px;
-  user-select: none;
-  pointer-events: none;
-  animation: fall linear forwards;
-  z-index: 10;
-  opacity: 0.95;
-  filter: drop-shadow(0 2px 6px rgba(251, 191, 36, 0.45));
+.app-install-logo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-@keyframes fall {
-  0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
-  12% { opacity: 1; }
-  85% { opacity: 0.95; }
-  100% { transform: translateY(230px) rotate(360deg) translateX(55px); opacity: 0; }
+.app-install-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px 0;
+  color: #ffffff;
 }
 
-.text-highlight {
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.app-install-tagline {
+  color: #94a3b8;
+  font-size: 13.5px;
+  margin: 0 0 18px 0;
+}
+
+.app-install-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.app-badge-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.btn-app-install-action {
+  width: 100%;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+  color: #ffffff;
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  padding: 13px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+  margin-bottom: 20px;
+}
+
+.btn-app-install-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6);
+}
+
+.app-install-guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+}
+
+.app-guide-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.app-guide-box h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #93c5fd;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-guide-box p {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .hero-description {

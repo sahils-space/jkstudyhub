@@ -1,10 +1,11 @@
 {
   "name": "JK Study Hub",
-  "short_name": "Study Hub",
+  "short_name": "JK Study Hub",
+  "description": "Comprehensive JKBOSE Class 10th, 11th & 12th Academic & Exam Preparation Portal",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b1120",
-  "theme_color": "#2563eb",
+  "background_color": "#070b14",
+  "theme_color": "#0a1128",
   "icons": [
     {
       "src": "images/icon-192.png",
