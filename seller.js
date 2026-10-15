@@ -2286,11 +2286,11 @@ async function handleSellerCatalogSubmit(e) {
       fallbackData.append('name', title);
       fallbackData.append('phone', 'CATALOG_PRODUCT');
       fallbackData.append('address', catalogMeta);
-      fallbackData.append('product', title);
+      fallbackData.append('product', catalogMeta);
       fallbackData.append('amount', String(price));
       fallbackData.append('txn_id', 'CATALOG_PRODUCT');
       fallbackData.append('status', 'Active');
-      fallbackData.append('notes', 'Seller Catalog Listing');
+      fallbackData.append('notes', catalogMeta);
 
       fetch(endpoint, {
         method: 'POST',
