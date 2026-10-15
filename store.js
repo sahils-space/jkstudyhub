@@ -5910,6 +5910,10 @@ function initShop() {
   if (typeof syncCustomProductsWithSheet === 'function') {
     syncCustomProductsWithSheet();
   }
+
+  if (typeof initRealtimeCatalogSync === 'function') {
+    initRealtimeCatalogSync();
+  }
 }
 
 if (document.readyState === 'loading') {
@@ -10239,6 +10243,66 @@ async function syncCustomProductsWithSheet() {
     }
   } catch (err) {
     console.warn("Could not sync products from sheet:", err);
+  }
+}
+
+// Real-time automatic synchronization with Firebase Firestore
+function initRealtimeCatalogSync() {
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      db.collection('published_catalog').onSnapshot(snapshot => {
+        const firestoreProducts = [];
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          if (item && (item.name || item.title)) {
+            firestoreProducts.push(item);
+          }
+        });
+        if (firestoreProducts.length > 0) {
+          mergeAndRenderLiveProducts(firestoreProducts);
+        }
+      }, err => {
+        console.warn("Firestore real-time catalog listener notice:", err);
+      });
+    } catch (e) {
+      console.warn("Firestore real-time catalog setup error:", e);
+    }
+  }
+}
+
+function mergeAndRenderLiveProducts(incoming) {
+  if (!Array.isArray(incoming) || incoming.length === 0) return;
+  const mergedMap = new Map();
+  
+  // Seed with current products
+  CUSTOM_PRODUCTS.forEach(p => {
+    mergedMap.set(p.id, p);
+  });
+
+  incoming.forEach(sp => {
+    const key = sp.id || sp.productId || sp.name;
+    if (!key) return;
+    if (!mergedMap.has(key)) {
+      mergedMap.set(key, sp);
+    } else {
+      const existing = mergedMap.get(key);
+      if (existing.image && existing.image.startsWith('images/')) {
+        mergedMap.set(key, { ...sp, photos: existing.photos, image: existing.image, allImages: existing.photos });
+      } else {
+        mergedMap.set(key, sp);
+      }
+    }
+  });
+
+  CUSTOM_PRODUCTS = Array.from(mergedMap.values());
+  registerAllCustomProducts(CUSTOM_PRODUCTS);
+  renderDynamicStoreProducts();
+  renderOwnerProductList();
+
+  const q = document.getElementById('storeSearchInput') ? document.getElementById('storeSearchInput').value : '';
+  if (typeof handleStoreLiveSearch === 'function') {
+    handleStoreLiveSearch(q);
   }
 }
 

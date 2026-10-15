@@ -2259,6 +2259,17 @@ async function handleSellerCatalogSubmit(e) {
       timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
     };
 
+    // 0. Instant Cloud Publishing to Firebase Firestore (Real-Time for all visitors worldwide!)
+    try {
+      if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+        const db = firebase.firestore();
+        await db.collection('published_catalog').doc(prodId).set(newProduct);
+        console.log("Product published live to Firebase Firestore!");
+      }
+    } catch (fbErr) {
+      console.warn("Firestore save notice:", fbErr);
+    }
+
     // 1. Save to local storage for store.js and seller.js
     try {
       let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
@@ -2694,6 +2705,41 @@ function toggleSellerMobileSidebar(forceState) {
   }
 }
 
+// Real-time listener for published catalog from Firebase Firestore
+function initSellerRealtimeCatalog() {
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      db.collection('published_catalog').onSnapshot(snapshot => {
+        const firestoreProds = [];
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          if (d && (d.name || d.title)) firestoreProds.push(d);
+        });
+        if (firestoreProds.length > 0) {
+          let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+          const curIds = new Set(curCat.map(c => c.id || c.productId || c.name));
+          let changed = false;
+          firestoreProds.forEach(fp => {
+            const k = fp.id || fp.productId || fp.name;
+            if (k && !curIds.has(k)) {
+              curCat.unshift(fp);
+              curIds.add(k);
+              changed = true;
+            }
+          });
+          if (changed) {
+            try {
+              localStorage.setItem('jk_uploaded_catalog', JSON.stringify(curCat));
+            } catch(e) {}
+            if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
+          }
+        }
+      }, err => {});
+    } catch(e) {}
+  }
+}
+
 function initSellerSupplierPanel() {
   renderSellerOrdersTable();
   calculateBusinessMetrics();
@@ -2702,6 +2748,7 @@ function initSellerSupplierPanel() {
   if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
   if (typeof updateSellerDeliveryBadges === 'function') updateSellerDeliveryBadges();
   if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
+  if (typeof initSellerRealtimeCatalog === 'function') initSellerRealtimeCatalog();
   syncSellerWithGoogleSheets(false);
 }
 
