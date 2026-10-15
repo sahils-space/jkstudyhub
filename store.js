@@ -11259,7 +11259,7 @@ function renderShoppableReels(reels) {
     const thumb = reel.posterUrl || cat.image || 'images/logo-app.png';
 
     html += `
-      <div class="shoppable-reel-card" data-reel-id="${reel.id}" onclick="openFullscreenReel('${reel.id}')">
+      <div class="shoppable-reel-card" data-reel-id="${reel.id}" onclick="buyReelProduct('${encodeURIComponent(pName)}')">
         <video class="reel-video-element" src="${reel.videoUrl}" poster="${thumb}" preload="metadata" playsinline webkit-playsinline loop muted></video>
         <div class="reel-top-bar">
           <span class="reel-badge-pill">${reel.badge || '🔥 Watch & Shop'}</span>
@@ -11357,89 +11357,13 @@ function scrollReelsTrack(dir) {
 function openFullscreenReel(reelId) {
   const reel = (g_shoppableReelsData || []).find(r => r.id === reelId);
   if (!reel) return;
-  g_currentActiveFullscreenReel = reel;
-
-  const modal = document.getElementById('fullscreenReelModal');
-  const video = document.getElementById('fullscreenReelVideo');
-  const thumb = document.getElementById('fullscreenReelThumb');
-  const title = document.getElementById('fullscreenReelProdTitle');
-  const priceEl = document.getElementById('fullscreenReelPrice');
-  const mrpEl = document.getElementById('fullscreenReelMrp');
-
-  const pName = reel.productName;
-  const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
-  const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
-  const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
-
-  if (title) title.innerText = pName;
-  if (priceEl) priceEl.innerText = '₹' + price;
-  if (mrpEl) mrpEl.innerText = '₹' + mrp;
-  if (thumb) {
-    thumb.src = reel.posterUrl || cat.image || 'images/logo-app.png';
-  }
-
-  // Pause card videos in the background
-  document.querySelectorAll('#shoppableReelsTrack video').forEach(v => v.pause());
-
-  if (video) {
-    video.src = reel.videoUrl;
-    video.poster = reel.posterUrl || cat.image || '';
-    video.muted = false;
-    const muteIcon = document.getElementById('fullscreenMuteIcon');
-    if (muteIcon) muteIcon.className = 'fa-solid fa-volume-high';
-
-    const p = video.play();
-    if (p !== undefined) {
-      p.catch(() => {
-        video.muted = true;
-        if (muteIcon) muteIcon.className = 'fa-solid fa-volume-xmark';
-        video.play().catch(() => {});
-      });
-    }
-  }
-
-  if (modal) {
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
+  buyReelProduct(encodeURIComponent(reel.productName));
 }
 
-function closeFullscreenReel() {
-  const modal = document.getElementById('fullscreenReelModal');
-  const video = document.getElementById('fullscreenReelVideo');
-  if (video) {
-    video.pause();
-    video.src = '';
-  }
-  if (modal) {
-    modal.style.display = 'none';
-    document.body.style.overflow = '';
-  }
-  g_currentActiveFullscreenReel = null;
-}
-
-function closeFullscreenReelOnBackdrop(e) {
-  if (e.target && e.target.id === 'fullscreenReelModal') {
-    closeFullscreenReel();
-  }
-}
-
-function toggleFullscreenReelSound() {
-  const video = document.getElementById('fullscreenReelVideo');
-  const icon = document.getElementById('fullscreenMuteIcon');
-  if (!video) return;
-  video.muted = !video.muted;
-  if (icon) {
-    icon.className = video.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
-  }
-}
-
-function handleFullscreenReelShopNow() {
-  if (!g_currentActiveFullscreenReel) return;
-  const pName = g_currentActiveFullscreenReel.productName;
-  closeFullscreenReel();
-  buyReelProduct(encodeURIComponent(pName));
-}
+function closeFullscreenReel() {}
+function closeFullscreenReelOnBackdrop() {}
+function toggleFullscreenReelSound() {}
+function handleFullscreenReelShopNow() {}
 
 function syncShoppableReelsPrices() {
   if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) return;
