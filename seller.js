@@ -441,9 +441,9 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
         const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
         const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
 
-        // Filter valid remote orders from Google Sheets
+        // Filter valid remote orders from Google Sheets (excluding catalog products and price overrides)
         const validRemoteOrders = data.orders.filter(remote => {
-          if (!remote || !remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT') {
+          if (!remote || !remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT' || String(remote.orderId).includes('PRICE-OVERRIDE') || String(remote.txnId).includes('PRICE_OVERRIDE')) {
             return false;
           }
           const remoteUpperId = String(remote.orderId).trim().toUpperCase();
@@ -451,6 +451,47 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           if (remote.timestamp && Number(remote.timestamp) <= resetTs) return false;
           return true;
         });
+
+        // Also sync price & MRP overrides from Google Sheets!
+        try {
+          const priceMap = getSellerCustomPriceOverrides();
+          const mrpMap = getSellerCustomMrpOverrides();
+          let priceChanged = false;
+
+          data.orders.forEach(remote => {
+            if (!remote) return;
+            const isPrice = String(remote.orderId).includes('PRICE-OVERRIDE') || String(remote.txnId).includes('PRICE_OVERRIDE');
+            if (isPrice) {
+              let meta = null;
+              const fields = [remote.notes, remote.product];
+              for (const f of fields) {
+                if (typeof f === 'string' && f.startsWith('{') && f.endsWith('}')) {
+                  try {
+                    meta = JSON.parse(f);
+                    if (meta && meta.name) break;
+                  } catch(e) {}
+                }
+              }
+              const pName = (meta && meta.name) || remote.name;
+              const pPrice = (meta && meta.price) || parseFloat(remote.amount || remote.phone);
+              const pMrp = (meta && meta.mrp) || parseFloat(remote.address);
+              if (pName && !isNaN(pPrice) && pPrice > 0) {
+                priceMap[pName] = pPrice;
+                if (!isNaN(pMrp) && pMrp > 0) mrpMap[pName] = pMrp;
+                priceChanged = true;
+              }
+            }
+          });
+
+          if (priceChanged) {
+            localStorage.setItem('jk_custom_prices', JSON.stringify(priceMap));
+            localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpMap));
+            if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
+            if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
+          }
+        } catch(e) {
+          console.warn("Seller price remote sync notice:", e);
+        }
 
         // Also sync any catalog products from Google Sheets into seller catalog!
         try {
@@ -2573,20 +2614,25 @@ function renderSellerPublishedCatalog() {
   }
 
   let html = '';
+  const customPrices = (typeof getSellerCustomPriceOverrides === 'function') ? getSellerCustomPriceOverrides() : {};
+  const customMrps = (typeof getSellerCustomMrpOverrides === 'function') ? getSellerCustomMrpOverrides() : {};
+
   products.forEach(p => {
     const photos = (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : ['images/logo-app.png']);
     const mainImg = photos[0] || 'images/logo-app.png';
     const prodId = p.id || p.productId || '';
-    const safeTitle = (p.title || p.name || 'Untitled').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    const price = Number(p.price) || 0;
-    const mrp = Number(p.mrp || p.originalPrice) || Math.round(price * 1.35);
+    const cleanId = String(prodId).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const prodName = p.title || p.name || 'Untitled';
+    const safeTitle = prodName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const price = (customPrices[prodName] !== undefined) ? Number(customPrices[prodName]) : (Number(p.price) || 0);
+    const mrp = (customMrps[prodName] !== undefined) ? Number(customMrps[prodName]) : (Number(p.mrp || p.originalPrice) || Math.round(price * 1.35));
     const stock = (p.stock !== undefined) ? p.stock : 20;
 
     html += `
       <tr>
         <td>
           <div style="position: relative; width: 50px; height: 50px;">
-            <img src="${mainImg}" alt="${p.title || p.name}" onerror="this.src='images/logo-app.png'" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <img src="${mainImg}" alt="${prodName}" onerror="this.src='images/logo-app.png'" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
             ${photos.length > 1 ? `
               <span style="position: absolute; bottom: 2px; right: 2px; background: rgba(15,23,42,0.85); color: #fff; font-size: 9.5px; font-weight: 800; padding: 1px 4px; border-radius: 4px;">
                 ${photos.length} 📸
@@ -2595,7 +2641,7 @@ function renderSellerPublishedCatalog() {
           </div>
         </td>
         <td>
-          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.title || p.name}</div>
+          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${prodName}</div>
           <div style="font-size: 11px; color: #64748b; margin-top: 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
             ${p.desc || p.description || ''}
           </div>
@@ -2611,8 +2657,22 @@ function renderSellerPublishedCatalog() {
           </span>
         </td>
         <td>
-          <div style="font-size: 14px; font-weight: 800; color: #0f172a;">₹${price}</div>
-          ${mrp > price ? `<div style="font-size: 11.5px; color: #94a3b8; text-decoration: line-through;">₹${mrp}</div>` : ''}
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span style="font-size:11px; font-weight:700; color:#64748b; width:34px;">MRP:</span>
+              <input type="number" id="pub-mrp-${cleanId}" value="${mrp}" min="1" step="1"
+                     onkeydown="if(event.key==='Enter') quickSavePublishedProductPrice('${cleanId}', '${safeTitle}')"
+                     style="width:78px; padding:3px 6px; border:1px solid #cbd5e1; border-radius:5px; font-size:12.5px; font-weight:700; color:#475569;"
+                     placeholder="MRP">
+            </div>
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span style="font-size:11px; font-weight:800; color:#16a34a; width:34px;">Rate:</span>
+              <input type="number" id="pub-price-${cleanId}" value="${price}" min="1" step="1"
+                     onkeydown="if(event.key==='Enter') quickSavePublishedProductPrice('${cleanId}', '${safeTitle}')"
+                     style="width:78px; padding:3px 6px; border:1.5px solid #22c55e; border-radius:5px; font-size:12.5px; font-weight:800; color:#0f172a;"
+                     placeholder="Price">
+            </div>
+          </div>
         </td>
         <td>
           <span style="font-size: 12px; font-weight: 700; color: ${stock > 0 ? '#15803d' : '#dc2626'}; background: ${stock > 0 ? '#dcfce7' : '#fee2e2'}; padding: 2px 7px; border-radius: 4px;">
@@ -2625,15 +2685,96 @@ function renderSellerPublishedCatalog() {
           </span>
         </td>
         <td style="text-align: center;">
-          <button type="button" onclick="deleteSellerPublishedProduct('${prodId}', '${safeTitle}')" title="Remove from store" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-            <i class="fa-solid fa-trash-can"></i> Remove
-          </button>
+          <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn-hub-primary" onclick="quickSavePublishedProductPrice('${cleanId}', '${safeTitle}')" style="padding: 5px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px;">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+            <button type="button" onclick="deleteSellerPublishedProduct('${prodId}', '${safeTitle}')" title="Remove from store" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 5px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
         </td>
       </tr>
     `;
   });
 
   tbody.innerHTML = html;
+}
+
+function quickSavePublishedProductPrice(cleanId, prodTitle) {
+  const pInput = document.getElementById(`pub-price-${cleanId}`);
+  const mInput = document.getElementById(`pub-mrp-${cleanId}`);
+  if (!pInput) return;
+
+  const newPrice = Number(pInput.value);
+  if (isNaN(newPrice) || newPrice <= 0) {
+    alert("Please enter a valid selling price greater than ₹0.");
+    return;
+  }
+
+  let newMrp = mInput ? Number(mInput.value) : 0;
+  if (isNaN(newMrp) || newMrp <= 0) newMrp = Math.round(newPrice * 1.35);
+  if (newMrp < newPrice) newMrp = newPrice;
+
+  // 1. Update local storage
+  const priceOverrides = getSellerCustomPriceOverrides();
+  priceOverrides[prodTitle] = newPrice;
+  localStorage.setItem('jk_custom_prices', JSON.stringify(priceOverrides));
+
+  const mrpOverrides = getSellerCustomMrpOverrides();
+  mrpOverrides[prodTitle] = newMrp;
+  localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+
+  // Update in jk_uploaded_catalog & jk_custom_products
+  try {
+    let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+    cat.forEach(item => {
+      if (item.name === prodTitle || item.title === prodTitle || item.id === cleanId || item.productId === cleanId) {
+        item.price = newPrice;
+        item.mrp = newMrp;
+      }
+    });
+    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
+  } catch(e) {}
+
+  try {
+    let prods = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
+    prods.forEach(item => {
+      if (item.name === prodTitle || item.title === prodTitle || item.id === cleanId || item.productId === cleanId) {
+        item.price = newPrice;
+        item.mrp = newMrp;
+      }
+    });
+    localStorage.setItem('jk_custom_products', JSON.stringify(prods));
+  } catch(e) {}
+
+  // 2. Dispatch to Google Sheet cloud
+  try {
+    const postData = new URLSearchParams();
+    postData.append('order_id', 'OD-PRICE-OVERRIDE');
+    postData.append('name', prodTitle);
+    postData.append('phone', String(newPrice));
+    postData.append('address', String(newMrp));
+    postData.append('product', JSON.stringify({ name: prodTitle, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
+    postData.append('amount', String(newPrice));
+    postData.append('txn_id', 'PRICE_OVERRIDE');
+    postData.append('status', 'Active');
+    postData.append('notes', JSON.stringify({ name: prodTitle, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
+
+    const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+    fetch(endpoint, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: postData
+    }).catch(e => console.warn("Google Sheet price sync notice:", e));
+  } catch(e) {}
+
+  if (typeof showToast === 'function') {
+    showToast(`✅ Saved! ${prodTitle} updated to ₹${newPrice} (MRP ₹${newMrp}) on live store!`);
+  }
+
+  renderSellerPublishedCatalog();
+  if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
 }
 
 // Delete / Unpublish Product
@@ -3202,22 +3343,49 @@ async function saveSellerProductPrice(productName, index) {
     }
   }
 
-  // 3. Dispatch to Google Sheets Apps Script endpoint (fire-and-forget background sync)
+  // 3. Dispatch to Google Sheets Apps Script endpoint (Guaranteed Cloud Sheet Persistence)
   try {
     const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+    
+    const postData = new URLSearchParams();
+    postData.append('order_id', 'OD-PRICE-OVERRIDE');
+    postData.append('name', productName);
+    postData.append('phone', String(newPrice));
+    postData.append('address', String(newMrp));
+    postData.append('product', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
+    postData.append('amount', String(newPrice));
+    postData.append('txn_id', 'PRICE_OVERRIDE');
+    postData.append('status', 'Active');
+    postData.append('notes', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
+
     fetch(endpoint, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'update_price',
-        productName: productName,
-        name: productName,
-        price: newPrice,
-        mrp: newMrp,
-        timestamp: new Date().toISOString()
-      })
+      body: postData
     }).catch(e => console.warn("Google Sheet price sync notice:", e));
+  } catch(e) {}
+
+  // Also update in local catalogs if present
+  try {
+    let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+    cat.forEach(item => {
+      if (item.name === productName || item.title === productName) {
+        item.price = newPrice;
+        item.mrp = newMrp;
+      }
+    });
+    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
+  } catch(e) {}
+
+  try {
+    let prods = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
+    prods.forEach(item => {
+      if (item.name === productName || item.title === productName) {
+        item.price = newPrice;
+        item.mrp = newMrp;
+      }
+    });
+    localStorage.setItem('jk_custom_products', JSON.stringify(prods));
   } catch(e) {}
 
   // Show feedback

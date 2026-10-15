@@ -6030,6 +6030,8 @@ function initShop() {
     }
   }
 
+  applyCustomPricesToStorefront();
+
   if (typeof renderDynamicStoreProducts === 'function') {
     renderDynamicStoreProducts();
   }
@@ -6040,6 +6042,15 @@ function initShop() {
 
   if (typeof initRealtimeCatalogSync === 'function') {
     initRealtimeCatalogSync();
+  }
+
+  // Periodic background refresh for price changes and new catalog items
+  if (!window._jkStoreSheetSyncInterval) {
+    window._jkStoreSheetSyncInterval = setInterval(() => {
+      if (typeof syncCustomProductsWithSheet === 'function' && document.visibilityState === 'visible') {
+        syncCustomProductsWithSheet();
+      }
+    }, 15000);
   }
 }
 
@@ -10245,8 +10256,34 @@ async function syncCustomProductsWithSheet() {
       if (ordersRes.ok) {
         const ordersData = await ordersRes.json();
         if (ordersData && ordersData.status === 'success' && Array.isArray(ordersData.orders)) {
+          const sheetPriceOverrides = {};
+          const sheetMrpOverrides = {};
+
           ordersData.orders.forEach(o => {
             if (!o || typeof o !== 'object') return;
+
+            // Check if this row is a price/MRP override broadcasted from Seller Panel
+            const isPriceOverride = (String(o.orderId).includes('PRICE-OVERRIDE') || String(o.txnId).includes('PRICE_OVERRIDE'));
+            if (isPriceOverride) {
+              let pMeta = null;
+              const metaFields = [o.notes, o.product];
+              for (const mf of metaFields) {
+                if (typeof mf === 'string' && mf.startsWith('{') && mf.endsWith('}')) {
+                  try {
+                    pMeta = JSON.parse(mf);
+                    if (pMeta && pMeta.name) break;
+                  } catch(e) {}
+                }
+              }
+              const ovName = (pMeta && pMeta.name) || o.name;
+              const ovPrice = (pMeta && pMeta.price) || parseFloat(o.amount || o.phone);
+              const ovMrp = (pMeta && pMeta.mrp) || parseFloat(o.address);
+              if (ovName && !isNaN(ovPrice) && ovPrice > 0) {
+                sheetPriceOverrides[ovName] = ovPrice;
+                if (!isNaN(ovMrp) && ovMrp > 0) sheetMrpOverrides[ovName] = ovMrp;
+              }
+              return;
+            }
 
             // Check if this row is a catalog product item in ANY column
             const values = Object.values(o).map(v => typeof v === 'string' ? v.trim() : String(v || ''));
@@ -10320,6 +10357,11 @@ async function syncCustomProductsWithSheet() {
               sheetProducts.push(prodItem);
             }
           });
+
+          // Apply live price and MRP overrides from Google Sheet
+          if (Object.keys(sheetPriceOverrides).length > 0) {
+            applyLivePriceAndMrpOverrides(sheetPriceOverrides, sheetMrpOverrides);
+          }
         }
       }
     } catch(e) {
