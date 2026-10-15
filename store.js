@@ -4504,10 +4504,7 @@ function setupCheckoutModal(name, price, category) {
   }
   togglePaymentMethod('cod');
 
-  const step1 = document.getElementById('step1');
-  if (step1) step1.style.display = 'block';
-  const step2 = document.getElementById('step2');
-  if (step2) step2.style.display = 'none';
+  goToCheckoutStep(1);
 
   const notesFields = document.getElementById('notesSpecificFields');
   const schoolFields = document.getElementById('schoolBooksSpecificFields');
@@ -4878,6 +4875,9 @@ function updateCheckoutInvoiceTotals() {
 
   const totalEl = document.getElementById('totalPrice');
   if (totalEl) totalEl.innerText = '₹' + totalAmount;
+
+  const payStepBadge = document.getElementById('payStepTotalBadge');
+  if (payStepBadge) payStepBadge.innerText = '₹' + totalAmount;
 }
 
 function updateChecklist() {
@@ -4894,29 +4894,214 @@ function updateChecklist() {
   }
 }
 
-function goToStep2() {
-  const form = document.getElementById('checkoutForm');
-  if (!form.reportValidity()) return;
+// ========================================================
+// 3-STEP CHECKOUT WIZARD CONTROLLER
+// Step 1: Contact & Address
+// Step 2: Order & Price Summary (Review)
+// Step 3: Payment Choice (Cash on Delivery / Online)
+// ========================================================
+let currentCheckoutStep = 1;
 
-  updateCheckoutInvoiceTotals();
+function goToCheckoutStep(step) {
+  if (step === 2 || step === 3) {
+    // Validate Step 1 first
+    const nameInput = document.getElementById('orderName');
+    const phoneInput = document.getElementById('orderPhone');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
 
-  document.getElementById('step1').style.display = 'none';
-  document.getElementById('step2').style.display = 'block';
+    if (!name) {
+      alert("Please enter your full name.");
+      if (nameInput) nameInput.focus();
+      return;
+    }
 
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      alert("Please enter a valid 10-digit WhatsApp phone number.");
+      if (phoneInput) phoneInput.focus();
+      return;
+    }
+
+    const isPhysical = (currentCheckoutCategory !== 'form' && currentCheckoutCategory !== 'digital');
+    if (isPhysical) {
+      const addrInput = document.getElementById('orderAddress');
+      const pinInput = document.getElementById('orderPin');
+      if (!addrInput || !addrInput.value.trim()) {
+        alert("Please enter your village / mohalla, street & landmark for delivery.");
+        if (addrInput) addrInput.focus();
+        return;
+      }
+      if (!pinInput || !pinInput.value.trim() || pinInput.value.trim().length < 6) {
+        alert("Please enter a valid 6-digit Pincode.");
+        if (pinInput) pinInput.focus();
+        return;
+      }
+    }
+
+    const schoolFields = document.getElementById('schoolBooksSpecificFields');
+    if (schoolFields && schoolFields.style.display !== 'none') {
+      const schoolNameInput = document.getElementById('orderSchoolName');
+      if (schoolNameInput && schoolNameInput.hasAttribute('required') && !schoolNameInput.value.trim()) {
+        alert("Please enter the School Name so we dispatch the exact syllabus books.");
+        schoolNameInput.focus();
+        return;
+      }
+    }
+
+    const notesFields = document.getElementById('notesSpecificFields');
+    if (notesFields && notesFields.style.display !== 'none') {
+      const notesSub = document.getElementById('notesSubject');
+      if (notesSub && notesSub.hasAttribute('required') && !notesSub.value.trim()) {
+        alert("Please enter the specific subject for your notes.");
+        notesSub.focus();
+        return;
+      }
+    }
+
+    const formFields = document.getElementById('formSpecificFields');
+    if (formFields && formFields.style.display !== 'none') {
+      const formType = document.getElementById('digitalFormType');
+      if (formType && formType.hasAttribute('required') && !formType.value) {
+        alert("Please select which form you want us to fill.");
+        formType.focus();
+        return;
+      }
+    }
+  }
+
+  currentCheckoutStep = step;
+
+  // Toggle step containers
+  const s1 = document.getElementById('step1');
+  const s2 = document.getElementById('step2');
+  const s3 = document.getElementById('step3');
+  if (s1) s1.style.display = (step === 1) ? 'block' : 'none';
+  if (s2) s2.style.display = (step === 2) ? 'block' : 'none';
+  if (s3) s3.style.display = (step === 3) ? 'block' : 'none';
+
+  // Backward compatibility support for old progressStep elements
   const p1 = document.getElementById('progressStep1');
   const p2 = document.getElementById('progressStep2');
-  if (p1) p1.classList.remove('active-step');
-  if (p2) p2.classList.add('active-step');
+  if (p1) p1.classList.toggle('active-step', step === 1);
+  if (p2) p2.classList.toggle('active-step', step >= 2);
+
+  // Stepper Tabs & Progress line
+  const tab1 = document.getElementById('stepperTab1');
+  const tab2 = document.getElementById('stepperTab2');
+  const tab3 = document.getElementById('stepperTab3');
+  const line = document.getElementById('checkoutStepperProgress');
+
+  if (tab1) {
+    tab1.classList.toggle('active', step === 1);
+    tab1.classList.toggle('completed', step > 1);
+    const circle1 = tab1.querySelector('.step-circle');
+    if (circle1) circle1.innerHTML = step > 1 ? '<i class="fa-solid fa-check"></i>' : '1';
+  }
+  if (tab2) {
+    tab2.classList.toggle('active', step === 2);
+    tab2.classList.toggle('completed', step > 2);
+    const circle2 = tab2.querySelector('.step-circle');
+    if (circle2) circle2.innerHTML = step > 2 ? '<i class="fa-solid fa-check"></i>' : '2';
+  }
+  if (tab3) {
+    tab3.classList.toggle('active', step === 3);
+    tab3.classList.toggle('completed', false);
+    const circle3 = tab3.querySelector('.step-circle');
+    if (circle3) circle3.innerHTML = '3';
+  }
+
+  if (line) {
+    line.style.width = step === 1 ? '0%' : step === 2 ? '50%' : '100%';
+  }
+
+  // Update modal header title
+  const titleEl = document.getElementById('checkoutTitle');
+  if (titleEl) {
+    if (step === 1) titleEl.innerText = "Step 1 of 3: Contact & Delivery Address";
+    else if (step === 2) titleEl.innerText = "Step 2 of 3: Order & Price Summary";
+    else if (step === 3) titleEl.innerText = "Step 3 of 3: Choose Payment Option";
+  }
+
+  // Populate Review Details on Step 2 & 3
+  updateCheckoutReviewData();
+  updateCheckoutInvoiceTotals();
+
+  // Scroll card to top
+  const card = document.querySelector('.checkout-card');
+  if (card) card.scrollTop = 0;
+}
+
+function updateCheckoutReviewData() {
+  const nameInput = document.getElementById('orderName');
+  const phoneInput = document.getElementById('orderPhone');
+  const citySelect = document.getElementById('orderCity');
+  const pinInput = document.getElementById('orderPin');
+  const addrInput = document.getElementById('orderAddress');
+
+  const rName = document.getElementById('reviewCustomerName');
+  const rPhone = document.getElementById('reviewCustomerPhone');
+  const rAddr = document.getElementById('reviewCustomerAddress');
+  const rItem = document.getElementById('reviewItemName');
+  const rSub = document.getElementById('reviewItemSubDetails');
+  const payStepTotal = document.getElementById('payStepTotalBadge');
+
+  if (rName && nameInput) rName.innerText = nameInput.value.trim() || 'Student';
+  if (rPhone && phoneInput) rPhone.innerHTML = `<i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> +91 ${phoneInput.value.trim()}`;
+  
+  if (rAddr) {
+    const isPhysical = (currentCheckoutCategory !== 'form' && currentCheckoutCategory !== 'digital');
+    if (isPhysical) {
+      const street = addrInput ? addrInput.value.trim() : '';
+      const city = citySelect ? citySelect.value : '';
+      const pin = pinInput ? pinInput.value.trim() : '';
+      rAddr.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${street ? street + ', ' : ''}${city} &bull; PIN: <strong>${pin}</strong>`;
+    } else {
+      rAddr.innerHTML = `<i class="fa-solid fa-cloud-arrow-down" style="color:#2563eb;"></i> Digital Service (Instant WhatsApp / Online Delivery)`;
+    }
+  }
+
+  if (rItem) rItem.innerText = currentCheckoutProduct || 'Item';
+
+  if (rSub) {
+    let subInfo = [];
+    const schoolNameInput = document.getElementById('orderSchoolName');
+    const schoolClassSelect = document.getElementById('orderSchoolClass');
+    if (schoolNameInput && schoolNameInput.value.trim()) {
+      subInfo.push(`🏫 School: ${schoolNameInput.value.trim()}${schoolClassSelect ? ' (' + schoolClassSelect.value + ')' : ''}`);
+    }
+    const notesClass = document.getElementById('notesClass');
+    const notesSub = document.getElementById('notesSubject');
+    if (notesSub && notesSub.value.trim()) {
+      subInfo.push(`📚 Subject: ${notesSub.value.trim()}${notesClass ? ' (' + notesClass.value + ')' : ''}`);
+    }
+    const formType = document.getElementById('digitalFormType');
+    if (formType && formType.value) {
+      subInfo.push(`📋 Form: ${formType.value}`);
+    }
+    rSub.innerHTML = subInfo.join('<br>') || '';
+  }
+
+  const totalEl = document.getElementById('totalPrice');
+  if (payStepTotal && totalEl) {
+    payStepTotal.innerText = totalEl.innerText;
+  }
+}
+
+function goToStep2() {
+  goToCheckoutStep(2);
 }
 
 function backToStep1() {
-  document.getElementById('step2').style.display = 'none';
-  document.getElementById('step1').style.display = 'block';
+  goToCheckoutStep(1);
+}
 
-  const p1 = document.getElementById('progressStep1');
-  const p2 = document.getElementById('progressStep2');
-  if (p2) p2.classList.remove('active-step');
-  if (p1) p1.classList.add('active-step');
+function goToStep3() {
+  goToCheckoutStep(3);
+}
+
+function backToStep2() {
+  goToCheckoutStep(2);
 }
 
 // --- PAYMENT METHOD TOGGLE (ONLINE VS CASH ON DELIVERY) ---
@@ -4925,6 +5110,7 @@ function togglePaymentMethod(method) {
   const codLabel = document.getElementById('payMethodCodLabel');
   const submitBtn = document.getElementById('submitOrderBtn');
   const note = document.getElementById('checkoutFooterNote');
+  const totalEl = document.getElementById('totalPrice');
 
   if (method === 'cod') {
     if (onlineLabel) onlineLabel.style.border = '1.5px solid #cbd5e1';
@@ -4940,7 +5126,8 @@ function togglePaymentMethod(method) {
     if (onlineLabel) onlineLabel.style.border = '2px solid #2563eb';
     if (codLabel) codLabel.style.border = '1.5px solid #cbd5e1';
     if (submitBtn) {
-      submitBtn.innerHTML = 'Pay Securely Online';
+      const totText = totalEl ? totalEl.innerText : '';
+      submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online (${totText})`;
       submitBtn.style.backgroundColor = '#2563eb';
     }
     if (note) {
