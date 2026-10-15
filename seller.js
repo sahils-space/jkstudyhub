@@ -3403,28 +3403,29 @@ async function saveSellerProductPriceFromRow(triggerEl) {
     // Dispatch cross-tab storage event so all storefront tabs update immediately
     window.dispatchEvent(new Event('storage'));
 
-    // 2. Broadcast to Firebase Firestore for ALL store visitors in real time
+    // 2. Broadcast to Firebase Firestore in background (Non-blocking, never freezes UI)
     const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
     if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
       try {
         const db = firebase.firestore();
-        await db.collection('price_overrides').doc(safeDocId).set({
+        db.collection('price_overrides').doc(safeDocId).set({
           name: productName,
           price: newPrice,
           mrp: newMrp,
           updatedAt: Date.now()
-        }, { merge: true });
+        }, { merge: true }).catch(e => console.warn("[Firestore] Price override push notice:", e));
 
-        const catQuery = await db.collection('published_catalog').where('name', '==', productName).get();
-        if (!catQuery.empty) {
-          catQuery.forEach(docSnap => {
-            docSnap.ref.update({
-              price: newPrice,
-              mrp: newMrp,
-              updatedAt: Date.now()
-            }).catch(e => console.warn("Doc update notice:", e));
-          });
-        }
+        db.collection('published_catalog').where('name', '==', productName).get().then(catQuery => {
+          if (!catQuery.empty) {
+            catQuery.forEach(docSnap => {
+              docSnap.ref.update({
+                price: newPrice,
+                mrp: newMrp,
+                updatedAt: Date.now()
+              }).catch(e => console.warn("Doc update notice:", e));
+            });
+          }
+        }).catch(e => console.warn("[Firestore] Query notice:", e));
       } catch(err) {
         console.warn("[Firestore] Price override push notice:", err);
       }
@@ -3534,7 +3535,7 @@ async function resetSingleSellerProductPrice(productName) {
   if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
     try {
       const db = firebase.firestore();
-      await db.collection('price_overrides').doc(safeDocId).delete();
+      db.collection('price_overrides').doc(safeDocId).delete().catch(e => console.warn("Firestore delete notice:", e));
     } catch(e) {
       console.warn("Firestore delete override notice:", e);
     }
@@ -3689,10 +3690,11 @@ async function resetAllSellerPricesToDefault() {
     if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
       try {
         const db = firebase.firestore();
-        const snap = await db.collection('price_overrides').get();
-        const batch = db.batch();
-        snap.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
+        db.collection('price_overrides').get().then(snap => {
+          const batch = db.batch();
+          snap.forEach(doc => batch.delete(doc.ref));
+          batch.commit().catch(e => console.warn(e));
+        }).catch(e => console.warn("Firestore batch delete notice:", e));
       } catch(e) {
         console.warn("Firestore batch delete notice:", e);
       }

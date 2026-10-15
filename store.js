@@ -764,9 +764,9 @@ function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps) {
       existingMrps = JSON.parse(localStorage.getItem('jk_custom_mrps') || '{}');
     } catch(e) {}
 
-    // Combine existing overrides with incoming overrides
-    const priceMap = { ...existingPrices, ...incomingPrices };
-    const mrpMap = { ...existingMrps, ...incomingMrps };
+    // Baseline incoming defaults overridden by explicit user-saved prices in localStorage
+    const priceMap = { ...incomingPrices, ...existingPrices };
+    const mrpMap = { ...incomingMrps, ...existingMrps };
 
     // Persist full merged map so prices are preserved permanently across all page refreshes
     try {
