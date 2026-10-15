@@ -21,7 +21,7 @@
   } catch(e) {}
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
+function initMainApp() {
   // Mobile Navigation Toggle
   const mobileToggle = document.getElementById('mobileToggle');
   const navLinks = document.getElementById('navLinks');
@@ -2050,8 +2050,13 @@ const SYLLABUS_PDF_DATA = {
       console.warn("Error in promo timer:", e);
     }
   }, 30000); // 30 seconds
+}
 
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMainApp);
+} else {
+  initMainApp();
+}
 
 
   // =========================================================

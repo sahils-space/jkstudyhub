@@ -4,6 +4,26 @@
 const RAZORPAY_KEY = "rzp_live_TjJ6bv39yo6Gds";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
 
+// Network Retry Engine with Exponential Backoff
+async function fetchWithRetry(url, options = {}, retries = 2, delayMs = 1500) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (!res.ok && attempt < retries) {
+        await new Promise(r => setTimeout(r, delayMs * (attempt + 1)));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, delayMs * (attempt + 1)));
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
 // ============================================================================
 // MASTER J&K DISTRICT, AREA & PIN CODE DIRECTORY (ALL 20 DISTRICTS)
 // Covers every local post office, town, college, hospital, and village
@@ -7507,6 +7527,9 @@ function setCardPhoto(cardId, index, event) {
 // Touch swipe support for card carousels
 function initCardSwipes() {
   document.querySelectorAll('.swipe-photo-container').forEach(el => {
+    if (el.dataset.swipeInitialized === 'true') return;
+    el.dataset.swipeInitialized = 'true';
+
     let startX = 0;
     let startY = 0;
     let isSwiping = false;
@@ -10215,8 +10238,8 @@ async function syncCustomProductsWithSheet() {
 
     // 1. Fetch from action=get_products
     try {
-      const res = await fetch(`${endpoint}?action=get_products&t=${Date.now()}`);
-      if (res.ok) {
+      const res = await fetchWithRetry(`${endpoint}?action=get_products&t=${Date.now()}`, {}, 2, 1200);
+      if (res && res.ok) {
         const data = await res.json();
         if (data && data.status === 'success' && Array.isArray(data.products)) {
           data.products.forEach(p => {
@@ -10252,8 +10275,8 @@ async function syncCustomProductsWithSheet() {
 
     // 2. Fetch from action=get_orders universal catalog fallback
     try {
-      const ordersRes = await fetch(`${endpoint}?action=get_orders&t=${Date.now()}`);
-      if (ordersRes.ok) {
+      const ordersRes = await fetchWithRetry(`${endpoint}?action=get_orders&t=${Date.now()}`, {}, 2, 1200);
+      if (ordersRes && ordersRes.ok) {
         const ordersData = await ordersRes.json();
         if (ordersData && ordersData.status === 'success' && Array.isArray(ordersData.orders)) {
           const sheetPriceOverrides = {};
@@ -10606,6 +10629,9 @@ function renderDynamicStoreProducts() {
   });
 
   container.innerHTML = html;
+  if (typeof initCardSwipes === 'function') {
+    initCardSwipes();
+  }
 }
 
 // Render Owner Product List in account.html
@@ -11047,10 +11073,17 @@ function checkoutCalculatedBundle() {
   openCheckout(bundleName, bundle.ourPrice, 'physical', 'bundle');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function onStoreReady() {
   applyCustomPricesToStorefront();
   applyStockOverridesToStorefront();
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', onStoreReady);
+} else {
+  onStoreReady();
+}
+

@@ -5,6 +5,26 @@
 
 const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
 
+// Resilient Network Fetch Engine with Exponential Backoff
+async function fetchWithRetry(url, options = {}, retries = 2, delayMs = 1500) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (!res.ok && attempt < retries) {
+        await new Promise(r => setTimeout(r, delayMs * (attempt + 1)));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, delayMs * (attempt + 1)));
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
 // Strict Owner Authorizations:
 const AUTHORIZED_OWNER_PHONES = ['9622605714'];
 const AUTHORIZED_OWNER_EMAILS = [
@@ -251,7 +271,7 @@ function handleSellerSignOut() {
 }
 
 // Auto-check on page load
-window.addEventListener('DOMContentLoaded', () => {
+function initSellerAppOnLoad() {
   applySellerDeviceMode(getSellerDeviceMode());
 
   if (isSellerUnlocked()) {
@@ -271,7 +291,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const lockScreen = document.getElementById('sellerAuthLockScreen');
     if (lockScreen) lockScreen.style.display = 'flex';
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initSellerAppOnLoad);
+} else {
+  initSellerAppOnLoad();
+}
 
 // =========================================================
 // 2. DATA LOADERS & GOOGLE SHEETS SYNC
@@ -431,7 +457,7 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
     syncPill.innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> <span>Syncing Google Sheets...</span>';
   }
 
-  fetch(SELLER_SCRIPT_URL + '?action=get_orders&t=' + Date.now(), { method: 'GET' })
+  fetchWithRetry(SELLER_SCRIPT_URL + '?action=get_orders&t=' + Date.now(), { method: 'GET' }, 2, 1200)
     .then(res => res.json())
     .then(data => {
       if (data && data.status === 'success' && Array.isArray(data.orders)) {
