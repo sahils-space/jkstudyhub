@@ -686,56 +686,183 @@ function checkAddressForKashmirArea(addressText) {
   }
 }
 
-// Dynamic Seller Price Override System
+// Dynamic Seller Price & MRP Override System (Zero-Latency Local + Real-Time Firestore Sync)
 function getCustomPrice(productName, defaultPrice) {
   try {
     const raw = localStorage.getItem('jk_custom_prices');
     if (raw) {
       const overrides = JSON.parse(raw);
-      if (overrides && overrides[productName] !== undefined && overrides[productName] !== null) {
-        const val = Number(overrides[productName]);
-        if (!isNaN(val) && val > 0) return val;
+      if (overrides) {
+        if (overrides[productName] !== undefined && overrides[productName] !== null) {
+          const val = Number(overrides[productName]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+        const key = Object.keys(overrides).find(k => k.toLowerCase() === String(productName).toLowerCase());
+        if (key && overrides[key] !== undefined && overrides[key] !== null) {
+          const val = Number(overrides[key]);
+          if (!isNaN(val) && val > 0) return val;
+        }
       }
     }
   } catch(e) {}
   return defaultPrice;
 }
 
-function applyCustomPricesToStorefront() {
+function getCustomMrp(productName, defaultMrp) {
   try {
-    const raw = localStorage.getItem('jk_custom_prices');
-    if (!raw) return;
-    const overrides = JSON.parse(raw);
-    if (!overrides || Object.keys(overrides).length === 0) return;
+    const raw = localStorage.getItem('jk_custom_mrps');
+    if (raw) {
+      const overrides = JSON.parse(raw);
+      if (overrides) {
+        if (overrides[productName] !== undefined && overrides[productName] !== null) {
+          const val = Number(overrides[productName]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+        const key = Object.keys(overrides).find(k => k.toLowerCase() === String(productName).toLowerCase());
+        if (key && overrides[key] !== undefined && overrides[key] !== null) {
+          const val = Number(overrides[key]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+      }
+    }
+  } catch(e) {}
+  return defaultMrp;
+}
 
-    // 1. Sync overrides into PRODUCT_CATALOG
+function applyLivePriceAndMrpOverrides(priceMap, mrpMap) {
+  try {
+    if (!priceMap) priceMap = {};
+    if (!mrpMap) mrpMap = {};
+
+    // 1. Persist to localStorage for 0ms load on next refresh
+    try {
+      localStorage.setItem('jk_custom_prices', JSON.stringify(priceMap));
+      localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpMap));
+    } catch(e) {}
+
+    // 2. Sync into PRODUCT_CATALOG
     if (typeof PRODUCT_CATALOG !== 'undefined') {
-      Object.keys(overrides).forEach(pName => {
-        if (PRODUCT_CATALOG[pName]) {
-          PRODUCT_CATALOG[pName].price = Number(overrides[pName]);
+      Object.keys(priceMap).forEach(pName => {
+        const catKey = Object.keys(PRODUCT_CATALOG).find(k => k.toLowerCase() === pName.toLowerCase());
+        if (catKey && PRODUCT_CATALOG[catKey]) {
+          PRODUCT_CATALOG[catKey].price = Number(priceMap[pName]);
+        }
+      });
+      Object.keys(mrpMap).forEach(pName => {
+        const catKey = Object.keys(PRODUCT_CATALOG).find(k => k.toLowerCase() === pName.toLowerCase());
+        if (catKey && PRODUCT_CATALOG[catKey]) {
+          PRODUCT_CATALOG[catKey].mrp = Number(mrpMap[pName]);
         }
       });
     }
 
-    // 2. Sync DOM product cards
+    // 3. Sync into BOOK_CATALOG_DATA
+    if (typeof BOOK_CATALOG_DATA !== 'undefined' && Array.isArray(BOOK_CATALOG_DATA)) {
+      BOOK_CATALOG_DATA.forEach(b => {
+        const pKey = Object.keys(priceMap).find(k => k.toLowerCase() === b.name.toLowerCase());
+        if (pKey) b.price = Number(priceMap[pKey]);
+        const mKey = Object.keys(mrpMap).find(k => k.toLowerCase() === b.name.toLowerCase());
+        if (mKey) b.mrp = Number(mrpMap[mKey]);
+      });
+    }
+
+    // 4. Sync into CUSTOM_PRODUCTS
+    if (typeof CUSTOM_PRODUCTS !== 'undefined' && Array.isArray(CUSTOM_PRODUCTS)) {
+      let changed = false;
+      CUSTOM_PRODUCTS.forEach(cp => {
+        const pName = cp.name || cp.title;
+        if (!pName) return;
+        const pKey = Object.keys(priceMap).find(k => k.toLowerCase() === pName.toLowerCase());
+        if (pKey && cp.price !== Number(priceMap[pKey])) {
+          cp.price = Number(priceMap[pKey]);
+          changed = true;
+        }
+        const mKey = Object.keys(mrpMap).find(k => k.toLowerCase() === pName.toLowerCase());
+        if (mKey && cp.mrp !== Number(mrpMap[mKey])) {
+          cp.mrp = Number(mrpMap[mKey]);
+          changed = true;
+        }
+      });
+      if (changed) {
+        try {
+          localStorage.setItem('jk_uploaded_catalog', JSON.stringify(CUSTOM_PRODUCTS));
+        } catch(e) {}
+      }
+    }
+
+    // 5. Update dynamic grid if rendered
+    if (typeof renderDynamicStoreProducts === 'function') {
+      renderDynamicStoreProducts();
+    }
+
+    // 6. Sync DOM product cards across the page
     const cards = document.querySelectorAll('.product-card, .book-product-card');
     cards.forEach(card => {
       const titleEl = card.querySelector('.product-title');
       if (!titleEl) return;
       const title = titleEl.textContent.trim();
 
-      const matchedKey = Object.keys(overrides).find(k => k.toLowerCase() === title.toLowerCase());
-      if (matchedKey) {
-        const newPrice = Number(overrides[matchedKey]);
+      const matchedPriceKey = Object.keys(priceMap).find(k => k.toLowerCase() === title.toLowerCase());
+      const matchedMrpKey = Object.keys(mrpMap).find(k => k.toLowerCase() === title.toLowerCase());
+
+      if (matchedPriceKey || matchedMrpKey) {
+        const newPrice = matchedPriceKey ? Number(priceMap[matchedPriceKey]) : null;
+        const newMrp = matchedMrpKey ? Number(mrpMap[matchedMrpKey]) : null;
+
+        // Price text
         const priceEl = card.querySelector('.product-price');
-        if (priceEl) {
+        if (priceEl && newPrice !== null && !isNaN(newPrice)) {
           priceEl.textContent = '₹' + newPrice;
+        }
+        const currentPrice = (newPrice !== null && !isNaN(newPrice)) ? newPrice : (priceEl ? parseInt(priceEl.textContent.replace(/[^0-9]/g, '')) : 0);
+
+        // MRP text
+        const mrpEl = card.querySelector('span[style*="line-through"]');
+        if (mrpEl && newMrp !== null && !isNaN(newMrp)) {
+          mrpEl.textContent = '₹' + newMrp;
+        }
+        const currentMrp = (newMrp !== null && !isNaN(newMrp)) ? newMrp : (mrpEl ? parseInt(mrpEl.textContent.replace(/[^0-9]/g, '')) : 0);
+
+        // Discount badge
+        const discountSpan = card.querySelector('span[style*="10b981"]');
+        if (discountSpan && currentMrp > currentPrice && currentPrice > 0) {
+          const disc = Math.round(((currentMrp - currentPrice) / currentMrp) * 100);
+          discountSpan.textContent = `Save ${disc}% Today`;
+        }
+
+        // Button onclick updates
+        if (newPrice !== null && !isNaN(newPrice)) {
+          const buyBtn = card.querySelector('.buy-btn');
+          if (buyBtn) {
+            const oc = buyBtn.getAttribute('onclick') || '';
+            buyBtn.setAttribute('onclick', oc.replace(/,\s*\d+\s*,/, `, ${newPrice},`));
+          }
+          const cartBtn = card.querySelector('.btn-icon[title="Add to Cart"]');
+          if (cartBtn) {
+            const oc = cartBtn.getAttribute('onclick') || '';
+            cartBtn.setAttribute('onclick', oc.replace(/,\s*\d+\s*,/, `, ${newPrice},`));
+          }
+          const waBtn = card.querySelector('.btn-whatsapp-direct');
+          if (waBtn) {
+            const oc = waBtn.getAttribute('onclick') || '';
+            waBtn.setAttribute('onclick', oc.replace(/,\s*\d+\s*\)/, `, ${newPrice})`));
+          }
         }
       }
     });
   } catch(e) {
-    console.warn("Could not apply custom prices to storefront:", e);
+    console.warn("Could not apply live price/MRP overrides to storefront:", e);
   }
+}
+
+function applyCustomPricesToStorefront() {
+  try {
+    const rawPrices = localStorage.getItem('jk_custom_prices');
+    const rawMrps = localStorage.getItem('jk_custom_mrps');
+    const priceMap = rawPrices ? JSON.parse(rawPrices) : {};
+    const mrpMap = rawMrps ? JSON.parse(rawMrps) : {};
+    applyLivePriceAndMrpOverrides(priceMap, mrpMap);
+  } catch(e) {}
 }
 
 // District & PIN Code Delivery and COD Rates (All 20 J&K Districts)
@@ -8763,8 +8890,11 @@ function orderCurrentBookViaWhatsApp() {
 }
 
 function openBookDetailsModal(bookName) {
-  const book = BOOK_CATALOG_DATA.find(b => b.name === bookName) || (PRODUCT_CATALOG[bookName] ? { name: bookName, ...PRODUCT_CATALOG[bookName] } : null);
-  if (!book) return;
+  const rawBook = BOOK_CATALOG_DATA.find(b => b.name === bookName) || (PRODUCT_CATALOG[bookName] ? { name: bookName, ...PRODUCT_CATALOG[bookName] } : null);
+  if (!rawBook) return;
+  const effectivePrice = getCustomPrice(rawBook.name, rawBook.price);
+  const effectiveMrp = getCustomMrp(rawBook.name, rawBook.mrp || Math.round(effectivePrice * 1.8));
+  const book = { ...rawBook, price: effectivePrice, mrp: effectiveMrp };
   currentModalBook = book;
   currentModalImages = book.allImages || book.images || [book.image];
   currentModalIndex = 0;
@@ -8774,11 +8904,11 @@ function openBookDetailsModal(bookName) {
 
   document.getElementById('modalBookTitle').innerText = book.name;
   document.getElementById('modalBookAuthor').innerText = 'By ' + (book.author || 'Renowned Author');
-  document.getElementById('modalBookPrice').innerText = '₹' + book.price;
-  document.getElementById('modalBookMrp').innerText = '₹' + (book.mrp || Math.round(book.price * 1.8));
+  document.getElementById('modalBookPrice').innerText = '₹' + effectivePrice;
+  document.getElementById('modalBookMrp').innerText = '₹' + effectiveMrp;
   document.getElementById('modalBookDesc').innerText = book.desc || 'High quality paperback verified for students.';
   
-  const discount = Math.round((((book.mrp || Math.round(book.price * 1.8)) - book.price) / (book.mrp || Math.round(book.price * 1.8))) * 100);
+  const discount = Math.max(0, Math.round(((effectiveMrp - effectivePrice) / effectiveMrp) * 100));
   document.getElementById('modalBookDiscount').innerText = discount + '% OFF';
 
   // Render Specs
@@ -8820,13 +8950,13 @@ function openBookDetailsModal(bookName) {
   if (buyBtn) {
     buyBtn.onclick = () => {
       closeBookDetailsModal();
-      openCheckout(book.name, book.price, 'physical', 'books');
+      openCheckout(book.name, effectivePrice, 'physical', 'books');
     };
   }
   const cartBtn = document.getElementById('modalCartBtn');
   if (cartBtn) {
     cartBtn.onclick = () => {
-      addToCart(book.name, book.price, 'physical', 'books');
+      addToCart(book.name, effectivePrice, 'physical', 'books');
     };
   }
 
@@ -10251,6 +10381,8 @@ function initRealtimeCatalogSync() {
   if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
     try {
       const db = firebase.firestore();
+
+      // 1. Listen for new published catalog items
       db.collection('published_catalog').onSnapshot(snapshot => {
         const firestoreProducts = [];
         snapshot.forEach(doc => {
@@ -10264,6 +10396,26 @@ function initRealtimeCatalogSync() {
         }
       }, err => {
         console.warn("Firestore real-time catalog listener notice:", err);
+      });
+
+      // 2. Listen for live price & MRP overrides from Seller Panel
+      db.collection('price_overrides').onSnapshot(snapshot => {
+        const priceMap = {};
+        const mrpMap = {};
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          if (item && item.name) {
+            if (item.price !== undefined && item.price !== null) {
+              priceMap[item.name] = Number(item.price);
+            }
+            if (item.mrp !== undefined && item.mrp !== null) {
+              mrpMap[item.name] = Number(item.mrp);
+            }
+          }
+        });
+        applyLivePriceAndMrpOverrides(priceMap, mrpMap);
+      }, err => {
+        console.warn("Firestore real-time price overrides notice:", err);
       });
     } catch (e) {
       console.warn("Firestore real-time catalog setup error:", e);
@@ -10324,9 +10476,12 @@ function renderDynamicStoreProducts() {
   CUSTOM_PRODUCTS.forEach((prod, index) => {
     const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
     const safeCarouselId = `carousel-dyn-${index}`;
-    const safeName = (prod.name || prod.title || 'Product').replace(/'/g, "\\'");
-    const price = Number(prod.price) || 0;
-    const mrp = Number(prod.mrp) || Math.round(price * 1.35);
+    const pName = prod.name || prod.title || 'Product';
+    const safeName = pName.replace(/'/g, "\\'");
+    const rawPrice = Number(prod.price) || 0;
+    const price = getCustomPrice(pName, rawPrice);
+    const rawMrp = Number(prod.mrp) || Math.round(price * 1.35);
+    const mrp = getCustomMrp(pName, rawMrp);
     const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
     const badgeText = prod.badge || '✨ Fresh Stock';
 

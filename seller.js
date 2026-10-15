@@ -2749,6 +2749,7 @@ function initSellerSupplierPanel() {
   if (typeof updateSellerDeliveryBadges === 'function') updateSellerDeliveryBadges();
   if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
   if (typeof initSellerRealtimeCatalog === 'function') initSellerRealtimeCatalog();
+  if (typeof initSellerRealtimePriceSync === 'function') initSellerRealtimePriceSync();
   syncSellerWithGoogleSheets(false);
 }
 
@@ -3014,18 +3015,42 @@ function getSellerCustomPriceOverrides() {
   }
 }
 
+function getSellerCustomMrpOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem('jk_custom_mrps') || '{}');
+  } catch(e) {
+    return {};
+  }
+}
+
+function onSellerPriceOrMrpInput(index) {
+  const pInput = document.getElementById(`seller-price-${index}`);
+  const mInput = document.getElementById(`seller-mrp-${index}`);
+  const badge = document.getElementById(`seller-disc-badge-${index}`);
+  if (!pInput || !mInput || !badge) return;
+  const p = Number(pInput.value) || 0;
+  const m = Number(mInput.value) || 0;
+  if (m > p && m > 0) {
+    const pct = Math.max(0, Math.round(((m - p) / m) * 100));
+    badge.innerText = `Save ${pct}%`;
+  } else {
+    badge.innerText = `0%`;
+  }
+}
+
 function renderSellerPricingTable() {
   const tbody = document.getElementById('sellerPricingTableBody');
   if (!tbody) return;
 
   const products = getAllSellerPricingProducts();
   const overrides = getSellerCustomPriceOverrides();
+  const mrpOverrides = getSellerCustomMrpOverrides();
 
   // Update counters
   const totalCountEl = document.getElementById('pricingTotalProductsCount');
   if (totalCountEl) totalCountEl.innerText = products.length;
 
-  const activeOverridesCount = Object.keys(overrides).length;
+  const activeOverridesCount = new Set([...Object.keys(overrides), ...Object.keys(mrpOverrides)]).size;
   const activeCountEl = document.getElementById('pricingCustomOverridesCount');
   if (activeCountEl) activeCountEl.innerText = activeOverridesCount;
 
@@ -3039,9 +3064,11 @@ function renderSellerPricingTable() {
     if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return;
 
     const currentPrice = (overrides[p.name] !== undefined) ? Number(overrides[p.name]) : p.defaultPrice;
-    const isCustom = (overrides[p.name] !== undefined);
-    const mrp = p.mrp || Math.round(currentPrice * 1.3);
-    const discountPct = Math.max(0, Math.round(((mrp - currentPrice) / mrp) * 100));
+    const isCustomPrice = (overrides[p.name] !== undefined);
+    const currentMrp = (mrpOverrides[p.name] !== undefined) ? Number(mrpOverrides[p.name]) : (p.mrp || Math.round(currentPrice * 1.3));
+    const isCustomMrp = (mrpOverrides[p.name] !== undefined);
+    const isCustom = isCustomPrice || isCustomMrp;
+    const discountPct = Math.max(0, Math.round(((currentMrp - currentPrice) / currentMrp) * 100));
 
     const safeEscapedName = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
@@ -3053,7 +3080,7 @@ function renderSellerPricingTable() {
         <td>
           <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.name}</div>
           <div style="display: flex; gap: 4px; align-items: center; margin-top: 3px; flex-wrap: wrap;">
-            ${isCustom ? '<span style="font-size: 10px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">Custom Rate Live</span>' : ''}
+            ${isCustom ? '<span style="font-size: 10px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 4px;"><i class="fa-solid fa-bolt"></i> Live on Store</span>' : ''}
             ${(() => {
               const stock = (typeof getSellerStockOverrides === 'function') ? (getSellerStockOverrides()[p.name] || { status: 'in_stock', qty: 25 }) : { status: 'in_stock', qty: 25 };
               if (stock.status === 'out_of_stock' || (stock.qty !== undefined && Number(stock.qty) <= 0)) {
@@ -3069,18 +3096,27 @@ function renderSellerPricingTable() {
           <span style="font-size: 11.5px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">${p.categoryLabel || p.category}</span>
         </td>
         <td>
-          <span style="font-size: 13px; font-weight: 600; color: #94a3b8; text-decoration: line-through;">₹${mrp}</span>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 13px; font-weight: 700; color: #64748b;">₹</span>
+            <input type="number" id="seller-mrp-${index}" value="${currentMrp}" min="1" step="1" 
+                   oninput="onSellerPriceOrMrpInput(${index})"
+                   onkeydown="if(event.key==='Enter') saveSellerProductPrice('${safeEscapedName}', ${index})"
+                   style="width: 80px; padding: 5px 8px; border: 1.5px solid ${isCustomMrp ? '#3b82f6' : '#cbd5e1'}; border-radius: 6px; font-weight: 700; font-size: 13px; color: #475569;"
+                   placeholder="MRP">
+          </div>
         </td>
         <td>
           <div style="display: flex; align-items: center; gap: 4px;">
             <span style="font-size: 14px; font-weight: 800; color: #0f172a;">₹</span>
             <input type="number" id="seller-price-${index}" value="${currentPrice}" min="1" step="1" 
+                   oninput="onSellerPriceOrMrpInput(${index})"
                    onkeydown="if(event.key==='Enter') saveSellerProductPrice('${safeEscapedName}', ${index})"
-                   style="width: 85px; padding: 5px 8px; border: 1.5px solid ${isCustom ? '#22c55e' : '#cbd5e1'}; border-radius: 6px; font-weight: 800; font-size: 14px; color: #0f172a;">
+                   style="width: 85px; padding: 5px 8px; border: 1.5px solid ${isCustomPrice ? '#22c55e' : '#cbd5e1'}; border-radius: 6px; font-weight: 800; font-size: 14px; color: #0f172a;"
+                   placeholder="Price">
           </div>
         </td>
         <td>
-          <span style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 7px; border-radius: 4px;">
+          <span id="seller-disc-badge-${index}" style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 7px; border-radius: 4px;">
             Save ${discountPct}%
           </span>
         </td>
@@ -3107,54 +3143,171 @@ function filterPricingProductsTable() {
   renderSellerPricingTable();
 }
 
-function saveSellerProductPrice(productName, index) {
-  const input = document.getElementById(`seller-price-${index}`);
-  if (!input) return;
+async function saveSellerProductPrice(productName, index) {
+  const priceInput = document.getElementById(`seller-price-${index}`);
+  const mrpInput = document.getElementById(`seller-mrp-${index}`);
+  if (!priceInput) return;
 
-  const newPrice = Number(input.value);
+  const newPrice = Number(priceInput.value);
   if (isNaN(newPrice) || newPrice <= 0) {
-    alert("Please enter a valid price greater than ₹0.");
+    alert("Please enter a valid selling price greater than ₹0.");
     return;
   }
 
-  const overrides = getSellerCustomPriceOverrides();
-  overrides[productName] = newPrice;
-  localStorage.setItem('jk_custom_prices', JSON.stringify(overrides));
+  let newMrp = mrpInput ? Number(mrpInput.value) : 0;
+  if (isNaN(newMrp) || newMrp <= 0) {
+    newMrp = Math.round(newPrice * 1.3);
+  }
+  if (newMrp < newPrice) {
+    newMrp = newPrice;
+  }
+
+  // 1. Save locally to localStorage for immediate zero-latency feedback
+  const priceOverrides = getSellerCustomPriceOverrides();
+  priceOverrides[productName] = newPrice;
+  localStorage.setItem('jk_custom_prices', JSON.stringify(priceOverrides));
+
+  const mrpOverrides = getSellerCustomMrpOverrides();
+  mrpOverrides[productName] = newMrp;
+  localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+
+  // 2. Broadcast to Firebase Firestore for ALL store visitors in real time
+  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      
+      // A. Write to price_overrides collection
+      await db.collection('price_overrides').doc(safeDocId).set({
+        name: productName,
+        price: newPrice,
+        mrp: newMrp,
+        updatedAt: Date.now()
+      }, { merge: true });
+
+      // B. Also update published_catalog doc if this product was uploaded via catalogue
+      const catQuery = await db.collection('published_catalog').where('name', '==', productName).get();
+      if (!catQuery.empty) {
+        catQuery.forEach(docSnap => {
+          docSnap.ref.update({
+            price: newPrice,
+            mrp: newMrp,
+            updatedAt: Date.now()
+          }).catch(e => console.warn("Doc update notice:", e));
+        });
+      }
+      console.log(`[Firestore] Successfully published price override for "${productName}": ₹${newPrice} (MRP ₹${newMrp})`);
+    } catch(err) {
+      console.warn("[Firestore] Price override push notice:", err);
+    }
+  }
+
+  // 3. Dispatch to Google Sheets Apps Script endpoint (fire-and-forget background sync)
+  try {
+    const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+    fetch(endpoint, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'update_price',
+        productName: productName,
+        name: productName,
+        price: newPrice,
+        mrp: newMrp,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(e => console.warn("Google Sheet price sync notice:", e));
+  } catch(e) {}
 
   // Show feedback
   const msgEl = document.getElementById('pricingFeedbackMessage');
   if (msgEl) {
     msgEl.style.display = 'block';
-    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved! "${productName}" updated to <strong>₹${newPrice}</strong>. Live on store.`;
-    setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
+    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved &amp; Live! "${productName}" is now <strong>₹${newPrice}</strong> (MRP: ₹${newMrp}).`;
+    setTimeout(() => { msgEl.style.display = 'none'; }, 5000);
   }
 
   if (typeof showToast === 'function') {
-    showToast(`✅ Price updated: ${productName} is now ₹${newPrice}!`);
+    showToast(`✅ Price & MRP Live: ${productName} is ₹${newPrice} (MRP ₹${newMrp})!`);
   }
 
   renderSellerPricingTable();
 }
 
-function resetSingleSellerProductPrice(productName) {
+async function resetSingleSellerProductPrice(productName) {
   const overrides = getSellerCustomPriceOverrides();
-  if (overrides[productName] !== undefined) {
-    delete overrides[productName];
-    localStorage.setItem('jk_custom_prices', JSON.stringify(overrides));
+  const mrpOverrides = getSellerCustomMrpOverrides();
+  delete overrides[productName];
+  delete mrpOverrides[productName];
+  localStorage.setItem('jk_custom_prices', JSON.stringify(overrides));
+  localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+
+  // Remove from Firestore
+  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      await db.collection('price_overrides').doc(safeDocId).delete();
+    } catch(e) {
+      console.warn("Firestore delete override notice:", e);
+    }
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(`Restored default price & MRP for ${productName}.`);
+  }
+  renderSellerPricingTable();
+}
+
+async function resetAllSellerPricesToDefault() {
+  if (confirm("Reset all products back to their factory default prices and MRPs? Any custom overrides will be removed.")) {
+    localStorage.removeItem('jk_custom_prices');
+    localStorage.removeItem('jk_custom_mrps');
+
+    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+      try {
+        const db = firebase.firestore();
+        const snap = await db.collection('price_overrides').get();
+        const batch = db.batch();
+        snap.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+      } catch(e) {
+        console.warn("Firestore batch delete notice:", e);
+      }
+    }
+
     if (typeof showToast === 'function') {
-      showToast(`Restored default price for ${productName}.`);
+      showToast("All product prices & MRPs have been reset to factory defaults.");
     }
     renderSellerPricingTable();
   }
 }
 
-function resetAllSellerPricesToDefault() {
-  if (confirm("Reset all products back to their factory default prices? Any custom overrides will be removed.")) {
-    localStorage.removeItem('jk_custom_prices');
-    if (typeof showToast === 'function') {
-      showToast("All product prices have been reset to factory defaults.");
-    }
-    renderSellerPricingTable();
+// Real-time listener for price overrides from Firebase Firestore
+function initSellerRealtimePriceSync() {
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      db.collection('price_overrides').onSnapshot(snapshot => {
+        const priceMap = {};
+        const mrpMap = {};
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          if (d && d.name) {
+            if (d.price !== undefined && d.price !== null) priceMap[d.name] = Number(d.price);
+            if (d.mrp !== undefined && d.mrp !== null) mrpMap[d.name] = Number(d.mrp);
+          }
+        });
+        localStorage.setItem('jk_custom_prices', JSON.stringify(priceMap));
+        localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpMap));
+        if (typeof renderSellerPricingTable === 'function') {
+          renderSellerPricingTable();
+        }
+      }, err => {
+        console.warn("Seller price sync notice:", err);
+      });
+    } catch(e) {}
   }
 }
 
