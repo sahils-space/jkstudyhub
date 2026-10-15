@@ -3117,14 +3117,14 @@ const SELLER_MANAGED_PRODUCTS = [
   { name: "Board Exam Stationery Combo", category: "stationery", categoryLabel: "Stationery", mrp: 450, defaultPrice: 249, image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&q=80&w=500" },
   { name: "PDF Printing & Spiral Binding", category: "notes", categoryLabel: "Print on Demand", mrp: 160, defaultPrice: 99, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=500" },
   { name: "Printed PYQs & Syllabus", category: "notes", categoryLabel: "Notes & PYQs", mrp: 99, defaultPrice: 49, image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" },
-  { name: "Instant Notes", category: "notes", categoryLabel: "Notes & PYQs", mrp: 250, defaultPrice: 150, image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" },
+  { name: "Instant Notes", category: "notes", categoryLabel: "Notes & PYQs", mrp: 250, defaultPrice: 149, image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" },
   { name: "Exam Survival Kit", category: "stationery", categoryLabel: "Stationery", mrp: 499, defaultPrice: 299, image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" },
 
   // Novels & Bestsellers
   { name: "Atomic Habits", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 249, image: "images/books/atomic-habits-1.webp" },
   { name: "The Psychology of Money", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 399, defaultPrice: 220, image: "images/books/psychology-of-money-1.webp" },
-  { name: "Deep Work", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 240, image: "images/books/deep-work-1.webp" },
-  { name: "The Alchemist", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 299, defaultPrice: 180, image: "images/books/the-alchemist-1.webp" },
+  { name: "Deep Work", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 239, image: "images/books/deep-work-1.webp" },
+  { name: "The Alchemist", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 350, defaultPrice: 179, image: "images/books/the-alchemist-1.webp" },
   { name: "The Kite Runner", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 260, image: "images/books/the-kite-runner-1.webp" },
   { name: "A Thousand Splendid Suns", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 260, image: "images/books/thousand-splendid-suns-1.webp" },
   { name: "Secrets of Divine Love", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 550, defaultPrice: 299, image: "images/books/secrets-of-divine-love-1.webp" },

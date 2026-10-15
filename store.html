@@ -21,7 +21,78 @@
   <meta name="twitter:image" content="https://jkstudyhub.online/images/logo-app.png">
   <!-- Preload Critical Above-The-Fold 3D Ads for Instant 0ms Rendering -->
   <link rel="preload" as="image" href="images/ad-3d-scooter.webp" type="image/webp">
-  <link rel="preload" as="image" href="images/ad-3d-founder.webp" type="image/webp">
+  <!-- Instant Zero-Flicker Price Hydration (Runs before First Paint to eliminate any price flicker on hard refresh) -->
+  <script>
+    (function() {
+      try {
+        var p = JSON.parse(localStorage.getItem('jk_custom_prices') || '{}');
+        var m = JSON.parse(localStorage.getItem('jk_custom_mrps') || '{}');
+        if (Object.keys(p).length === 0 && Object.keys(m).length === 0) return;
+
+        function patchCard(card) {
+          var titleEl = card.querySelector('.product-title');
+          if (!titleEl) return;
+          var cleanTitle = titleEl.textContent.trim().toLowerCase();
+          var matchP = Object.keys(p).find(function(k) { return k.trim().toLowerCase() === cleanTitle; });
+          var matchM = Object.keys(m).find(function(k) { return k.trim().toLowerCase() === cleanTitle; });
+
+          if (matchP && p[matchP]) {
+            var priceEl = card.querySelector('.product-price');
+            if (priceEl) priceEl.textContent = '₹' + p[matchP];
+
+            var buyBtn = card.querySelector('.buy-btn');
+            if (buyBtn) {
+              var oc = buyBtn.getAttribute('onclick') || '';
+              buyBtn.setAttribute('onclick', oc.replace(/,\s*\d+\s*,/, ', ' + p[matchP] + ', '));
+            }
+            var cartBtn = card.querySelector('.btn-icon[title="Add to Cart"]');
+            if (cartBtn) {
+              var oc2 = cartBtn.getAttribute('onclick') || '';
+              cartBtn.setAttribute('onclick', oc2.replace(/,\s*\d+\s*,/, ', ' + p[matchP] + ', '));
+            }
+            var waBtn = card.querySelector('.btn-whatsapp-direct');
+            if (waBtn) {
+              var oc3 = waBtn.getAttribute('onclick') || '';
+              waBtn.setAttribute('onclick', oc3.replace(/,\s*\d+\s*\)/, ', ' + p[matchP] + ')'));
+            }
+          }
+          if (matchM && m[matchM]) {
+            var mrpEl = card.querySelector('span[style*="line-through"]');
+            if (mrpEl) mrpEl.textContent = '₹' + m[matchM];
+          }
+          if (matchP && matchM && m[matchM] > p[matchP]) {
+            var discSpan = card.querySelector('span[style*="10b981"]');
+            if (discSpan) {
+              var disc = Math.round(((m[matchM] - p[matchP]) / m[matchM]) * 100);
+              discSpan.textContent = 'Save ' + disc + '% Today';
+            }
+          }
+        }
+
+        var observer = new MutationObserver(function(mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            var added = mutations[i].addedNodes;
+            for (var j = 0; j < added.length; j++) {
+              var node = added[j];
+              if (node.nodeType === 1) {
+                if (node.classList && (node.classList.contains('product-card') || node.classList.contains('book-product-card'))) {
+                  patchCard(node);
+                } else if (node.querySelectorAll) {
+                  var cards = node.querySelectorAll('.product-card, .book-product-card');
+                  for (var k = 0; k < cards.length; k++) patchCard(cards[k]);
+                }
+              }
+            }
+          }
+        });
+
+        if (document.documentElement) {
+          observer.observe(document.documentElement, { childList: true, subtree: true });
+        }
+        document.addEventListener('DOMContentLoaded', function() { observer.disconnect(); });
+      } catch(e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -3610,20 +3681,20 @@
           <p class="product-desc">Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.</p>
           <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
             <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Deep Work')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
-            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Deep Work', 240)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('Deep Work', 239)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
           </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
-                <span class="product-price">₹240</span>
+                <span class="product-price">₹239</span>
                 <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹499</span>
               </div>
               <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 52% Today</span>
             </div>
 
             <div class="product-actions" style="gap:6px;">
-              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Deep Work', 240, 'physical', 'books')">Buy Now</button>
-              <button class="btn-icon" onclick="addToCart('Deep Work', 240, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('Deep Work', 239, 'physical', 'books')">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart('Deep Work', 239, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
               <button class="btn-icon" onclick="openBookDetailsModal('Deep Work')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
@@ -3665,20 +3736,20 @@
           <p class="product-desc">A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.</p>
           <div style="display:flex; gap:6px; margin: 8px 0 10px; flex-wrap:wrap;">
             <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('The Alchemist')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
-            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('The Alchemist', 180)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 10px; font-size:11.5px;" onclick="orderBookViaWhatsApp('The Alchemist', 179)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
           </div>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
-                <span class="product-price">₹180</span>
+                <span class="product-price">₹179</span>
                 <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹350</span>
               </div>
               <span style="color:#10b981; font-size:11.5px; font-weight:800;">Save 49% Today</span>
             </div>
 
             <div class="product-actions" style="gap:6px;">
-              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('The Alchemist', 180, 'physical', 'books')">Buy Now</button>
-              <button class="btn-icon" onclick="addToCart('The Alchemist', 180, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('The Alchemist', 179, 'physical', 'books')">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart('The Alchemist', 179, 'physical', 'books')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
               <button class="btn-icon" onclick="openBookDetailsModal('The Alchemist')" title="Inspect Dimensions & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
@@ -5186,11 +5257,11 @@
           <h3 class="product-title">Instant Notes (Per Subject)</h3>
           <p class="product-desc">Comprehensive and easy-to-understand printed notes for any specific subject.</p>
           <div class="product-footer">
-            <span class="product-price">₹150</span>
+            <span class="product-price">₹149</span>
             
           <div class="product-actions">
-            <button class="buy-btn" style="flex:1;" onclick="openCheckout('Instant Notes', 150, 'physical', 'notes')">Buy Now</button>
-            <button class="btn-icon" onclick="addToCart('Instant Notes', 150, 'physical', 'notes')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+            <button class="buy-btn" style="flex:1;" onclick="openCheckout('Instant Notes', 149, 'physical', 'notes')">Buy Now</button>
+            <button class="btn-icon" onclick="addToCart('Instant Notes', 149, 'physical', 'notes')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
           </div>
 
           </div>

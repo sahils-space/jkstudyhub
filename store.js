@@ -916,6 +916,9 @@ function applyCustomPricesToStorefront() {
   syncPricesFromJsonFile();
 }
 
+// Immediate initial execution to eliminate any flash on page load
+applyCustomPricesToStorefront();
+
 // District & PIN Code Delivery and COD Rates (All 20 J&K Districts)
 const DEFAULT_JK_DISTRICT_RATES = {
   // Kashmir Division (10 Districts)
@@ -1126,7 +1129,7 @@ const PRODUCT_CATALOG = {
   "Deep Work": {
     author: "Cal Newport",
     mrp: 499,
-    price: 240,
+    price: 239,
     category: "books",
     badge: "Exam Prep Must-Have",
     rating: "4.8",
@@ -1147,7 +1150,7 @@ const PRODUCT_CATALOG = {
   "The Alchemist": {
     author: "Paulo Coelho",
     mrp: 350,
-    price: 180,
+    price: 179,
     category: "books",
     badge: "Inspiring Classic",
     rating: "4.9",
@@ -8649,21 +8652,28 @@ const COMPREHENSIVE_BOOK_PREVIEWS = {
 };
 
 function getBookPriceByName(name) {
+  try {
+    const overrides = JSON.parse(localStorage.getItem('jk_custom_prices') || '{}');
+    if (overrides && overrides[name]) return Number(overrides[name]);
+  } catch(e) {}
+  if (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[name] && PRODUCT_CATALOG[name].price) {
+    return PRODUCT_CATALOG[name].price;
+  }
   if (typeof BOOKS_DATA !== 'undefined' && BOOKS_DATA[name] && BOOKS_DATA[name].price) {
     return BOOKS_DATA[name].price;
   }
   const pricingMap = {
     "Atomic Habits": 249,
     "The Psychology of Money": 220,
-    "Deep Work": 249,
-    "The Alchemist": 199,
+    "Deep Work": 239,
+    "The Alchemist": 179,
     "The Kite Runner": 260,
     "A Thousand Splendid Suns": 260,
     "Secrets of Divine Love": 299,
-    "Reclaim Your Heart": 260,
-    "Wings of Fire": 230,
-    "Lucent's General Knowledge": 299,
-    "Wren & Martin English Grammar": 299
+    "Reclaim Your Heart": 250,
+    "Wings of Fire": 199,
+    "Lucent's General Knowledge": 250,
+    "Wren & Martin English Grammar": 290
   };
   return pricingMap[name] || 249;
 }
