@@ -1953,21 +1953,42 @@ function renderCartPage() {
 
   let subtotal = 0;
   let totalQty = 0;
+
+  cart.forEach((item) => {
+    const q = parseInt(item.qty) || 1;
+    subtotal += item.price * q;
+    totalQty += q;
+  });
+
+  const qualifiesFreeShipping = (subtotal >= 499);
+  const diffToFree = Math.max(0, 499 - subtotal);
+  const progressPercent = Math.min(100, Math.round((subtotal / 499) * 100));
+
   let itemsHtml = `
-    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px;">
-      <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #1e40af;">
-        <i class="fa-solid fa-location-dot" style="font-size: 16px;"></i>
-        <span>Deliver to: <strong>All Kashmir Districts &amp; Pincodes</strong></span>
+    <!-- Dynamic Kashmir ₹499+ Free Shipping Progress Strip -->
+    <div style="background: ${qualifiesFreeShipping ? '#f0fdf4' : '#eff6ff'}; border: 1.5px solid ${qualifiesFreeShipping ? '#86efac' : '#bfdbfe'}; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifiesFreeShipping ? '#166534' : '#1e40af'};">
+          <i class="fa-solid fa-truck-fast"></i>
+          <span>${qualifiesFreeShipping ? '🎉 Congratulations! You unlocked FREE Delivery across Kashmir!' : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> more to unlock FREE Delivery across Kashmir!`}</span>
+        </div>
+        <span style="font-size: 11.5px; background: ${qualifiesFreeShipping ? '#22c55e' : '#2563eb'}; color: white; font-weight: 800; padding: 3px 10px; border-radius: 20px;">
+          ${qualifiesFreeShipping ? 'FREE SHIPPING UNLOCKED' : `${progressPercent}% COMPLETED`}
+        </span>
       </div>
-      <span style="font-size: 11px; background: #dcfce7; color: #16a34a; font-weight: 800; padding: 4px 10px; border-radius: 20px;"><i class="fa-solid fa-gift"></i> 100% FREE DELIVERY</span>
+      <div style="width: 100%; height: 7px; background: ${qualifiesFreeShipping ? '#dcfce7' : '#dbeafe'}; border-radius: 10px; overflow: hidden;">
+        <div style="width: ${progressPercent}%; height: 100%; background: ${qualifiesFreeShipping ? '#16a34a' : 'linear-gradient(90deg, #3b82f6, #2563eb)'}; border-radius: 10px; transition: width 0.4s ease;"></div>
+      </div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+        <span>Free delivery threshold: <strong>₹499 (Kashmir Division)</strong></span>
+        <span>Standard: ₹40-₹55</span>
+      </div>
     </div>
   `;
 
   cart.forEach((item, index) => {
     const q = parseInt(item.qty) || 1;
     const itemTotal = item.price * q;
-    subtotal += itemTotal;
-    totalQty += q;
 
     itemsHtml += `
       <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 16px; display: flex; gap: 18px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
@@ -4511,15 +4532,25 @@ function getCheckoutDeliveryInfo() {
     };
   }
 
-  const isFree = Boolean(matchedDistrict.isFree);
+  // FREE Delivery threshold for Kashmir Division: Orders >= ₹499 (Kashmir only, not Jammu)
+  const isKashmir = matchedDistrict && (matchedDistrict.division === 'Kashmir' || !matchedDistrict.division);
+  const orderPriceNum = Number(currentCheckoutPrice) || 0;
+  const qualifiesForKashmirFreeShipping = isKashmir && (orderPriceNum >= 499);
+
+  const isFree = Boolean(matchedDistrict.isFree) || qualifiesForKashmirFreeShipping;
   const deliveryFee = isFree ? 0 : (Number(matchedDistrict.deliveryFee) || 0);
   const codFee = Number(matchedDistrict.codFee) || 0;
 
   let feeHtml = '';
   if (deliveryFee === 0) {
-    feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ${matchedDistrict.name.split('(')[0].trim()})</span>`;
+    if (qualifiesForKashmirFreeShipping && Number(matchedDistrict.deliveryFee) > 0) {
+      feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ₹499+ Kashmir Free Delivery 🎁)</span>`;
+    } else {
+      feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ${matchedDistrict.name.split('(')[0].trim()})</span>`;
+    }
   } else {
-    feeHtml = `<span style="color:#b45309; font-weight:800;">₹${deliveryFee} (${matchedDistrict.name.split('(')[0].trim()} Dispatch)</span>`;
+    const divisionNote = (matchedDistrict.division === 'Jammu') ? ' • Jammu Division' : '';
+    feeHtml = `<span style="color:#b45309; font-weight:800;">₹${deliveryFee} (${matchedDistrict.name.split('(')[0].trim()}${divisionNote})</span>`;
   }
 
   return {
@@ -4527,6 +4558,8 @@ function getCheckoutDeliveryInfo() {
     codFee: codFee,
     isFree: (deliveryFee === 0),
     districtName: matchedDistrict.name,
+    division: matchedDistrict.division || 'Kashmir',
+    isKashmirFreeOffer: qualifiesForKashmirFreeShipping,
     html: feeHtml
   };
 }
