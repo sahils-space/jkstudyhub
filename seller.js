@@ -299,6 +299,14 @@ if (document.readyState === 'loading') {
   initSellerAppOnLoad();
 }
 
+window.addEventListener('storage', function(e) {
+  if (e.key === 'jk_custom_prices' || e.key === 'jk_custom_mrps' || e.key === 'jk_uploaded_catalog' || e.key === 'jk_custom_products' || e.key === 'jk_orders') {
+    if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
+    if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
+    if (typeof renderSellerOrdersTable === 'function') renderSellerOrdersTable();
+  }
+});
+
 // =========================================================
 // 2. DATA LOADERS & GOOGLE SHEETS SYNC
 // =========================================================
@@ -2649,9 +2657,10 @@ function renderSellerPublishedCatalog() {
     const prodId = p.id || p.productId || '';
     const cleanId = String(prodId).replace(/[^a-zA-Z0-9_-]/g, '_');
     const prodName = p.title || p.name || 'Untitled';
-    const safeTitle = prodName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    const price = (customPrices[prodName] !== undefined) ? Number(customPrices[prodName]) : (Number(p.price) || 0);
-    const mrp = (customMrps[prodName] !== undefined) ? Number(customMrps[prodName]) : (Number(p.mrp || p.originalPrice) || Math.round(price * 1.35));
+    const resolvedPrice = resolveSellerPriceOverride(customPrices, prodName);
+    const price = (resolvedPrice !== undefined) ? resolvedPrice : (Number(p.price) || 0);
+    const resolvedMrp = resolveSellerMrpOverride(customMrps, prodName);
+    const mrp = (resolvedMrp !== undefined) ? resolvedMrp : (Number(p.mrp || p.originalPrice) || Math.round(price * 1.35));
     const stock = (p.stock !== undefined) ? p.stock : 20;
 
     html += `
@@ -3190,6 +3199,36 @@ function getSellerCustomMrpOverrides() {
   }
 }
 
+function resolveSellerPriceOverride(overrides, name) {
+  if (!overrides || typeof overrides !== 'object' || !name) return undefined;
+  if (overrides[name] !== undefined && overrides[name] !== null) {
+    const val = Number(overrides[name]);
+    if (!isNaN(val) && val > 0) return val;
+  }
+  const cleanTarget = String(name).trim().toLowerCase();
+  const matchedKey = Object.keys(overrides).find(k => k.trim().toLowerCase() === cleanTarget);
+  if (matchedKey && overrides[matchedKey] !== undefined && overrides[matchedKey] !== null) {
+    const val = Number(overrides[matchedKey]);
+    if (!isNaN(val) && val > 0) return val;
+  }
+  return undefined;
+}
+
+function resolveSellerMrpOverride(mrpOverrides, name) {
+  if (!mrpOverrides || typeof mrpOverrides !== 'object' || !name) return undefined;
+  if (mrpOverrides[name] !== undefined && mrpOverrides[name] !== null) {
+    const val = Number(mrpOverrides[name]);
+    if (!isNaN(val) && val > 0) return val;
+  }
+  const cleanTarget = String(name).trim().toLowerCase();
+  const matchedKey = Object.keys(mrpOverrides).find(k => k.trim().toLowerCase() === cleanTarget);
+  if (matchedKey && mrpOverrides[matchedKey] !== undefined && mrpOverrides[matchedKey] !== null) {
+    const val = Number(mrpOverrides[matchedKey]);
+    if (!isNaN(val) && val > 0) return val;
+  }
+  return undefined;
+}
+
 function onSellerPriceOrMrpInput(index) {
   const pInput = document.getElementById(`seller-price-${index}`);
   const mInput = document.getElementById(`seller-mrp-${index}`);
@@ -3230,10 +3269,13 @@ function renderSellerPricingTable() {
     if (catFilter !== 'all' && p.category !== catFilter) return;
     if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return;
 
-    const currentPrice = (overrides[p.name] !== undefined) ? Number(overrides[p.name]) : p.defaultPrice;
-    const isCustomPrice = (overrides[p.name] !== undefined);
-    const currentMrp = (mrpOverrides[p.name] !== undefined) ? Number(mrpOverrides[p.name]) : (p.mrp || Math.round(currentPrice * 1.3));
-    const isCustomMrp = (mrpOverrides[p.name] !== undefined);
+    const resolvedP = resolveSellerPriceOverride(overrides, p.name);
+    const currentPrice = (resolvedP !== undefined) ? resolvedP : p.defaultPrice;
+    const isCustomPrice = (resolvedP !== undefined);
+
+    const resolvedM = resolveSellerMrpOverride(mrpOverrides, p.name);
+    const currentMrp = (resolvedM !== undefined) ? resolvedM : (p.mrp || Math.round(currentPrice * 1.3));
+    const isCustomMrp = (resolvedM !== undefined);
     const isCustom = isCustomPrice || isCustomMrp;
     const discountPct = Math.max(0, Math.round(((currentMrp - currentPrice) / currentMrp) * 100));
 
@@ -3484,6 +3526,7 @@ function initSellerRealtimePriceSync() {
     try {
       const db = firebase.firestore();
       db.collection('price_overrides').onSnapshot(snapshot => {
+        if (!snapshot || snapshot.empty) return;
         const priceMap = {};
         const mrpMap = {};
         snapshot.forEach(doc => {
@@ -3493,10 +3536,16 @@ function initSellerRealtimePriceSync() {
             if (d.mrp !== undefined && d.mrp !== null) mrpMap[d.name] = Number(d.mrp);
           }
         });
-        localStorage.setItem('jk_custom_prices', JSON.stringify(priceMap));
-        localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpMap));
-        if (typeof renderSellerPricingTable === 'function') {
-          renderSellerPricingTable();
+        if (Object.keys(priceMap).length > 0) {
+          const curPrices = getSellerCustomPriceOverrides();
+          const curMrps = getSellerCustomMrpOverrides();
+          const mergedPrices = { ...curPrices, ...priceMap };
+          const mergedMrps = { ...curMrps, ...mrpMap };
+          localStorage.setItem('jk_custom_prices', JSON.stringify(mergedPrices));
+          localStorage.setItem('jk_custom_mrps', JSON.stringify(mergedMrps));
+          if (typeof renderSellerPricingTable === 'function') {
+            renderSellerPricingTable();
+          }
         }
       }, err => {
         console.warn("Seller price sync notice:", err);

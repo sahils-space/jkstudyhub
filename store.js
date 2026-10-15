@@ -717,7 +717,8 @@ function getCustomPrice(productName, defaultPrice) {
           const val = Number(overrides[productName]);
           if (!isNaN(val) && val > 0) return val;
         }
-        const key = Object.keys(overrides).find(k => k.toLowerCase() === String(productName).toLowerCase());
+        const cleanName = String(productName).trim().toLowerCase();
+        const key = Object.keys(overrides).find(k => k.trim().toLowerCase() === cleanName);
         if (key && overrides[key] !== undefined && overrides[key] !== null) {
           const val = Number(overrides[key]);
           if (!isNaN(val) && val > 0) return val;
@@ -738,7 +739,8 @@ function getCustomMrp(productName, defaultMrp) {
           const val = Number(overrides[productName]);
           if (!isNaN(val) && val > 0) return val;
         }
-        const key = Object.keys(overrides).find(k => k.toLowerCase() === String(productName).toLowerCase());
+        const cleanName = String(productName).trim().toLowerCase();
+        const key = Object.keys(overrides).find(k => k.trim().toLowerCase() === cleanName);
         if (key && overrides[key] !== undefined && overrides[key] !== null) {
           const val = Number(overrides[key]);
           if (!isNaN(val) && val > 0) return val;
@@ -749,16 +751,29 @@ function getCustomMrp(productName, defaultMrp) {
   return defaultMrp;
 }
 
-function applyLivePriceAndMrpOverrides(priceMap, mrpMap) {
+function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps) {
   try {
-    if (!priceMap) priceMap = {};
-    if (!mrpMap) mrpMap = {};
+    if (!incomingPrices) incomingPrices = {};
+    if (!incomingMrps) incomingMrps = {};
 
-    // 1. Persist to localStorage for 0ms load on next refresh
+    // 1. Read existing overrides to guarantee previously saved prices are NEVER lost or reset
+    let existingPrices = {};
+    let existingMrps = {};
+    try {
+      existingPrices = JSON.parse(localStorage.getItem('jk_custom_prices') || '{}');
+      existingMrps = JSON.parse(localStorage.getItem('jk_custom_mrps') || '{}');
+    } catch(e) {}
+
+    // Combine existing overrides with incoming overrides
+    const priceMap = { ...existingPrices, ...incomingPrices };
+    const mrpMap = { ...existingMrps, ...incomingMrps };
+
+    // Persist full merged map so prices are preserved permanently across all page refreshes
     try {
       localStorage.setItem('jk_custom_prices', JSON.stringify(priceMap));
       localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpMap));
     } catch(e) {}
+
 
     // 2. Sync into PRODUCT_CATALOG
     if (typeof PRODUCT_CATALOG !== 'undefined') {
@@ -6085,7 +6100,7 @@ window.addEventListener('pageshow', function(event) {
 });
 
 window.addEventListener('storage', function(e) {
-  if (e.key === 'jk_cart' || e.key === 'cart' || e.key === 'jk_wishlist' || e.key === 'wishlist' || e.key === 'jk_orders' || e.key === 'jk_study_user') {
+  if (e.key === 'jk_cart' || e.key === 'cart' || e.key === 'jk_wishlist' || e.key === 'wishlist' || e.key === 'jk_orders' || e.key === 'jk_study_user' || e.key === 'jk_custom_prices' || e.key === 'jk_custom_mrps' || e.key === 'jk_uploaded_catalog' || e.key === 'jk_custom_products') {
     initShop();
   }
 });
@@ -10465,6 +10480,7 @@ function initRealtimeCatalogSync() {
 
       // 2. Listen for live price & MRP overrides from Seller Panel
       db.collection('price_overrides').onSnapshot(snapshot => {
+        if (!snapshot || snapshot.empty) return;
         const priceMap = {};
         const mrpMap = {};
         snapshot.forEach(doc => {
@@ -10478,7 +10494,9 @@ function initRealtimeCatalogSync() {
             }
           }
         });
-        applyLivePriceAndMrpOverrides(priceMap, mrpMap);
+        if (Object.keys(priceMap).length > 0) {
+          applyLivePriceAndMrpOverrides(priceMap, mrpMap);
+        }
       }, err => {
         console.warn("Firestore real-time price overrides notice:", err);
       });
