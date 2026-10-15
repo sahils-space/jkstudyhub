@@ -853,7 +853,7 @@
   <script src="script.js?v=30"></script>
 
   <!-- Floating Store Button -->
-  <a href="store.html" style="position: fixed; right: 20px; bottom: 30px; background: #2563eb; color: white; padding: 14px 24px; border-radius: 50px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); font-weight: 700; z-index: 1000; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 16px; transition: transform 0.2s;">
+  <a href="store.html" class="floating-store-btn" style="position: fixed; right: 20px; bottom: 30px; background: #2563eb; color: white; padding: 14px 24px; border-radius: 50px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); font-weight: 700; z-index: 1000; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 16px; transition: transform 0.2s;">
     <i class="fa-solid fa-bag-shopping"></i> Store
   </a>
 
@@ -1000,10 +1000,10 @@
     })();
   </script>
 
-  <!-- Floating WhatsApp Quick-Chat & Order Widget (Positioned on Left side to prevent overlap with Store button) -->
+  <!-- Floating WhatsApp Quick-Chat & Order Widget -->
   <a href="https://wa.me/919622605714?text=Hello%20JK%20Study%20Hub!%20I%20am%20visiting%20the%20website%20and%20want%20to%20order%20study%20materials%20or%20books." 
      class="floating-whatsapp-widget" 
-     style="right: auto !important; left: 20px !important; bottom: 30px !important; flex-direction: row-reverse;" 
+     style="left: 24px; right: auto; bottom: 24px; flex-direction: row-reverse;" 
      target="_blank" 
      rel="noopener" 
      aria-label="Chat & Order on WhatsApp">
@@ -1015,5 +1015,36 @@
       <i class="fa-brands fa-whatsapp"></i>
     </div>
   </a>
+
+  <!-- Mobile Bottom Navigation Bar (ZAPVI / Native App Style) -->
+  <div class="mobile-bottom-nav">
+    <a href="index.html" class="mobile-nav-item active"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="index.html#subjects" class="mobile-nav-item"><i class="fa-solid fa-layer-group"></i><span>Subjects</span></a>
+    <a href="store.html" class="mobile-nav-item"><i class="fa-solid fa-store"></i><span>Store</span></a>
+    <a href="cart.html" class="mobile-nav-item">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span>Cart</span>
+      <span id="homeMobileCartCount" class="nav-badge-count" style="display:none;">0</span>
+    </a>
+    <a href="account.html" class="mobile-nav-item"><i class="fa-regular fa-user"></i><span>Account</span></a>
+  </div>
+
+  <script>
+    // Sync Mobile Bottom Nav Cart Badge on Home
+    (function syncHomeCartBadge() {
+      try {
+        const raw = localStorage.getItem('jk_cart') || localStorage.getItem('cart');
+        const badge = document.getElementById('homeMobileCartCount');
+        if (badge && raw) {
+          const items = JSON.parse(raw);
+          const totalQty = Array.isArray(items) ? items.reduce((acc, it) => acc + (parseInt(it.qty) || 1), 0) : 0;
+          if (totalQty > 0) {
+            badge.textContent = totalQty;
+            badge.style.display = 'inline-block';
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
 </body>
 </html>
