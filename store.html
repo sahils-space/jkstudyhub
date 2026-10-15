@@ -1155,110 +1155,177 @@
       background: #ffffff;
     }
 
-    /* 5. Zapvi Offers & Deals Section (Ticket Cutouts) */
-    .zapvi-offers-section {
-      max-width: 850px;
-      margin: 30px auto 40px;
-      padding: 0 20px;
-    }
-    .zapvi-offers-heading {
-      font-size: 13px;
-      font-weight: 800;
-      color: #64748b;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .zapvi-tickets-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .zapvi-ticket {
-      position: relative;
-      border-radius: 16px;
-      padding: 24px 28px;
+    /* 5. Top 3D Floating Interactive Offers Showcase (Left: ₹1499+, Right: ₹499+) */
+    .top-3d-offers-showcase {
+      max-width: 1360px;
+      margin: 18px auto 24px;
+      padding: 0 16px;
       box-sizing: border-box;
+      position: relative;
+    }
+    .top-3d-offers-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+    }
+    .top-3d-center-stage {
+      flex: 1 1 820px;
+      max-width: 860px;
+      min-width: 0;
+    }
+    .top-3d-center-stage .zapvi-hero-stage {
+      margin: 0 auto;
+      max-width: 100%;
+    }
+    .floating-3d-circle-card {
+      flex: 0 0 215px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+      text-decoration: none;
+      position: relative;
     }
-    /* Ticket Scallop Side Cutouts */
-    .zapvi-ticket::before, .zapvi-ticket::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
+    .floating-3d-circle-card.left {
+      animation: float3DCircleLeft 4.6s ease-in-out infinite alternate;
+    }
+    .floating-3d-circle-card.right {
+      animation: float3DCircleRight 5.2s ease-in-out infinite alternate;
+    }
+    @keyframes float3DCircleLeft {
+      0% { transform: translateY(0px) rotate(-1.5deg); }
+      100% { transform: translateY(-12px) rotate(1.5deg); }
+    }
+    @keyframes float3DCircleRight {
+      0% { transform: translateY(0px) rotate(1.5deg); }
+      100% { transform: translateY(-12px) rotate(-1.5deg); }
+    }
+    .floating-3d-circle-card:hover {
+      transform: translateY(-8px) scale(1.06);
+      filter: drop-shadow(0 16px 32px rgba(37,99,235,0.3));
+    }
+    .circle-3d-frame {
+      position: relative;
+      width: 185px;
+      height: 185px;
       border-radius: 50%;
-      background: #f8fafc;
-      z-index: 3;
+      filter: drop-shadow(0 14px 28px rgba(15, 23, 42, 0.22));
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .zapvi-ticket::before { left: -10px; }
-    .zapvi-ticket::after { right: -10px; }
-
-    .zapvi-ticket.teal {
-      background: linear-gradient(135deg, #0d9488 0%, #10b981 100%);
-      color: #ffffff;
+    .circle-3d-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+      display: block;
     }
-    .zapvi-ticket.white {
-      background: #ffffff;
-      border: 2px dashed #10b981;
-      color: #0f172a;
+    .circle-3d-caption {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      max-width: 200px;
     }
-    .zapvi-ticket.gold {
-      background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-      color: #ffffff;
-    }
-
-    .zapvi-ticket-tag {
-      font-size: 12px;
+    .circle-badge-pill {
+      font-size: 10.5px;
       font-weight: 800;
-      padding: 4px 14px;
+      padding: 3px 10px;
       border-radius: 20px;
-      display: inline-block;
-      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
-    .zapvi-ticket.teal .zapvi-ticket-tag {
-      background: rgba(255,255,255,0.92);
-      color: #0f766e;
-    }
-    .zapvi-ticket.white .zapvi-ticket-tag {
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
-    }
-    .zapvi-ticket.gold .zapvi-ticket-tag {
-      background: rgba(255,255,255,0.92);
-      color: #b45309;
-    }
-    .zapvi-ticket-title {
-      font-size: 38px;
-      font-weight: 900;
-      line-height: 1.1;
-      margin: 0 0 6px;
-      letter-spacing: -0.5px;
+    .circle-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 4px 0 0 0;
       font-family: 'Outfit', sans-serif;
+      line-height: 1.2;
     }
-    .zapvi-ticket.white .zapvi-ticket-title {
-      color: #047857;
-    }
-    .zapvi-ticket-sub {
-      font-size: 15px;
-      font-weight: 600;
-      opacity: 0.95;
+    .circle-desc {
+      font-size: 12px;
+      color: #475569;
       margin: 0;
+      line-height: 1.35;
     }
-    .zapvi-ticket.white .zapvi-ticket-sub {
-      color: #64748b;
+    body.dark-mode .circle-title {
+      color: #f8fafc;
+    }
+    body.dark-mode .circle-desc {
+      color: #94a3b8;
+    }
+    .mobile-3d-circles-row {
+      display: none;
+    }
+    @media (max-width: 992px) {
+      .top-3d-offers-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .top-3d-center-stage {
+        width: 100%;
+        max-width: 100%;
+      }
+      .floating-3d-circle-card.desktop-only {
+        display: none !important;
+      }
+      .mobile-3d-circles-row {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        margin-top: 10px;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+      .mobile-3d-circles-row .floating-3d-circle-card {
+        flex: 1 1 150px;
+        max-width: 180px;
+      }
+      .mobile-3d-circles-row .circle-3d-frame {
+        width: 130px;
+        height: 130px;
+      }
+      .mobile-3d-circles-row .circle-title {
+        font-size: 12.5px;
+      }
+      .mobile-3d-circles-row .circle-desc {
+        font-size: 11px;
+      }
+    }
+    @media (max-width: 480px) {
+      .mobile-3d-circles-row {
+        gap: 8px;
+      }
+      .mobile-3d-circles-row .floating-3d-circle-card {
+        max-width: 160px;
+      }
+      .mobile-3d-circles-row .circle-3d-frame {
+        width: 118px;
+        height: 118px;
+      }
+      .mobile-3d-circles-row .circle-badge-pill {
+        font-size: 9px;
+        padding: 2px 7px;
+      }
+      .mobile-3d-circles-row .circle-title {
+        font-size: 12px;
+      }
+      .mobile-3d-circles-row .circle-desc {
+        font-size: 10px;
+      }
     }
 
     /* Mobile Responsive Dimensions */
@@ -2660,70 +2727,134 @@
     </span>
   </aside>
 
-  <!-- 3. Zapvi Hero Carousel Stage (Responsive Mobile & PC Dimensions) -->
-  <header class="zapvi-hero-stage" id="zapviHeroCarousel">
-    <div class="zapvi-hero-slider">
-      <!-- Slide 1: Your Books. Your Style. -->
-      <div class="zapvi-hero-slide active" data-slide="0">
-        <div class="zapvi-slide-left">
-          <h1 class="zapvi-slide-title">Your Books.<br>Your Style.</h1>
-          <p class="zapvi-slide-subtitle">Pick from 1000+ textbooks, guides &amp; study essentials made for you.</p>
-          <a href="#section-novels" class="zapvi-slide-btn">Explore Books &rarr;</a>
+  <!-- 3. Top 3D Interactive Offers Showcase (Flanked by 3D Circular Badges on Left & Right) -->
+  <section class="top-3d-offers-showcase" id="topOffersShowcase">
+    <div class="top-3d-offers-container">
+      <!-- Left 3D Circle: ₹1499+ Free Shipping + ₹100 Off (Cartoon Character Opening Gift) -->
+      <div class="floating-3d-circle-card left desktop-only" onclick="focusStoreSearch()" title="Order ₹1499+ for Free Shipping & ₹100 Off">
+        <div class="circle-3d-frame">
+          <img src="images/badge-3d-circle-1499.png" alt="Order ₹1499 Above Free Shipping plus ₹100 Off" class="circle-3d-img">
         </div>
-        <div class="zapvi-slide-right">
-          <picture>
-            <source srcset="images/ad-3d-scooter.webp" type="image/webp">
-            <img class="zapvi-hero-photo" src="images/ad-3d-scooter.png" alt="JK Study Hub Fast Kashmir Delivery">
-          </picture>
-        </div>
-      </div>
-
-      <!-- Slide 2: 100% Free Kashmir Delivery on ₹499+ -->
-      <div class="zapvi-hero-slide" data-slide="1">
-        <div class="zapvi-slide-left">
-          <h1 class="zapvi-slide-title">Free Delivery<br>Orders ₹499+.</h1>
-          <p class="zapvi-slide-subtitle">Enjoy 100% FREE doorstep delivery across all Kashmir districts on orders ₹499 &amp; above. Fast dispatch with COD.</p>
-          <a href="#section-novels" class="zapvi-slide-btn">Order with Free Delivery &rarr;</a>
-        </div>
-        <div class="zapvi-slide-right">
-          <picture>
-            <source srcset="images/books/atomic-habits-1.webp" type="image/webp">
-            <img class="zapvi-hero-photo" src="images/books/atomic-habits-1.jpg" alt="Atomic Habits Best Student Edition">
-          </picture>
+        <div class="circle-3d-caption">
+          <span class="circle-badge-pill" style="background:#7c3aed; color:#ffffff;">
+            <i class="fa-solid fa-gift"></i> VIP OFFER
+          </span>
+          <h3 class="circle-title">Order ₹1499 &amp; Above</h3>
+          <p class="circle-desc"><strong>FREE Shipping</strong> + <strong>₹100 Instant Off</strong></p>
         </div>
       </div>
 
-      <!-- Slide 3: Board Exam Guides & PYQs -->
-      <div class="zapvi-hero-slide" data-slide="2">
-        <div class="zapvi-slide-left">
-          <h1 class="zapvi-slide-title">Class 10th &amp; 12th<br>Solved PYQs.</h1>
-          <p class="zapvi-slide-subtitle">JKBOSE exam preparation sets, solved question papers &amp; toppers revision notes.</p>
-          <a href="#section-novels" class="zapvi-slide-btn">View Guides &rarr;</a>
+      <!-- Center Stage: Hero Carousel -->
+      <div class="top-3d-center-stage">
+        <header class="zapvi-hero-stage" id="zapviHeroCarousel">
+          <div class="zapvi-hero-slider">
+            <!-- Slide 1: Your Books. Your Style. -->
+            <div class="zapvi-hero-slide active" data-slide="0">
+              <div class="zapvi-slide-left">
+                <h1 class="zapvi-slide-title">Your Books.<br>Your Style.</h1>
+                <p class="zapvi-slide-subtitle">Pick from 1000+ textbooks, guides &amp; study essentials made for you.</p>
+                <a href="#section-novels" class="zapvi-slide-btn">Explore Books &rarr;</a>
+              </div>
+              <div class="zapvi-slide-right">
+                <picture>
+                  <source srcset="images/ad-3d-scooter.webp" type="image/webp">
+                  <img class="zapvi-hero-photo" src="images/ad-3d-scooter.png" alt="JK Study Hub Fast Kashmir Delivery">
+                </picture>
+              </div>
+            </div>
+
+            <!-- Slide 2: 100% Free Kashmir Delivery on ₹499+ -->
+            <div class="zapvi-hero-slide" data-slide="1">
+              <div class="zapvi-slide-left">
+                <h1 class="zapvi-slide-title">Free Delivery<br>Orders ₹499+.</h1>
+                <p class="zapvi-slide-subtitle">Enjoy 100% FREE doorstep delivery across all Kashmir districts on orders ₹499 &amp; above. Fast dispatch with COD.</p>
+                <a href="#section-novels" class="zapvi-slide-btn">Order with Free Delivery &rarr;</a>
+              </div>
+              <div class="zapvi-slide-right">
+                <picture>
+                  <source srcset="images/books/atomic-habits-1.webp" type="image/webp">
+                  <img class="zapvi-hero-photo" src="images/books/atomic-habits-1.jpg" alt="Atomic Habits Best Student Edition">
+                </picture>
+              </div>
+            </div>
+
+            <!-- Slide 3: Board Exam Guides & PYQs -->
+            <div class="zapvi-hero-slide" data-slide="2">
+              <div class="zapvi-slide-left">
+                <h1 class="zapvi-slide-title">Class 10th &amp; 12th<br>Solved PYQs.</h1>
+                <p class="zapvi-slide-subtitle">JKBOSE exam preparation sets, solved question papers &amp; toppers revision notes.</p>
+                <a href="#section-novels" class="zapvi-slide-btn">View Guides &rarr;</a>
+              </div>
+              <div class="zapvi-slide-right">
+                <picture>
+                  <source srcset="images/books/lucent-gk-1.webp" type="image/webp">
+                  <img class="zapvi-hero-photo" src="images/books/lucent-gk-1.jpg" alt="Lucent GK and Exam Revision">
+                </picture>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carousel Circular Arrows -->
+          <button type="button" class="zapvi-carousel-arrow prev" onclick="prevZapviSlide()" title="Previous slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button type="button" class="zapvi-carousel-arrow next" onclick="nextZapviSlide()" title="Next slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <!-- Carousel Indicator Dots -->
+          <div class="zapvi-carousel-dots">
+            <span class="zapvi-carousel-dot active" onclick="setZapviSlide(0)"></span>
+            <span class="zapvi-carousel-dot" onclick="setZapviSlide(1)"></span>
+            <span class="zapvi-carousel-dot" onclick="setZapviSlide(2)"></span>
+          </div>
+        </header>
+      </div>
+
+      <!-- Right 3D Circle: ₹499+ Free Shipping across Kashmir (Cartoon Mascot Delivery) -->
+      <div class="floating-3d-circle-card right desktop-only" onclick="focusStoreSearch()" title="Order ₹499+ for Free Shipping across Kashmir">
+        <div class="circle-3d-frame">
+          <img src="images/badge-3d-circle-499.png" alt="Order ₹499 Above Free Shipping across Kashmir" class="circle-3d-img">
         </div>
-        <div class="zapvi-slide-right">
-          <picture>
-            <source srcset="images/books/lucent-gk-1.webp" type="image/webp">
-            <img class="zapvi-hero-photo" src="images/books/lucent-gk-1.jpg" alt="Lucent GK and Exam Revision">
-          </picture>
+        <div class="circle-3d-caption">
+          <span class="circle-badge-pill" style="background:#0284c7; color:#ffffff;">
+            <i class="fa-solid fa-truck-fast"></i> KASHMIR SPECIAL
+          </span>
+          <h3 class="circle-title">Order ₹499 &amp; Above</h3>
+          <p class="circle-desc"><strong>100% FREE Shipping</strong> across Kashmir</p>
         </div>
       </div>
     </div>
 
-    <!-- Carousel Circular Arrows -->
-    <button type="button" class="zapvi-carousel-arrow prev" onclick="prevZapviSlide()" title="Previous slide">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-    <button type="button" class="zapvi-carousel-arrow next" onclick="nextZapviSlide()" title="Next slide">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
+    <!-- Mobile 2-Column Floating 3D Circles Row (Shown on Phones & Tablets) -->
+    <div class="mobile-3d-circles-row">
+      <div class="floating-3d-circle-card left" onclick="focusStoreSearch()">
+        <div class="circle-3d-frame">
+          <img src="images/badge-3d-circle-1499.png" alt="Order ₹1499 Above Free Shipping plus ₹100 Off" class="circle-3d-img">
+        </div>
+        <div class="circle-3d-caption">
+          <span class="circle-badge-pill" style="background:#7c3aed; color:#ffffff;">
+            <i class="fa-solid fa-gift"></i> VIP OFFER
+          </span>
+          <h3 class="circle-title">₹1499 &amp; Above</h3>
+          <p class="circle-desc">Free Delivery + ₹100 Off</p>
+        </div>
+      </div>
 
-    <!-- Carousel Indicator Dots -->
-    <div class="zapvi-carousel-dots">
-      <span class="zapvi-carousel-dot active" onclick="setZapviSlide(0)"></span>
-      <span class="zapvi-carousel-dot" onclick="setZapviSlide(1)"></span>
-      <span class="zapvi-carousel-dot" onclick="setZapviSlide(2)"></span>
+      <div class="floating-3d-circle-card right" onclick="focusStoreSearch()">
+        <div class="circle-3d-frame">
+          <img src="images/badge-3d-circle-499.png" alt="Order ₹499 Above Free Shipping across Kashmir" class="circle-3d-img">
+        </div>
+        <div class="circle-3d-caption">
+          <span class="circle-badge-pill" style="background:#0284c7; color:#ffffff;">
+            <i class="fa-solid fa-truck-fast"></i> KASHMIR SPECIAL
+          </span>
+          <h3 class="circle-title">₹499 &amp; Above</h3>
+          <p class="circle-desc">100% Free Shipping</p>
+        </div>
+      </div>
     </div>
-  </header>
+  </section>
 
   <!-- 4. Featured Category Cards Row (Zapvi Style) -->
   <section class="zapvi-category-strip">
@@ -2784,32 +2915,6 @@
     </a>
   </section>
 
-  <!-- 5. Zapvi Offers & Deals Section (Ticket Cutouts) -->
-  <section class="zapvi-offers-section" id="offers">
-    <div class="zapvi-offers-heading">Offers &amp; Deals</div>
-    <div class="zapvi-tickets-wrap">
-      <!-- Ticket 1: Free Shipping -->
-      <div class="zapvi-ticket teal">
-        <span class="zapvi-ticket-tag">ORDER ₹399 &amp; ABOVE</span>
-        <h2 class="zapvi-ticket-title">FREE SHIPPING</h2>
-        <p class="zapvi-ticket-sub">All over Kashmir &middot; under ₹399 it's ₹40</p>
-      </div>
-
-      <!-- Ticket 2: Auto Applied -->
-      <div class="zapvi-ticket white">
-        <span class="zapvi-ticket-tag">NO COUPON NEEDED</span>
-        <h2 class="zapvi-ticket-title">AUTO APPLIED</h2>
-        <p class="zapvi-ticket-sub">Applied automatically at checkout</p>
-      </div>
-
-      <!-- Ticket 3: Extra Rs 100 Off -->
-      <div class="zapvi-ticket gold">
-        <span class="zapvi-ticket-tag">ORDER ₹599 &amp; ABOVE</span>
-        <h2 class="zapvi-ticket-title">EXTRA ₹100 OFF</h2>
-        <p class="zapvi-ticket-sub">+ FREE shipping &middot; on your order</p>
-      </div>
-    </div>
-  </section>
 
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
     

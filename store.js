@@ -10365,7 +10365,7 @@ if (typeof document !== 'undefined') {
 
 function openZapviOffersModal(e) {
   if (e) e.preventDefault();
-  const offersEl = document.getElementById('offers');
+  const offersEl = document.getElementById('topOffersShowcase') || document.getElementById('offers');
   if (offersEl) {
     offersEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     offersEl.style.transition = 'transform 0.3s ease';
