@@ -829,9 +829,30 @@
               </div>
 
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-hub-secondary" onclick="exportSellerPricesJson()" style="font-size: 12px; color: #166534; border-color: #bbf7d0; background: #f0fdf4;" title="Download current rates as prices.json">
+                  <i class="fa-solid fa-download"></i> Download prices.json
+                </button>
+                <button type="button" class="btn-hub-secondary" onclick="copySellerPricesJson()" style="font-size: 12px; color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff;" title="Copy rates as JSON">
+                  <i class="fa-solid fa-copy"></i> Copy JSON
+                </button>
+                <label class="btn-hub-secondary" style="font-size: 12px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 6px;" title="Upload an edited prices.json file">
+                  <i class="fa-solid fa-upload"></i> Upload prices.json
+                  <input type="file" id="importPricesJsonInput" accept=".json" onchange="importSellerPricesJson(this)" style="display: none;">
+                </label>
                 <button type="button" class="btn-hub-secondary" onclick="resetAllSellerPricesToDefault()" style="font-size: 12px; color: #dc2626; border-color: #fecaca; background: #fff5f5;">
                   <i class="fa-solid fa-rotate-left"></i> Reset All to Default
                 </button>
+              </div>
+            </div>
+
+            <!-- No-Code Helper Callout Banner -->
+            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px dashed #86efac; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: #166534;">
+                <i class="fa-solid fa-bolt" style="font-size: 16px; color: #16a34a;"></i>
+                <span><strong>Instant No-Code Price Updates:</strong> Edit any price or MRP directly in the table below and click <strong style="color:#0f172a;">Save</strong>. OR edit the file <code style="background:#dcfce7; padding:2px 6px; border-radius:4px; font-weight:700; color:#14532d;">prices.json</code> in your project folder anytime!</span>
+              </div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #047857;">
+                <i class="fa-solid fa-shield-check"></i> Zero Code Knowledge Required
               </div>
             </div>
 

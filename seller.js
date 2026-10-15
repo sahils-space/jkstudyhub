@@ -2926,6 +2926,7 @@ function initSellerSupplierPanel() {
   if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
   if (typeof initSellerRealtimeCatalog === 'function') initSellerRealtimeCatalog();
   if (typeof initSellerRealtimePriceSync === 'function') initSellerRealtimePriceSync();
+  if (typeof syncSellerPricesFromJsonFile === 'function') syncSellerPricesFromJsonFile();
   syncSellerWithGoogleSheets(false);
 }
 
@@ -3229,10 +3230,12 @@ function resolveSellerMrpOverride(mrpOverrides, name) {
   return undefined;
 }
 
-function onSellerPriceOrMrpInput(index) {
-  const pInput = document.getElementById(`seller-price-${index}`);
-  const mInput = document.getElementById(`seller-mrp-${index}`);
-  const badge = document.getElementById(`seller-disc-badge-${index}`);
+function onSellerPriceOrMrpInputRow(inputEl) {
+  const tr = inputEl.closest('tr');
+  if (!tr) return;
+  const pInput = tr.querySelector('.seller-price-input');
+  const mInput = tr.querySelector('.seller-mrp-input');
+  const badge = tr.querySelector('.seller-disc-badge');
   if (!pInput || !mInput || !badge) return;
   const p = Number(pInput.value) || 0;
   const m = Number(mInput.value) || 0;
@@ -3242,6 +3245,11 @@ function onSellerPriceOrMrpInput(index) {
   } else {
     badge.innerText = `0%`;
   }
+}
+
+function onSellerPriceOrMrpInput(index) {
+  const pInput = document.getElementById(`seller-price-${index}`);
+  if (pInput) onSellerPriceOrMrpInputRow(pInput);
 }
 
 function renderSellerPricingTable() {
@@ -3279,12 +3287,12 @@ function renderSellerPricingTable() {
     const isCustom = isCustomPrice || isCustomMrp;
     const discountPct = Math.max(0, Math.round(((currentMrp - currentPrice) / currentMrp) * 100));
 
-    const safeEscapedName = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const encodedName = encodeURIComponent(p.name);
 
     html += `
-      <tr style="${isCustom ? 'background: #f0fdf4;' : ''}">
+      <tr data-product-name="${encodedName}" style="${isCustom ? 'background: #f0fdf4;' : ''}">
         <td>
-          <img src="${p.image}" alt="${p.name}" onerror="this.src='images/logo-app.png'" style="width: 38px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">
+          <img src="${p.image}" alt="${p.name.replace(/"/g, '&quot;')}" onerror="this.src='images/logo-app.png'" style="width: 38px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">
         </td>
         <td>
           <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${p.name}</div>
@@ -3307,9 +3315,9 @@ function renderSellerPricingTable() {
         <td>
           <div style="display: flex; align-items: center; gap: 4px;">
             <span style="font-size: 13px; font-weight: 700; color: #64748b;">₹</span>
-            <input type="number" id="seller-mrp-${index}" value="${currentMrp}" min="1" step="1" 
-                   oninput="onSellerPriceOrMrpInput(${index})"
-                   onkeydown="if(event.key==='Enter') saveSellerProductPrice('${safeEscapedName}', ${index})"
+            <input type="number" class="seller-mrp-input" id="seller-mrp-${index}" value="${currentMrp}" min="1" step="1" 
+                   oninput="onSellerPriceOrMrpInputRow(this)"
+                   onkeydown="if(event.key==='Enter') saveSellerProductPriceFromRow(this)"
                    style="width: 80px; padding: 5px 8px; border: 1.5px solid ${isCustomMrp ? '#3b82f6' : '#cbd5e1'}; border-radius: 6px; font-weight: 700; font-size: 13px; color: #475569;"
                    placeholder="MRP">
           </div>
@@ -3317,25 +3325,25 @@ function renderSellerPricingTable() {
         <td>
           <div style="display: flex; align-items: center; gap: 4px;">
             <span style="font-size: 14px; font-weight: 800; color: #0f172a;">₹</span>
-            <input type="number" id="seller-price-${index}" value="${currentPrice}" min="1" step="1" 
-                   oninput="onSellerPriceOrMrpInput(${index})"
-                   onkeydown="if(event.key==='Enter') saveSellerProductPrice('${safeEscapedName}', ${index})"
+            <input type="number" class="seller-price-input" id="seller-price-${index}" value="${currentPrice}" min="1" step="1" 
+                   oninput="onSellerPriceOrMrpInputRow(this)"
+                   onkeydown="if(event.key==='Enter') saveSellerProductPriceFromRow(this)"
                    style="width: 85px; padding: 5px 8px; border: 1.5px solid ${isCustomPrice ? '#22c55e' : '#cbd5e1'}; border-radius: 6px; font-weight: 800; font-size: 14px; color: #0f172a;"
                    placeholder="Price">
           </div>
         </td>
         <td>
-          <span id="seller-disc-badge-${index}" style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 7px; border-radius: 4px;">
+          <span class="seller-disc-badge" id="seller-disc-badge-${index}" style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 7px; border-radius: 4px;">
             Save ${discountPct}%
           </span>
         </td>
         <td style="text-align: center;">
           <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
-            <button type="button" class="btn-hub-primary" onclick="saveSellerProductPrice('${safeEscapedName}', ${index})" style="padding: 5px 10px; font-size: 12px; font-weight: 700; border-radius: 6px;">
+            <button type="button" class="btn-hub-primary seller-save-btn" onclick="saveSellerProductPriceFromRow(this)" style="padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; transition: all 0.2s ease; cursor: pointer;">
               <i class="fa-solid fa-floppy-disk"></i> Save
             </button>
             ${isCustom ? `
-              <button type="button" onclick="resetSingleSellerProductPrice('${safeEscapedName}')" title="Reset to default ₹${p.defaultPrice}" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 11px; text-decoration: underline; padding: 2px;">
+              <button type="button" onclick="resetSingleSellerProductPriceFromRow(this)" title="Reset to default ₹${p.defaultPrice}" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 11px; text-decoration: underline; padding: 2px;">
                 Reset
               </button>
             ` : ''}
@@ -3352,10 +3360,16 @@ function filterPricingProductsTable() {
   renderSellerPricingTable();
 }
 
-async function saveSellerProductPrice(productName, index) {
-  const priceInput = document.getElementById(`seller-price-${index}`);
-  const mrpInput = document.getElementById(`seller-mrp-${index}`);
-  if (!priceInput) return;
+async function saveSellerProductPriceFromRow(triggerEl) {
+  const tr = triggerEl.closest('tr');
+  if (!tr) return;
+  const rawName = tr.getAttribute('data-product-name') || '';
+  const productName = decodeURIComponent(rawName);
+  const priceInput = tr.querySelector('.seller-price-input');
+  const mrpInput = tr.querySelector('.seller-mrp-input');
+  const saveBtn = tr.querySelector('.seller-save-btn') || triggerEl;
+
+  if (!productName || !priceInput) return;
 
   const newPrice = Number(priceInput.value);
   if (isNaN(newPrice) || newPrice <= 0) {
@@ -3371,104 +3385,139 @@ async function saveSellerProductPrice(productName, index) {
     newMrp = newPrice;
   }
 
-  // 1. Save locally to localStorage for immediate zero-latency feedback
-  const priceOverrides = getSellerCustomPriceOverrides();
-  priceOverrides[productName] = newPrice;
-  localStorage.setItem('jk_custom_prices', JSON.stringify(priceOverrides));
+  // Visual indication on button
+  const originalBtnHtml = saveBtn.innerHTML;
+  saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  saveBtn.disabled = true;
 
-  const mrpOverrides = getSellerCustomMrpOverrides();
-  mrpOverrides[productName] = newMrp;
-  localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+  try {
+    // 1. Save locally to localStorage
+    const priceOverrides = getSellerCustomPriceOverrides();
+    priceOverrides[productName] = newPrice;
+    localStorage.setItem('jk_custom_prices', JSON.stringify(priceOverrides));
 
-  // 2. Broadcast to Firebase Firestore for ALL store visitors in real time
-  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
-    try {
-      const db = firebase.firestore();
-      
-      // A. Write to price_overrides collection
-      await db.collection('price_overrides').doc(safeDocId).set({
-        name: productName,
-        price: newPrice,
-        mrp: newMrp,
-        updatedAt: Date.now()
-      }, { merge: true });
+    const mrpOverrides = getSellerCustomMrpOverrides();
+    mrpOverrides[productName] = newMrp;
+    localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
 
-      // B. Also update published_catalog doc if this product was uploaded via catalogue
-      const catQuery = await db.collection('published_catalog').where('name', '==', productName).get();
-      if (!catQuery.empty) {
-        catQuery.forEach(docSnap => {
-          docSnap.ref.update({
-            price: newPrice,
-            mrp: newMrp,
-            updatedAt: Date.now()
-          }).catch(e => console.warn("Doc update notice:", e));
-        });
+    // Dispatch cross-tab storage event so all storefront tabs update immediately
+    window.dispatchEvent(new Event('storage'));
+
+    // 2. Broadcast to Firebase Firestore for ALL store visitors in real time
+    const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+      try {
+        const db = firebase.firestore();
+        await db.collection('price_overrides').doc(safeDocId).set({
+          name: productName,
+          price: newPrice,
+          mrp: newMrp,
+          updatedAt: Date.now()
+        }, { merge: true });
+
+        const catQuery = await db.collection('published_catalog').where('name', '==', productName).get();
+        if (!catQuery.empty) {
+          catQuery.forEach(docSnap => {
+            docSnap.ref.update({
+              price: newPrice,
+              mrp: newMrp,
+              updatedAt: Date.now()
+            }).catch(e => console.warn("Doc update notice:", e));
+          });
+        }
+      } catch(err) {
+        console.warn("[Firestore] Price override push notice:", err);
       }
-      console.log(`[Firestore] Successfully published price override for "${productName}": ₹${newPrice} (MRP ₹${newMrp})`);
-    } catch(err) {
-      console.warn("[Firestore] Price override push notice:", err);
     }
+
+    // 3. Dispatch to Google Sheets Apps Script endpoint (Guaranteed Cloud Sheet Persistence)
+    try {
+      const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
+      const postData = new URLSearchParams();
+      postData.append('order_id', 'OD-PRICE-OVERRIDE');
+      postData.append('name', productName);
+      postData.append('phone', String(newPrice));
+      postData.append('address', String(newMrp));
+      postData.append('product', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
+      postData.append('amount', String(newPrice));
+      postData.append('txn_id', 'PRICE_OVERRIDE');
+      postData.append('status', 'Active');
+      postData.append('notes', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
+
+      fetch(endpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: postData
+      }).catch(e => console.warn("Google Sheet price sync notice:", e));
+    } catch(e) {}
+
+    // 4. Update in local catalogs if present
+    try {
+      let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+      cat.forEach(item => {
+        if (item.name === productName || item.title === productName) {
+          item.price = newPrice;
+          item.mrp = newMrp;
+        }
+      });
+      localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
+    } catch(e) {}
+
+    // Button success state
+    saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+    saveBtn.style.background = '#16a34a';
+    saveBtn.style.color = '#ffffff';
+
+    // Show top feedback message
+    const msgEl = document.getElementById('pricingFeedbackMessage');
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Saved &amp; Live!</strong> "${productName}" is now <strong>₹${newPrice}</strong> (MRP: ₹${newMrp}).`;
+      setTimeout(() => { if (msgEl) msgEl.style.display = 'none'; }, 5000);
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(`✅ Price & MRP Live: "${productName}" is ₹${newPrice} (MRP ₹${newMrp})!`);
+    }
+
+    setTimeout(() => {
+      saveBtn.innerHTML = originalBtnHtml;
+      saveBtn.style.background = '';
+      saveBtn.style.color = '';
+      saveBtn.disabled = false;
+      renderSellerPricingTable();
+    }, 1200);
+
+  } catch(err) {
+    console.error("Error saving seller price:", err);
+    saveBtn.innerHTML = originalBtnHtml;
+    saveBtn.disabled = false;
+    alert("Could not save price: " + err.message);
   }
+}
 
-  // 3. Dispatch to Google Sheets Apps Script endpoint (Guaranteed Cloud Sheet Persistence)
-  try {
-    const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
-    
-    const postData = new URLSearchParams();
-    postData.append('order_id', 'OD-PRICE-OVERRIDE');
-    postData.append('name', productName);
-    postData.append('phone', String(newPrice));
-    postData.append('address', String(newMrp));
-    postData.append('product', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
-    postData.append('amount', String(newPrice));
-    postData.append('txn_id', 'PRICE_OVERRIDE');
-    postData.append('status', 'Active');
-    postData.append('notes', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
-
-    fetch(endpoint, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: postData
-    }).catch(e => console.warn("Google Sheet price sync notice:", e));
-  } catch(e) {}
-
-  // Also update in local catalogs if present
-  try {
-    let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-    cat.forEach(item => {
-      if (item.name === productName || item.title === productName) {
-        item.price = newPrice;
-        item.mrp = newMrp;
-      }
-    });
-    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
-  } catch(e) {}
-
-  try {
-    let prods = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
-    prods.forEach(item => {
-      if (item.name === productName || item.title === productName) {
-        item.price = newPrice;
-        item.mrp = newMrp;
-      }
-    });
-    localStorage.setItem('jk_custom_products', JSON.stringify(prods));
-  } catch(e) {}
-
-  // Show feedback
-  const msgEl = document.getElementById('pricingFeedbackMessage');
-  if (msgEl) {
-    msgEl.style.display = 'block';
-    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved &amp; Live! "${productName}" is now <strong>₹${newPrice}</strong> (MRP: ₹${newMrp}).`;
-    setTimeout(() => { msgEl.style.display = 'none'; }, 5000);
+// Backwards-compatible save wrapper
+async function saveSellerProductPrice(productName, index) {
+  const pInput = document.getElementById(`seller-price-${index}`);
+  if (pInput) {
+    saveSellerProductPriceFromRow(pInput);
+  } else {
+    // Direct fallback if called programmatically
+    const priceOverrides = getSellerCustomPriceOverrides();
+    const mrpOverrides = getSellerCustomMrpOverrides();
+    priceOverrides[productName] = Number(priceOverrides[productName] || 199);
+    localStorage.setItem('jk_custom_prices', JSON.stringify(priceOverrides));
+    renderSellerPricingTable();
   }
+}
 
-  if (typeof showToast === 'function') {
-    showToast(`✅ Price & MRP Live: ${productName} is ₹${newPrice} (MRP ₹${newMrp})!`);
-  }
-
-  renderSellerPricingTable();
+async function resetSingleSellerProductPriceFromRow(triggerEl) {
+  const tr = triggerEl.closest('tr');
+  if (!tr) return;
+  const rawName = tr.getAttribute('data-product-name') || '';
+  const productName = decodeURIComponent(rawName);
+  if (!productName) return;
+  await resetSingleSellerProductPrice(productName);
 }
 
 async function resetSingleSellerProductPrice(productName) {
@@ -3478,6 +3527,7 @@ async function resetSingleSellerProductPrice(productName) {
   delete mrpOverrides[productName];
   localStorage.setItem('jk_custom_prices', JSON.stringify(overrides));
   localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+  window.dispatchEvent(new Event('storage'));
 
   // Remove from Firestore
   const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
@@ -3494,6 +3544,141 @@ async function resetSingleSellerProductPrice(productName) {
     showToast(`Restored default price & MRP for ${productName}.`);
   }
   renderSellerPricingTable();
+}
+
+// --- ZERO-CODE PRICING UTILITIES (Export, Import, Copy JSON) ---
+
+function exportSellerPricesJson() {
+  const products = getAllSellerPricingProducts();
+  const overrides = getSellerCustomPriceOverrides();
+  const mrpOverrides = getSellerCustomMrpOverrides();
+
+  const pricesObj = {};
+  const mrpsObj = {};
+
+  products.forEach(p => {
+    const resolvedP = resolveSellerPriceOverride(overrides, p.name);
+    const price = (resolvedP !== undefined) ? resolvedP : p.defaultPrice;
+
+    const resolvedM = resolveSellerMrpOverride(mrpOverrides, p.name);
+    const mrp = (resolvedM !== undefined) ? resolvedM : (p.mrp || Math.round(price * 1.3));
+
+    pricesObj[p.name] = price;
+    mrpsObj[p.name] = mrp;
+  });
+
+  const exportData = {
+    "_comment": "JK STUDY HUB - ZERO-CODE PRICE & MRP CONFIGURATION. Edit any price or MRP below directly. Changes apply across the entire store, cart, and checkout.",
+    "lastUpdated": new Date().toISOString(),
+    "prices": pricesObj,
+    "mrps": mrpsObj
+  };
+
+  const jsonStr = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'prices.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  if (typeof showToast === 'function') {
+    showToast("✅ Downloaded latest prices.json! Place this in your repository root.");
+  }
+}
+
+function copySellerPricesJson() {
+  const products = getAllSellerPricingProducts();
+  const overrides = getSellerCustomPriceOverrides();
+  const mrpOverrides = getSellerCustomMrpOverrides();
+
+  const pricesObj = {};
+  const mrpsObj = {};
+
+  products.forEach(p => {
+    const resolvedP = resolveSellerPriceOverride(overrides, p.name);
+    const price = (resolvedP !== undefined) ? resolvedP : p.defaultPrice;
+
+    const resolvedM = resolveSellerMrpOverride(mrpOverrides, p.name);
+    const mrp = (resolvedM !== undefined) ? resolvedM : (p.mrp || Math.round(price * 1.3));
+
+    pricesObj[p.name] = price;
+    mrpsObj[p.name] = mrp;
+  });
+
+  const exportData = {
+    "_comment": "JK STUDY HUB - ZERO-CODE PRICE & MRP CONFIGURATION",
+    "lastUpdated": new Date().toISOString(),
+    "prices": pricesObj,
+    "mrps": mrpsObj
+  };
+
+  navigator.clipboard.writeText(JSON.stringify(exportData, null, 2)).then(() => {
+    if (typeof showToast === 'function') {
+      showToast("📋 Copied entire prices.json configuration to clipboard!");
+    } else {
+      alert("Copied entire prices.json configuration to clipboard!");
+    }
+  }).catch(() => {
+    alert("Please allow clipboard access to copy JSON.");
+  });
+}
+
+function importSellerPricesJson(fileInput) {
+  if (!fileInput.files || !fileInput.files[0]) return;
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.prices && !data.mrps) {
+        alert("Invalid prices.json format. The file must contain 'prices' and/or 'mrps' objects.");
+        return;
+      }
+      const existingPrices = getSellerCustomPriceOverrides();
+      const existingMrps = getSellerCustomMrpOverrides();
+      const newPrices = { ...existingPrices, ...(data.prices || {}) };
+      const newMrps = { ...existingMrps, ...(data.mrps || {}) };
+
+      localStorage.setItem('jk_custom_prices', JSON.stringify(newPrices));
+      localStorage.setItem('jk_custom_mrps', JSON.stringify(newMrps));
+      window.dispatchEvent(new Event('storage'));
+
+      renderSellerPricingTable();
+      if (typeof showToast === 'function') {
+        showToast(`✅ Successfully imported prices for ${Object.keys(data.prices || {}).length} products!`);
+      } else {
+        alert(`Successfully imported prices for ${Object.keys(data.prices || {}).length} products!`);
+      }
+    } catch(err) {
+      alert("Error reading prices.json: " + err.message);
+    }
+    fileInput.value = '';
+  };
+  reader.readAsText(file);
+}
+
+async function syncSellerPricesFromJsonFile() {
+  try {
+    const res = await fetch('prices.json?t=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      if (data && (data.prices || data.mrps)) {
+        const curPrices = getSellerCustomPriceOverrides();
+        const curMrps = getSellerCustomMrpOverrides();
+        const mergedPrices = { ...(data.prices || {}), ...curPrices };
+        const mergedMrps = { ...(data.mrps || {}), ...curMrps };
+        localStorage.setItem('jk_custom_prices', JSON.stringify(mergedPrices));
+        localStorage.setItem('jk_custom_mrps', JSON.stringify(mergedMrps));
+        if (typeof renderSellerPricingTable === 'function') {
+          renderSellerPricingTable();
+        }
+      }
+    }
+  } catch(e) {}
 }
 
 async function resetAllSellerPricesToDefault() {

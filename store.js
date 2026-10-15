@@ -890,6 +890,20 @@ function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps) {
   }
 }
 
+async function syncPricesFromJsonFile() {
+  try {
+    const res = await fetch('prices.json?t=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      if (data && (data.prices || data.mrps)) {
+        applyLivePriceAndMrpOverrides(data.prices || {}, data.mrps || {});
+      }
+    }
+  } catch(e) {
+    // Offline or file system mode fallback
+  }
+}
+
 function applyCustomPricesToStorefront() {
   try {
     const rawPrices = localStorage.getItem('jk_custom_prices');
@@ -898,6 +912,8 @@ function applyCustomPricesToStorefront() {
     const mrpMap = rawMrps ? JSON.parse(rawMrps) : {};
     applyLivePriceAndMrpOverrides(priceMap, mrpMap);
   } catch(e) {}
+  // Also fetch any zero-code price modifications from prices.json
+  syncPricesFromJsonFile();
 }
 
 // District & PIN Code Delivery and COD Rates (All 20 J&K Districts)
@@ -2122,28 +2138,31 @@ function renderCartPage() {
     totalQty += q;
   });
 
+  const autoDiscount = (subtotal >= 1499) ? 100 : 0;
   const qualifiesFreeShipping = (subtotal >= 499);
+  const qualifies1499Offer = (subtotal >= 1499);
   const diffToFree = Math.max(0, 499 - subtotal);
-  const progressPercent = Math.min(100, Math.round((subtotal / 499) * 100));
+  const diffTo1499 = Math.max(0, 1499 - subtotal);
+  const progressPercent = qualifies1499Offer ? 100 : (qualifiesFreeShipping ? Math.min(100, Math.round((subtotal / 1499) * 100)) : Math.min(100, Math.round((subtotal / 499) * 100)));
 
   let itemsHtml = `
-    <!-- Dynamic Kashmir ₹499+ Free Shipping Progress Strip -->
-    <div style="background: ${qualifiesFreeShipping ? '#f0fdf4' : '#eff6ff'}; border: 1.5px solid ${qualifiesFreeShipping ? '#86efac' : '#bfdbfe'}; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+    <!-- Dynamic Kashmir ₹499+ & ₹1499+ Offers Progress Strip -->
+    <div style="background: ${qualifies1499Offer ? '#f0fdf4' : (qualifiesFreeShipping ? '#f0fdf4' : '#eff6ff')}; border: 1.5px solid ${qualifies1499Offer ? '#22c55e' : (qualifiesFreeShipping ? '#86efac' : '#bfdbfe')}; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifiesFreeShipping ? '#166534' : '#1e40af'};">
-          <i class="fa-solid fa-truck-fast"></i>
-          <span>${qualifiesFreeShipping ? '🎉 Congratulations! You unlocked FREE Delivery across Kashmir!' : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> more to unlock FREE Delivery across Kashmir!`}</span>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifies1499Offer ? '#15803d' : (qualifiesFreeShipping ? '#166534' : '#1e40af')};">
+          <i class="fa-solid fa-gift" style="font-size: 16px; color: ${qualifies1499Offer ? '#16a34a' : '#2563eb'};"></i>
+          <span>${qualifies1499Offer ? '🎉 <strong>Mega Offer Applied:</strong> FREE Shipping + <strong>₹100 Instant Discount</strong> active on this order!' : (qualifiesFreeShipping ? `🚚 FREE Delivery unlocked! Add <strong style="color:#b45309;">₹${diffTo1499}</strong> more to unlock an extra <strong>₹100 OFF</strong>!` : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> more to unlock FREE Delivery across Kashmir!`)}</span>
         </div>
-        <span style="font-size: 11.5px; background: ${qualifiesFreeShipping ? '#22c55e' : '#2563eb'}; color: white; font-weight: 800; padding: 3px 10px; border-radius: 20px;">
-          ${qualifiesFreeShipping ? 'FREE SHIPPING UNLOCKED' : `${progressPercent}% COMPLETED`}
+        <span style="font-size: 11.5px; background: ${qualifies1499Offer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : '#2563eb')}; color: white; font-weight: 800; padding: 3px 10px; border-radius: 20px;">
+          ${qualifies1499Offer ? '₹100 OFF + FREE DELIVERY' : (qualifiesFreeShipping ? 'FREE DELIVERY UNLOCKED' : `${progressPercent}% COMPLETED`)}
         </span>
       </div>
       <div style="width: 100%; height: 7px; background: ${qualifiesFreeShipping ? '#dcfce7' : '#dbeafe'}; border-radius: 10px; overflow: hidden;">
-        <div style="width: ${progressPercent}%; height: 100%; background: ${qualifiesFreeShipping ? '#16a34a' : 'linear-gradient(90deg, #3b82f6, #2563eb)'}; border-radius: 10px; transition: width 0.4s ease;"></div>
+        <div style="width: ${progressPercent}%; height: 100%; background: ${qualifies1499Offer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : 'linear-gradient(90deg, #3b82f6, #2563eb)')}; border-radius: 10px; transition: width 0.4s ease;"></div>
       </div>
       <div style="font-size: 11px; color: #64748b; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
-        <span>Free delivery threshold: <strong>₹499 (Kashmir Division)</strong></span>
-        <span>Standard: ₹40-₹55</span>
+        <span>Free delivery: <strong>₹499+</strong> • Mega Savings: <strong>₹1499+ (₹100 OFF)</strong></span>
+        <span>${qualifies1499Offer ? '<strong style="color:#16a34a;">₹100 Saved!</strong>' : 'Standard Delivery: ₹40-₹55'}</span>
       </div>
     </div>
   `;
@@ -2197,14 +2216,26 @@ function renderCartPage() {
   const subtotalEl = document.getElementById('summarySubtotal');
   if (subtotalEl) subtotalEl.innerText = '₹' + subtotal;
 
+  const discountRow = document.getElementById('cartAutoDiscountRow');
+  const discountAmtEl = document.getElementById('cartAutoDiscountAmount');
+  if (discountRow) {
+    if (autoDiscount > 0) {
+      discountRow.style.display = 'flex';
+      if (discountAmtEl) discountAmtEl.innerText = '-₹' + autoDiscount;
+    } else {
+      discountRow.style.display = 'none';
+    }
+  }
+
+  const finalCartTotal = Math.max(0, subtotal - autoDiscount + 5);
   const totalEl = document.getElementById('summaryTotal');
-  if (totalEl) totalEl.innerText = '₹' + (subtotal + 5);
+  if (totalEl) totalEl.innerText = '₹' + finalCartTotal;
 
   const itemsCountText = document.getElementById('summaryItemsCount');
   if (itemsCountText) itemsCountText.innerText = `Price (${totalQty} items)`;
 
   const checkoutBtn = document.getElementById('proceedCheckoutBtn');
-  if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${subtotal + 5}) ➔`;
+  if (checkoutBtn) checkoutBtn.innerText = `Proceed to Checkout (₹${finalCartTotal}) ➔`;
 }
 
 // --- RENDER DEDICATED WISHLIST PAGE (account.html#wishlist) ---
@@ -4734,10 +4765,11 @@ function setupCheckoutModal(name, price, category) {
   currentCheckoutPrice = price;
   currentCheckoutCategory = category;
 
+  const autoDiscount = (Number(price) >= 1499) ? 100 : 0;
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
-  const totalAmount = price + deliveryFee + platformFee;
+  const totalAmount = Math.max(0, price - autoDiscount) + deliveryFee + platformFee;
 
   const nameEl = document.getElementById('itemName');
   if (nameEl) nameEl.innerText = name;
@@ -5168,9 +5200,12 @@ function updateCheckoutInvoiceTotals() {
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
-  const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
 
-  // Base Order Amount (Item Price + Delivery Fee + Platform Fee - Repeat Discount)
+  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const repeatDiscount = Number(activeRepeatDiscountAmount) || 0;
+  const finalPrice = Math.max(0, currentCheckoutPrice - repeatDiscount - autoDiscount);
+
+  // Base Order Amount (Item Price + Delivery Fee + Platform Fee - Discounts)
   // This is shown cleanly on Step 2 (Order Summary) BEFORE the customer chooses their payment method.
   const baseOrderAmount = finalPrice + deliveryFee + platformFee;
 
@@ -5200,6 +5235,18 @@ function updateCheckoutInvoiceTotals() {
       discountAmtEl.innerText = `-₹${activeRepeatDiscountAmount}`;
     } else {
       discountRow.style.display = 'none';
+    }
+  }
+
+  // Automatic ₹100 discount row for orders >= ₹1499
+  const autoDiscountRow = document.getElementById('invoiceAutoDiscountRow');
+  const autoDiscountAmtEl = document.getElementById('invoiceAutoDiscountAmount');
+  if (autoDiscountRow && autoDiscountAmtEl) {
+    if (autoDiscount > 0) {
+      autoDiscountRow.style.display = 'flex';
+      autoDiscountAmtEl.innerText = `-₹${autoDiscount}`;
+    } else {
+      autoDiscountRow.style.display = 'none';
     }
   }
 
@@ -5529,7 +5576,8 @@ function togglePaymentMethod(method) {
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
-  const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const baseOrderAmount = finalPrice + deliveryFee + platformFee;
   const codFee = Number(deliveryInfo.codFee) || 0;
 
@@ -5614,7 +5662,8 @@ function startRazorpayPayment() {
   const phone = document.getElementById('orderPhone') ? document.getElementById('orderPhone').value : '';
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
-  const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const totalPaid = finalItemPrice + deliveryFee + 5;
 
   const btn = document.getElementById('submitOrderBtn');
@@ -5703,7 +5752,8 @@ function processOrder(txnId, customStatus) {
   const platformFee = 5;
   const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId === 'Cash on Delivery' || String(txnId).startsWith('COD') || String(txnId).toUpperCase().includes('CASH');
   const codFee = isCod ? (Number(deliveryInfo.codFee) || 0) : 0;
-  const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0));
+  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const totalPaid = finalItemPrice + deliveryFee + platformFee + codFee;
 
   let schoolName = '';
