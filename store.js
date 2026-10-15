@@ -313,7 +313,7 @@ function openDistrictPincodeSelectorModal(targetDistrict) {
   if (!modal) return;
 
   // Determine district to show: parameter or currently selected in checkout dropdown
-  if (targetDistrict) {
+  if (targetDistrict && JK_DISTRICT_PIN_AREAS[targetDistrict]) {
     currentPickerDistrict = targetDistrict;
   } else {
     const citySelect = document.getElementById('orderCity');
@@ -328,20 +328,31 @@ function openDistrictPincodeSelectorModal(targetDistrict) {
     }
   }
 
+  if (!JK_DISTRICT_PIN_AREAS[currentPickerDistrict]) {
+    currentPickerDistrict = 'Baramulla';
+  }
+
   // Clear search input
   const searchInput = document.getElementById('pickerAreaSearchInput');
-  if (searchInput) searchInput.value = '';
+  if (searchInput) {
+    searchInput.value = '';
+    setTimeout(() => { try { searchInput.focus(); } catch(e) {} }, 100);
+  }
 
   renderPickerDistrictPills();
   renderPickerRateBanner();
   renderPickerAreasList();
 
+  modal.classList.add('active');
   modal.style.display = 'flex';
 }
 
 function closeDistrictPincodeSelectorModal() {
   const modal = document.getElementById('districtPincodePickerModal');
-  if (modal) modal.style.display = 'none';
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
 }
 
 function selectPickerDistrict(distName) {
@@ -505,7 +516,15 @@ function selectPincodeFromPicker(pin, areaName, districtName) {
     }
   }
 
+  // Pre-fill village name in address if empty
+  const addrInput = document.getElementById('orderAddress');
+  if (addrInput && !addrInput.value.trim() && areaName) {
+    const mainPlace = areaName.split(',')[0].trim();
+    addrInput.value = mainPlace;
+  }
+
   handleKashmirPincodeLookup(pin);
+  renderCheckoutQuickTownPills(districtName);
   updateCheckoutInvoiceTotals();
   closeDistrictPincodeSelectorModal();
 
@@ -515,6 +534,9 @@ function selectPincodeFromPicker(pin, areaName, districtName) {
   if (hintEl && hintTextEl) {
     hintEl.style.display = 'flex';
     hintTextEl.innerHTML = `📍 Area: <strong>${areaName.split(',')[0]}</strong> (PIN: <strong>${pin}</strong>)`;
+    hintEl.onclick = function() {
+      openDistrictPincodeSelectorModal(districtName);
+    };
   }
 
   if (typeof showToast === 'function') {
@@ -535,7 +557,9 @@ function handleCheckoutDistrictChange(selectedDistrictVal) {
     }
   }
 
-  // Automatically update the hint box and open the pop-up modal so students/parents can pick their area!
+  renderCheckoutQuickTownPills(distName);
+
+  // Automatically update the hint box and open the pop-up modal so students/parents can pick their area
   const hintEl = document.getElementById('districtPincodeQuickHint');
   const hintTextEl = document.getElementById('districtPincodeQuickHintText');
   const totalPins = (JK_DISTRICT_PIN_AREAS[distName] || []).length;
@@ -543,10 +567,123 @@ function handleCheckoutDistrictChange(selectedDistrictVal) {
   if (hintEl && hintTextEl) {
     hintEl.style.display = 'flex';
     hintTextEl.innerHTML = `💡 Selected <strong>${distName}</strong> (${totalPins} areas &amp; PIN codes). Tap to pick your area.`;
+    hintEl.onclick = function() {
+      openDistrictPincodeSelectorModal(distName);
+    };
   }
 
-  // Open the pop-up selector pre-filtered to the chosen district!
+  // Open the pop-up selector pre-filtered to the chosen district
   openDistrictPincodeSelectorModal(distName);
+}
+
+// Renders clickable pills for top towns/villages in the selected district right inside the form
+function renderCheckoutQuickTownPills(targetDistrict) {
+  const container = document.getElementById('quickDistrictTownPills');
+  if (!container) return;
+
+  const citySelect = document.getElementById('orderCity');
+  let dist = targetDistrict || (citySelect ? citySelect.value : 'Baramulla');
+  
+  let matchedKey = 'Baramulla';
+  for (const dKey in JK_DISTRICT_PIN_AREAS) {
+    if (dist.toLowerCase().includes(dKey.toLowerCase())) {
+      matchedKey = dKey;
+      break;
+    }
+  }
+
+  const items = JK_DISTRICT_PIN_AREAS[matchedKey] || [];
+  if (items.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  let pillsHtml = `
+    <div style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;">
+      <span><i class="fa-solid fa-location-dot" style="color: #2563eb;"></i> Quick Select Village / Area in <strong>${matchedKey}</strong>:</span>
+      <span onclick="openDistrictPincodeSelectorModal('${matchedKey}')" style="color: #2563eb; cursor: pointer; text-decoration: underline; font-size: 10.5px; font-weight: 800;">View all ${items.length} ▾</span>
+    </div>
+    <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+  `;
+
+  // Display top towns as quick 1-tap pills
+  items.slice(0, 8).forEach(item => {
+    const mainTown = item.area.split(',')[0].trim();
+    const safeEscapedArea = (item.area || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    pillsHtml += `
+      <button type="button" onclick="selectPincodeFromPicker('${item.pin}', '${safeEscapedArea}', '${matchedKey}')" 
+              style="padding: 4px 9px; font-size: 11px; font-weight: 700; background: #eff6ff; border: 1.2px solid #93c5fd; color: #1e40af; border-radius: 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s;"
+              onmouseover="this.style.background='#2563eb'; this.style.color='white';"
+              onmouseout="this.style.background='#eff6ff'; this.style.color='#1e40af';">
+        <span>${mainTown}</span>
+        <span style="font-size: 10px; opacity: 0.85; font-family: monospace;">(${item.pin})</span>
+      </button>
+    `;
+  });
+
+  if (items.length > 8) {
+    pillsHtml += `
+      <button type="button" onclick="openDistrictPincodeSelectorModal('${matchedKey}')" 
+              style="padding: 4px 9px; font-size: 11px; font-weight: 800; background: #f8fafc; border: 1.2px dashed #64748b; color: #334155; border-radius: 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+        + More Areas (${items.length - 8}) ▾
+      </button>
+    `;
+  }
+
+  pillsHtml += `</div>`;
+  container.innerHTML = pillsHtml;
+}
+
+// Populates HTML5 datalist for instant native suggestions as student types
+function populatePincodeDatalist() {
+  let datalist = document.getElementById('orderPinDatalist');
+  if (!datalist) {
+    datalist = document.createElement('datalist');
+    datalist.id = 'orderPinDatalist';
+    document.body.appendChild(datalist);
+  }
+  
+  const pinInput = document.getElementById('orderPin');
+  if (pinInput && !pinInput.getAttribute('list')) {
+    pinInput.setAttribute('list', 'orderPinDatalist');
+  }
+
+  let optionsHtml = '';
+  Object.keys(JK_DISTRICT_PIN_AREAS).forEach(dist => {
+    (JK_DISTRICT_PIN_AREAS[dist] || []).forEach(item => {
+      const mainTown = item.area.split(',')[0].trim();
+      optionsHtml += `<option value="${item.pin}">${mainTown} (${dist}) - PIN ${item.pin}</option>`;
+    });
+  });
+  datalist.innerHTML = optionsHtml;
+}
+
+// Smart village/area detector from address input
+function checkAddressForKashmirArea(addressText) {
+  if (!addressText || addressText.length < 3) return;
+  const lower = addressText.toLowerCase();
+
+  for (const dist in JK_DISTRICT_PIN_AREAS) {
+    const items = JK_DISTRICT_PIN_AREAS[dist];
+    for (const item of items) {
+      const places = item.area.toLowerCase().split(',').map(p => p.trim());
+      for (const place of places) {
+        if (place.length >= 4 && lower.includes(place)) {
+          const hintEl = document.getElementById('districtPincodeQuickHint');
+          const hintTextEl = document.getElementById('districtPincodeQuickHintText');
+          if (hintEl && hintTextEl) {
+            hintEl.style.display = 'flex';
+            hintTextEl.innerHTML = `📍 Detected: <strong>${place.toUpperCase()}</strong> (PIN: <strong>${item.pin}</strong>, ${dist}). Tap to apply.`;
+            hintEl.onclick = function() {
+              selectPincodeFromPicker(item.pin, item.area, dist);
+            };
+          }
+          return;
+        }
+      }
+    }
+  }
 }
 
 // Dynamic Seller Price Override System
@@ -4496,6 +4633,8 @@ function setupCheckoutModal(name, price, category) {
     }
   });
   updateCheckoutInvoiceTotals();
+  populatePincodeDatalist();
+  renderCheckoutQuickTownPills();
 
   // Default to Cash on Delivery (COD) for fastest student checkout
   const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
