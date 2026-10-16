@@ -3006,6 +3006,193 @@
       bottom: 14px;
       z-index: 3;
     }
+
+    /* Storefront visual polish: one calm blue palette, consistent cards, and clear touch targets. */
+    :root {
+      --primary-navy: #172554;
+      --primary-indigo: #1e40af;
+      --primary-blue: #2563eb;
+      --primary-light: #eff6ff;
+      --accent-amber: #d97706;
+      --bg-slate: #f8fafc;
+      --text-muted: #52627a;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 2px 8px rgba(23, 37, 84, 0.06);
+      --shadow-md: 0 8px 22px rgba(23, 37, 84, 0.09);
+      --shadow-lg: 0 16px 36px rgba(23, 37, 84, 0.13);
+      --radius-md: 16px;
+      --radius-lg: 22px;
+    }
+
+    body:not(.dark-mode) {
+      background-color: #f8fafc;
+      background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(37, 99, 235, 0.055), transparent 42%),
+        radial-gradient(ellipse at 100% 8%, rgba(14, 165, 233, 0.045), transparent 38%),
+        radial-gradient(#cbd5e1 0.55px, transparent 0.55px);
+      background-size: 100% 100%, 100% 100%, 28px 28px;
+      background-attachment: fixed;
+    }
+
+    .category-title {
+      color: #172554;
+      letter-spacing: -0.025em;
+    }
+
+    .product-grid {
+      align-items: stretch;
+      gap: 20px;
+    }
+
+    .product-card,
+    .book-product-card {
+      border: 1px solid #e4eaf3;
+      border-radius: 18px;
+      box-shadow: 0 3px 12px rgba(23, 37, 84, 0.055);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .product-img {
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-title {
+      color: #172554;
+      letter-spacing: -0.015em;
+    }
+
+    .product-desc {
+      color: #52627a;
+    }
+
+    .product-price {
+      color: #172554;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .buy-btn,
+    .btn-primary,
+    .btn-add-cart,
+    .reel-shop-now-btn {
+      min-height: 40px;
+      border-radius: 10px;
+      font-weight: 700;
+      transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .buy-btn:focus-visible,
+    .btn-primary:focus-visible,
+    .btn-add-cart:focus-visible,
+    .reel-shop-now-btn:focus-visible,
+    .reel-mute-btn:focus-visible,
+    .ad-watch-close:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.38);
+      outline-offset: 3px;
+    }
+
+    .shoppable-reels-section {
+      margin-top: 34px;
+      padding: 20px 20px 10px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 8px 24px rgba(23, 37, 84, 0.045);
+      backdrop-filter: blur(8px);
+    }
+
+    .reels-empty-state {
+      min-height: 78px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .shoppable-reel-card {
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(23, 37, 84, 0.08);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .reel-shop-now-btn {
+      background: #2563eb;
+      border-color: #2563eb;
+      box-shadow: 0 5px 14px rgba(37, 99, 235, 0.28);
+    }
+
+    .reel-shop-now-btn:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    body.dark-mode .shoppable-reels-section {
+      background: rgba(17, 24, 39, 0.92);
+      border-color: #334155;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .reels-empty-state {
+      background: #0f172a;
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .product-card:hover,
+      .book-product-card:hover {
+        transform: translateY(-3px);
+        border-color: #c7d7f5;
+        box-shadow: 0 14px 28px rgba(23, 37, 84, 0.11);
+      }
+
+      .shoppable-reel-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(37, 99, 235, 0.2);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .product-grid {
+        gap: 10px !important;
+      }
+
+      .product-card,
+      .book-product-card {
+        border-radius: 14px;
+      }
+
+      .shoppable-reels-section {
+        margin-top: 26px;
+        padding: 14px 10px 8px;
+        border-radius: 16px;
+      }
+
+      .reels-header-wrap {
+        align-items: center;
+      }
+
+      .reels-header-wrap h2 {
+        font-size: 21px !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .product-card,
+      .book-product-card,
+      .shoppable-reel-card,
+      .buy-btn,
+      .btn-primary,
+      .btn-add-cart,
+      .reel-shop-now-btn {
+        transition: none;
+      }
+    }
   </style>
 
 </head>
