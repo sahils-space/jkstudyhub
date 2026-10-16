@@ -168,7 +168,7 @@
 
         <a href="javascript:void(0)" class="sidebar-nav-link" id="nav-link-reels" onclick="switchSellerView('reels')">
           <i class="fa-solid fa-circle-play" style="color: #ef4444;"></i>
-          <span>Video &amp; Photo Ads</span>
+          <span>Video Ads</span>
           <span class="nav-pill-badge" style="background:#fee2e2; color:#ef4444; font-weight:800;">LIVE</span>
         </a>
 
@@ -1205,32 +1205,20 @@
                   <span style="font-size:12px; color:#2563eb; font-weight:700;">⚡ Instant 0-Sec Reload Optimized</span>
                 </div>
                 <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 4px; display:flex; align-items:center; gap:8px;">
-                  <i class="fa-solid fa-circle-play" style="color: #ef4444;"></i> Video &amp; Photo Ads Manager
+                  <i class="fa-solid fa-circle-play" style="color: #ef4444;"></i> Video Ads Manager
                 </h2>
                 <p style="font-size: 13px; color: #64748b; margin: 0;">
-                  Upload product video ads and photo ads. They appear in matching 9:16 rows on the store, above the footer. Tap video to watch with sound.
+                  Upload and preview videos here. To publish an ad for all visitors, host the video at a public URL, add it with “Paste Video URL,” then export and deploy reels.json.
                 </p>
               </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <a href="store.html#shoppableReelsSection" target="_blank" class="btn-hub-secondary" style="font-weight:700; color:#2563eb; border-color:#bfdbfe; background:#eff6ff; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
                   <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview on Store
                 </a>
-                <button type="button" class="btn-hub-secondary" onclick="exportReelsJsonFile()" title="Download reels.json for repository commit" style="font-weight:700;">
+                <button type="button" class="btn-hub-secondary" onclick="exportReelsJsonFile()" title="Download the video ad list for deployment" style="font-weight:700;">
                   <i class="fa-solid fa-file-arrow-down"></i> Export reels.json
                 </button>
-                <button type="button" class="btn-hub-secondary" onclick="resetSellerReelsToDefault()" style="color:#ef4444;" title="Reset back to starter sample reels">
-                  <i class="fa-solid fa-rotate-left"></i> Reset Defaults
-                </button>
               </div>
-            </div>
-
-            <div style="display:flex; gap:8px; margin-bottom:18px;">
-              <button type="button" id="sellerAdsTabVideo" class="btn-hub-secondary active" onclick="switchSellerAdsTab('video')" style="font-weight:800;">
-                <i class="fa-solid fa-circle-play"></i> Video Ads
-              </button>
-              <button type="button" id="sellerAdsTabPhoto" class="btn-hub-secondary" onclick="switchSellerAdsTab('photo')" style="font-weight:800;">
-                <i class="fa-solid fa-image"></i> Photo Ads
-              </button>
             </div>
 
             <div id="sellerVideoAdsPane">
@@ -1247,7 +1235,7 @@
                   <!-- 1. Reel Title / Caption -->
                   <div style="margin-bottom: 14px;">
                     <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">
-                      Reel Hook / Video Title <span style="color:#ef4444;">*</span>
+                      Video Title <span style="color:#ef4444;">*</span>
                     </label>
                     <input type="text" id="sellerReelTitleInput" class="form-control" placeholder="e.g. Unboxing The Alchemist &middot; Page &amp; Print Quality Tour" required oninput="updateSellerReelMockup()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
                   </div>
@@ -1255,7 +1243,7 @@
                   <!-- 2. Target Product Dropdown -->
                   <div style="margin-bottom: 14px;">
                     <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">
-                      Target Product for Video Ad <span style="color:#ef4444;">*</span>
+                      Product for Video Ad <span style="color:#ef4444;">*</span>
                       <span style="font-weight:400; color:#64748b; font-size:11px;">(Live price and thumbnail sync automatically)</span>
                     </label>
                     <select id="sellerReelProductSelect" class="form-control" required onchange="onSellerReelProductSelectChange()" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px; font-weight:600;">
@@ -1282,13 +1270,13 @@
                     <div id="reelFileInputGroup">
                       <input type="file" id="sellerReelFileInput" accept="video/mp4,video/webm,video/quicktime" onchange="handleSellerReelFileSelected(this)" style="display:block; width:100%; font-size:12.5px; padding:8px; background:white; border:1px dashed #94a3b8; border-radius:8px; cursor:pointer;">
                       <div style="font-size:11px; color:#64748b; margin-top:4px;">
-                        💡 Tip: Vertical 9:16 reels under 30MB work best. First frame is automatically extracted for lightning-fast page loading.
+                          💡 Local file previews are saved on this device. Host the video publicly and use its direct URL to publish it for all visitors.
                       </div>
                     </div>
 
                     <!-- URL input -->
                     <div id="reelUrlInputGroup" style="display: none;">
-                      <input type="url" id="sellerReelUrlInput" class="form-control" placeholder="https://assets.mixkit.co/... or Cloudinary / Supabase MP4 direct link" oninput="handleSellerReelUrlInput(this.value)" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
+                      <input type="url" id="sellerReelUrlInput" class="form-control" placeholder="https://your-host/video.mp4" oninput="handleSellerReelUrlInput(this.value)" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
                     </div>
                   </div>
 
@@ -1324,7 +1312,7 @@
 
                   <!-- Submit button -->
                   <button type="submit" id="btnPublishSellerReel" class="btn-hub-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; justify-content: center; background: #2563eb; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
-                    <i class="fa-solid fa-circle-check"></i> Publish Video Ad to Storefront
+                    <i class="fa-solid fa-circle-check"></i> Save Video Ad
                   </button>
                 </form>
               </div>
@@ -1409,65 +1397,6 @@
                 </table>
               </div>
             </div>
-            </div>
-
-            <div id="sellerPhotoAdsPane" style="display:none;">
-              <div style="display: grid; grid-template-columns: 1.25fr 0.85fr; gap: 24px; align-items: start;" id="sellerPhotosGrid">
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-                  <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 0 0 16px; display:flex; align-items:center; gap:8px;">
-                    <i class="fa-solid fa-cloud-arrow-up" style="color: #2563eb;"></i> Upload Photo Ad
-                  </h3>
-                  <form id="sellerPhotoForm" onsubmit="event.preventDefault(); publishSellerPhoto();">
-                    <div style="margin-bottom: 14px;">
-                      <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Photo Title <span style="color:#ef4444;">*</span></label>
-                      <input type="text" id="sellerPhotoTitleInput" class="form-control" placeholder="e.g. Pahalgam Hoodie — New Drop" required style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
-                    </div>
-                    <div style="margin-bottom: 14px;">
-                      <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Target Product <span style="color:#ef4444;">*</span></label>
-                      <select id="sellerPhotoProductSelect" class="form-control" required style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px; font-weight:600;">
-                        <option value="">-- Choose Product to Advertise --</option>
-                      </select>
-                    </div>
-                    <div style="margin-bottom: 14px;">
-                      <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Photo File or Image URL <span style="color:#ef4444;">*</span></label>
-                      <input type="file" id="sellerPhotoFileInput" accept="image/*" onchange="handleSellerPhotoFileSelected(this)" style="display:block; width:100%; font-size:12.5px; padding:8px; background:white; border:1px dashed #94a3b8; border-radius:8px; cursor:pointer;">
-                      <input type="url" id="sellerPhotoUrlInput" class="form-control" placeholder="or paste https://... image link" oninput="handleSellerPhotoUrlInput(this.value)" style="width:100%; margin-top:8px; padding:10px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
-                    </div>
-                    <div style="margin-bottom: 18px;">
-                      <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Overlay Badge</label>
-                      <input type="text" id="sellerPhotoBadgeInput" class="form-control" value="Sale" placeholder="e.g. Sale" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
-                    </div>
-                    <button type="submit" class="btn-hub-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; justify-content: center;">
-                      <i class="fa-solid fa-circle-check"></i> Publish Photo Ad to Storefront
-                    </button>
-                  </form>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">Live 9:16 Photo Mockup</div>
-                  <div style="width: 230px; height: 410px; background: #0f172a; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.25); border: 2px solid #334155;">
-                    <img id="sellerMockupPhoto" src="images/logo-app.png" alt="Photo preview" style="width:100%; height:100%; object-fit:cover; background:#000;">
-                  </div>
-                </div>
-              </div>
-              <div style="margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 24px;">
-                <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 14px; display:flex; align-items:center; gap:8px;">
-                  <i class="fa-solid fa-list-check" style="color: #2563eb;"></i> Active Photo Ads (<span id="activePhotosCount">0</span>)
-                </h3>
-                <div style="overflow-x: auto;">
-                  <table class="hub-table" style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                      <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left;">
-                        <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">PREVIEW</th>
-                        <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">TITLE</th>
-                        <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">PRODUCT</th>
-                        <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569;">STATUS</th>
-                        <th style="padding: 10px 14px; font-size: 11.5px; font-weight: 700; color: #475569; text-align: right;">ACTION</th>
-                      </tr>
-                    </thead>
-                    <tbody id="sellerPublishedPhotosTableBody"></tbody>
-                  </table>
-                </div>
-              </div>
             </div>
 
           </div>
@@ -1617,7 +1546,7 @@
   <!-- Real-Time Visitor Analytics Tracker -->
   <script src="analytics.js?v=1"></script>
   <!-- External Script -->
-  <script src="ads-media.js?v=89.0"></script>
-  <script src="seller.js?v=89.0"></script>
+  <script src="ads-media.js?v=90.0"></script>
+  <script src="seller.js?v=90.0"></script>
 </body>
 </html>

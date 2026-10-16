@@ -1383,10 +1383,13 @@ body.seller-mobile-mode button {
 }
 
 @media (max-width: 900px) {
-  #sellerReelsGrid,
-  #sellerPhotosGrid {
-    grid-template-columns: 1fr !important;
+  #sellerReelsGrid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  #sellerReelMockupCard {
+    width: min(230px, 100%) !important;
+    height: auto !important;
+    aspect-ratio: 9 / 16;
   }
 }
-
-

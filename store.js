@@ -11157,56 +11157,50 @@ function checkoutCalculatedBundle() {
 }
 
 /* =========================================================================
-   SHOPPABLE VIDEO + PHOTO ADS (aligned 9:16 row)
+   SHOPPABLE VIDEO ADS (aligned 9:16 row)
    ========================================================================= */
 let g_shoppableReelsData = [];
-let g_shoppablePhotosData = [];
 let g_currentActiveFullscreenReel = null;
 let g_reelsIntersectionObserver = null;
 
 function loadAdsList(storageKey, jsonFile, jsonField) {
   return (async function () {
-    let list = [];
     try {
       const cached = localStorage.getItem(storageKey);
-      if (cached) {
+      if (cached !== null) {
         const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
+        if (Array.isArray(parsed)) {
+          const list = parsed.filter(reel => !/^reel-[1-4]$/.test(reel.id));
+          if (list.length !== parsed.length) {
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(list));
+            } catch (error) {
+              console.warn('Could not remove sample video ads from local storage:', error);
+            }
+          }
+          if (list.length > 0) return list;
+        }
       }
     } catch (e) {}
-    if (list.length === 0) {
-      try {
-        const res = await fetch(jsonFile + '?v=' + Date.now());
-        if (res.ok) {
-          const data = await res.json();
-          if (data && Array.isArray(data[jsonField]) && data[jsonField].length > 0) {
-            list = data[jsonField];
-          }
+    try {
+      const res = await fetch(jsonFile + '?v=' + Date.now());
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data[jsonField])) {
+          return data[jsonField].filter(reel => !/^reel-[1-4]$/.test(reel.id));
         }
-      } catch (e) {}
+      }
+    } catch (error) {
+      console.error('Could not load video ads:', error);
     }
-    return list;
+    return [];
   })();
 }
 
 async function loadShoppableReels() {
   if (!document.getElementById('shoppableReelsTrack')) return;
   g_shoppableReelsData = await loadAdsList('jk_shoppable_reels', 'reels.json', 'reels');
-  if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) {
-    g_shoppableReelsData = [
-      { id: "reel-1", title: "The Alchemist — Student Favorite", productName: "The Alchemist", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4", posterUrl: "images/books/the-alchemist-1.webp", badge: "⭐ 4.9 Bestseller", active: true },
-      { id: "reel-2", title: "Atomic Habits — Original Edition", productName: "Atomic Habits", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4", posterUrl: "images/books/atomic-habits-1.webp", badge: "🔥 Most Popular", active: true },
-      { id: "reel-3", title: "Deep Work — Study Focus Guide", productName: "Deep Work", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4", posterUrl: "images/books/deep-work-1.webp", badge: "🎯 Rank Booster", active: true },
-      { id: "reel-4", title: "JKBOSE Class 10th Master Kit", productName: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4", posterUrl: "images/school-bookset.webp", badge: "📦 5 Subject Combo", active: true }
-    ];
-  }
   await renderShoppableReels(g_shoppableReelsData);
-}
-
-async function loadShoppablePhotos() {
-  if (!document.getElementById('shoppablePhotosTrack')) return;
-  g_shoppablePhotosData = await loadAdsList('jk_shoppable_photos', 'photos.json', 'photos');
-  await renderShoppablePhotos(g_shoppablePhotosData);
 }
 
 function adProductMeta(pName, fallbackThumb) {
@@ -11217,16 +11211,18 @@ function adProductMeta(pName, fallbackThumb) {
 }
 
 function adCardOverlayHtml(pName, thumb, price, mrp, priceAttr) {
-  const enc = encodeURIComponent(pName);
+  const enc = encodeURIComponent(pName).replace(/'/g, '%27');
+  const safeName = safeEscape(pName);
+  const safeThumb = safeEscape(thumb);
   return `
         <div class="reel-bottom-overlay">
           <div class="reel-product-chip" onclick="event.stopPropagation(); buyReelProduct('${enc}')">
-            <img src="${thumb}" alt="${pName}" class="reel-thumb-img" onerror="this.src='images/logo-app.png'">
+            <img src="${safeThumb}" alt="${safeName}" class="reel-thumb-img" onerror="this.src='images/logo-app.png'">
             <div class="reel-prod-meta">
-              <div class="reel-prod-title" title="${pName}">${pName}</div>
+              <div class="reel-prod-title" title="${safeName}">${safeName}</div>
               <div class="reel-prod-price-row">
-                <span class="reel-price-now" data-${priceAttr}-price="${pName}">₹${price}</span>
-                <span class="reel-price-mrp" data-${priceAttr}-mrp="${pName}" style="text-decoration:line-through; opacity:0.65; font-size:10.5px;">₹${mrp}</span>
+                <span class="reel-price-now" data-${priceAttr}-price="${safeName}">₹${price}</span>
+                <span class="reel-price-mrp" data-${priceAttr}-mrp="${safeName}" style="text-decoration:line-through; opacity:0.65; font-size:10.5px;">₹${mrp}</span>
               </div>
             </div>
           </div>
@@ -11243,7 +11239,8 @@ async function renderShoppableReels(reels) {
   const activeReels = (reels || []).filter(r => r.active !== false);
   const parent = document.getElementById('shoppableReelsSection');
   if (activeReels.length === 0) {
-    if (parent) parent.style.display = 'none';
+    if (parent) parent.style.display = 'block';
+    container.innerHTML = '<p class="reels-empty-state">No video ads yet.</p>';
     return;
   }
   if (parent) parent.style.display = 'block';
@@ -11256,10 +11253,10 @@ async function renderShoppableReels(reels) {
       ? await AdsMedia.resolveUrl(reel.videoUrl)
       : (reel.videoUrl || '');
     html += `
-      <div class="shoppable-reel-card" data-reel-id="${reel.id}">
-        <video class="reel-video-element" src="${playUrl}" poster="${meta.thumb}" preload="metadata" playsinline webkit-playsinline loop muted></video>
+      <div class="shoppable-reel-card" data-reel-id="${safeEscape(reel.id)}">
+        <video class="reel-video-element" ${playUrl ? `src="${safeEscape(playUrl)}"` : ''} poster="${safeEscape(meta.thumb)}" preload="metadata" playsinline webkit-playsinline loop muted></video>
         <div class="reel-top-bar">
-          <span class="reel-badge-pill">${reel.badge || '🔥 Watch & Shop'}</span>
+          <span class="reel-badge-pill">${safeEscape(reel.badge || '🔥 Watch & Shop')}</span>
           <button type="button" class="reel-mute-btn" onclick="event.stopPropagation(); toggleReelCardSound(this)" title="Sound on/off">
             <i class="fa-solid fa-volume-xmark"></i>
           </button>
@@ -11275,46 +11272,10 @@ async function renderShoppableReels(reels) {
   container.querySelectorAll('.shoppable-reel-card').forEach(card => {
     card.addEventListener('click', function (e) {
       if (e.target.closest('.reel-shop-now-btn') || e.target.closest('.reel-product-chip') || e.target.closest('.reel-mute-btn')) return;
-      openAdWatchModal('video', card.getAttribute('data-reel-id'));
+      openAdWatchModal(card.getAttribute('data-reel-id'));
     });
   });
   initReelsIntersectionObserver(container);
-}
-
-async function renderShoppablePhotos(photos) {
-  const container = document.getElementById('shoppablePhotosTrack');
-  if (!container) return;
-  const active = (photos || []).filter(p => p.active !== false);
-  const parent = document.getElementById('shoppablePhotosSection');
-  if (active.length === 0) {
-    if (parent) parent.style.display = 'none';
-    return;
-  }
-  if (parent) parent.style.display = 'block';
-
-  let html = '';
-  for (const photo of active) {
-    const pName = photo.productName;
-    const meta = adProductMeta(pName, photo.imageUrl);
-    const imgUrl = (window.AdsMedia && typeof AdsMedia.resolveUrl === 'function')
-      ? (await AdsMedia.resolveUrl(photo.imageUrl) || meta.thumb)
-      : (photo.imageUrl || meta.thumb);
-    html += `
-      <div class="shoppable-reel-card" data-photo-id="${photo.id}">
-        <img class="reel-video-element" src="${imgUrl}" alt="${pName}" onerror="this.src='images/logo-app.png'">
-        <div class="reel-top-bar">
-          <span class="reel-badge-pill">${photo.badge || 'Photo Ad'}</span>
-        </div>
-        ${adCardOverlayHtml(pName, imgUrl, meta.price, meta.mrp, 'photo-prod')}
-      </div>`;
-  }
-  container.innerHTML = html;
-  container.querySelectorAll('.shoppable-reel-card').forEach(card => {
-    card.addEventListener('click', function (e) {
-      if (e.target.closest('.reel-shop-now-btn') || e.target.closest('.reel-product-chip')) return;
-      openAdWatchModal('photo', card.getAttribute('data-photo-id'));
-    });
-  });
 }
 
 function initReelsIntersectionObserver(container) {
@@ -11378,54 +11339,48 @@ function buyReelProduct(encodedName) {
 
 function scrollReelsTrack(dir) {
   const track = document.getElementById('shoppableReelsTrack');
-  if (!track) return;
-  track.scrollBy({ left: 226 * dir, behavior: 'smooth' });
+  const card = track && track.querySelector('.shoppable-reel-card');
+  if (!track || !card) return;
+  const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+  track.scrollBy({ left: (card.getBoundingClientRect().width + gap) * dir, behavior: 'smooth' });
 }
 
-function scrollPhotosTrack(dir) {
-  const track = document.getElementById('shoppablePhotosTrack');
-  if (!track) return;
-  track.scrollBy({ left: 226 * dir, behavior: 'smooth' });
-}
-
-async function openAdWatchModal(kind, itemId) {
+async function openAdWatchModal(itemId) {
   const modal = document.getElementById('adWatchModal');
   const videoEl = document.getElementById('adWatchVideo');
-  const imgEl = document.getElementById('adWatchImage');
   const shopBtn = document.getElementById('adWatchShopBtn');
   if (!modal || !itemId) return;
 
-  let productName = '';
-  if (kind === 'video') {
-    const reel = (g_shoppableReelsData || []).find(r => r.id === itemId);
-    if (!reel) return;
-    productName = reel.productName;
-    const playUrl = window.AdsMedia ? await AdsMedia.resolveUrl(reel.videoUrl) : reel.videoUrl;
-    if (imgEl) imgEl.style.display = 'none';
-    if (videoEl) {
-      videoEl.style.display = 'block';
-      videoEl.src = playUrl || '';
-      videoEl.muted = false;
-      videoEl.controls = true;
-      const p = videoEl.play();
-      if (p) p.catch(function () {});
-    }
-    document.querySelectorAll('#shoppableReelsTrack video').forEach(function (v) { v.pause(); });
-  } else {
-    const photo = (g_shoppablePhotosData || []).find(r => r.id === itemId);
-    if (!photo) return;
-    productName = photo.productName;
-    const imgUrl = window.AdsMedia ? (await AdsMedia.resolveUrl(photo.imageUrl) || photo.imageUrl) : photo.imageUrl;
-    if (videoEl) {
-      videoEl.pause();
-      videoEl.removeAttribute('src');
-      videoEl.style.display = 'none';
-    }
-    if (imgEl) {
-      imgEl.style.display = 'block';
-      imgEl.src = imgUrl || 'images/logo-app.png';
-    }
+  const reel = (g_shoppableReelsData || []).find(item => item.id === itemId);
+  if (!reel) return;
+  const productName = reel.productName;
+  let playUrl = '';
+  try {
+    playUrl = window.AdsMedia ? await AdsMedia.resolveUrl(reel.videoUrl) : reel.videoUrl;
+  } catch (error) {
+    console.error('Could not load the selected ad video:', error);
+    const message = 'This video could not be loaded from browser storage. Try refreshing the store.';
+    if (typeof showToast === 'function') showToast(message);
+    else alert(message);
+    return;
   }
+  if (!playUrl) {
+    const message = 'This video file is missing from this browser. Upload it again on the seller device.';
+    if (typeof showToast === 'function') showToast(message);
+    else alert(message);
+    return;
+  }
+  if (videoEl) {
+    videoEl.style.display = 'block';
+    videoEl.src = playUrl;
+    videoEl.muted = false;
+    videoEl.controls = true;
+    const p = videoEl.play();
+    if (p) p.catch(function (error) {
+      console.warn('Video playback did not start automatically:', error);
+    });
+  }
+  document.querySelectorAll('#shoppableReelsTrack video').forEach(function (v) { v.pause(); });
 
   if (shopBtn) {
     shopBtn.onclick = function () {
@@ -11452,7 +11407,7 @@ function closeAdWatchModal(evt) {
 }
 
 function openFullscreenReel(reelId) {
-  openAdWatchModal('video', reelId);
+  openAdWatchModal(reelId);
 }
 function closeFullscreenReel() { closeAdWatchModal(); }
 function closeFullscreenReelOnBackdrop() { closeAdWatchModal(); }
@@ -11471,17 +11426,20 @@ function syncShoppableReelsPrices() {
     });
   }
   patch(g_shoppableReelsData, 'reel-prod');
-  patch(g_shoppablePhotosData, 'photo-prod');
 }
 
 function onStoreReady() {
+  try {
+    localStorage.removeItem('jk_shoppable_photos');
+  } catch (error) {
+    console.warn('Could not clear retired photo-ad data from this browser:', error);
+  }
   applyCustomPricesToStorefront();
   applyStockOverridesToStorefront();
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
   }
   loadShoppableReels();
-  loadShoppablePhotos();
 }
 
 document.addEventListener('keydown', function (e) {
@@ -11493,4 +11451,3 @@ if (document.readyState === 'loading') {
 } else {
   onStoreReady();
 }
-

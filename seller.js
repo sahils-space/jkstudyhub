@@ -683,7 +683,7 @@ function switchSellerView(viewName) {
     if (pane) pane.style.display = 'block';
     renderSellerLeadsTable();
   } else if (viewName === 'reels') {
-    if (pageTitle) pageTitle.innerText = 'Video & Photo Ads';
+    if (pageTitle) pageTitle.innerText = 'Video Ads';
     const pane = document.getElementById('view-reels');
     if (pane) pane.style.display = 'block';
     initSellerReelsSection();
@@ -4365,26 +4365,27 @@ let g_sellerReelCurrentVideoUrl = '';
 let g_sellerReelExtractedPoster = '';
 let g_sellerReelVideoSourceType = 'file';
 
-async function initSellerReelsSection() {
-  populateSellerReelProductsDropdown();
-  populateSellerPhotoProductsDropdown();
-  await loadSellerReels();
-  await loadSellerPhotos();
-  renderSellerPublishedReelsTable();
-  renderSellerPublishedPhotosTable();
-  updateSellerReelMockup();
+function saveSellerAdsList(storageKey, list) {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(list));
+    return true;
+  } catch (error) {
+    console.error('Could not save seller ad changes in this browser:', error);
+    alert('This browser could not save the ad. Free up browser storage and try again.');
+    return false;
+  }
 }
 
-function switchSellerAdsTab(tab) {
-  const videoPane = document.getElementById('sellerVideoAdsPane');
-  const photoPane = document.getElementById('sellerPhotoAdsPane');
-  const videoBtn = document.getElementById('sellerAdsTabVideo');
-  const photoBtn = document.getElementById('sellerAdsTabPhoto');
-  const isPhoto = tab === 'photo';
-  if (videoPane) videoPane.style.display = isPhoto ? 'none' : 'block';
-  if (photoPane) photoPane.style.display = isPhoto ? 'block' : 'none';
-  if (videoBtn) videoBtn.className = isPhoto ? 'btn-hub-secondary' : 'btn-hub-secondary active';
-  if (photoBtn) photoBtn.className = isPhoto ? 'btn-hub-secondary active' : 'btn-hub-secondary';
+async function initSellerReelsSection() {
+  populateSellerReelProductsDropdown();
+  await loadSellerReels();
+  try {
+    localStorage.removeItem('jk_shoppable_photos');
+  } catch (error) {
+    console.warn('Could not clear retired photo-ad data from this browser:', error);
+  }
+  renderSellerPublishedReelsTable();
+  updateSellerReelMockup();
 }
 
 function populateSellerReelProductsDropdown() {
@@ -4410,10 +4411,14 @@ function populateSellerReelProductsDropdown() {
 async function loadSellerReels() {
   try {
     const cached = localStorage.getItem('jk_shoppable_reels');
-    if (cached) {
-      g_sellerReelsList = JSON.parse(cached);
-      if (Array.isArray(g_sellerReelsList) && g_sellerReelsList.length > 0) {
-        return;
+    if (cached !== null) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed)) {
+        g_sellerReelsList = parsed.filter(reel => !/^reel-[1-4]$/.test(reel.id));
+        if (g_sellerReelsList.length !== parsed.length) {
+          saveSellerAdsList('jk_shoppable_reels', g_sellerReelsList);
+        }
+        if (g_sellerReelsList.length > 0) return;
       }
     }
   } catch(e) {}
@@ -4423,58 +4428,18 @@ async function loadSellerReels() {
     if (res.ok) {
       const data = await res.json();
       if (data && Array.isArray(data.reels)) {
-        g_sellerReelsList = data.reels;
-        localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+        g_sellerReelsList = data.reels.filter(reel => !/^reel-[1-4]$/.test(reel.id));
+        try {
+          localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
+        } catch (error) {
+          console.warn('Could not cache the default video ads on this device:', error);
+        }
         return;
       }
     }
   } catch(e) {}
 
-  g_sellerReelsList = [
-    {
-      id: "reel-1",
-      title: "The Alchemist — Student Favorite",
-      productName: "The Alchemist",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4",
-      posterUrl: "images/books/the-alchemist-1.webp",
-      badge: "⭐ 4.9 Bestseller",
-      views: "3.8k",
-      active: true
-    },
-    {
-      id: "reel-2",
-      title: "Atomic Habits — Original Edition",
-      productName: "Atomic Habits",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4",
-      posterUrl: "images/books/atomic-habits-1.webp",
-      badge: "🔥 Most Popular",
-      views: "5.2k",
-      active: true
-    },
-    {
-      id: "reel-3",
-      title: "Deep Work — Study Focus Guide",
-      productName: "Deep Work",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4",
-      posterUrl: "images/books/deep-work-1.webp",
-      badge: "🎯 Rank Booster",
-      views: "2.4k",
-      active: true
-    },
-    {
-      id: "reel-4",
-      title: "JKBOSE Class 10th Master Kit",
-      productName: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4",
-      posterUrl: "images/school-bookset.webp",
-      badge: "📦 5 Subject Combo",
-      views: "6.1k",
-      active: true
-    }
-  ];
-  try {
-    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
-  } catch(e) {}
+  g_sellerReelsList = [];
 }
 
 function switchReelVideoInputType(type) {
@@ -4636,8 +4601,8 @@ function updateSellerReelMockup() {
         mockupVideo.play().catch(() => {});
       }
     } else {
-      mockupVideo.src = 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4';
-      mockupVideo.play().catch(() => {});
+      mockupVideo.removeAttribute('src');
+      mockupVideo.load();
     }
   }
 }
@@ -4698,12 +4663,18 @@ async function publishSellerReel() {
     createdAt: new Date().toISOString()
   };
 
-  g_sellerReelsList.unshift(newReel);
-  try {
-    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
-  } catch(e) {
-    console.error("Storage save error:", e);
+  const updatedReels = [newReel].concat(g_sellerReelsList);
+  if (!saveSellerAdsList('jk_shoppable_reels', updatedReels)) {
+    if (file && window.AdsMedia) {
+      try {
+        await AdsMedia.deleteFile(newId);
+      } catch (deleteError) {
+        console.error('Could not clean up the uploaded video after a storage error:', deleteError);
+      }
+    }
+    return;
   }
+  g_sellerReelsList = updatedReels;
 
   renderSellerPublishedReelsTable();
 
@@ -4726,13 +4697,13 @@ async function publishSellerReel() {
   }
 
   if (typeof showToast === 'function') {
-    showToast(`✅ Video Ad for "${productName}" published successfully! Visible on storefront.`);
+    showToast(`✅ Video Ad for "${productName}" saved on this device. Export reels.json to publish it for all visitors.`);
   } else {
-    alert(`✅ Video Ad for "${productName}" published successfully!`);
+    alert(`✅ Video Ad for "${productName}" saved on this device. Export reels.json to publish it for all visitors.`);
   }
 }
 
-function renderSellerPublishedReelsTable() {
+async function renderSellerPublishedReelsTable() {
   const tbody = document.getElementById('sellerPublishedReelsTableBody');
   const countEl = document.getElementById('activeReelsCount');
   if (!tbody) return;
@@ -4752,30 +4723,31 @@ function renderSellerPublishedReelsTable() {
   }
 
   let html = '';
-  list.forEach(reel => {
+  for (const reel of list) {
     const isActive = reel.active !== false;
     const catItem = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[reel.productName]) ? PRODUCT_CATALOG[reel.productName] : {};
     const priceOverrides = getSellerCustomPriceOverrides();
     const effectivePrice = priceOverrides[reel.productName] || catItem.price || '—';
+    const previewUrl = await sellerAdPreviewUrl(reel.videoUrl);
 
     html += `
       <tr style="border-bottom: 1px solid #f1f5f9;">
         <td style="padding: 10px 14px;">
           <div style="width: 52px; height: 75px; border-radius: 8px; overflow: hidden; position: relative; background: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
-            <video src="${reel.videoUrl}" poster="${reel.posterUrl || ''}" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            <video ${previewUrl ? `src="${escapeSellerAdText(previewUrl)}"` : ''} poster="${escapeSellerAdText(reel.posterUrl || '')}" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
             <div style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; padding: 1px 3px; border-radius: 3px;">
               9:16
             </div>
           </div>
         </td>
         <td style="padding: 10px 14px;">
-          <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${reel.title}</div>
+          <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${escapeSellerAdText(reel.title)}</div>
           <span style="display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 700; background: #fee2e2; color: #dc2626; padding: 2px 6px; border-radius: 6px;">
-            ${reel.badge || '🔥 Promo'}
+            ${escapeSellerAdText(reel.badge || '🔥 Promo')}
           </span>
         </td>
         <td style="padding: 10px 14px;">
-          <div style="font-weight: 600; font-size: 12.5px; color: #2563eb;">${reel.productName}</div>
+          <div style="font-weight: 600; font-size: 12.5px; color: #2563eb;">${escapeSellerAdText(reel.productName)}</div>
         </td>
         <td style="padding: 10px 14px;">
           <span style="font-weight: 800; font-size: 13px; color: #16a34a;">₹${effectivePrice}</span>
@@ -4786,7 +4758,7 @@ function renderSellerPublishedReelsTable() {
           </span>
         </td>
         <td style="padding: 10px 14px;">
-          <button type="button" onclick="toggleSellerReelActive('${reel.id}')" style="background: ${isActive ? '#dcfce7' : '#fee2e2'}; color: ${isActive ? '#15803d' : '#b91c1c'}; border: none; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
+          <button type="button" onclick="toggleSellerReelActive('${escapeSellerAdText(reel.id)}')" style="background: ${isActive ? '#dcfce7' : '#fee2e2'}; color: ${isActive ? '#15803d' : '#b91c1c'}; border: none; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
             ${isActive ? '● Active' : '○ Paused'}
           </button>
         </td>
@@ -4795,14 +4767,14 @@ function renderSellerPublishedReelsTable() {
             <a href="store.html#shoppableReelsSection" target="_blank" class="btn-hub-secondary" style="padding: 4px 8px; font-size: 11px;" title="View on store">
               <i class="fa-solid fa-eye"></i>
             </a>
-            <button type="button" class="btn-hub-secondary" onclick="deleteSellerReel('${reel.id}')" style="padding: 4px 8px; font-size: 11px; color: #ef4444;" title="Delete Video Reel">
+            <button type="button" class="btn-hub-secondary" onclick="deleteSellerReel('${escapeSellerAdText(reel.id)}')" style="padding: 4px 8px; font-size: 11px; color: #ef4444;" title="Delete Video Reel">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
         </td>
       </tr>
     `;
-  });
+  }
 
   tbody.innerHTML = html;
 }
@@ -4810,10 +4782,12 @@ function renderSellerPublishedReelsTable() {
 function toggleSellerReelActive(reelId) {
   const reel = (g_sellerReelsList || []).find(r => r.id === reelId);
   if (!reel) return;
+  const oldActive = reel.active;
   reel.active = (reel.active === false);
-  try {
-    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
-  } catch(e) {}
+  if (!saveSellerAdsList('jk_shoppable_reels', g_sellerReelsList)) {
+    reel.active = oldActive;
+    return;
+  }
   renderSellerPublishedReelsTable();
   if (typeof showToast === 'function') {
     showToast(reel.active ? "✅ Reel activated on storefront." : "⏸️ Reel paused.");
@@ -4823,13 +4797,14 @@ function toggleSellerReelActive(reelId) {
 function deleteSellerReel(reelId) {
   if (!confirm("Are you sure you want to delete this video ad reel?")) return;
   const reel = (g_sellerReelsList || []).find(r => r.id === reelId);
+  const updatedReels = (g_sellerReelsList || []).filter(r => r.id !== reelId);
+  if (!saveSellerAdsList('jk_shoppable_reels', updatedReels)) return;
+  g_sellerReelsList = updatedReels;
   if (reel && reel.videoUrl && reel.videoUrl.indexOf('idb:') === 0 && window.AdsMedia) {
-    AdsMedia.deleteFile(reel.videoUrl.slice(4));
+    AdsMedia.deleteFile(reel.videoUrl.slice(4)).catch(function (error) {
+      console.error('Could not remove the stored video file:', error);
+    });
   }
-  g_sellerReelsList = (g_sellerReelsList || []).filter(r => r.id !== reelId);
-  try {
-    localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
-  } catch(e) {}
   renderSellerPublishedReelsTable();
   if (typeof showToast === 'function') {
     showToast("🗑️ Video ad deleted.");
@@ -4837,193 +4812,44 @@ function deleteSellerReel(reelId) {
 }
 
 function exportReelsJsonFile() {
+  const localOnlyReels = g_sellerReelsList.filter(reel => (reel.videoUrl || '').startsWith('idb:'));
+  if (localOnlyReels.length > 0) {
+    alert('Some ads use video files stored only on this device. Host those videos at public URLs and add them using “Paste Video URL” before exporting for the live site.');
+    return;
+  }
+
   const payload = {
-    "_comment": "JK STUDY HUB - SHOPPABLE VIDEO REELS & VIDEO ADS CONFIGURATION.",
+    "_comment": "JK STUDY HUB - SHOPPABLE VIDEO ADS. Deploy this file with the referenced public video URLs.",
     "lastUpdated": new Date().toISOString(),
     "reels": g_sellerReelsList
   };
-  const str = JSON.stringify(payload, null, 2);
-  const blob = new Blob([str], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "reels.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = 'reels.json';
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
   if (typeof showToast === 'function') {
-    showToast("📥 reels.json downloaded! Commit this file to update reels for all users.");
+    showToast('📥 reels.json downloaded. Replace the repository file and deploy it to publish ads for all visitors.');
   }
 }
 
-function resetSellerReelsToDefault() {
-  if (!confirm("Reset all video reels back to standard sample reels? Any custom added reels will be removed.")) return;
-  localStorage.removeItem('jk_shoppable_reels');
-  loadSellerReels().then(() => {
-    renderSellerPublishedReelsTable();
-    updateSellerReelMockup();
-    if (typeof showToast === 'function') {
-      showToast("🔄 Default reels restored.");
-    }
+function escapeSellerAdText(value) {
+  return String(value || '').replace(/[&<>"']/g, function (character) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
   });
 }
 
-let g_sellerPhotosList = [];
-let g_sellerPhotoCurrentUrl = '';
-
-function populateSellerPhotoProductsDropdown() {
-  const select = document.getElementById('sellerPhotoProductSelect');
-  const source = document.getElementById('sellerReelProductSelect');
-  if (!select || !source) return;
-  select.innerHTML = source.innerHTML;
-}
-
-async function loadSellerPhotos() {
-  try {
-    const cached = localStorage.getItem('jk_shoppable_photos');
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        g_sellerPhotosList = parsed;
-        return;
-      }
+async function sellerAdPreviewUrl(url) {
+  if (window.AdsMedia && typeof AdsMedia.resolveUrl === 'function') {
+    try {
+      return await AdsMedia.resolveUrl(url);
+    } catch (error) {
+      console.error('Could not load an ad preview from browser storage:', error);
+      return '';
     }
-  } catch (e) {}
-  try {
-    const res = await fetch('photos.json?v=' + Date.now());
-    if (res.ok) {
-      const data = await res.json();
-      if (data && Array.isArray(data.photos)) {
-        g_sellerPhotosList = data.photos;
-        localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList));
-        return;
-      }
-    }
-  } catch (e) {}
-  g_sellerPhotosList = [];
-}
-
-async function handleSellerPhotoFileSelected(input) {
-  const file = input.files && input.files[0];
-  if (!file) return;
-  if (window.AdsMedia && typeof AdsMedia.compressImageFile === 'function') {
-    g_sellerPhotoCurrentUrl = await AdsMedia.compressImageFile(file, 720, 0.82);
-  } else {
-    g_sellerPhotoCurrentUrl = URL.createObjectURL(file);
   }
-  const mock = document.getElementById('sellerMockupPhoto');
-  if (mock && g_sellerPhotoCurrentUrl) mock.src = g_sellerPhotoCurrentUrl;
+  return url || '';
 }
-
-function handleSellerPhotoUrlInput(url) {
-  g_sellerPhotoCurrentUrl = (url || '').trim();
-  const mock = document.getElementById('sellerMockupPhoto');
-  if (mock && g_sellerPhotoCurrentUrl) mock.src = g_sellerPhotoCurrentUrl;
-}
-
-function publishSellerPhoto() {
-  const titleInput = document.getElementById('sellerPhotoTitleInput');
-  const select = document.getElementById('sellerPhotoProductSelect');
-  const badgeInput = document.getElementById('sellerPhotoBadgeInput');
-  const urlInput = document.getElementById('sellerPhotoUrlInput');
-  const title = (titleInput ? titleInput.value : '').trim();
-  const productName = select ? select.value : '';
-  const badge = (badgeInput ? badgeInput.value : '').trim() || 'Sale';
-  let imageUrl = g_sellerPhotoCurrentUrl || (urlInput ? urlInput.value.trim() : '');
-
-  if (!title) {
-    alert('Please enter a photo title.');
-    return;
-  }
-  if (!productName) {
-    alert('Please select the product this photo is advertising.');
-    return;
-  }
-  if (!imageUrl) {
-    alert('Please upload a photo or paste an image URL.');
-    return;
-  }
-
-  const newPhoto = {
-    id: 'photo-' + Date.now(),
-    title: title,
-    productName: productName,
-    imageUrl: imageUrl,
-    badge: badge,
-    active: true,
-    createdAt: new Date().toISOString()
-  };
-  g_sellerPhotosList.unshift(newPhoto);
-  try {
-    localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList));
-  } catch (e) {
-    alert('Photo is too large to save on this device. Try a smaller image.');
-    g_sellerPhotosList.shift();
-    return;
-  }
-  renderSellerPublishedPhotosTable();
-  if (titleInput) titleInput.value = '';
-  const fileInput = document.getElementById('sellerPhotoFileInput');
-  if (fileInput) fileInput.value = '';
-  if (urlInput) urlInput.value = '';
-  g_sellerPhotoCurrentUrl = '';
-  if (typeof showToast === 'function') {
-    showToast('✅ Photo ad published. Open the store to see it.');
-  } else {
-    alert('Photo ad published.');
-  }
-}
-
-function renderSellerPublishedPhotosTable() {
-  const tbody = document.getElementById('sellerPublishedPhotosTableBody');
-  const countEl = document.getElementById('activePhotosCount');
-  if (!tbody) return;
-  const list = g_sellerPhotosList || [];
-  if (countEl) countEl.innerText = list.filter(p => p.active !== false).length;
-  if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#64748b;font-size:13px;">No photo ads yet. Add your first photo above.</td></tr>';
-    return;
-  }
-  let html = '';
-  list.forEach(function (photo) {
-    const isActive = photo.active !== false;
-    html += `
-      <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding:10px 14px;">
-          <img src="${photo.imageUrl}" alt="" style="width:52px;height:75px;object-fit:cover;border-radius:8px;background:#000;" onerror="this.src='images/logo-app.png'">
-        </td>
-        <td style="padding:10px 14px;">
-          <div style="font-weight:700;font-size:13px;color:#0f172a;">${photo.title}</div>
-          <span style="font-size:10.5px;font-weight:700;background:#dbeafe;color:#1d4ed8;padding:2px 6px;border-radius:6px;">${photo.badge || 'Sale'}</span>
-        </td>
-        <td style="padding:10px 14px;font-weight:600;font-size:12.5px;color:#2563eb;">${photo.productName}</td>
-        <td style="padding:10px 14px;">
-          <button type="button" onclick="toggleSellerPhotoActive('${photo.id}')" style="background:${isActive ? '#dcfce7' : '#fee2e2'};color:${isActive ? '#15803d' : '#b91c1c'};border:none;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;">
-            ${isActive ? '● Active' : '○ Paused'}
-          </button>
-        </td>
-        <td style="padding:10px 14px;text-align:right;">
-          <button type="button" class="btn-hub-secondary" onclick="deleteSellerPhoto('${photo.id}')" style="padding:4px 8px;font-size:11px;color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
-        </td>
-      </tr>`;
-  });
-  tbody.innerHTML = html;
-}
-
-function toggleSellerPhotoActive(photoId) {
-  const photo = (g_sellerPhotosList || []).find(p => p.id === photoId);
-  if (!photo) return;
-  photo.active = (photo.active === false);
-  try { localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList)); } catch (e) {}
-  renderSellerPublishedPhotosTable();
-}
-
-function deleteSellerPhoto(photoId) {
-  if (!confirm('Delete this photo ad?')) return;
-  g_sellerPhotosList = (g_sellerPhotosList || []).filter(p => p.id !== photoId);
-  try { localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList)); } catch (e) {}
-  renderSellerPublishedPhotosTable();
-}
-
-
