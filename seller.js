@@ -4886,7 +4886,7 @@ async function renderSellerPublishedReelsTable() {
             <a href="store.html#shoppableReelsSection" target="_blank" class="btn-hub-secondary" style="padding: 4px 8px; font-size: 11px;" title="View on store">
               <i class="fa-solid fa-eye"></i>
             </a>
-            ${reel.cloudManaged ? '' : `<button type="button" class="btn-hub-secondary" onclick="publishSellerReelToCloud('${escapeSellerAdText(reel.id)}')" style="padding: 4px 8px; font-size: 11px; color: #2563eb;" title="Publish for all students"><i class="fa-solid fa-cloud-arrow-up"></i></button>`}
+            <button type="button" class="btn-hub-secondary" onclick="publishSellerReelToCloud('${escapeSellerAdText(reel.id)}')" style="padding: 4px 8px; font-size: 11px; color: #2563eb;" title="${reel.cloudManaged ? 'Update live video ad for all students' : 'Publish for all students'}"><i class="fa-solid fa-cloud-arrow-up"></i></button>
             <button type="button" class="btn-hub-secondary" onclick="deleteSellerReel('${escapeSellerAdText(reel.id)}')" style="padding: 4px 8px; font-size: 11px; color: #ef4444;" title="Delete Video Reel">
               <i class="fa-solid fa-trash"></i>
             </button>
