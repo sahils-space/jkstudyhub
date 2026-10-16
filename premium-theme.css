@@ -1,0 +1,422 @@
+:root {
+  --primary-navy: #172a22;
+  --primary-indigo: #244638;
+  --primary-blue: #315c4b;
+  --primary-light: #edf3ef;
+  --accent-teal: #537b68;
+  --accent-cyan: #668b81;
+  --accent-amber: #b08d57;
+  --accent-amber-light: #f3ecdf;
+  --bg-slate: #f7f5ef;
+  --bg-white: #fffefa;
+  --bg-subtle: #efede6;
+  --text-dark: #202a25;
+  --text-muted: #59655e;
+  --border-color: #e5e1d7;
+  --border-focus: #668b76;
+}
+
+body:not(.dark-mode) {
+  background-color: #f7f5ef;
+  background-image:
+    radial-gradient(ellipse at 8% 4%, rgba(176, 141, 87, 0.08), transparent 38%),
+    radial-gradient(ellipse at 94% 22%, rgba(83, 123, 104, 0.07), transparent 36%),
+    linear-gradient(180deg, #faf9f5 0%, #f3f1ea 55%, #f8f6f0 100%);
+  color: #202a25;
+}
+
+.exam-countdown-topbar,
+.main-header,
+.top-brand-wrapper,
+.navbar {
+  background-color: #172a22;
+}
+
+.exam-countdown-topbar {
+  background-image: linear-gradient(100deg, #14231d 0%, #1d382c 55%, #14231d 100%);
+  border-bottom-color: rgba(223, 205, 166, 0.16);
+}
+
+.exam-pulse-dot {
+  background: #c9a96e;
+  box-shadow: 0 0 10px rgba(201, 169, 110, 0.65);
+}
+
+.exam-badge-tag i,
+.t-val {
+  color: #e0c28b;
+}
+
+.pill-class {
+  color: #c9b27f;
+}
+
+.exam-timer-pill {
+  border-color: rgba(223, 205, 166, 0.18);
+}
+
+.main-header {
+  border-bottom-color: rgba(223, 205, 166, 0.2);
+  box-shadow: 0 8px 28px rgba(20, 35, 28, 0.24);
+}
+
+.top-brand-wrapper {
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(176, 141, 87, 0.17), transparent 62%),
+    linear-gradient(180deg, #172a22 0%, #1d382c 100%);
+  border-bottom-color: rgba(223, 205, 166, 0.14);
+}
+
+.top-brand-wrapper::after {
+  background: radial-gradient(ellipse at center, rgba(176, 141, 87, 0.14), transparent 70%);
+}
+
+.hub-title {
+  background-image: linear-gradient(180deg, #fffefa 24%, #e9dfc9 100%);
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.38));
+}
+
+.hub-tagline {
+  color: #d5c7a9;
+}
+
+.navbar {
+  border-top-color: rgba(223, 205, 166, 0.12);
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #f4e8cf;
+  background-color: rgba(176, 141, 87, 0.14);
+  border-color: rgba(205, 177, 126, 0.32);
+  box-shadow: 0 0 14px rgba(176, 141, 87, 0.12);
+}
+
+.nav-item.jkbose-btn,
+.nav-item.jkbose-btn:hover {
+  background: linear-gradient(135deg, #b08d57, #967444);
+  color: #fffefa !important;
+  box-shadow: 0 3px 12px rgba(176, 141, 87, 0.24);
+}
+
+.hero-section {
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(176, 141, 87, 0.17), transparent 55%),
+    radial-gradient(ellipse at 8% 62%, rgba(83, 123, 104, 0.14), transparent 45%),
+    linear-gradient(180deg, #1d382c 0%, #172a22 62%, #14231d 100%);
+  border-bottom-color: rgba(223, 205, 166, 0.18);
+}
+
+.hero-ring-outer {
+  border-color: rgba(205, 177, 126, 0.14);
+}
+
+.hero-ring-inner {
+  border-color: rgba(205, 177, 126, 0.22);
+  box-shadow: 0 0 70px rgba(176, 141, 87, 0.12), inset 0 0 50px rgba(176, 141, 87, 0.05);
+}
+
+.hero-ring-core {
+  background: radial-gradient(circle, rgba(176, 141, 87, 0.11), transparent 70%);
+}
+
+.hero-study-watermark {
+  color: rgba(222, 205, 169, 0.12);
+  filter: drop-shadow(0 0 16px rgba(176, 141, 87, 0.12));
+}
+
+.badge {
+  background: rgba(176, 141, 87, 0.12);
+  color: #ead7b3;
+  border-color: rgba(205, 177, 126, 0.35);
+  box-shadow: 0 4px 15px rgba(176, 141, 87, 0.1);
+}
+
+.badge-dot-glow {
+  background: #c9a96e;
+  box-shadow: 0 0 8px rgba(201, 169, 110, 0.7);
+}
+
+.hero-title-accent {
+  background-image: linear-gradient(135deg, #fffefa 18%, #e2c995 68%, #c9a96e 100%);
+  filter: drop-shadow(0 4px 14px rgba(176, 141, 87, 0.18));
+}
+
+.hero-community-strip {
+  background: rgba(15, 31, 24, 0.72);
+  border-color: rgba(223, 205, 166, 0.16);
+}
+
+.hero-community-strip a {
+  background: #315c4b;
+}
+
+.hero-community-strip a:hover {
+  background: #244638;
+}
+
+.hero-stat-pill {
+  border-color: rgba(223, 205, 166, 0.16);
+}
+
+.hero-stat-pill i {
+  color: #c9a96e;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #315c4b, #244638);
+  border-color: #315c4b;
+  box-shadow: 0 8px 18px rgba(36, 70, 56, 0.22);
+}
+
+.btn-primary:hover {
+  background: #244638;
+  border-color: #244638;
+}
+
+.nav-library-btn {
+  background: linear-gradient(135deg, #315c4b, #244638) !important;
+  border-color: rgba(223, 205, 166, 0.28) !important;
+  box-shadow: 0 3px 12px rgba(36, 70, 56, 0.2) !important;
+}
+
+.nav-library-btn:hover {
+  background: #244638 !important;
+}
+
+.hero-actions .btn-secondary {
+  background: rgba(255, 254, 250, 0.1) !important;
+  border-color: rgba(223, 205, 166, 0.28) !important;
+}
+
+.hero-actions a.btn:not(.btn-primary) {
+  background: rgba(176, 141, 87, 0.12) !important;
+  color: #f0dfbd !important;
+  border-color: rgba(205, 177, 126, 0.34) !important;
+}
+
+.store-portals-section {
+  background: linear-gradient(180deg, #f5f2e9 0%, #eeece3 100%) !important;
+  border-bottom-color: #e1dccf !important;
+}
+
+.store-portals-section .section-tag {
+  background: #eee6d6 !important;
+  color: #765c34 !important;
+}
+
+.store-portals-section .section-title,
+.section-title {
+  color: #202a25 !important;
+}
+
+.store-portals-section .title-underline {
+  background: linear-gradient(90deg, #315c4b, #b08d57) !important;
+}
+
+.store-portal-card {
+  border-color: #e4dfd3;
+  box-shadow: 0 8px 24px rgba(37, 49, 41, 0.07);
+}
+
+.store-portal-card:hover {
+  border-color: #c8b995;
+  box-shadow: 0 18px 34px rgba(37, 49, 41, 0.12);
+}
+
+.portal-title {
+  color: #244638;
+}
+
+.portal-icon-box {
+  background: #e9eee8 !important;
+  color: #315c4b !important;
+}
+
+.portal-badge {
+  background: #eee6d6 !important;
+  color: #765c34 !important;
+}
+
+.portal-window-btn {
+  background: #315c4b !important;
+  color: #fffefa !important;
+}
+
+.portal-window-btn:hover {
+  background: #244638 !important;
+}
+
+.section-tag {
+  background: #eee6d6;
+  color: #765c34;
+}
+
+.main-footer {
+  background: #172a22;
+}
+
+.zapvi-top-bar {
+  background: linear-gradient(100deg, #172a22 0%, #244638 58%, #172a22 100%);
+}
+
+.zapvi-top-bar span strong {
+  color: #e0c28b;
+}
+
+.zapvi-store-nav {
+  background: #fffefa;
+  border-bottom: 1px solid #e7e1d5;
+}
+
+.zapvi-logo,
+.zapvi-nav-link:hover,
+.zapvi-nav-link.active {
+  color: #244638;
+}
+
+.zapvi-logo-bolt {
+  color: #b08d57;
+}
+
+.zapvi-icon-btn,
+.back-btn-pill {
+  color: #315c4b;
+}
+
+.zapvi-icon-btn:hover {
+  background: #edf3ef;
+  color: #244638;
+}
+
+.zapvi-offer-link,
+.zapvi-offer-link:hover {
+  color: #765c34;
+}
+
+.zapvi-pill-new {
+  background: #315c4b;
+}
+
+.zapvi-category-strip {
+  background: transparent;
+}
+
+.zapvi-cat-img-wrap {
+  background: #f2efe6 !important;
+}
+
+.zapvi-cat-title {
+  color: #244638 !important;
+}
+
+.jk-offers {
+  background: #f4f1e8;
+}
+
+.jk-offers__heading {
+  color: #59655e;
+}
+
+.jk-offer {
+  border-color: #e3ddcf;
+  background: linear-gradient(115deg, #fffefa 5%, #f1f2eb 100%);
+}
+
+.jk-offer--delivery {
+  border-color: #d6e1d8;
+  background: linear-gradient(115deg, #fffefa 5%, #edf3ef 100%);
+}
+
+.jk-offer__eyebrow {
+  background: #eee6d6;
+  color: #765c34;
+}
+
+.jk-offer--delivery .jk-offer__eyebrow {
+  background: #e2ece4;
+  color: #315c4b;
+}
+
+.jk-offer__title {
+  color: #202a25;
+}
+
+.jk-offer__description {
+  color: #59655e;
+}
+
+body:not(.dark-mode) .zapvi-category-strip,
+body:not(.dark-mode) .container {
+  color: #202a25;
+}
+
+body:not(.dark-mode) .zapvi-cat-card,
+body:not(.dark-mode) .store-search-container,
+body:not(.dark-mode) .product-card,
+body:not(.dark-mode) .book-product-card {
+  background-color: #fffefa;
+  border-color: #e5e1d7;
+}
+
+body:not(.dark-mode) .zapvi-cat-title,
+body:not(.dark-mode) .category-title {
+  color: #244638;
+}
+
+body:not(.dark-mode) .buy-btn,
+body:not(.dark-mode) .btn-add-cart,
+body:not(.dark-mode) .reel-shop-now-btn {
+  background-color: #315c4b;
+  border-color: #315c4b;
+  color: #fffefa;
+}
+
+body:not(.dark-mode) .buy-btn:hover,
+body:not(.dark-mode) .btn-add-cart:hover,
+body:not(.dark-mode) .reel-shop-now-btn:hover {
+  background-color: #244638;
+  border-color: #244638;
+}
+
+body:not(.dark-mode) .product-title,
+body:not(.dark-mode) .product-price {
+  color: #244638;
+}
+
+body:not(.dark-mode) .mobile-bottom-nav {
+  border-top-color: #e5e1d7;
+  background: #fffefa;
+}
+
+body:not(.dark-mode) .mobile-nav-item.active,
+body:not(.dark-mode) .mobile-nav-item.active i {
+  color: #315c4b !important;
+}
+
+body.dark-mode .jk-offers {
+  background: #0b0f19;
+}
+
+body.dark-mode .jk-offer {
+  background: #111827;
+  border-color: #334155;
+}
+
+body.dark-mode .jk-offer__eyebrow {
+  background: #29362e;
+  color: #e0c28b;
+}
+
+body.dark-mode .jk-offer--delivery .jk-offer__eyebrow {
+  background: #20372e;
+  color: #a9c6b3;
+}
+
+@media (max-width: 768px) {
+  .top-brand-wrapper {
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(176, 141, 87, 0.14), transparent 62%),
+      linear-gradient(180deg, #172a22 0%, #1d382c 100%);
+  }
+}
