@@ -2667,12 +2667,20 @@ function renderSellerPublishedCatalog() {
     const resolvedMrp = resolveSellerMrpOverride(customMrps, prodName);
     const mrp = (resolvedMrp !== undefined) ? resolvedMrp : (Number(p.mrp || p.originalPrice) || Math.round(price * 1.35));
     const stock = (p.stock !== undefined) ? p.stock : 20;
+    const safeTitle = String(prodName)
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '&quot;')
+      .replace(/[\r\n]/g, ' ');
+    const escapedTitle = String(prodName).replace(/[&<>"']/g, function (character) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+    });
 
     html += `
       <tr>
         <td>
           <div style="position: relative; width: 50px; height: 50px;">
-            <img src="${mainImg}" alt="${prodName}" onerror="this.src='images/logo-app.png'" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <img src="${mainImg}" alt="${escapedTitle}" onerror="this.src='images/logo-app.png'" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
             ${photos.length > 1 ? `
               <span style="position: absolute; bottom: 2px; right: 2px; background: rgba(15,23,42,0.85); color: #fff; font-size: 9.5px; font-weight: 800; padding: 1px 4px; border-radius: 4px;">
                 ${photos.length} 📸
@@ -2681,7 +2689,7 @@ function renderSellerPublishedCatalog() {
           </div>
         </td>
         <td>
-          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${prodName}</div>
+          <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${escapedTitle}</div>
           <div style="font-size: 11px; color: #64748b; margin-top: 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
             ${p.desc || p.description || ''}
           </div>

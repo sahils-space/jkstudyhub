@@ -921,9 +921,6 @@ function applyCustomPricesToStorefront() {
   syncPricesFromJsonFile();
 }
 
-// Immediate initial execution to eliminate any flash on page load
-applyCustomPricesToStorefront();
-
 // District & PIN Code Delivery and COD Rates (All 20 J&K Districts)
 const DEFAULT_JK_DISTRICT_RATES = {
   // Kashmir Division (10 Districts)
