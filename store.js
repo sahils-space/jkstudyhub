@@ -751,7 +751,7 @@ function getCustomMrp(productName, defaultMrp) {
   return defaultMrp;
 }
 
-function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps) {
+function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps, preferIncoming) {
   try {
     if (!incomingPrices) incomingPrices = {};
     if (!incomingMrps) incomingMrps = {};
@@ -765,8 +765,12 @@ function applyLivePriceAndMrpOverrides(incomingPrices, incomingMrps) {
     } catch(e) {}
 
     // Baseline incoming defaults overridden by explicit user-saved prices in localStorage
-    const priceMap = { ...incomingPrices, ...existingPrices };
-    const mrpMap = { ...incomingMrps, ...existingMrps };
+    const priceMap = preferIncoming
+      ? { ...existingPrices, ...incomingPrices }
+      : { ...incomingPrices, ...existingPrices };
+    const mrpMap = preferIncoming
+      ? { ...existingMrps, ...incomingMrps }
+      : { ...incomingMrps, ...existingMrps };
 
     // Persist full merged map so prices are preserved permanently across all page refreshes
     try {
@@ -10557,7 +10561,7 @@ function initRealtimeCatalogSync() {
           }
         });
         if (Object.keys(priceMap).length > 0) {
-          applyLivePriceAndMrpOverrides(priceMap, mrpMap);
+          applyLivePriceAndMrpOverrides(priceMap, mrpMap, true);
         }
       }, err => {
         console.warn("Firestore real-time price overrides notice:", err);
@@ -11157,6 +11161,7 @@ function checkoutCalculatedBundle() {
    SHOPPABLE VIDEO ADS (aligned 9:16 row)
    ========================================================================= */
 let g_shoppableReelsData = [];
+let g_deployedReelsData = [];
 let g_currentActiveFullscreenReel = null;
 let g_reelsIntersectionObserver = null;
 
@@ -11197,7 +11202,33 @@ function loadAdsList(storageKey, jsonFile, jsonField) {
 async function loadShoppableReels() {
   if (!document.getElementById('shoppableReelsTrack')) return;
   g_shoppableReelsData = await loadAdsList('jk_shoppable_reels', 'reels.json', 'reels');
+  g_deployedReelsData = g_shoppableReelsData.filter(reel => !reel.cloudManaged);
   await renderShoppableReels(g_shoppableReelsData);
+  initRealtimeShoppableReelsSync();
+}
+
+function initRealtimeShoppableReelsSync() {
+  if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) return;
+  try {
+    firebase.firestore().collection('shoppable_reels').onSnapshot(snapshot => {
+      const reelsById = new Map(g_deployedReelsData.map(reel => [reel.id, reel]));
+      snapshot.forEach(doc => {
+        const reel = doc.data();
+        if (reel && reel.id) reelsById.set(doc.id, { ...reel, id: doc.id, cloudManaged: true });
+      });
+      g_shoppableReelsData = Array.from(reelsById.values());
+      try {
+        localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_shoppableReelsData));
+      } catch (error) {
+        console.warn('Could not cache shared video ads on this device:', error);
+      }
+      renderShoppableReels(g_shoppableReelsData);
+    }, error => {
+      console.error('Could not receive shared video ads from Firestore:', error);
+    });
+  } catch (error) {
+    console.error('Could not set up shared video ads:', error);
+  }
 }
 
 function adProductMeta(pName, fallbackThumb) {

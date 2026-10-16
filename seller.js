@@ -2668,6 +2668,7 @@ function renderSellerPublishedCatalog() {
     const mrp = (resolvedMrp !== undefined) ? resolvedMrp : (Number(p.mrp || p.originalPrice) || Math.round(price * 1.35));
     const stock = (p.stock !== undefined) ? p.stock : 20;
     const safeTitle = String(prodName)
+      .replace(/&/g, '&amp;')
       .replace(/\\/g, '\\\\')
       .replace(/'/g, "\\'")
       .replace(/"/g, '&quot;')
@@ -2749,7 +2750,7 @@ function renderSellerPublishedCatalog() {
   tbody.innerHTML = html;
 }
 
-function quickSavePublishedProductPrice(cleanId, prodTitle) {
+async function quickSavePublishedProductPrice(cleanId, prodTitle) {
   const pInput = document.getElementById(`pub-price-${cleanId}`);
   const mInput = document.getElementById(`pub-mrp-${cleanId}`);
   if (!pInput) return;
@@ -2772,6 +2773,37 @@ function quickSavePublishedProductPrice(cleanId, prodTitle) {
   const mrpOverrides = getSellerCustomMrpOverrides();
   mrpOverrides[prodTitle] = newMrp;
   localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+
+  if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) {
+    if (typeof showToast === 'function') {
+      showToast('Price saved only on this device. Cloud sync is unavailable.');
+    } else {
+      alert('Price saved only on this device. Cloud sync is unavailable.');
+    }
+    renderSellerPublishedCatalog();
+    if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
+    return;
+  }
+
+  const safeDocId = String(prodTitle).toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  try {
+    await firebase.firestore().collection('price_overrides').doc(safeDocId).set({
+      name: prodTitle,
+      price: newPrice,
+      mrp: newMrp,
+      updatedAt: Date.now()
+    }, { merge: true });
+  } catch (error) {
+    console.error('[Firestore] Could not publish seller catalog price:', error);
+    if (typeof showToast === 'function') {
+      showToast('Cloud price update failed. The new price is saved only on this device.');
+    } else {
+      alert('Cloud price update failed. The new price is saved only on this device.');
+    }
+    renderSellerPublishedCatalog();
+    if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
+    return;
+  }
 
   // Update in jk_uploaded_catalog & jk_custom_products
   try {
@@ -4387,6 +4419,7 @@ function saveSellerAdsList(storageKey, list) {
 async function initSellerReelsSection() {
   populateSellerReelProductsDropdown();
   await loadSellerReels();
+  await loadSellerCloudReels();
   try {
     localStorage.removeItem('jk_shoppable_photos');
   } catch (error) {
@@ -4704,10 +4737,88 @@ async function publishSellerReel() {
     qualityDetails.innerText = 'Once a video is chosen, our automatic poster pipeline renders an instant-load thumbnail frame.';
   }
 
-  if (typeof showToast === 'function') {
-    showToast(`✅ Video Ad for "${productName}" saved on this device. Export reels.json to publish it for all visitors.`);
-  } else {
-    alert(`✅ Video Ad for "${productName}" saved on this device. Export reels.json to publish it for all visitors.`);
+  await publishSellerReelToCloud(newId);
+}
+
+async function loadSellerCloudReels() {
+  if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) return;
+  try {
+    const snapshot = await firebase.firestore().collection('shoppable_reels').get();
+    const localReels = g_sellerReelsList.filter(reel => !reel.cloudManaged);
+    const cloudReels = [];
+    snapshot.forEach(doc => {
+      const reel = doc.data();
+      if (reel && reel.id) cloudReels.push({ ...reel, id: doc.id, cloudManaged: true });
+    });
+    g_sellerReelsList = cloudReels.concat(localReels);
+    saveSellerAdsList('jk_shoppable_reels', g_sellerReelsList);
+  } catch (error) {
+    console.error('Could not load shared video ads from Firestore:', error);
+    if (typeof showToast === 'function') showToast('Could not load shared video ads. Check Firestore access.');
+  }
+}
+
+async function publishSellerReelToCloud(reelId) {
+  const reel = (g_sellerReelsList || []).find(item => item.id === reelId);
+  if (!reel) return false;
+
+  if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.storage || !firebase.auth || !firebase.apps || !firebase.apps.length) {
+    if (typeof showToast === 'function') showToast('Saved only on this device. Firebase cloud services are unavailable.');
+    else alert('Saved only on this device. Firebase cloud services are unavailable.');
+    return false;
+  }
+
+  const user = firebase.auth().currentUser;
+  const ownerEmails = ['sahilsspace20@gmail.com', 'sahilsspace@gmail.com', 'info.jkstudyhub@gmail.com'];
+  const ownerEmail = String(user && user.email || '').trim().toLowerCase();
+  if (!user || !ownerEmails.includes(ownerEmail)) {
+    if (typeof showToast === 'function') showToast('Saved only on this device. Sign in with an authorized Google seller account to publish.');
+    else alert('Sign in with an authorized Google seller account to publish this ad for all students.');
+    return false;
+  }
+
+  let uploadedPath = '';
+  let videoUrl = reel.videoUrl || '';
+  try {
+    if (videoUrl.indexOf('idb:') === 0) {
+      const file = await AdsMedia.getFile(videoUrl.slice(4));
+      if (!file) throw new Error('The local video file is missing. Re-upload it before publishing.');
+      if (!String(file.type || '').startsWith('video/')) throw new Error('Choose a valid video file before publishing.');
+      const extension = String(file.type).split('/')[1].replace(/[^a-z0-9]+/gi, '') || 'mp4';
+      uploadedPath = `video-ads/${reel.id}.${extension}`;
+      const uploadedFile = await firebase.storage().ref(uploadedPath).put(file, { contentType: file.type });
+      videoUrl = await uploadedFile.ref.getDownloadURL();
+    } else {
+      const publicUrl = new URL(videoUrl);
+      if (publicUrl.protocol !== 'https:') throw new Error('Video URLs must use HTTPS to be published.');
+    }
+
+    const cloudReel = {
+      ...reel,
+      videoUrl,
+      storagePath: uploadedPath || reel.storagePath || '',
+      cloudManaged: true,
+      updatedAt: new Date().toISOString()
+    };
+    await firebase.firestore().collection('shoppable_reels').doc(reel.id).set(cloudReel);
+    Object.assign(reel, cloudReel);
+    saveSellerAdsList('jk_shoppable_reels', g_sellerReelsList);
+    await renderSellerPublishedReelsTable();
+    if (typeof showToast === 'function') showToast(`Video ad for "${reel.productName}" is now published for all students.`);
+    return true;
+  } catch (error) {
+    console.error('Could not publish the video ad:', error);
+    if (uploadedPath) {
+      try {
+        await firebase.storage().ref(uploadedPath).delete();
+      } catch (cleanupError) {
+        console.error('Could not remove the uploaded video after publishing failed:', cleanupError);
+      }
+    }
+    const message = error && error.message ? error.message : 'Check Firebase Storage and Firestore rules.';
+    if (typeof showToast === 'function') showToast(`Video was not published: ${message}`);
+    else alert(`Video was not published: ${message}`);
+    return false;
   }
 }
 
@@ -4775,6 +4886,7 @@ async function renderSellerPublishedReelsTable() {
             <a href="store.html#shoppableReelsSection" target="_blank" class="btn-hub-secondary" style="padding: 4px 8px; font-size: 11px;" title="View on store">
               <i class="fa-solid fa-eye"></i>
             </a>
+            ${reel.cloudManaged ? '' : `<button type="button" class="btn-hub-secondary" onclick="publishSellerReelToCloud('${escapeSellerAdText(reel.id)}')" style="padding: 4px 8px; font-size: 11px; color: #2563eb;" title="Publish for all students"><i class="fa-solid fa-cloud-arrow-up"></i></button>`}
             <button type="button" class="btn-hub-secondary" onclick="deleteSellerReel('${escapeSellerAdText(reel.id)}')" style="padding: 4px 8px; font-size: 11px; color: #ef4444;" title="Delete Video Reel">
               <i class="fa-solid fa-trash"></i>
             </button>
@@ -4787,35 +4899,63 @@ async function renderSellerPublishedReelsTable() {
   tbody.innerHTML = html;
 }
 
-function toggleSellerReelActive(reelId) {
+async function toggleSellerReelActive(reelId) {
   const reel = (g_sellerReelsList || []).find(r => r.id === reelId);
   if (!reel) return;
   const oldActive = reel.active;
   reel.active = (reel.active === false);
-  if (!saveSellerAdsList('jk_shoppable_reels', g_sellerReelsList)) {
+  if (reel.cloudManaged) {
+    try {
+      await firebase.firestore().collection('shoppable_reels').doc(reelId).update({
+        active: reel.active,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      reel.active = oldActive;
+      console.error('Could not update shared video ad status:', error);
+      if (typeof showToast === 'function') showToast('Could not update the live ad. Check Firestore access.');
+      return;
+    }
+  }
+  if (!saveSellerAdsList('jk_shoppable_reels', g_sellerReelsList) && !reel.cloudManaged) {
     reel.active = oldActive;
     return;
   }
   renderSellerPublishedReelsTable();
   if (typeof showToast === 'function') {
-    showToast(reel.active ? "✅ Reel activated on storefront." : "⏸️ Reel paused.");
+    showToast(reel.cloudManaged
+      ? (reel.active ? '✅ Video ad activated for all students.' : '⏸️ Video ad paused for all students.')
+      : 'Saved only on this device. Publish the ad to make this change live.');
   }
 }
 
-function deleteSellerReel(reelId) {
+async function deleteSellerReel(reelId) {
   if (!confirm("Are you sure you want to delete this video ad reel?")) return;
   const reel = (g_sellerReelsList || []).find(r => r.id === reelId);
   const updatedReels = (g_sellerReelsList || []).filter(r => r.id !== reelId);
-  if (!saveSellerAdsList('jk_shoppable_reels', updatedReels)) return;
+  if (reel && reel.cloudManaged) {
+    try {
+      await firebase.firestore().collection('shoppable_reels').doc(reelId).delete();
+    } catch (error) {
+      console.error('Could not delete shared video ad:', error);
+      if (typeof showToast === 'function') showToast('Could not delete the live ad. Check Firestore access.');
+      return;
+    }
+  }
   g_sellerReelsList = updatedReels;
-  if (reel && reel.videoUrl && reel.videoUrl.indexOf('idb:') === 0 && window.AdsMedia) {
+  if (!saveSellerAdsList('jk_shoppable_reels', updatedReels) && !(reel && reel.cloudManaged)) return;
+  if (reel && reel.storagePath && firebase.storage) {
+    firebase.storage().ref(reel.storagePath).delete().catch(function (error) {
+      console.error('Could not remove the shared video file:', error);
+    });
+  } else if (reel && reel.videoUrl && reel.videoUrl.indexOf('idb:') === 0 && window.AdsMedia) {
     AdsMedia.deleteFile(reel.videoUrl.slice(4)).catch(function (error) {
       console.error('Could not remove the stored video file:', error);
     });
   }
   renderSellerPublishedReelsTable();
   if (typeof showToast === 'function') {
-    showToast("🗑️ Video ad deleted.");
+    showToast(reel && reel.cloudManaged ? '🗑️ Video ad removed for all students.' : '🗑️ Video ad deleted on this device.');
   }
 }
 

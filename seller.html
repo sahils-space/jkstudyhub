@@ -1208,7 +1208,7 @@
                   <i class="fa-solid fa-circle-play" style="color: #ef4444;"></i> Video Ads Manager
                 </h2>
                 <p style="font-size: 13px; color: #64748b; margin: 0;">
-                  Upload and preview videos here. To publish an ad for all visitors, host the video at a public URL, add it with “Paste Video URL,” then export and deploy reels.json.
+                  Sign in with an authorized Google account to publish videos to all students. Uploaded files use Firebase Storage; public video URLs can also be published directly. First-time setup: deploy storage.rules with “firebase deploy --only storage”.
                 </p>
               </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -1529,6 +1529,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script>
     if (typeof firebase !== 'undefined' && !firebase.apps.length) {
       firebase.initializeApp({
@@ -1547,6 +1548,6 @@
   <script src="analytics.js?v=1"></script>
   <!-- External Script -->
   <script src="ads-media.js?v=90.0"></script>
-  <script src="seller.js?v=90.1"></script>
+  <script src="seller.js?v=90.2"></script>
 </body>
 </html>
