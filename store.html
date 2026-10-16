@@ -2707,13 +2707,15 @@
     body.dark-mode .verified-uni-badge {
       background: #1e3a8a !important;
       color: #93c5fd !important;
+    }
     /* =========================================================
-       SHOPPABLE VIDEO REELS & VIDEO ADS CAROUSEL (Instagram/TikTok Style)
+       SHOPPABLE VIDEO + PHOTO ADS (aligned 9:16 row, store layout unchanged)
        ========================================================= */
     .shoppable-reels-section {
       margin-top: 45px;
       margin-bottom: 35px;
       position: relative;
+      width: 100%;
     }
     .reels-header-wrap {
       display: flex;
@@ -2725,38 +2727,43 @@
     }
     .reels-scroll-track {
       display: flex;
-      gap: 14px;
+      gap: 16px;
+      justify-content: center;
+      align-items: stretch;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       padding: 6px 2px 18px 2px;
       scrollbar-width: none;
+      width: 100%;
     }
     .reels-scroll-track::-webkit-scrollbar {
       display: none;
     }
     .shoppable-reel-card {
-      flex: 0 0 240px;
-      height: 420px;
+      flex: 0 0 210px;
+      width: 210px;
+      height: 372px;
       position: relative;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow: hidden;
       scroll-snap-align: start;
       background: #0f172a;
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.06);
       cursor: pointer;
       user-select: none;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    @media (max-width: 900px) {
+      .reels-scroll-track {
+        justify-content: flex-start;
+      }
     }
     @media (max-width: 640px) {
       .shoppable-reel-card {
-        flex: 0 0 185px;
-        height: 330px;
+        flex: 0 0 172px;
+        width: 172px;
+        height: 306px;
       }
-    }
-    .shoppable-reel-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2);
     }
     .reel-video-element {
       width: 100%;
@@ -2932,6 +2939,56 @@
       }
       .reel-prod-title {
         font-size: 10.5px;
+      }
+    }
+    .ad-watch-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      background: rgba(15, 23, 42, 0.82);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .ad-watch-modal.open {
+      display: flex;
+    }
+    .ad-watch-frame {
+      width: min(360px, 92vw);
+      height: min(640px, 86vh);
+      background: #000;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    }
+    .ad-watch-frame video,
+    .ad-watch-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+    .ad-watch-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      cursor: pointer;
+    }
+    .ad-watch-shop {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 14px;
+      z-index: 3;
     }
   </style>
 
@@ -5545,10 +5602,10 @@
             <span style="font-size:12px; font-weight:700; color:#2563eb;">⚡ Tap to Watch Original Edition</span>
           </div>
           <h2 style="font-size:24px; font-weight:800; color:#0f172a; margin:0; display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> Watch &amp; Shop &middot; Video Ads &amp; Unboxing
+            <i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> Product Video Ads
           </h2>
           <p style="font-size:13px; color:#64748b; margin:4px 0 0;">
-            Watch authentic book tours, page quality, and unboxing reels. Click <strong>Shop now</strong> to order directly.
+            Tap a video to watch with sound. Use <strong>Shop now</strong> to order.
           </p>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
@@ -5565,6 +5622,33 @@
       <div class="reels-scroll-track" id="shoppableReelsTrack">
         <!-- Rendered dynamically by store.js -->
       </div>
+    </section>
+
+    <section class="shoppable-reels-section" id="shoppablePhotosSection">
+      <div class="reels-header-wrap">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span style="background:#dbeafe; color:#1d4ed8; font-size:11px; font-weight:800; padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:4px;">
+              <i class="fa-solid fa-image"></i> PHOTO ADS
+            </span>
+          </div>
+          <h2 style="font-size:24px; font-weight:800; color:#0f172a; margin:0; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-camera" style="color:#2563eb;"></i> Product Photo Ads
+          </h2>
+          <p style="font-size:13px; color:#64748b; margin:4px 0 0;">
+            Same card size as videos. Add photos from the seller panel. Tap to view, then shop.
+          </p>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" onclick="scrollPhotosTrack(-1)" class="btn-icon" style="background:#ffffff; border:1px solid #cbd5e1; width:36px; height:36px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.06); cursor:pointer;" title="Previous Photos">
+            <i class="fa-solid fa-chevron-left" style="font-size:12px; color:#334155;"></i>
+          </button>
+          <button type="button" onclick="scrollPhotosTrack(1)" class="btn-icon" style="background:#ffffff; border:1px solid #cbd5e1; width:36px; height:36px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.06); cursor:pointer;" title="Next Photos">
+            <i class="fa-solid fa-chevron-right" style="font-size:12px; color:#334155;"></i>
+          </button>
+        </div>
+      </div>
+      <div class="reels-scroll-track" id="shoppablePhotosTrack"></div>
     </section>
 
 
@@ -6353,8 +6437,22 @@
     }
   </script>
   <!-- Real-Time Visitor Analytics Tracker -->
+  <div id="adWatchModal" class="ad-watch-modal" onclick="closeAdWatchModal(event)">
+    <div class="ad-watch-frame" onclick="event.stopPropagation()">
+      <button type="button" class="ad-watch-close" onclick="closeAdWatchModal()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      <video id="adWatchVideo" playsinline controls></video>
+      <img id="adWatchImage" alt="Product photo ad" style="display:none;">
+      <div class="ad-watch-shop">
+        <button type="button" class="reel-shop-now-btn" id="adWatchShopBtn">
+          <i class="fa-solid fa-bag-shopping"></i> Shop now
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="analytics.js?v=2"></script>
-  <script src="store.js?v=88.0"></script>
+  <script src="ads-media.js?v=89.0"></script>
+  <script src="store.js?v=89.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">

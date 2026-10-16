@@ -11157,140 +11157,164 @@ function checkoutCalculatedBundle() {
 }
 
 /* =========================================================================
-   SHOPPABLE VIDEO REELS & VIDEO ADS (Instagram/TikTok Video Commerce)
+   SHOPPABLE VIDEO + PHOTO ADS (aligned 9:16 row)
    ========================================================================= */
 let g_shoppableReelsData = [];
+let g_shoppablePhotosData = [];
 let g_currentActiveFullscreenReel = null;
 let g_reelsIntersectionObserver = null;
 
-async function loadShoppableReels() {
-  const container = document.getElementById('shoppableReelsTrack');
-  if (!container) return;
-
-  // 1. Try local storage first (instant cached render)
-  try {
-    const cached = localStorage.getItem('jk_shoppable_reels');
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        g_shoppableReelsData = parsed;
-        renderShoppableReels(g_shoppableReelsData);
+function loadAdsList(storageKey, jsonFile, jsonField) {
+  return (async function () {
+    let list = [];
+    try {
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
       }
-    }
-  } catch(e) {}
-
-  // 2. Fetch fresh reels.json from server / repo in background
-  try {
-    const res = await fetch('reels.json?v=' + Date.now());
-    if (res.ok) {
-      const data = await res.json();
-      if (data && Array.isArray(data.reels) && data.reels.length > 0) {
-        if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) {
-          g_shoppableReelsData = data.reels;
-          renderShoppableReels(g_shoppableReelsData);
+    } catch (e) {}
+    if (list.length === 0) {
+      try {
+        const res = await fetch(jsonFile + '?v=' + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data[jsonField]) && data[jsonField].length > 0) {
+            list = data[jsonField];
+          }
         }
-      }
+      } catch (e) {}
     }
-  } catch(e) {}
-
-  // 3. Fallback starter reels if still empty
-  if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) {
-    g_shoppableReelsData = [
-      {
-        id: "reel-1",
-        title: "The Alchemist — Student Favorite",
-        productName: "The Alchemist",
-        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4",
-        posterUrl: "images/books/the-alchemist-1.webp",
-        badge: "⭐ 4.9 Bestseller",
-        active: true
-      },
-      {
-        id: "reel-2",
-        title: "Atomic Habits — Original Edition",
-        productName: "Atomic Habits",
-        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4",
-        posterUrl: "images/books/atomic-habits-1.webp",
-        badge: "🔥 Most Popular",
-        active: true
-      },
-      {
-        id: "reel-3",
-        title: "Deep Work — Study Focus Guide",
-        productName: "Deep Work",
-        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4",
-        posterUrl: "images/books/deep-work-1.webp",
-        badge: "🎯 Rank Booster",
-        active: true
-      },
-      {
-        id: "reel-4",
-        title: "JKBOSE Class 10th Master Kit",
-        productName: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)",
-        videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4",
-        posterUrl: "images/school-bookset.webp",
-        badge: "📦 5 Subject Combo",
-        active: true
-      }
-    ];
-    renderShoppableReels(g_shoppableReelsData);
-  }
+    return list;
+  })();
 }
 
-function renderShoppableReels(reels) {
+async function loadShoppableReels() {
+  if (!document.getElementById('shoppableReelsTrack')) return;
+  g_shoppableReelsData = await loadAdsList('jk_shoppable_reels', 'reels.json', 'reels');
+  if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) {
+    g_shoppableReelsData = [
+      { id: "reel-1", title: "The Alchemist — Student Favorite", productName: "The Alchemist", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-person-turning-the-pages-of-a-book-40037-large.mp4", posterUrl: "images/books/the-alchemist-1.webp", badge: "⭐ 4.9 Bestseller", active: true },
+      { id: "reel-2", title: "Atomic Habits — Original Edition", productName: "Atomic Habits", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-student-reading-a-book-in-a-library-41551-large.mp4", posterUrl: "images/books/atomic-habits-1.webp", badge: "🔥 Most Popular", active: true },
+      { id: "reel-3", title: "Deep Work — Study Focus Guide", productName: "Deep Work", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-studying-with-a-book-at-night-42861-large.mp4", posterUrl: "images/books/deep-work-1.webp", badge: "🎯 Rank Booster", active: true },
+      { id: "reel-4", title: "JKBOSE Class 10th Master Kit", productName: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)", videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-high-school-student-writing-in-a-notebook-42796-large.mp4", posterUrl: "images/school-bookset.webp", badge: "📦 5 Subject Combo", active: true }
+    ];
+  }
+  await renderShoppableReels(g_shoppableReelsData);
+}
+
+async function loadShoppablePhotos() {
+  if (!document.getElementById('shoppablePhotosTrack')) return;
+  g_shoppablePhotosData = await loadAdsList('jk_shoppable_photos', 'photos.json', 'photos');
+  await renderShoppablePhotos(g_shoppablePhotosData);
+}
+
+function adProductMeta(pName, fallbackThumb) {
+  const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
+  const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
+  const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
+  return { cat, price, mrp, thumb: fallbackThumb || cat.image || 'images/logo-app.png' };
+}
+
+function adCardOverlayHtml(pName, thumb, price, mrp, priceAttr) {
+  const enc = encodeURIComponent(pName);
+  return `
+        <div class="reel-bottom-overlay">
+          <div class="reel-product-chip" onclick="event.stopPropagation(); buyReelProduct('${enc}')">
+            <img src="${thumb}" alt="${pName}" class="reel-thumb-img" onerror="this.src='images/logo-app.png'">
+            <div class="reel-prod-meta">
+              <div class="reel-prod-title" title="${pName}">${pName}</div>
+              <div class="reel-prod-price-row">
+                <span class="reel-price-now" data-${priceAttr}-price="${pName}">₹${price}</span>
+                <span class="reel-price-mrp" data-${priceAttr}-mrp="${pName}" style="text-decoration:line-through; opacity:0.65; font-size:10.5px;">₹${mrp}</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="reel-shop-now-btn" onclick="event.stopPropagation(); buyReelProduct('${enc}')">
+            <i class="fa-solid fa-bag-shopping"></i> Shop now
+          </button>
+        </div>`;
+}
+
+async function renderShoppableReels(reels) {
   const container = document.getElementById('shoppableReelsTrack');
   if (!container) return;
 
   const activeReels = (reels || []).filter(r => r.active !== false);
+  const parent = document.getElementById('shoppableReelsSection');
   if (activeReels.length === 0) {
-    const parent = document.getElementById('shoppableReelsSection');
     if (parent) parent.style.display = 'none';
     return;
   }
-  const parent = document.getElementById('shoppableReelsSection');
   if (parent) parent.style.display = 'block';
 
   let html = '';
-  activeReels.forEach(reel => {
+  for (const reel of activeReels) {
     const pName = reel.productName;
-    const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
-    const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
-    const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
-    const thumb = reel.posterUrl || cat.image || 'images/logo-app.png';
-
+    const meta = adProductMeta(pName, reel.posterUrl);
+    const playUrl = (window.AdsMedia && typeof AdsMedia.resolveUrl === 'function')
+      ? await AdsMedia.resolveUrl(reel.videoUrl)
+      : (reel.videoUrl || '');
     html += `
-      <div class="shoppable-reel-card" data-reel-id="${reel.id}" onclick="buyReelProduct('${encodeURIComponent(pName)}')">
-        <video class="reel-video-element" src="${reel.videoUrl}" poster="${thumb}" preload="metadata" playsinline webkit-playsinline loop muted></video>
+      <div class="shoppable-reel-card" data-reel-id="${reel.id}">
+        <video class="reel-video-element" src="${playUrl}" poster="${meta.thumb}" preload="metadata" playsinline webkit-playsinline loop muted></video>
         <div class="reel-top-bar">
           <span class="reel-badge-pill">${reel.badge || '🔥 Watch & Shop'}</span>
-          <button type="button" class="reel-mute-btn" onclick="event.stopPropagation(); toggleReelCardSound(this)" title="Mute/Unmute">
+          <button type="button" class="reel-mute-btn" onclick="event.stopPropagation(); toggleReelCardSound(this)" title="Sound on/off">
             <i class="fa-solid fa-volume-xmark"></i>
           </button>
         </div>
         <div class="reel-play-indicator">
           <i class="fa-solid fa-play"></i>
         </div>
-        <div class="reel-bottom-overlay">
-          <div class="reel-product-chip" onclick="event.stopPropagation(); buyReelProduct('${encodeURIComponent(pName)}')">
-            <img src="${thumb}" alt="${pName}" class="reel-thumb-img" onerror="this.src='images/logo-app.png'">
-            <div class="reel-prod-meta">
-              <div class="reel-prod-title" title="${pName}">${pName}</div>
-              <div class="reel-prod-price-row">
-                <span class="reel-price-now" data-reel-prod-price="${pName}">₹${price}</span>
-                <span class="reel-price-mrp" data-reel-prod-mrp="${pName}" style="text-decoration:line-through; opacity:0.65; font-size:10.5px;">₹${mrp}</span>
-              </div>
-            </div>
-          </div>
-          <button type="button" class="reel-shop-now-btn" onclick="event.stopPropagation(); buyReelProduct('${encodeURIComponent(pName)}')">
-            <i class="fa-solid fa-bag-shopping"></i> Shop now
-          </button>
-        </div>
-      </div>
-    `;
-  });
+        ${adCardOverlayHtml(pName, meta.thumb, meta.price, meta.mrp, 'reel-prod')}
+      </div>`;
+  }
 
   container.innerHTML = html;
+  container.querySelectorAll('.shoppable-reel-card').forEach(card => {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('.reel-shop-now-btn') || e.target.closest('.reel-product-chip') || e.target.closest('.reel-mute-btn')) return;
+      openAdWatchModal('video', card.getAttribute('data-reel-id'));
+    });
+  });
   initReelsIntersectionObserver(container);
+}
+
+async function renderShoppablePhotos(photos) {
+  const container = document.getElementById('shoppablePhotosTrack');
+  if (!container) return;
+  const active = (photos || []).filter(p => p.active !== false);
+  const parent = document.getElementById('shoppablePhotosSection');
+  if (active.length === 0) {
+    if (parent) parent.style.display = 'none';
+    return;
+  }
+  if (parent) parent.style.display = 'block';
+
+  let html = '';
+  for (const photo of active) {
+    const pName = photo.productName;
+    const meta = adProductMeta(pName, photo.imageUrl);
+    const imgUrl = (window.AdsMedia && typeof AdsMedia.resolveUrl === 'function')
+      ? (await AdsMedia.resolveUrl(photo.imageUrl) || meta.thumb)
+      : (photo.imageUrl || meta.thumb);
+    html += `
+      <div class="shoppable-reel-card" data-photo-id="${photo.id}">
+        <img class="reel-video-element" src="${imgUrl}" alt="${pName}" onerror="this.src='images/logo-app.png'">
+        <div class="reel-top-bar">
+          <span class="reel-badge-pill">${photo.badge || 'Photo Ad'}</span>
+        </div>
+        ${adCardOverlayHtml(pName, imgUrl, meta.price, meta.mrp, 'photo-prod')}
+      </div>`;
+  }
+  container.innerHTML = html;
+  container.querySelectorAll('.shoppable-reel-card').forEach(card => {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('.reel-shop-now-btn') || e.target.closest('.reel-product-chip')) return;
+      openAdWatchModal('photo', card.getAttribute('data-photo-id'));
+    });
+  });
 }
 
 function initReelsIntersectionObserver(container) {
@@ -11331,6 +11355,11 @@ function toggleReelCardSound(btn) {
   const video = card.querySelector('video');
   if (!video) return;
   video.muted = !video.muted;
+  if (!video.muted) {
+    const playPromise = video.play();
+    if (playPromise) playPromise.catch(function () {});
+    card.classList.remove('paused');
+  }
   const icon = btn.querySelector('i');
   if (icon) {
     icon.className = video.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
@@ -11350,33 +11379,99 @@ function buyReelProduct(encodedName) {
 function scrollReelsTrack(dir) {
   const track = document.getElementById('shoppableReelsTrack');
   if (!track) return;
-  const scrollAmount = 260 * dir;
-  track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  track.scrollBy({ left: 226 * dir, behavior: 'smooth' });
+}
+
+function scrollPhotosTrack(dir) {
+  const track = document.getElementById('shoppablePhotosTrack');
+  if (!track) return;
+  track.scrollBy({ left: 226 * dir, behavior: 'smooth' });
+}
+
+async function openAdWatchModal(kind, itemId) {
+  const modal = document.getElementById('adWatchModal');
+  const videoEl = document.getElementById('adWatchVideo');
+  const imgEl = document.getElementById('adWatchImage');
+  const shopBtn = document.getElementById('adWatchShopBtn');
+  if (!modal || !itemId) return;
+
+  let productName = '';
+  if (kind === 'video') {
+    const reel = (g_shoppableReelsData || []).find(r => r.id === itemId);
+    if (!reel) return;
+    productName = reel.productName;
+    const playUrl = window.AdsMedia ? await AdsMedia.resolveUrl(reel.videoUrl) : reel.videoUrl;
+    if (imgEl) imgEl.style.display = 'none';
+    if (videoEl) {
+      videoEl.style.display = 'block';
+      videoEl.src = playUrl || '';
+      videoEl.muted = false;
+      videoEl.controls = true;
+      const p = videoEl.play();
+      if (p) p.catch(function () {});
+    }
+    document.querySelectorAll('#shoppableReelsTrack video').forEach(function (v) { v.pause(); });
+  } else {
+    const photo = (g_shoppablePhotosData || []).find(r => r.id === itemId);
+    if (!photo) return;
+    productName = photo.productName;
+    const imgUrl = window.AdsMedia ? (await AdsMedia.resolveUrl(photo.imageUrl) || photo.imageUrl) : photo.imageUrl;
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.removeAttribute('src');
+      videoEl.style.display = 'none';
+    }
+    if (imgEl) {
+      imgEl.style.display = 'block';
+      imgEl.src = imgUrl || 'images/logo-app.png';
+    }
+  }
+
+  if (shopBtn) {
+    shopBtn.onclick = function () {
+      closeAdWatchModal();
+      buyReelProduct(encodeURIComponent(productName));
+    };
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAdWatchModal(evt) {
+  if (evt && evt.target && evt.target.id !== 'adWatchModal' && evt.type === 'click' && !evt.target.classList.contains('ad-watch-close') && evt.currentTarget && evt.currentTarget.id !== 'adWatchModal') {
+    return;
+  }
+  const modal = document.getElementById('adWatchModal');
+  const videoEl = document.getElementById('adWatchVideo');
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.removeAttribute('src');
+  }
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function openFullscreenReel(reelId) {
-  const reel = (g_shoppableReelsData || []).find(r => r.id === reelId);
-  if (!reel) return;
-  buyReelProduct(encodeURIComponent(reel.productName));
+  openAdWatchModal('video', reelId);
 }
-
-function closeFullscreenReel() {}
-function closeFullscreenReelOnBackdrop() {}
+function closeFullscreenReel() { closeAdWatchModal(); }
+function closeFullscreenReelOnBackdrop() { closeAdWatchModal(); }
 function toggleFullscreenReelSound() {}
 function handleFullscreenReelShopNow() {}
 
 function syncShoppableReelsPrices() {
-  if (!g_shoppableReelsData || g_shoppableReelsData.length === 0) return;
-  g_shoppableReelsData.forEach(reel => {
-    const pName = reel.productName;
-    const cat = (typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pName]) ? PRODUCT_CATALOG[pName] : {};
-    const price = typeof getCustomPrice === 'function' ? getCustomPrice(pName, cat.price || 199) : (cat.price || 199);
-    const mrp = typeof getCustomMrp === 'function' ? getCustomMrp(pName, cat.mrp || (price + 150)) : (cat.mrp || (price + 150));
-    const priceEl = document.querySelector(`[data-reel-prod-price="${pName}"]`);
-    const mrpEl = document.querySelector(`[data-reel-prod-mrp="${pName}"]`);
-    if (priceEl) priceEl.innerText = '₹' + price;
-    if (mrpEl) mrpEl.innerText = '₹' + mrp;
-  });
+  function patch(list, attr) {
+    (list || []).forEach(function (item) {
+      const pName = item.productName;
+      const meta = adProductMeta(pName);
+      const priceEl = document.querySelector(`[data-${attr}-price="${pName}"]`);
+      const mrpEl = document.querySelector(`[data-${attr}-mrp="${pName}"]`);
+      if (priceEl) priceEl.innerText = '₹' + meta.price;
+      if (mrpEl) mrpEl.innerText = '₹' + meta.mrp;
+    });
+  }
+  patch(g_shoppableReelsData, 'reel-prod');
+  patch(g_shoppablePhotosData, 'photo-prod');
 }
 
 function onStoreReady() {
@@ -11386,7 +11481,12 @@ function onStoreReady() {
     calculateBundleTotal();
   }
   loadShoppableReels();
+  loadShoppablePhotos();
 }
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeAdWatchModal();
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', onStoreReady);

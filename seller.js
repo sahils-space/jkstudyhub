@@ -683,7 +683,7 @@ function switchSellerView(viewName) {
     if (pane) pane.style.display = 'block';
     renderSellerLeadsTable();
   } else if (viewName === 'reels') {
-    if (pageTitle) pageTitle.innerText = 'Video Ads & Shoppable Reels (Video Commerce)';
+    if (pageTitle) pageTitle.innerText = 'Video & Photo Ads';
     const pane = document.getElementById('view-reels');
     if (pane) pane.style.display = 'block';
     initSellerReelsSection();
@@ -4367,9 +4367,24 @@ let g_sellerReelVideoSourceType = 'file';
 
 async function initSellerReelsSection() {
   populateSellerReelProductsDropdown();
+  populateSellerPhotoProductsDropdown();
   await loadSellerReels();
+  await loadSellerPhotos();
   renderSellerPublishedReelsTable();
+  renderSellerPublishedPhotosTable();
   updateSellerReelMockup();
+}
+
+function switchSellerAdsTab(tab) {
+  const videoPane = document.getElementById('sellerVideoAdsPane');
+  const photoPane = document.getElementById('sellerPhotoAdsPane');
+  const videoBtn = document.getElementById('sellerAdsTabVideo');
+  const photoBtn = document.getElementById('sellerAdsTabPhoto');
+  const isPhoto = tab === 'photo';
+  if (videoPane) videoPane.style.display = isPhoto ? 'none' : 'block';
+  if (photoPane) photoPane.style.display = isPhoto ? 'block' : 'none';
+  if (videoBtn) videoBtn.className = isPhoto ? 'btn-hub-secondary' : 'btn-hub-secondary active';
+  if (photoBtn) photoBtn.className = isPhoto ? 'btn-hub-secondary active' : 'btn-hub-secondary';
 }
 
 function populateSellerReelProductsDropdown() {
@@ -4627,7 +4642,7 @@ function updateSellerReelMockup() {
   }
 }
 
-function publishSellerReel() {
+async function publishSellerReel() {
   const titleInput = document.getElementById('sellerReelTitleInput');
   const select = document.getElementById('sellerReelProductSelect');
   const badgeInput = document.getElementById('sellerReelBadgeInput');
@@ -4645,13 +4660,25 @@ function publishSellerReel() {
     return;
   }
 
-  let finalVideoUrl = g_sellerReelCurrentVideoUrl;
-  if (!finalVideoUrl) {
-    const urlInput = document.getElementById('sellerReelUrlInput');
-    finalVideoUrl = (urlInput ? urlInput.value : '').trim();
+  const fileInput = document.getElementById('sellerReelFileInput');
+  const urlInput = document.getElementById('sellerReelUrlInput');
+  const file = fileInput && fileInput.files && fileInput.files[0];
+  let finalVideoUrl = (urlInput ? urlInput.value : '').trim();
+  const newId = "reel-" + Date.now();
+
+  if (file && window.AdsMedia) {
+    try {
+      await AdsMedia.putFile(newId, file);
+      finalVideoUrl = 'idb:' + newId;
+    } catch (e) {
+      alert("Could not save the video file on this device. Try a smaller MP4 or paste a video URL.");
+      return;
+    }
+  } else if (!finalVideoUrl) {
+    finalVideoUrl = g_sellerReelCurrentVideoUrl;
   }
 
-  if (!finalVideoUrl) {
+  if (!finalVideoUrl || finalVideoUrl.indexOf('blob:') === 0) {
     alert("Please upload a video file or paste a direct video URL.");
     return;
   }
@@ -4660,7 +4687,7 @@ function publishSellerReel() {
   const prodImage = selectedOpt ? selectedOpt.getAttribute('data-image') : '';
 
   const newReel = {
-    id: "reel-" + Date.now(),
+    id: newId,
     title: title,
     productName: productName,
     videoUrl: finalVideoUrl,
@@ -4682,9 +4709,7 @@ function publishSellerReel() {
 
   // Reset form
   if (titleInput) titleInput.value = '';
-  const fileInput = document.getElementById('sellerReelFileInput');
   if (fileInput) fileInput.value = '';
-  const urlInput = document.getElementById('sellerReelUrlInput');
   if (urlInput) urlInput.value = '';
   g_sellerReelCurrentVideoUrl = '';
   g_sellerReelExtractedPoster = '';
@@ -4797,6 +4822,10 @@ function toggleSellerReelActive(reelId) {
 
 function deleteSellerReel(reelId) {
   if (!confirm("Are you sure you want to delete this video ad reel?")) return;
+  const reel = (g_sellerReelsList || []).find(r => r.id === reelId);
+  if (reel && reel.videoUrl && reel.videoUrl.indexOf('idb:') === 0 && window.AdsMedia) {
+    AdsMedia.deleteFile(reel.videoUrl.slice(4));
+  }
   g_sellerReelsList = (g_sellerReelsList || []).filter(r => r.id !== reelId);
   try {
     localStorage.setItem('jk_shoppable_reels', JSON.stringify(g_sellerReelsList));
@@ -4838,6 +4867,163 @@ function resetSellerReelsToDefault() {
       showToast("🔄 Default reels restored.");
     }
   });
+}
+
+let g_sellerPhotosList = [];
+let g_sellerPhotoCurrentUrl = '';
+
+function populateSellerPhotoProductsDropdown() {
+  const select = document.getElementById('sellerPhotoProductSelect');
+  const source = document.getElementById('sellerReelProductSelect');
+  if (!select || !source) return;
+  select.innerHTML = source.innerHTML;
+}
+
+async function loadSellerPhotos() {
+  try {
+    const cached = localStorage.getItem('jk_shoppable_photos');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        g_sellerPhotosList = parsed;
+        return;
+      }
+    }
+  } catch (e) {}
+  try {
+    const res = await fetch('photos.json?v=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.photos)) {
+        g_sellerPhotosList = data.photos;
+        localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList));
+        return;
+      }
+    }
+  } catch (e) {}
+  g_sellerPhotosList = [];
+}
+
+async function handleSellerPhotoFileSelected(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  if (window.AdsMedia && typeof AdsMedia.compressImageFile === 'function') {
+    g_sellerPhotoCurrentUrl = await AdsMedia.compressImageFile(file, 720, 0.82);
+  } else {
+    g_sellerPhotoCurrentUrl = URL.createObjectURL(file);
+  }
+  const mock = document.getElementById('sellerMockupPhoto');
+  if (mock && g_sellerPhotoCurrentUrl) mock.src = g_sellerPhotoCurrentUrl;
+}
+
+function handleSellerPhotoUrlInput(url) {
+  g_sellerPhotoCurrentUrl = (url || '').trim();
+  const mock = document.getElementById('sellerMockupPhoto');
+  if (mock && g_sellerPhotoCurrentUrl) mock.src = g_sellerPhotoCurrentUrl;
+}
+
+function publishSellerPhoto() {
+  const titleInput = document.getElementById('sellerPhotoTitleInput');
+  const select = document.getElementById('sellerPhotoProductSelect');
+  const badgeInput = document.getElementById('sellerPhotoBadgeInput');
+  const urlInput = document.getElementById('sellerPhotoUrlInput');
+  const title = (titleInput ? titleInput.value : '').trim();
+  const productName = select ? select.value : '';
+  const badge = (badgeInput ? badgeInput.value : '').trim() || 'Sale';
+  let imageUrl = g_sellerPhotoCurrentUrl || (urlInput ? urlInput.value.trim() : '');
+
+  if (!title) {
+    alert('Please enter a photo title.');
+    return;
+  }
+  if (!productName) {
+    alert('Please select the product this photo is advertising.');
+    return;
+  }
+  if (!imageUrl) {
+    alert('Please upload a photo or paste an image URL.');
+    return;
+  }
+
+  const newPhoto = {
+    id: 'photo-' + Date.now(),
+    title: title,
+    productName: productName,
+    imageUrl: imageUrl,
+    badge: badge,
+    active: true,
+    createdAt: new Date().toISOString()
+  };
+  g_sellerPhotosList.unshift(newPhoto);
+  try {
+    localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList));
+  } catch (e) {
+    alert('Photo is too large to save on this device. Try a smaller image.');
+    g_sellerPhotosList.shift();
+    return;
+  }
+  renderSellerPublishedPhotosTable();
+  if (titleInput) titleInput.value = '';
+  const fileInput = document.getElementById('sellerPhotoFileInput');
+  if (fileInput) fileInput.value = '';
+  if (urlInput) urlInput.value = '';
+  g_sellerPhotoCurrentUrl = '';
+  if (typeof showToast === 'function') {
+    showToast('✅ Photo ad published. Open the store to see it.');
+  } else {
+    alert('Photo ad published.');
+  }
+}
+
+function renderSellerPublishedPhotosTable() {
+  const tbody = document.getElementById('sellerPublishedPhotosTableBody');
+  const countEl = document.getElementById('activePhotosCount');
+  if (!tbody) return;
+  const list = g_sellerPhotosList || [];
+  if (countEl) countEl.innerText = list.filter(p => p.active !== false).length;
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#64748b;font-size:13px;">No photo ads yet. Add your first photo above.</td></tr>';
+    return;
+  }
+  let html = '';
+  list.forEach(function (photo) {
+    const isActive = photo.active !== false;
+    html += `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding:10px 14px;">
+          <img src="${photo.imageUrl}" alt="" style="width:52px;height:75px;object-fit:cover;border-radius:8px;background:#000;" onerror="this.src='images/logo-app.png'">
+        </td>
+        <td style="padding:10px 14px;">
+          <div style="font-weight:700;font-size:13px;color:#0f172a;">${photo.title}</div>
+          <span style="font-size:10.5px;font-weight:700;background:#dbeafe;color:#1d4ed8;padding:2px 6px;border-radius:6px;">${photo.badge || 'Sale'}</span>
+        </td>
+        <td style="padding:10px 14px;font-weight:600;font-size:12.5px;color:#2563eb;">${photo.productName}</td>
+        <td style="padding:10px 14px;">
+          <button type="button" onclick="toggleSellerPhotoActive('${photo.id}')" style="background:${isActive ? '#dcfce7' : '#fee2e2'};color:${isActive ? '#15803d' : '#b91c1c'};border:none;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;">
+            ${isActive ? '● Active' : '○ Paused'}
+          </button>
+        </td>
+        <td style="padding:10px 14px;text-align:right;">
+          <button type="button" class="btn-hub-secondary" onclick="deleteSellerPhoto('${photo.id}')" style="padding:4px 8px;font-size:11px;color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>`;
+  });
+  tbody.innerHTML = html;
+}
+
+function toggleSellerPhotoActive(photoId) {
+  const photo = (g_sellerPhotosList || []).find(p => p.id === photoId);
+  if (!photo) return;
+  photo.active = (photo.active === false);
+  try { localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList)); } catch (e) {}
+  renderSellerPublishedPhotosTable();
+}
+
+function deleteSellerPhoto(photoId) {
+  if (!confirm('Delete this photo ad?')) return;
+  g_sellerPhotosList = (g_sellerPhotosList || []).filter(p => p.id !== photoId);
+  try { localStorage.setItem('jk_shoppable_photos', JSON.stringify(g_sellerPhotosList)); } catch (e) {}
+  renderSellerPublishedPhotosTable();
 }
 
 
