@@ -2956,8 +2956,18 @@ function initSellerRealtimeCatalog() {
             if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
           }
         }
-      }, err => {});
-    } catch(e) {}
+      }, err => {
+        console.error('Could not receive the shared catalog from Firestore:', err);
+        if (typeof showToast === 'function') {
+          showToast('Could not sync the published catalog. Existing local items remain available; check Firestore access.');
+        }
+      });
+    } catch(error) {
+      console.error('Could not set up the published catalog listener:', error);
+      if (typeof showToast === 'function') {
+        showToast('Could not connect the published catalog. Check Firebase configuration.');
+      }
+    }
   }
 }
 

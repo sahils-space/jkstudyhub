@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v94';
+const CACHE_NAME = 'jk-study-hub-v95';
 const urlsToCache = [
   './',
   './index.html',
@@ -13,6 +13,8 @@ const urlsToCache = [
   './analytics.js',
   './seller.css',
   './seller.js',
+  './premium-theme.css',
+  './promo-offers.css',
   './style.css',
   './store.js',
   './script.js',
@@ -31,13 +33,20 @@ const urlsToCache = [
   './images/pen-stand.webp',
   './images/quran.webp',
   './images/spiral-copies.webp',
-  './images/study-table.webp'
+  './images/study-table.webp',
+  './images/offer-mascot-delivery.jpg',
+  './images/offer-mascot-savings.jpg'
 ];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).catch(() => {})
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
+      .catch(error => {
+        console.error('Service worker precache failed; the previous worker will remain active:', error);
+        throw error;
+      })
   );
 });
 
@@ -79,11 +88,25 @@ self.addEventListener('fetch', event => {
         .then(response => {
           if (response && response.status === 200) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(event.request, clone))
+              .catch(error => console.warn('Could not cache the latest site response:', error));
           }
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(error => {
+          console.warn('Network request failed; checking the offline cache:', url.pathname, error);
+          return caches.match(event.request).then(cachedResponse => {
+            if (cachedResponse) return cachedResponse;
+            if (isNavigation) {
+              return new Response(
+                '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline</title><body style="font:16px system-ui,sans-serif;max-width:36rem;margin:15vh auto;padding:0 1.25rem;color:#202a25"><h1>You are offline</h1><p>This page is not available on this device yet. Reconnect to the internet and reload JK Study Hub.</p></body></html>',
+                { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+              );
+            }
+            return Response.error();
+          });
+        })
     );
     return;
   }
@@ -95,9 +118,14 @@ self.addEventListener('fetch', event => {
       return fetch(event.request).then(networkResponse => {
         if (networkResponse && networkResponse.status === 200) {
           const clone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          caches.open(CACHE_NAME)
+            .then(cache => cache.put(event.request, clone))
+            .catch(error => console.warn('Could not cache the requested media:', error));
         }
         return networkResponse;
+      }).catch(error => {
+        console.warn('Media request failed and no cached copy was available:', url.pathname, error);
+        return Response.error();
       });
     })
   );
