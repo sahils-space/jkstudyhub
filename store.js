@@ -4869,11 +4869,13 @@ function syncStoreRouteFromLocation() {
   document.title = 'JK Study Hub Store - Books & School Supplies (Less Than Bookshop Rates)';
 }
 
-window.addEventListener('popstate', syncStoreRouteFromLocation);
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', syncStoreRouteFromLocation);
-} else {
-  syncStoreRouteFromLocation();
+if (location.pathname.endsWith('store.html') || location.pathname === '/' || location.pathname.endsWith('/')) {
+  window.addEventListener('popstate', syncStoreRouteFromLocation);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncStoreRouteFromLocation);
+  } else {
+    syncStoreRouteFromLocation();
+  }
 }
 
 function getCheckoutDeliveryInfo() {
