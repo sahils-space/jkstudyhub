@@ -5962,13 +5962,16 @@ function startRazorpayPayment() {
     return;
   }
 
+  const emailInput = document.getElementById('orderEmail');
+  const email = emailInput ? emailInput.value.trim() : '';
+
   const options = {
     "key": RAZORPAY_KEY,
     "amount": Math.round(totalPaid * 100),
     "currency": "INR",
     "name": "JK Study Hub",
     "description": (currentCheckoutProduct || 'Book & Study Supplies').substring(0, 250),
-    "image": "images/icon.svg",
+    "image": "https://jkstudyhub.online/images/icon-192.png",
     "handler": function (response) {
       const txnId = response.razorpay_payment_id;
       if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying & Saving...';
@@ -5976,7 +5979,8 @@ function startRazorpayPayment() {
     },
     "prefill": {
       "name": name,
-      "contact": phone
+      "contact": phone,
+      "email": email
     },
     "theme": {
       "color": "#2563eb"
