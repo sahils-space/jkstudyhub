@@ -4726,12 +4726,18 @@ let activeRepeatDiscountAmount = 0;
 let activeRedeemedPrevOrderId = null;
 
 function navigateToCheckoutPage(checkoutContext) {
+  window._jkCheckoutPageStarted = false;
   try {
     sessionStorage.setItem('jk_checkout_context', JSON.stringify(checkoutContext));
     sessionStorage.setItem('jk_checkout_return_url', `${location.pathname}${location.search}${location.hash}`);
   } catch (error) {
     console.error('Unable to start checkout:', error);
     alert('Checkout could not be opened. Please enable browser storage and try again.');
+    return;
+  }
+  const isStorePage = location.pathname.endsWith('store.html') || location.pathname === '/' || location.pathname === '';
+  if (!isStorePage) {
+    window.location.href = 'store.html?checkout=1';
     return;
   }
   history.pushState({ jkStoreRoute: 'checkout' }, '', 'store.html?checkout=1');
@@ -4864,6 +4870,11 @@ function syncStoreRouteFromLocation() {
 }
 
 window.addEventListener('popstate', syncStoreRouteFromLocation);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', syncStoreRouteFromLocation);
+} else {
+  syncStoreRouteFromLocation();
+}
 
 function getCheckoutDeliveryInfo() {
   const pinInput = document.getElementById('orderPin');
@@ -5160,21 +5171,8 @@ function quickOneClickCodCheckout(btnEl, evt) {
     return;
   }
 
-  const nameInput = document.getElementById('orderName');
-  const phoneInput = document.getElementById('orderPhone');
-  const addrInput = document.getElementById('orderAddress');
-
-  if (!nameInput || !nameInput.value.trim() || !phoneInput || !phoneInput.value.trim()) {
-    alert("Please check your name and 10-digit WhatsApp phone number.");
+  if (!validateCheckoutInputs()) {
     return;
-  }
-
-  if (currentCheckoutCategory === 'standard' || currentCheckoutCategory === 'books' || currentCheckoutCategory === 'both') {
-    if (!addrInput || !addrInput.value.trim()) {
-      alert("Please enter your delivery street / landmark.");
-      if (addrInput) addrInput.focus();
-      return;
-    }
   }
 
   isOrderSubmissionInProgress = true;
@@ -5615,72 +5613,93 @@ function updateChecklist() {
 // ========================================================
 let currentCheckoutStep = 1;
 
+function validateCheckoutInputs() {
+  const nameInput = document.getElementById('orderName');
+  const phoneInput = document.getElementById('orderPhone');
+  const name = nameInput ? nameInput.value.trim() : '';
+  const phone = phoneInput ? phoneInput.value.trim() : '';
+
+  if (!name) {
+    alert("Please enter your full name.");
+    goToCheckoutStep(1);
+    if (nameInput) nameInput.focus();
+    return false;
+  }
+
+  let cleanPhone = phone.replace(/[^0-9]/g, '');
+  if (cleanPhone.startsWith('91') && cleanPhone.length === 12) {
+    cleanPhone = cleanPhone.slice(2);
+  } else if (cleanPhone.startsWith('0') && cleanPhone.length === 11) {
+    cleanPhone = cleanPhone.slice(1);
+  }
+
+  if (cleanPhone.length !== 10 || !/^[6-9]/.test(cleanPhone)) {
+    alert("Please enter a valid 10-digit mobile / WhatsApp number starting with 6, 7, 8, or 9.");
+    goToCheckoutStep(1);
+    if (phoneInput) phoneInput.focus();
+    return false;
+  }
+  if (phoneInput) phoneInput.value = cleanPhone;
+
+  const isPhysical = (currentCheckoutCategory !== 'form' && currentCheckoutCategory !== 'digital');
+  if (isPhysical) {
+    const addrInput = document.getElementById('orderAddress');
+    const pinInput = document.getElementById('orderPin');
+    if (!addrInput || !addrInput.value.trim()) {
+      alert("Please enter your village / mohalla, street & landmark for delivery.");
+      goToCheckoutStep(1);
+      if (addrInput) addrInput.focus();
+      return false;
+    }
+    const cleanPin = pinInput ? pinInput.value.trim().replace(/[^0-9]/g, '') : '';
+    if (cleanPin.length !== 6) {
+      alert("Please enter a valid 6-digit Pincode.");
+      goToCheckoutStep(1);
+      if (pinInput) pinInput.focus();
+      return false;
+    }
+    if (pinInput) pinInput.value = cleanPin;
+  }
+
+  const schoolFields = document.getElementById('schoolBooksSpecificFields');
+  if (schoolFields && schoolFields.style.display !== 'none') {
+    const schoolNameInput = document.getElementById('orderSchoolName');
+    if (schoolNameInput && schoolNameInput.hasAttribute('required') && !schoolNameInput.value.trim()) {
+      alert("Please enter the School Name so we dispatch the exact syllabus books.");
+      goToCheckoutStep(1);
+      schoolNameInput.focus();
+      return false;
+    }
+  }
+
+  const notesFields = document.getElementById('notesSpecificFields');
+  if (notesFields && notesFields.style.display !== 'none') {
+    const notesSub = document.getElementById('notesSubject');
+    if (notesSub && notesSub.hasAttribute('required') && !notesSub.value.trim()) {
+      alert("Please enter the specific subject for your notes.");
+      goToCheckoutStep(1);
+      notesSub.focus();
+      return false;
+    }
+  }
+
+  const formFields = document.getElementById('formSpecificFields');
+  if (formFields && formFields.style.display !== 'none') {
+    const formType = document.getElementById('digitalFormType');
+    if (formType && formType.hasAttribute('required') && !formType.value) {
+      alert("Please select which form you want us to fill.");
+      goToCheckoutStep(1);
+      formType.focus();
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function goToCheckoutStep(step) {
   if (step === 2 || step === 3) {
-    // Validate Step 1 first
-    const nameInput = document.getElementById('orderName');
-    const phoneInput = document.getElementById('orderPhone');
-    const name = nameInput ? nameInput.value.trim() : '';
-    const phone = phoneInput ? phoneInput.value.trim() : '';
-
-    if (!name) {
-      alert("Please enter your full name.");
-      if (nameInput) nameInput.focus();
-      return;
-    }
-
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-    if (cleanPhone.length < 10) {
-      alert("Please enter a valid 10-digit WhatsApp phone number.");
-      if (phoneInput) phoneInput.focus();
-      return;
-    }
-
-    const isPhysical = (currentCheckoutCategory !== 'form' && currentCheckoutCategory !== 'digital');
-    if (isPhysical) {
-      const addrInput = document.getElementById('orderAddress');
-      const pinInput = document.getElementById('orderPin');
-      if (!addrInput || !addrInput.value.trim()) {
-        alert("Please enter your village / mohalla, street & landmark for delivery.");
-        if (addrInput) addrInput.focus();
-        return;
-      }
-      if (!pinInput || !pinInput.value.trim() || pinInput.value.trim().length < 6) {
-        alert("Please enter a valid 6-digit Pincode.");
-        if (pinInput) pinInput.focus();
-        return;
-      }
-    }
-
-    const schoolFields = document.getElementById('schoolBooksSpecificFields');
-    if (schoolFields && schoolFields.style.display !== 'none') {
-      const schoolNameInput = document.getElementById('orderSchoolName');
-      if (schoolNameInput && schoolNameInput.hasAttribute('required') && !schoolNameInput.value.trim()) {
-        alert("Please enter the School Name so we dispatch the exact syllabus books.");
-        schoolNameInput.focus();
-        return;
-      }
-    }
-
-    const notesFields = document.getElementById('notesSpecificFields');
-    if (notesFields && notesFields.style.display !== 'none') {
-      const notesSub = document.getElementById('notesSubject');
-      if (notesSub && notesSub.hasAttribute('required') && !notesSub.value.trim()) {
-        alert("Please enter the specific subject for your notes.");
-        notesSub.focus();
-        return;
-      }
-    }
-
-    const formFields = document.getElementById('formSpecificFields');
-    if (formFields && formFields.style.display !== 'none') {
-      const formType = document.getElementById('digitalFormType');
-      if (formType && formType.hasAttribute('required') && !formType.value) {
-        alert("Please select which form you want us to fill.");
-        formType.focus();
-        return;
-      }
-    }
+    if (!validateCheckoutInputs()) return;
   }
 
   currentCheckoutStep = step;
@@ -5880,8 +5899,7 @@ function handlePaymentSubmit() {
 }
 
 function processCodOrder(isFromQuick) {
-  const form = document.getElementById('checkoutForm');
-  if (!form.reportValidity()) {
+  if (!validateCheckoutInputs()) {
     isOrderSubmissionInProgress = false;
     const btn1 = document.querySelector('.btn-1click-cod');
     if (btn1) {
@@ -5917,11 +5935,12 @@ function processCodOrder(isFromQuick) {
 
 // --- RAZORPAY INTEGRATION ---
 function startRazorpayPayment() {
-  const form = document.getElementById('checkoutForm');
-  if (!form.reportValidity()) return;
+  if (!validateCheckoutInputs()) return;
 
-  const name = document.getElementById('orderName').value;
-  const phone = document.getElementById('orderPhone') ? document.getElementById('orderPhone').value : '';
+  const nameInput = document.getElementById('orderName');
+  const phoneInput = document.getElementById('orderPhone');
+  const name = nameInput ? nameInput.value.trim() : '';
+  const phone = phoneInput ? phoneInput.value.trim() : '';
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
@@ -5934,16 +5953,25 @@ function startRazorpayPayment() {
     btn.disabled = true;
   }
 
+  if (typeof Razorpay === 'undefined') {
+    alert("Razorpay payment gateway is still loading. Please check your internet connection or choose Cash on Delivery.");
+    if (btn) {
+      btn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online • ₹${totalPaid}`;
+      btn.disabled = false;
+    }
+    return;
+  }
+
   const options = {
     "key": RAZORPAY_KEY,
-    "amount": totalPaid * 100,
+    "amount": Math.round(totalPaid * 100),
     "currency": "INR",
     "name": "JK Study Hub",
-    "description": currentCheckoutProduct.substring(0, 250),
+    "description": (currentCheckoutProduct || 'Book & Study Supplies').substring(0, 250),
     "image": "images/icon.svg",
     "handler": function (response) {
       const txnId = response.razorpay_payment_id;
-      if (btn) btn.innerHTML = 'Verifying & Saving...';
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying & Saving...';
       processOrder(txnId, 'Confirmed (Paid Online)');
     },
     "prefill": {
@@ -5956,7 +5984,7 @@ function startRazorpayPayment() {
     "modal": {
       "ondismiss": function() {
         if (btn) {
-          btn.innerHTML = 'Pay Securely Online';
+          btn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online • ₹${totalPaid}`;
           btn.disabled = false;
         }
       }
@@ -5966,17 +5994,18 @@ function startRazorpayPayment() {
   try {
     const rzp = new Razorpay(options);
     rzp.on('payment.failed', function (resp) {
-      alert("Payment Failed: " + (resp.error.description || "Unknown error"));
+      alert("Payment Failed: " + ((resp && resp.error && resp.error.description) ? resp.error.description : "Payment could not be completed"));
       if (btn) {
-        btn.innerHTML = 'Pay Securely Online';
+        btn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online • ₹${totalPaid}`;
         btn.disabled = false;
       }
     });
     rzp.open();
   } catch(e) {
-    alert("Razorpay checkout failed to open. Please check your internet connection.");
+    console.error("Razorpay open error:", e);
+    alert("Razorpay checkout failed to open: " + (e.message || "Please check internet or choose COD."));
     if (btn) {
-      btn.innerHTML = 'Pay Securely Online';
+      btn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online • ₹${totalPaid}`;
       btn.disabled = false;
     }
   }
@@ -5984,13 +6013,14 @@ function startRazorpayPayment() {
 
 // --- ORDER COMPLETION & BACKEND LOGGING ---
 function processOrder(txnId, customStatus) {
-  const name = document.getElementById('orderName').value;
-  const phone = document.getElementById('orderPhone').value;
+  const name = document.getElementById('orderName').value.trim();
+  const phone = document.getElementById('orderPhone').value.trim();
 
   let finalAddress = 'Digital Service (No physical delivery)';
   let finalProductDesc = currentCheckoutProduct;
 
-  if (currentCheckoutCategory === 'notes' || currentCheckoutCategory === 'standard' || currentCheckoutCategory === 'both' || currentCheckoutCategory === 'books') {
+  const isPhysical = (currentCheckoutCategory !== 'form' && currentCheckoutCategory !== 'digital');
+  if (isPhysical) {
     const pin = document.getElementById('orderPin') ? document.getElementById('orderPin').value.trim() : '193121';
     const city = document.getElementById('orderCity') ? document.getElementById('orderCity').value : 'Baramulla';
     const street = document.getElementById('orderAddress') ? document.getElementById('orderAddress').value.trim() : '';

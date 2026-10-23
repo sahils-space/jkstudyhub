@@ -617,7 +617,7 @@
           </div>
         </div>
 
-        <form id="checkoutForm" onsubmit="return false;">
+        <form id="checkoutForm" onsubmit="return false;" novalidate>
           
           <!-- ========================================== -->
           <!-- STEP 1: CONTACT & DELIVERY ADDRESS         -->
@@ -638,12 +638,12 @@
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
               <div style="flex: 1; min-width: 140px;" class="form-group">
                 <label class="form-label" style="font-weight: 700;">Full Name *</label>
-                <input type="text" id="orderName" required class="form-input" placeholder="Enter your full name">
+                <input type="text" id="orderName" class="form-input" placeholder="Enter your full name">
               </div>
 
               <div style="flex: 1; min-width: 140px;" class="form-group">
                 <label class="form-label" style="font-weight: 700;">WhatsApp Number *</label>
-                <input type="tel" id="orderPhone" required class="form-input" placeholder="10-digit mobile number" pattern="[6789][0-9]{9}" title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9">
+                <input type="tel" id="orderPhone" class="form-input" placeholder="10-digit mobile number" title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9">
               </div>
             </div>
 
@@ -757,7 +757,7 @@
                 </div>
                 <div style="flex:1; min-width: 120px;">
                   <label class="form-label" style="font-weight: 700;">Pincode *</label>
-                  <input type="text" id="orderPin" list="orderPinDatalist" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();" required>
+                  <input type="text" id="orderPin" list="orderPinDatalist" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();">
                   <datalist id="orderPinDatalist"></datalist>
                   <div id="pinVerifiedBadge" style="display:none; margin-top:5px; font-size:11px; padding:3px 6px; border-radius:4px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;"></div>
                 </div>
@@ -1090,7 +1090,7 @@
 
   <!-- Real-Time Visitor Analytics Tracker -->
   <script src="analytics.js?v=2"></script>
-  <script src="store.js?v=85.0"></script>
+  <script src="store.js?v=91.0"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {
