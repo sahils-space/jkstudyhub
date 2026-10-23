@@ -4734,7 +4734,8 @@ function navigateToCheckoutPage(checkoutContext) {
     alert('Checkout could not be opened. Please enable browser storage and try again.');
     return;
   }
-  window.location.assign('store.html?checkout=1');
+  history.pushState({ jkStoreRoute: 'checkout' }, '', 'store.html?checkout=1');
+  syncStoreRouteFromLocation();
 }
 
 function openCheckout(name, price, type, category) {
@@ -4830,6 +4831,39 @@ function initializeProductPageFromRoute() {
   }
   openBookDetailsModal(productName);
 }
+
+function syncStoreRouteFromLocation() {
+  const params = new URLSearchParams(window.location.search);
+  const isCheckoutRoute = params.get('checkout') === '1';
+  const isProductRoute = !isCheckoutRoute && params.has('product');
+  document.documentElement.classList.toggle('checkout-page-active', isCheckoutRoute);
+  document.documentElement.classList.toggle('product-page-active', isProductRoute);
+
+  if (isCheckoutRoute) {
+    document.title = 'Checkout | JK Study Hub';
+    window._jkProductPageStarted = false;
+    initializeCheckoutPageFromRoute();
+    return;
+  }
+
+  if (isProductRoute) {
+    window._jkCheckoutPageStarted = false;
+    window._jkProductPageStarted = false;
+    document.title = 'Product | JK Study Hub';
+    initializeProductPageFromRoute();
+    return;
+  }
+
+  window._jkCheckoutPageStarted = false;
+  window._jkProductPageStarted = false;
+  const checkoutModal = document.getElementById('checkoutModal');
+  const productModal = document.getElementById('bookDetailsModal');
+  if (checkoutModal) checkoutModal.classList.remove('active');
+  if (productModal) productModal.classList.remove('active');
+  document.title = 'JK Study Hub Store - Books & School Supplies (Less Than Bookshop Rates)';
+}
+
+window.addEventListener('popstate', syncStoreRouteFromLocation);
 
 function getCheckoutDeliveryInfo() {
   const pinInput = document.getElementById('orderPin');
@@ -5157,18 +5191,18 @@ function quickOneClickCodCheckout(btnEl, evt) {
 
 function closeCheckout() {
   if (document.documentElement.classList.contains('checkout-page-active')) {
-    let returnUrl = 'store.html';
     try {
-      const savedReturnUrl = sessionStorage.getItem('jk_checkout_return_url');
-      if (savedReturnUrl && new URL(savedReturnUrl, window.location.origin).origin === window.location.origin) {
-        returnUrl = savedReturnUrl;
-      }
       sessionStorage.removeItem('jk_checkout_return_url');
       sessionStorage.removeItem('jk_checkout_context');
     } catch (error) {
-      console.error('Unable to restore the previous store page:', error);
+      console.error('Unable to clear the checkout session:', error);
     }
-    window.location.assign(returnUrl);
+    if (history.state && history.state.jkStoreRoute === 'checkout') {
+      history.back();
+    } else {
+      history.replaceState({}, '', 'store.html');
+      syncStoreRouteFromLocation();
+    }
     return;
   }
 
@@ -6317,6 +6351,14 @@ function closeOrderConfirmationModal() {
 
 // --- INITIALIZATION & BFCACHE HANDLERS ---
 function initShop() {
+  if (window._jkStoreBootstrapped) {
+    updateNavBadges();
+    renderCartDrawer();
+    if (document.getElementById('cartItemsList')) renderCartPage();
+    return;
+  }
+  window._jkStoreBootstrapped = true;
+
   updateNavBadges();
   updateAuthUI();
   syncHeartIcons();
@@ -6370,10 +6412,15 @@ function initShop() {
   // Periodic background refresh for price changes and new catalog items
   if (!window._jkStoreSheetSyncInterval) {
     window._jkStoreSheetSyncInterval = setInterval(() => {
-      if (typeof syncCustomProductsWithSheet === 'function' && document.visibilityState === 'visible') {
+      if (
+        typeof syncCustomProductsWithSheet === 'function' &&
+        document.visibilityState === 'visible' &&
+        !document.documentElement.classList.contains('product-page-active') &&
+        !document.documentElement.classList.contains('checkout-page-active')
+      ) {
         syncCustomProductsWithSheet();
       }
-    }, 15000);
+    }, 60000);
   }
 }
 
@@ -6384,12 +6431,31 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('pageshow', function(event) {
-  initShop();
+  if (!event.persisted) return;
+  updateNavBadges();
+  renderCartDrawer();
+  if (document.getElementById('cartItemsList')) renderCartPage();
 });
 
 window.addEventListener('storage', function(e) {
-  if (e.key === 'jk_cart' || e.key === 'cart' || e.key === 'jk_wishlist' || e.key === 'wishlist' || e.key === 'jk_orders' || e.key === 'jk_study_user' || e.key === 'jk_custom_prices' || e.key === 'jk_custom_mrps' || e.key === 'jk_uploaded_catalog' || e.key === 'jk_custom_products') {
-    initShop();
+  if (!e.key || ['jk_cart', 'cart', 'jk_wishlist', 'wishlist', 'jk_orders', 'jk_study_user'].includes(e.key)) {
+    updateNavBadges();
+    syncHeartIcons();
+    renderCartDrawer();
+    if (e.key === 'jk_study_user') {
+      updateAuthUI();
+      updateOwnerUIProtection();
+    }
+    if (document.getElementById('cartItemsList')) renderCartPage();
+    if (document.getElementById('wishlistGrid')) renderWishlistPage();
+    if (document.getElementById('ordersListContainer') && typeof renderAccountOrders === 'function') renderAccountOrders();
+    if (document.getElementById('sidebarProfileCard') && typeof renderAccountDashboard === 'function') renderAccountDashboard();
+    return;
+  }
+
+  if (['jk_custom_prices', 'jk_custom_mrps', 'jk_uploaded_catalog', 'jk_custom_products'].includes(e.key)) {
+    if (e.key === 'jk_custom_prices' || e.key === 'jk_custom_mrps') applyCustomPricesToStorefront();
+    if (e.key === 'jk_uploaded_catalog' || e.key === 'jk_custom_products') renderDynamicStoreProducts();
   }
 });
 
@@ -9234,14 +9300,19 @@ function orderCurrentBookViaWhatsApp() {
 }
 
 function openBookDetailsModal(bookName) {
-  if (!document.documentElement.classList.contains('product-page-active')) {
+  const currentProduct = new URLSearchParams(window.location.search).get('product');
+  if (!document.documentElement.classList.contains('product-page-active') || currentProduct !== bookName) {
     try {
-      sessionStorage.setItem('jk_product_return_url', `${location.pathname}${location.search}${location.hash}`);
+      if (!document.documentElement.classList.contains('product-page-active')) {
+        sessionStorage.setItem('jk_product_return_url', `${location.pathname}${location.search}${location.hash}`);
+      }
     } catch (error) {
       console.error('Unable to save the store location before opening product details:', error);
     }
-    window.location.assign(`store.html?product=${encodeURIComponent(bookName)}`);
-    return;
+    history.pushState({ jkStoreRoute: 'product' }, '', `store.html?product=${encodeURIComponent(bookName)}`);
+    document.documentElement.classList.add('product-page-active');
+    document.documentElement.classList.remove('checkout-page-active');
+    window._jkProductPageStarted = true;
   }
 
   const rawBook = BOOK_CATALOG_DATA.find(b => b.name === bookName) || (PRODUCT_CATALOG[bookName] ? { name: bookName, ...PRODUCT_CATALOG[bookName] } : null);
@@ -9335,17 +9406,17 @@ function openBookDetailsModal(bookName) {
 
 function closeBookDetailsModal() {
   if (document.documentElement.classList.contains('product-page-active')) {
-    let returnUrl = 'store.html';
     try {
-      const savedReturnUrl = sessionStorage.getItem('jk_product_return_url');
-      if (savedReturnUrl && new URL(savedReturnUrl, window.location.origin).origin === window.location.origin) {
-        returnUrl = savedReturnUrl;
-      }
       sessionStorage.removeItem('jk_product_return_url');
     } catch (error) {
-      console.error('Unable to restore the previous store page:', error);
+      console.error('Unable to clear the product page state:', error);
     }
-    window.location.assign(returnUrl);
+    if (history.state && history.state.jkStoreRoute === 'product') {
+      history.back();
+    } else {
+      history.replaceState({}, '', 'store.html');
+      syncStoreRouteFromLocation();
+    }
     return;
   }
 
@@ -10565,14 +10636,12 @@ async function handleOwnerProductSubmit(event) {
 
 // Sync products from Google Sheet for all visitors
 async function syncCustomProductsWithSheet() {
+  if (window._jkCatalogSyncPromise) return window._jkCatalogSyncPromise;
   const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
   if (!endpoint) return;
 
-  // Render cached first
-  renderDynamicStoreProducts();
-  renderOwnerProductList();
-
-  try {
+  window._jkCatalogSyncPromise = (async () => {
+   try {
     let sheetProducts = [];
 
     // 1. Fetch from action=get_products
@@ -10775,14 +10844,19 @@ async function syncCustomProductsWithSheet() {
         handleStoreLiveSearch(q);
       }
     }
-  } catch (err) {
+   } catch (err) {
     console.warn("Could not sync products from sheet:", err);
-  }
+   } finally {
+    window._jkCatalogSyncPromise = null;
+   }
+  })();
+  return window._jkCatalogSyncPromise;
 }
 
 // Real-time automatic synchronization with Firebase Firestore
 function initRealtimeCatalogSync() {
   if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    if (window._jkRealtimeCatalogSyncStarted) return;
     try {
       const db = firebase.firestore();
 
@@ -10824,6 +10898,7 @@ function initRealtimeCatalogSync() {
       }, err => {
         console.warn("Firestore real-time price overrides notice:", err);
       });
+      window._jkRealtimeCatalogSyncStarted = true;
     } catch (e) {
       console.warn("Firestore real-time catalog setup error:", e);
     }

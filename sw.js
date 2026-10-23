@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v96';
+const CACHE_NAME = 'jk-study-hub-v97';
 const urlsToCache = [
   './',
   './index.html',
@@ -84,7 +84,7 @@ self.addEventListener('fetch', event => {
   // Network-First for core code & HTML (always fresh updates online)
   if (isNavigation || isCodeAsset) {
     event.respondWith(
-      fetch(event.request, { cache: 'no-store' })
+      fetch(event.request)
         .then(response => {
           if (response && response.status === 200) {
             const clone = response.clone();

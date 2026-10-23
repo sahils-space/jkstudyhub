@@ -7185,14 +7185,9 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then(reg => {
-          reg.update();
+        navigator.serviceWorker.register('sw.js').catch(error => {
+          console.error('Service worker registration failed:', error);
         });
-      });
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) {
-          navigator.serviceWorker.getRegistration().then(reg => { if (reg) reg.update(); });
-        }
       });
     }
   </script>
