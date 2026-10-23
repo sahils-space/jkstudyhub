@@ -4614,37 +4614,18 @@ let isCartCheckoutSession = false;
 let activeRepeatDiscountAmount = 0;
 let activeRedeemedPrevOrderId = null;
 
-function navigateToCheckoutPage(checkoutContext) {
-  try {
-    sessionStorage.setItem('jk_checkout_context', JSON.stringify(checkoutContext));
-    sessionStorage.setItem('jk_checkout_return_url', `${location.pathname}${location.search}${location.hash}`);
-  } catch (error) {
-    console.error('Unable to start checkout page:', error);
-    alert('Checkout could not be opened. Please enable browser storage and try again.');
-    return false;
-  }
-
-  window.location.assign('store.html?checkout=1');
-  return true;
-}
-
 function openCheckout(name, price, type, category) {
   if (typeof isProductOutOfStock === 'function' && isProductOutOfStock(name)) {
     alert(`⚠️ Sorry! "${name}" is currently Out of Stock.\nThe seller is replenishing inventory shortly. You can contact us on WhatsApp for emergency book reservations.`);
     return;
   }
-
+  isCartCheckoutSession = false;
   const effectivePrice = getCustomPrice(name, price);
   currentCheckoutProduct = name;
   currentCheckoutPrice = effectivePrice;
   currentCheckoutCategory = category || 'standard';
 
-  navigateToCheckoutPage({
-    isCart: false,
-    name,
-    price: effectivePrice,
-    category: currentCheckoutCategory
-  });
+  setupCheckoutModal(name, effectivePrice, category);
 }
 
 function openCartCheckout() {
@@ -4654,67 +4635,40 @@ function openCartCheckout() {
     return;
   }
 
-  navigateToCheckoutPage({ isCart: true });
-}
+  isCartCheckoutSession = true;
 
-function initializeCheckoutPageFromRoute() {
-  if (!document.documentElement.classList.contains('checkout-page-active') || window._jkCheckoutPageStarted) return;
-  window._jkCheckoutPageStarted = true;
+  let total = 0;
+  let names = [];
+  let hasNotes = false;
+  let hasForms = false;
 
-  let context;
-  try {
-    context = JSON.parse(sessionStorage.getItem('jk_checkout_context') || 'null');
-  } catch (error) {
-    console.error('Unable to restore checkout details:', error);
-  }
+  cart.forEach(item => {
+    const q = parseInt(item.qty) || 1;
+    total += item.price * q;
+    names.push(`${item.name} (x${q})`);
+    if (item.category === 'notes') hasNotes = true;
+    if (item.category === 'form') hasForms = true;
+  });
 
-  if (!context) {
-    window.location.replace('store.html');
-    return;
-  }
-
-  if (context.isCart) {
-    const cart = getCart();
-    if (!cart.length) {
-      window.location.replace('cart.html');
-      return;
+  let hasSchool = false;
+  cart.forEach(item => {
+    if (item.category === 'school-books' || item.category === 'copies' || (item.name && (item.name.includes('Book Set') || item.name.includes('Copies') || item.name.includes('Register')))) {
+      hasSchool = true;
     }
+  });
 
-    let total = 0;
-    const names = [];
-    let hasNotes = false;
-    let hasForms = false;
-    let hasSchool = false;
+  let combinedCat = 'standard';
+  if (hasSchool) combinedCat = 'school-books';
+  else if (hasNotes && hasForms) combinedCat = 'both';
+  else if (hasNotes) combinedCat = 'notes';
+  else if (hasForms) combinedCat = 'form';
 
-    cart.forEach(item => {
-      const quantity = parseInt(item.qty, 10) || 1;
-      total += Number(item.price) * quantity;
-      names.push(`${item.name} (x${quantity})`);
-      if (item.category === 'notes') hasNotes = true;
-      if (item.category === 'form') hasForms = true;
-      if (item.category === 'school-books' || item.category === 'copies' || (item.name && (item.name.includes('Book Set') || item.name.includes('Copies') || item.name.includes('Register')))) {
-        hasSchool = true;
-      }
-    });
+  const combinedTitle = `Cart Order [${names.join(', ')}]`;
+  currentCheckoutProduct = combinedTitle;
+  currentCheckoutPrice = total;
+  currentCheckoutCategory = combinedCat;
 
-    let combinedCategory = 'standard';
-    if (hasSchool) combinedCategory = 'school-books';
-    else if (hasNotes && hasForms) combinedCategory = 'both';
-    else if (hasNotes) combinedCategory = 'notes';
-    else if (hasForms) combinedCategory = 'form';
-
-    isCartCheckoutSession = true;
-    setupCheckoutModal(`Cart Order [${names.join(', ')}]`, total, combinedCategory);
-    return;
-  }
-
-  if (typeof context.name !== 'string' || !context.name || !Number.isFinite(Number(context.price))) {
-    window.location.replace('store.html');
-    return;
-  }
-
-  isCartCheckoutSession = false;
-  setupCheckoutModal(context.name, Number(context.price), context.category || 'standard');
+  setupCheckoutModal(combinedTitle, total, combinedCat);
 }
 
 function getCheckoutDeliveryInfo() {
@@ -5041,22 +4995,6 @@ function quickOneClickCodCheckout(btnEl, evt) {
 }
 
 function closeCheckout() {
-  if (document.documentElement.classList.contains('checkout-page-active')) {
-    let returnUrl = 'store.html';
-    try {
-      const savedReturnUrl = sessionStorage.getItem('jk_checkout_return_url');
-      if (savedReturnUrl && new URL(savedReturnUrl, window.location.origin).origin === window.location.origin) {
-        returnUrl = savedReturnUrl;
-      }
-      sessionStorage.removeItem('jk_checkout_return_url');
-      sessionStorage.removeItem('jk_checkout_context');
-    } catch (error) {
-      console.error('Unable to restore the previous store page:', error);
-    }
-    window.location.assign(returnUrl);
-    return;
-  }
-
   const modal = document.getElementById('checkoutModal');
   if (modal) modal.classList.remove('active');
   resetRepeatDiscountState();
@@ -5400,52 +5338,6 @@ function updateCheckoutInvoiceTotals() {
       noticeAmount.innerHTML = (codFee > 0) ? `<span style="color:#16a34a; font-weight:800;">₹0 COD Fee (Saved ₹${codFee}!)</span>` : `<span style="color:#16a34a; font-weight:800;">₹0 Extra</span>`;
     }
   }
-
-  updateCheckoutPageSummary(deliveryInfo, autoDiscount + repeatDiscount, step3Total, isCod ? codFee : 0);
-}
-
-function updateCheckoutPageSummary(deliveryInfo, discount, total, codFee) {
-  const itemsContainer = document.getElementById('checkoutPageSummaryItems');
-  if (!itemsContainer) return;
-
-  const items = isCartCheckoutSession
-    ? getCart().map(item => ({
-        name: item.name,
-        quantity: parseInt(item.qty, 10) || 1,
-        amount: Number(item.price) * (parseInt(item.qty, 10) || 1)
-      }))
-    : [{ name: currentCheckoutProduct, quantity: 1, amount: Number(currentCheckoutPrice) }];
-
-  itemsContainer.replaceChildren();
-  items.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'checkout-page-summary-item';
-    const label = document.createElement('span');
-    label.textContent = item.quantity > 1 ? `${item.name} × ${item.quantity}` : item.name;
-    const amount = document.createElement('strong');
-    amount.textContent = `₹${item.amount}`;
-    row.append(label, amount);
-    itemsContainer.appendChild(row);
-  });
-
-  const subtotal = isCartCheckoutSession
-    ? items.reduce((sum, item) => sum + item.amount, 0)
-    : Number(currentCheckoutPrice);
-  const subtotalEl = document.getElementById('checkoutPageSubtotal');
-  const discountRow = document.getElementById('checkoutPageDiscountRow');
-  const discountEl = document.getElementById('checkoutPageDiscount');
-  const deliveryEl = document.getElementById('checkoutPageDelivery');
-  const codFeeRow = document.getElementById('checkoutPageCodFeeRow');
-  const codFeeEl = document.getElementById('checkoutPageCodFee');
-  const totalEl = document.getElementById('checkoutPageTotal');
-
-  if (subtotalEl) subtotalEl.textContent = `₹${subtotal}`;
-  if (discountRow) discountRow.hidden = discount <= 0;
-  if (discountEl) discountEl.textContent = `−₹${discount}`;
-  if (deliveryEl) deliveryEl.textContent = deliveryInfo.fee === 0 ? 'FREE' : `₹${deliveryInfo.fee}`;
-  if (codFeeRow) codFeeRow.hidden = codFee <= 0;
-  if (codFeeEl) codFeeEl.textContent = `₹${codFee}`;
-  if (totalEl) totalEl.textContent = `₹${total}`;
 }
 
 function updateChecklist() {
@@ -6245,8 +6137,6 @@ function initShop() {
   if (typeof initRealtimeCatalogSync === 'function') {
     initRealtimeCatalogSync();
   }
-
-  initializeCheckoutPageFromRoute();
 
   // Periodic background refresh for price changes and new catalog items
   if (!window._jkStoreSheetSyncInterval) {
