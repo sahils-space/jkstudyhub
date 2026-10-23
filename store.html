@@ -9,6 +9,18 @@
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta name="theme-color" content="#172a22">
+  <script>
+    const checkoutRoute = new URLSearchParams(window.location.search).get('checkout') === '1';
+    const productRoute = new URLSearchParams(window.location.search).has('product');
+    if (checkoutRoute || productRoute) {
+      document.documentElement.classList.add(checkoutRoute ? 'checkout-page-active' : 'product-page-active');
+    }
+    if (checkoutRoute) {
+      document.title = 'Checkout | JK Study Hub';
+    } else if (productRoute) {
+      document.title = 'Product | JK Study Hub';
+    }
+  </script>
   <link rel="stylesheet" href="promo-offers.css?v=1">
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
@@ -347,6 +359,502 @@
     .form-group { margin-bottom: 15px; }
     .form-label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 5px; }
     .form-input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; font-family: inherit; box-sizing: border-box; }
+
+    .product-page-active body > :not(#bookDetailsModal):not(#samplePreviewModal):not(#districtPincodePickerModal):not(#orderSuccessModal):not(#cartDrawerBackdrop) {
+      display: none !important;
+    }
+    .product-page-active #bookDetailsModal {
+      display: flex !important;
+      position: static;
+      width: 100%;
+      min-height: 100vh;
+      height: auto;
+      padding: 32px 20px;
+      box-sizing: border-box;
+      align-items: flex-start;
+      justify-content: center;
+      background: #f5f5f0;
+      backdrop-filter: none;
+    }
+    .product-page-active #bookDetailsModal.active {
+      display: flex !important;
+    }
+    .product-page-active .book-details-card {
+      width: min(1120px, 100%);
+      max-width: 1120px;
+      max-height: none;
+      overflow: visible;
+      border: 1px solid #e3e5dc;
+      border-radius: 20px;
+      box-shadow: 0 18px 55px rgba(31, 48, 39, 0.12);
+    }
+    .product-page-active .modal-close-btn {
+      display: none;
+    }
+    .product-page-active .modal-grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 34px;
+      padding: 34px;
+    }
+    .product-page-active .modal-gallery {
+      position: sticky;
+      top: 22px;
+      align-self: start;
+    }
+    .product-page-active .modal-main-img-box {
+      height: min(54vw, 500px);
+      min-height: 360px;
+      background: #fbfbf8;
+    }
+    .product-page-active .modal-info {
+      min-width: 0;
+    }
+    .product-page-active .product-price-panel {
+      flex-wrap: wrap;
+    }
+    .product-page-active .product-price-panel #modalPriceDeliveryBadge {
+      flex: 1 1 100%;
+      margin-left: 0 !important;
+    }
+    .product-page-header {
+      display: none;
+    }
+    .product-page-active .product-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 24px;
+      border-bottom: 1px solid #e8ebe5;
+      background: #fff;
+    }
+    .product-page-back {
+      border: 0;
+      background: transparent;
+      color: #31513d;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .product-page-offer-chips {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .product-page-offer-chip {
+      padding: 7px 10px;
+      border: 1px solid #dce8dd;
+      border-radius: 20px;
+      background: #f0f6ef;
+      color: #31513d;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .product-page-faq {
+      margin: 18px 0;
+      border-top: 1px solid #e5e9e2;
+    }
+    .product-page-faq details {
+      padding: 12px 2px;
+      border-bottom: 1px solid #e5e9e2;
+    }
+    .product-page-faq summary {
+      color: #30463a;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .product-page-faq p {
+      margin: 8px 0 0;
+      color: #647168;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    @media (max-width: 768px) {
+      .product-page-active #bookDetailsModal {
+        padding: 0;
+      }
+      .product-page-active .book-details-card {
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .product-page-active .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 18px;
+      }
+      .product-page-active .modal-gallery {
+        position: static;
+      }
+      .product-page-active .modal-main-img-box {
+        height: min(82vw, 430px);
+        min-height: 260px;
+      }
+      .product-page-active .product-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 13px 18px;
+      }
+      .product-page-active .product-page-offer-chips {
+        justify-content: flex-start;
+      }
+    }
+
+    .cart-drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100010;
+      display: flex;
+      justify-content: flex-end;
+      background: rgba(15, 23, 42, 0.48);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .cart-drawer-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .cart-drawer {
+      display: flex;
+      flex-direction: column;
+      width: min(440px, 100%);
+      height: 100%;
+      background: #fff;
+      box-shadow: -18px 0 50px rgba(15, 23, 42, 0.18);
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+    }
+    .cart-drawer-backdrop.active .cart-drawer {
+      transform: translateX(0);
+    }
+    .cart-drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #e8ebe5;
+    }
+    .cart-drawer-header h2 {
+      margin: 0;
+      color: #1d3529;
+      font-size: 19px;
+    }
+    .cart-drawer-close {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 50%;
+      background: #f1f3ef;
+      color: #425148;
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .cart-drawer-progress {
+      padding: 15px 20px;
+      background: #f7f8f4;
+      border-bottom: 1px solid #e8ebe5;
+    }
+    .cart-drawer-progress p {
+      margin: 0 0 9px;
+      color: #43564a;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .cart-drawer-progress-track {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #dfe5dc;
+    }
+    .cart-drawer-progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: #41694f;
+      transition: width 0.2s ease;
+    }
+    .cart-drawer-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 20px;
+    }
+    .cart-drawer-item {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #edf0eb;
+    }
+    .cart-drawer-item img {
+      width: 64px;
+      height: 72px;
+      border-radius: 8px;
+      background: #f4f5f1;
+      object-fit: contain;
+    }
+    .cart-drawer-item-name {
+      margin: 0 0 5px;
+      color: #26392e;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .cart-drawer-item-price {
+      color: #53645a;
+      font-size: 12px;
+    }
+    .cart-drawer-quantity {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      padding: 4px 7px;
+      border: 1px solid #dce2d9;
+      border-radius: 7px;
+    }
+    .cart-drawer-quantity button {
+      border: 0;
+      background: transparent;
+      color: #31513d;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .cart-drawer-footer {
+      padding: 18px 20px calc(18px + env(safe-area-inset-bottom));
+      border-top: 1px solid #e8ebe5;
+      background: #fff;
+    }
+    .cart-drawer-total {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 13px;
+      color: #26392e;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .cart-drawer-delivery-note {
+      margin: -5px 0 12px;
+      color: #69766d;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .cart-drawer-checkout {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #244534;
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .cart-drawer-checkout:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .cart-drawer-view-cart {
+      display: block;
+      margin-top: 10px;
+      color: #385a43;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: underline;
+    }
+
+    .checkout-page-active body > :not(#checkoutModal):not(#districtPincodePickerModal):not(#orderSuccessModal) {
+      display: none !important;
+    }
+    .checkout-page-active #checkoutModal {
+      display: flex !important;
+      position: static;
+      width: 100%;
+      min-height: 100vh;
+      height: auto;
+      padding: 30px 20px;
+      box-sizing: border-box;
+      align-items: flex-start;
+      justify-content: center;
+      background: #f5f5f0;
+      backdrop-filter: none;
+    }
+    .checkout-page-active #checkoutModal.active {
+      display: flex !important;
+    }
+    .checkout-page-active .checkout-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(290px, 0.8fr);
+      grid-template-rows: auto 1fr;
+      width: min(1160px, 100%);
+      max-width: 1160px;
+      max-height: none;
+      overflow: visible;
+      border: 1px solid #e3e5dc;
+      border-radius: 20px;
+      box-shadow: 0 18px 55px rgba(31, 48, 39, 0.12);
+    }
+    .checkout-page-active .checkout-header {
+      grid-column: 1 / -1;
+      padding: 22px 28px;
+      border-color: #e7e9e2;
+      border-radius: 20px 20px 0 0;
+      background: #fff;
+      z-index: 1;
+    }
+    .checkout-page-active .checkout-header h3 {
+      color: #1d3529 !important;
+      font-size: 21px !important;
+    }
+    .checkout-page-active .checkout-body {
+      min-width: 0;
+      padding: 26px 28px 30px;
+    }
+    .checkout-page-summary {
+      display: none;
+      align-self: stretch;
+      padding: 28px 24px;
+      border-left: 1px solid #e7e9e2;
+      border-radius: 0 0 20px 0;
+      background: #fafaf7;
+    }
+    .checkout-page-active .checkout-page-summary {
+      display: block;
+    }
+    .checkout-page-summary h4 {
+      margin: 0 0 16px;
+      color: #1d3529;
+      font-size: 17px;
+    }
+    .checkout-page-summary-items {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .checkout-page-summary-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      color: #45564c;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .checkout-page-summary-item strong {
+      flex: 0 0 auto;
+      color: #26392e;
+    }
+    .checkout-page-offers {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0;
+    }
+    .checkout-page-offer {
+      padding: 10px 12px;
+      border: 1px solid #dce8dd;
+      border-radius: 10px;
+      color: #31513d;
+      background: #f0f6ef;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .checkout-page-totals {
+      display: grid;
+      gap: 11px;
+      padding-top: 16px;
+      border-top: 1px solid #e1e5dc;
+    }
+    .checkout-page-total-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #59665d;
+      font-size: 13px;
+    }
+    .checkout-page-total-row strong {
+      color: #293b30;
+    }
+    .checkout-page-grand-total {
+      margin-top: 3px;
+      padding-top: 13px;
+      border-top: 1px dashed #cbd3c8;
+      color: #20382a;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .checkout-page-secure-note {
+      margin: 18px 0 0;
+      color: #617167;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    @media (max-width: 760px) {
+      .checkout-page-active #checkoutModal {
+        padding: 0;
+      }
+      .checkout-page-active .checkout-card {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .checkout-page-active .checkout-header {
+        order: 0;
+        padding: 16px 18px;
+        border-radius: 0;
+      }
+      .checkout-page-active .checkout-header h3 {
+        font-size: 17px !important;
+      }
+      .checkout-page-active .checkout-page-summary {
+        order: 1;
+        padding: 12px 18px;
+        border: 0;
+        border-bottom: 1px solid #e7e9e2;
+        border-radius: 0;
+      }
+      .checkout-page-summary h4 {
+        margin-bottom: 8px;
+        font-size: 15px;
+      }
+      .checkout-page-active .checkout-body {
+        order: 2;
+        padding: 18px;
+      }
+      .checkout-page-active .checkout-page-summary-items {
+        max-height: 72px;
+        overflow: auto;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .checkout-page-offers {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin: 8px 0;
+      }
+      .checkout-page-offer {
+        padding: 7px;
+        font-size: 10.5px;
+      }
+      .checkout-page-totals {
+        gap: 7px;
+        padding-top: 10px;
+      }
+      .checkout-page-grand-total {
+        padding-top: 8px;
+      }
+      .checkout-page-secure-note {
+        display: none;
+      }
+    }
     
     .checklist-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px; margin-bottom: 20px; display: none; }
     .checklist-box ul { margin: 10px 0 0 20px; color: #b91c1c; font-size: 13px; }
@@ -3279,7 +3787,7 @@
         <span id="wishlistCount" class="wishlist-badge-count nav-badge-count" style="display:none;">0</span>
       </a>
 
-      <a href="cart.html" class="zapvi-icon-btn" title="Cart">
+      <a href="cart.html" class="zapvi-icon-btn" title="Cart" onclick="event.preventDefault(); openCartDrawer()">
         <i class="fa-solid fa-bag-shopping"></i>
         <span id="cartCount" class="cart-badge-count nav-badge-count" style="display:none;">0</span>
       </a>
@@ -6538,6 +7046,23 @@
         </form>
       </div>
 
+      <aside class="checkout-page-summary" aria-labelledby="checkoutPageSummaryTitle">
+        <h4 id="checkoutPageSummaryTitle">Your order</h4>
+        <div id="checkoutPageSummaryItems" class="checkout-page-summary-items"></div>
+        <div class="checkout-page-offers">
+          <div class="checkout-page-offer">🚚 Free Kashmir delivery on eligible orders of ₹499+</div>
+          <div class="checkout-page-offer">🎁 Save ₹100 automatically when your order is ₹1,499+</div>
+        </div>
+        <div class="checkout-page-totals" aria-live="polite">
+          <div class="checkout-page-total-row"><span>Items subtotal</span><strong id="checkoutPageSubtotal">₹0</strong></div>
+          <div class="checkout-page-total-row" id="checkoutPageDiscountRow" hidden><span>Offer discount</span><strong id="checkoutPageDiscount">−₹0</strong></div>
+          <div class="checkout-page-total-row"><span>Delivery</span><strong id="checkoutPageDelivery">Calculated by PIN</strong></div>
+          <div class="checkout-page-total-row"><span>Platform fee</span><strong>₹5</strong></div>
+          <div class="checkout-page-total-row" id="checkoutPageCodFeeRow" hidden><span>Cash on delivery fee</span><strong id="checkoutPageCodFee">₹0</strong></div>
+          <div class="checkout-page-total-row checkout-page-grand-total"><span>Total</span><strong id="checkoutPageTotal">₹0</strong></div>
+        </div>
+        <p class="checkout-page-secure-note"><i class="fa-solid fa-shield-halved"></i> Your PIN code confirms delivery coverage and charges.</p>
+      </aside>
     </div>
   </div>
 
@@ -6602,7 +7127,7 @@
       </div>
     </div>
     <div class="sticky-cart-right">
-      <a href="cart.html" class="sticky-cart-btn-view">View Cart</a>
+      <a href="cart.html" class="sticky-cart-btn-view" onclick="event.preventDefault(); openCartDrawer()">View Cart</a>
       <button type="button" class="sticky-cart-btn-checkout" onclick="openCartCheckout()">
         Checkout <i class="fa-solid fa-arrow-right"></i>
       </button>
@@ -6677,7 +7202,7 @@
     <a href="store.html" class="mobile-nav-item active"><i class="fa-solid fa-house"></i> Home</a>
     <a href="store.html#categories" class="mobile-nav-item"><i class="fa-solid fa-border-all"></i> Categories</a>
     <a href="account.html#wishlist" class="mobile-nav-item"><i class="fa-regular fa-heart"></i> Wishlist</a>
-    <a href="cart.html" class="mobile-nav-item">
+    <a href="cart.html" class="mobile-nav-item" onclick="event.preventDefault(); openCartDrawer()">
       <i class="fa-solid fa-bag-shopping"></i>
       <span id="mobileCartCount" class="nav-badge-count cart-badge-count" style="display:none;">0</span>
     </a>
@@ -6689,6 +7214,13 @@
   <div id="bookDetailsModal" class="book-details-modal">
     <div class="book-details-card">
       <button class="modal-close-btn" onclick="closeBookDetailsModal()">&times;</button>
+      <div class="product-page-header">
+        <button type="button" class="product-page-back" onclick="closeBookDetailsModal()"><i class="fa-solid fa-arrow-left"></i> Back to store</button>
+        <div class="product-page-offer-chips" aria-label="Current store offers">
+          <span class="product-page-offer-chip">Free Kashmir delivery at ₹499+</span>
+          <span class="product-page-offer-chip">₹100 off at ₹1,499+</span>
+        </div>
+      </div>
       
       <div class="modal-grid">
         <!-- Left: Large Photo Gallery with Swipe & Thumbnails -->
@@ -6712,7 +7244,7 @@
           <h2 id="modalBookTitle" style="font-size:24px; font-weight:800; color:#1e293b; margin-bottom:4px; line-height:1.3;"></h2>
           <div id="modalBookAuthor" style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:14px;"></div>
 
-          <div style="display:flex; align-items:baseline; gap:10px; padding:12px 16px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:14px;">
+          <div class="product-price-panel" style="display:flex; align-items:baseline; gap:10px; padding:12px 16px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <span id="modalBookPrice" style="font-size:28px; font-weight:800; color:#0f172a;"></span>
             <span id="modalBookMrp" style="font-size:15px; color:#94a3b8; text-decoration:line-through; font-weight:600;"></span>
             <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;" id="modalPriceDeliveryBadge"><i class="fa-solid fa-truck-fast"></i> Kashmir Express Delivery</span>
@@ -6844,6 +7376,21 @@
             </div>
           </div>
 
+          <section class="product-page-faq" aria-label="Shopping questions">
+            <details>
+              <summary>How much is delivery to my area?</summary>
+              <p>Enter your PIN above to check delivery availability and the exact charge. Eligible Kashmir orders of ₹499 or more qualify for free delivery.</p>
+            </details>
+            <details>
+              <summary>How do the store offers work?</summary>
+              <p>The ₹100 discount is applied automatically when eligible products in your order total ₹1,499 or more. Delivery eligibility is confirmed using your PIN at checkout.</p>
+            </details>
+            <details>
+              <summary>Can I pay when my order arrives?</summary>
+              <p>Cash on Delivery and online payment options are shown during checkout, based on the selected delivery area.</p>
+            </details>
+          </section>
+
           <div style="display:flex; gap:10px; margin-top:auto; flex-wrap:wrap;">
             <button type="button" onclick="openSamplePreviewModal()" class="yellow-btn" style="flex:1; min-width:140px; background:#f8fafc; color:#1e293b; border:1.5px solid #cbd5e1; padding:12px; font-size:13.5px; font-weight:700; border-radius:10px;">
               📖 Look Inside
@@ -6861,6 +7408,26 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div id="cartDrawerBackdrop" class="cart-drawer-backdrop" onclick="if(event.target === this) closeCartDrawer()" aria-hidden="true">
+    <aside class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cartDrawerTitle" onclick="event.stopPropagation()">
+      <div class="cart-drawer-header">
+        <h2 id="cartDrawerTitle">Your bag <span id="cartDrawerCount"></span></h2>
+        <button type="button" class="cart-drawer-close" onclick="closeCartDrawer()" aria-label="Close cart">&times;</button>
+      </div>
+      <div class="cart-drawer-progress">
+        <p id="cartDrawerOfferMessage">Add items to unlock current offers.</p>
+        <div class="cart-drawer-progress-track" aria-hidden="true"><div id="cartDrawerOfferProgress" class="cart-drawer-progress-fill"></div></div>
+      </div>
+      <div id="cartDrawerItems" class="cart-drawer-items"></div>
+      <div class="cart-drawer-footer">
+        <div class="cart-drawer-total"><span>Estimated total</span><strong id="cartDrawerTotal">₹0</strong></div>
+        <p class="cart-drawer-delivery-note">Delivery charges are confirmed with your PIN at checkout.</p>
+        <button type="button" class="cart-drawer-checkout" onclick="openCartCheckout()">Proceed to Checkout</button>
+        <a href="cart.html" class="cart-drawer-view-cart">View full cart</a>
+      </div>
+    </aside>
   </div>
 
   <!-- =========================================================

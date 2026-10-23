@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v95';
+const CACHE_NAME = 'jk-study-hub-v96';
 const urlsToCache = [
   './',
   './index.html',
@@ -96,7 +96,7 @@ self.addEventListener('fetch', event => {
         })
         .catch(error => {
           console.warn('Network request failed; checking the offline cache:', url.pathname, error);
-          return caches.match(event.request).then(cachedResponse => {
+          return caches.match(event.request, { ignoreSearch: isNavigation }).then(cachedResponse => {
             if (cachedResponse) return cachedResponse;
             if (isNavigation) {
               return new Response(
