@@ -1393,3 +1393,27 @@ body.seller-mobile-mode button {
     aspect-ratio: 9 / 16;
   }
 }
+
+/* =========================================================
+   SELLER SHIPPING LABEL & CARD QUICK ACTION TOOLBARS
+   ========================================================= */
+.label-action-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  transition: all 0.2s ease;
+}
+
+@media print {
+  .label-action-toolbar,
+  .label-action-toolbar * {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
