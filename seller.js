@@ -1450,107 +1450,126 @@ function renderShippingLabelCardHtml(o, isA4Quadrant = false) {
   const pincode = pinMatch ? pinMatch[1] : '193121';
 
   const isCod = isCodOrder(o);
-  const barcodeSvg = isA4Quadrant ? generateCode128Svg(o.orderId, 36, 1.6) : generateCode128Svg(o.orderId, 50, 2);
+  const barcodeSvg = isA4Quadrant ? generateCode128Svg(o.orderId, 45, 1.8) : generateCode128Svg(o.orderId, 52, 2);
   const qrUrl = `https://jkstudyhub.online/account.html#orders?id=${encodeURIComponent(o.orderId)}`;
   const awbNumber = 'JKSH' + (String(o.orderId).replace(/\D/g,'').slice(-6) || '193121');
   const orderDate = o.date || new Date().toLocaleDateString('en-IN');
 
-  if (isA4Quadrant) {
-    // Compact Quadrant Label formatted for A4 2x2 Grid (96mm x 138mm)
-    return `
-      <div class="a4-quadrant-label">
-        <!-- Top Logistics Header -->
-        <div style="border-bottom: 2px solid #000; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
-          <div style="display: flex; align-items: center; gap: 5px;">
-            <span style="font-size: 15px;">📦</span>
-            <div>
-              <div style="font-size: 10.5px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.1;">JK STUDY HUB LOGISTICS</div>
-              <div style="font-size: 7.5px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
-            </div>
+  const labelCoreHtml = `
+    <div ${isA4Quadrant ? 'class="a4-quadrant-label"' : 'id="printTargetLabel" class="shipping-label-sheet"'} style="border: 2.5px solid #000; background: #fff; color: #000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: left; line-height: 1.35; border-radius: 4px; box-sizing: border-box; overflow: hidden; ${isA4Quadrant ? '' : 'box-shadow: 0 4px 15px rgba(0,0,0,0.08);'}">
+      <!-- Top Bar: Logistics Header -->
+      <div style="border-bottom: 2px solid #000; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">📦</span>
+          <div>
+            <div style="font-size: 13px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">JK STUDY HUB LOGISTICS</div>
+            <div style="font-size: 9px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
           </div>
-          <div style="text-align: right;">
-            <div style="font-size: 8.5px; font-weight: 900; border: 1.5px solid #000; padding: 1px 5px; display: inline-block;">ROUTE: KMR-193</div>
-            <div style="font-size: 8px; font-weight: 600; margin-top: 1px;">DATE: ${orderDate}</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 10px; font-weight: 900; border: 1.5px solid #000; padding: 2px 6px; display: inline-block;">ROUTE: KMR-193</div>
+          <div style="font-size: 9px; font-weight: 600; margin-top: 2px;">DISPATCH: ${orderDate}</div>
+        </div>
+      </div>
+
+      <!-- Primary Barcode Section -->
+      <div style="border-bottom: 2px solid #000; padding: 10px 8px; text-align: center; background: #fff;">
+        <div style="display: flex; justify-content: center; margin-bottom: 3px;">
+          ${barcodeSvg}
+        </div>
+        <div style="font-family: monospace; font-size: 13.5px; font-weight: 900; letter-spacing: 2px;">* ${o.orderId} *</div>
+        <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 700; margin-top: 4px; padding: 0 8px; color: #222;">
+          <span>AWB: ${awbNumber}</span>
+          <span>HUB: BARAMULLA / PATTAN</span>
+        </div>
+      </div>
+
+      <!-- Payment Status Banner (PREPAID vs COD) -->
+      <div style="border-bottom: 2px solid #000; padding: 7px 10px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
+        ${isCod ? `
+          <div style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
+          <div style="font-size: 14px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${o.amount || 0}</div>
+          <div style="font-size: 9px; font-weight: 700; margin-top: 2px; letter-spacing: 0.4px; color: #fef08a;">⚠️ COLLECT EXACT CASH BEFORE OPENING PARCEL</div>
+        ` : `
+          <div style="font-size: 13.5px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
+          <div style="font-size: 11.5px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${o.amount || 0} • VERIFIED ONLINE</div>
+          <div style="font-size: 9px; font-weight: 600; color: #475569; margin-top: 1px;">Payment ID: ${o.txnId || 'PREPAID_VERIFIED'}</div>
+        `}
+      </div>
+
+      <!-- Address Section: SHIP TO & SHIP FROM -->
+      <div style="display: grid; grid-template-columns: 1.35fr 1fr; border-bottom: 2px solid #000; background: #fff;">
+        <!-- Ship To -->
+        <div style="padding: 9px 11px; border-right: 2px solid #000; background: #fff;">
+          <div style="font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
+          <div style="font-size: 13px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
+          <div style="font-size: 11px; font-weight: 800; color: #000; margin-top: 3px;">TEL: +91 ${customerPhone}</div>
+          <div style="font-size: 10px; font-weight: 600; color: #111; line-height: 1.35; margin-top: 3px; word-break: break-word;">${customerAddress}</div>
+          <div style="margin-top: 7px; padding-top: 3px; border-top: 1px dashed #000;">
+            <span style="font-size: 10px; font-weight: 900;">PIN: </span>
+            <span style="font-size: 17px; font-weight: 900; letter-spacing: 1px;">${pincode}</span>
           </div>
         </div>
 
-        <!-- Primary Barcode Section -->
-        <div style="border-bottom: 2px solid #000; padding: 4px 2px; text-align: center; background: #fff;">
-          <div style="display: flex; justify-content: center; margin-bottom: 2px;">
-            ${barcodeSvg}
+        <!-- Ship From -->
+        <div style="padding: 9px 11px; background: #fff;">
+          <div style="font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">SHIPPER (RETURN TO):</div>
+          <div style="font-size: 11px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB LOGISTICS</div>
+          <div style="font-size: 9.5px; font-weight: 600; color: #222; margin-top: 3px; line-height: 1.3;">
+            Fulfillment Center, Main Market, Pattan, Dist. Baramulla<br>
+            Jammu &amp; Kashmir – 193121
           </div>
-          <div style="font-family: monospace; font-size: 12px; font-weight: 900; letter-spacing: 1.5px; line-height: 1;">* ${o.orderId} *</div>
-          <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 700; margin-top: 2px; padding: 0 4px; color: #222;">
-            <span>AWB: ${awbNumber}</span>
-            <span>HUB: BARAMULLA / PATTAN</span>
-          </div>
-        </div>
-
-        <!-- Payment Status Banner -->
-        <div style="border-bottom: 2px solid #000; padding: 4px 6px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
-          ${isCod ? `
-            <div style="font-size: 11px; font-weight: 900; letter-spacing: 0.5px;">CASH ON DELIVERY (COD)</div>
-            <div style="font-size: 12px; font-weight: 900; margin-top: 1px;">COLLECT CASH: ₹${o.amount || 0}</div>
-          ` : `
-            <div style="font-size: 10.5px; font-weight: 900; letter-spacing: 0.5px;">PREPAID — DO NOT COLLECT CASH</div>
-            <div style="font-size: 9.5px; font-weight: 700; margin-top: 1px;">AMOUNT PAID: ₹${o.amount || 0} • VERIFIED ONLINE</div>
-          `}
-        </div>
-
-        <!-- Addresses (SHIP TO & SHIP FROM) -->
-        <div style="display: grid; grid-template-columns: 1.3fr 1fr; border-bottom: 2px solid #000; flex: 1; align-items: stretch;">
-          <div style="padding: 5px 6px; border-right: 1.5px solid #000; background: #fff;">
-            <div style="font-size: 7.5px; font-weight: 900; text-transform: uppercase; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 1px; margin-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
-            <div style="font-size: 11px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
-            <div style="font-size: 9.5px; font-weight: 800; color: #000; margin-top: 2px;">TEL: +91 ${customerPhone}</div>
-            <div style="font-size: 8.5px; font-weight: 600; color: #111; line-height: 1.25; margin-top: 2px; word-break: break-word;">${customerAddress}</div>
-            <div style="margin-top: 4px; padding-top: 2px; border-top: 1px dashed #000; display: flex; align-items: baseline; gap: 4px;">
-              <span style="font-size: 8px; font-weight: 900;">PIN:</span>
-              <span style="font-size: 14px; font-weight: 900; letter-spacing: 0.8px;">${pincode}</span>
-            </div>
-          </div>
-          <div style="padding: 5px 6px; background: #fff;">
-            <div style="font-size: 7.5px; font-weight: 900; text-transform: uppercase; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 1px; margin-bottom: 2px;">SHIPPER (RETURN TO):</div>
-            <div style="font-size: 9px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB</div>
-            <div style="font-size: 8px; font-weight: 600; color: #333; margin-top: 2px; line-height: 1.2;">
-              Main Market, Pattan<br>
-              Dist. Baramulla, J&amp;K
-            </div>
-            <div style="font-size: 8.5px; font-weight: 800; margin-top: 2px;">+91 9622605714</div>
-            <div style="margin-top: 4px; font-size: 7.5px; font-weight: 700; border: 1px solid #000; padding: 1px 3px; display: inline-block;">
-              ORIGIN: 193121
-            </div>
-          </div>
-        </div>
-
-        <!-- Contents -->
-        <div style="border-bottom: 1.5px solid #000; padding: 3px 6px; font-size: 8.5px; font-weight: 700; display: flex; justify-content: space-between; background: #fff;">
-          <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%;">${o.product || 'Study Material / Textbook'}</span>
-          <span>QTY: 1</span>
-          <span>₹${o.amount || 0}</span>
-        </div>
-
-        <!-- Tracking QR & Seal -->
-        <div style="padding: 4px 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px; background: #fff;">
-          <div style="display: flex; align-items: center; gap: 5px;">
-            <div style="width: 44px; height: 44px; border: 1px solid #000; padding: 1px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff;">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrUrl)}&margin=1" style="width: 100%; height: 100%; object-fit: contain;" alt="QR" crossOrigin="anonymous">
-            </div>
-            <div style="font-size: 7.5px; font-weight: 700; color: #333; line-height: 1.2; max-width: 120px;">
-              SCAN FOR LIVE DISPATCH STATUS &amp; AUTHENTICITY
-            </div>
-          </div>
-          <div style="text-align: center; border: 1.2px dashed #000; padding: 2px 5px; border-radius: 4px; min-width: 75px;">
-            <div style="font-size: 7px; font-weight: 900;">JK STUDY HUB</div>
-            <div style="font-size: 8px; font-weight: 900; color: #000; margin: 1px 0;">VERIFIED DISPATCH</div>
-            <div style="font-size: 6.5px; font-weight: 700; color: #555;">AUTH SIGNATORY</div>
+          <div style="font-size: 10px; font-weight: 800; margin-top: 4px;">HELPLINE: +91 9622605714</div>
+          <div style="margin-top: 7px; font-size: 8px; font-weight: 700; border: 1px solid #000; padding: 2px 4px; display: inline-block;">
+            ORIGIN PIN: 193121
           </div>
         </div>
       </div>
-    `;
+
+      <!-- Items and Package Contents -->
+      <div style="border-bottom: 2px solid #000; padding: 7px 11px; background: #fff;">
+        <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 3px;">
+          <span style="flex: 2;">ITEM DESCRIPTION</span>
+          <span style="flex: 0.5; text-align: center;">QTY</span>
+          <span style="flex: 0.8; text-align: right;">TOTAL VALUE</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 700; line-height: 1.3;">
+          <span style="flex: 2; word-break: break-word;">${o.product || 'Study Material / Textbook'}</span>
+          <span style="flex: 0.5; text-align: center;">1</span>
+          <span style="flex: 0.8; text-align: right;">₹${o.amount || 0}</span>
+        </div>
+        <div style="font-size: 8px; font-weight: 700; color: #444; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.3px;">
+          NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
+        </div>
+      </div>
+
+      <!-- Footer with QR Code and Dispatch Stamp -->
+      <div style="padding: 8px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #fff;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 58px; height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #000; padding: 2px; background: #fff;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(qrUrl)}&margin=1" style="width: 100%; height: 100%; object-fit: contain;" alt="QR" crossOrigin="anonymous">
+          </div>
+          <div>
+            <div style="font-size: 8.5px; font-weight: 900; text-transform: uppercase;">SCAN FOR REAL-TIME TRACKING</div>
+            <div style="font-size: 7.5px; font-weight: 600; color: #333; line-height: 1.25; max-width: 155px; margin-top: 2px;">
+              Scan with mobile camera or scanner to verify parcel authenticity &amp; live delivery status.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; border: 1.5px dashed #000; padding: 5px 8px; border-radius: 4px; min-width: 95px;">
+          <div style="font-size: 7.5px; font-weight: 900; letter-spacing: 0.5px;">JK STUDY HUB</div>
+          <div style="font-size: 9px; font-weight: 900; color: #000; margin: 1px 0;">VERIFIED DISPATCH</div>
+          <div style="font-size: 7px; font-weight: 700; color: #555;">AUTH. SIGNATORY</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  if (isA4Quadrant) {
+    return labelCoreHtml;
   }
 
-  // Single Standard View for modal preview (#printTargetLabel)
+  // Single Standard View with quick action toolbar
   return `
     <div class="label-column-wrapper" style="display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: 0 auto;">
       <!-- Label Quick Action Toolbar -->
@@ -1571,113 +1590,7 @@ function renderShippingLabelCardHtml(o, isA4Quadrant = false) {
         </div>
       </div>
 
-      <div id="printTargetLabel" class="shipping-label-sheet" style="border: 2.5px solid #000; background: #fff; color: #000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: left; line-height: 1.35; border-radius: 4px; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-        <!-- Top Bar: Logistics Header -->
-        <div style="border-bottom: 2px solid #000; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 22px;">📦</span>
-            <div>
-              <div style="font-size: 14px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">JK STUDY HUB LOGISTICS</div>
-              <div style="font-size: 9.5px; font-weight: 700; color: #333; text-transform: uppercase;">Express Surface &amp; Parcel Dispatch</div>
-            </div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 11px; font-weight: 900; border: 1.5px solid #000; padding: 2px 7px; display: inline-block;">ROUTE: KMR-193</div>
-            <div style="font-size: 9.5px; font-weight: 600; margin-top: 2px;">DISPATCH: ${orderDate}</div>
-          </div>
-        </div>
-
-        <!-- Primary Barcode Section -->
-        <div style="border-bottom: 2px solid #000; padding: 12px 10px; text-align: center; background: #fff;">
-          <div style="display: flex; justify-content: center; margin-bottom: 4px;">
-            ${barcodeSvg}
-          </div>
-          <div style="font-family: monospace; font-size: 14px; font-weight: 900; letter-spacing: 2px;">* ${o.orderId} *</div>
-          <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 4px; padding: 0 10px; color: #222;">
-            <span>AWB: ${awbNumber}</span>
-            <span>HUB: BARAMULLA / PATTAN</span>
-          </div>
-        </div>
-
-        <!-- Payment Status Banner (PREPAID vs COD) -->
-        <div style="border-bottom: 2px solid #000; padding: 8px 12px; text-align: center; ${isCod ? 'background: #000; color: #fff;' : 'background: #f1f5f9; color: #000;'}">
-          ${isCod ? `
-            <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">CASH ON DELIVERY (COD)</div>
-            <div style="font-size: 15px; font-weight: 900; margin-top: 2px;">COLLECT CASH: ₹${o.amount || 0}</div>
-            <div style="font-size: 9.5px; font-weight: 700; margin-top: 2px; letter-spacing: 0.5px;">⚠️ COLLECT EXACT CASH BEFORE OPENING PARCEL</div>
-          ` : `
-            <div style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">PREPAID — DO NOT COLLECT CASH</div>
-            <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">AMOUNT PAID: ₹${o.amount || 0} • VERIFIED ONLINE</div>
-            <div style="font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 1px;">Payment ID: ${o.txnId || 'PREPAID_VERIFIED'}</div>
-          `}
-        </div>
-
-        <!-- Address Section: SHIP TO & SHIP FROM -->
-        <div style="display: grid; grid-template-columns: 1.4fr 1fr; border-bottom: 2px solid #000;">
-          <!-- Ship To -->
-          <div style="padding: 10px 12px; border-right: 2px solid #000; background: #fff;">
-            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
-            <div style="font-size: 13.5px; font-weight: 900; color: #000; line-height: 1.2;">${customerName}</div>
-            <div style="font-size: 11.5px; font-weight: 800; color: #000; margin-top: 3px;">TEL: +91 ${customerPhone}</div>
-            <div style="font-size: 10.5px; font-weight: 600; color: #111; line-height: 1.4; margin-top: 4px; word-break: break-word;">${customerAddress}</div>
-            <div style="margin-top: 8px; padding-top: 4px; border-top: 1px dashed #000;">
-              <span style="font-size: 10.5px; font-weight: 900;">PIN: </span>
-              <span style="font-size: 18px; font-weight: 900; letter-spacing: 1px;">${pincode}</span>
-            </div>
-          </div>
-
-          <!-- Ship From -->
-          <div style="padding: 10px 12px; background: #fff;">
-            <div style="font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">SHIPPER (RETURN TO):</div>
-            <div style="font-size: 11.5px; font-weight: 900; color: #000; line-height: 1.2;">JK STUDY HUB LOGISTICS</div>
-            <div style="font-size: 10px; font-weight: 600; color: #222; margin-top: 3px; line-height: 1.3;">
-              Fulfillment Center, Main Market, Pattan, Dist. Baramulla<br>
-              Jammu &amp; Kashmir - 193121
-            </div>
-            <div style="font-size: 10.5px; font-weight: 800; margin-top: 4px;">HELPLINE: +91 9622605714</div>
-            <div style="margin-top: 8px; font-size: 8.5px; font-weight: 700; border: 1px solid #000; padding: 2px 4px; display: inline-block;">
-              ORIGIN PIN: 193121
-            </div>
-          </div>
-        </div>
-
-        <!-- Items and Package Contents -->
-        <div style="border-bottom: 2px solid #000; padding: 8px 12px; background: #fff;">
-          <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px;">
-            <span style="flex: 2;">ITEM DESCRIPTION</span>
-            <span style="flex: 0.5; text-align: center;">QTY</span>
-            <span style="flex: 0.8; text-align: right;">TOTAL VALUE</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; line-height: 1.3;">
-            <span style="flex: 2; word-break: break-word;">${o.product || 'Study Material / Textbook'}</span>
-            <span style="flex: 0.5; text-align: center;">1</span>
-            <span style="flex: 0.8; text-align: right;">₹${o.amount || 0}</span>
-          </div>
-          <div style="font-size: 8.5px; font-weight: 700; color: #444; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
-            NATURE: EDUCATIONAL BOOKS / STUDY NOTES • HANDLE WITH CARE • KEEP DRY
-          </div>
-        </div>
-
-        <!-- Footer with QR Code and Dispatch Stamp -->
-        <div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 65px; height: 65px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #000; padding: 2px; background: #fff;">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}&margin=1" style="width: 100%; height: 100%; object-fit: contain;" alt="QR" crossOrigin="anonymous">
-            </div>
-            <div>
-              <div style="font-size: 9px; font-weight: 900; text-transform: uppercase;">SCAN FOR REAL-TIME TRACKING</div>
-              <div style="font-size: 8px; font-weight: 600; color: #333; line-height: 1.3; max-width: 160px; margin-top: 2px;">
-                Scan with mobile camera or scanner to verify parcel authenticity &amp; live delivery status.
-              </div>
-            </div>
-          </div>
-          <div style="text-align: center; border: 1.5px dashed #000; padding: 6px 10px; border-radius: 4px; min-width: 105px;">
-            <div style="font-size: 8px; font-weight: 900; letter-spacing: 0.5px;">JK STUDY HUB</div>
-            <div style="font-size: 9.5px; font-weight: 900; color: #000; margin: 2px 0;">VERIFIED DISPATCH</div>
-            <div style="font-size: 7.5px; font-weight: 700; color: #555;">AUTH. SIGNATORY</div>
-          </div>
-        </div>
-      </div>
+      ${labelCoreHtml}
     </div>
   `;
 }
@@ -2225,16 +2138,15 @@ function printBulkA4LabelsWindow() {
           height: 138mm;
           border: 2px solid #000;
           border-radius: 4px;
-          padding: 7px 9px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
           background: #fff;
           color: #000;
           box-sizing: border-box;
           break-inside: avoid;
           page-break-inside: avoid;
           overflow: hidden;
+          font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+          text-align: left;
+          line-height: 1.35;
         }
         .a4-print-empty-slot {
           width: 96mm;
