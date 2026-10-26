@@ -4,8 +4,8 @@
   "description": "Comprehensive JKBOSE Class 10th, 11th & 12th Academic & Exam Preparation Portal",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#070b14",
-  "theme_color": "#0a1128",
+  "background_color": "#f7f5ef",
+  "theme_color": "#172a22",
   "icons": [
     {
       "src": "images/icon-192.png",

@@ -12,6 +12,18 @@
 
 function doPost(e) {
   try {
+    var p = e.parameter || {};
+
+    // Catalog price changes must never create rows or other side effects in Sheets.
+    var submittedOrderId = String(p.order_id || "").toUpperCase();
+    var submittedTxnId = String(p.txn_id || "").toUpperCase();
+    if (submittedOrderId.indexOf("PRICE-OVERRIDE") !== -1 || submittedTxnId.indexOf("PRICE_OVERRIDE") !== -1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "ignored",
+        reason: "catalog_price_update"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     
     // Auto-create standard headers if sheet is brand new
@@ -30,8 +42,6 @@ function doPost(e) {
       ]);
       sheet.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#e0f2fe");
     }
-    
-    var p = e.parameter || {};
     
     // --- FAST2SMS OTP DISCONNECTED ---
     if (p.action === "send_otp") {
@@ -116,10 +126,33 @@ function doPost(e) {
           "Photo 2",
           "Photo 3",
           "Photo 4",
-          "Status"
+          "Status",
+          "Class Level",
+          "Board",
+          "Subject",
+          "Edition",
+          "Items Included"
         ]);
-        prodSheet.getRange(1, 1, 1, 12).setFontWeight("bold").setBackground("#fef3c7");
+        prodSheet.getRange(1, 1, 1, 17).setFontWeight("bold").setBackground("#fef3c7");
       }
+
+      var lastProductColumn = prodSheet.getLastColumn();
+      var productHeaders = lastProductColumn
+        ? prodSheet.getRange(1, 1, 1, lastProductColumn).getValues()[0]
+        : [];
+      if (productHeaders.length === 0) {
+        productHeaders = [
+          "Timestamp", "Product ID", "Title", "Category", "Price", "MRP",
+          "Description", "Photo 1", "Photo 2", "Photo 3", "Photo 4", "Status"
+        ];
+        prodSheet.getRange(1, 1, 1, productHeaders.length).setValues([productHeaders]);
+      }
+      ["Class Level", "Board", "Subject", "Edition", "Items Included"].forEach(function(header) {
+        if (productHeaders.indexOf(header) === -1) {
+          productHeaders.push(header);
+          prodSheet.getRange(1, productHeaders.length).setValue(header);
+        }
+      });
 
       var prdId = String(p.product_id || ("PRD-" + Date.now())).trim();
       var prdTitle = String(p.title || "").trim();
@@ -134,7 +167,7 @@ function doPost(e) {
       var status = String(p.status || "Active").trim();
       var time = p.timestamp || new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
-      prodSheet.appendRow([
+      var productRow = [
         time,
         prdId,
         prdTitle,
@@ -147,7 +180,14 @@ function doPost(e) {
         photo3,
         photo4,
         status
-      ]);
+      ];
+      while (productRow.length < productHeaders.length) productRow.push("");
+      productRow[productHeaders.indexOf("Class Level")] = String(p.class_level || "");
+      productRow[productHeaders.indexOf("Board")] = String(p.board || "");
+      productRow[productHeaders.indexOf("Subject")] = String(p.subject || "");
+      productRow[productHeaders.indexOf("Edition")] = String(p.edition || "");
+      productRow[productHeaders.indexOf("Items Included")] = String(p.contents || "");
+      prodSheet.appendRow(productRow);
 
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
@@ -221,7 +261,7 @@ function doPost(e) {
         message: "Inquiry recorded and email notification dispatched"
       })).setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     // ACTION: New Order Placement
     var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
     var orderId = p.order_id || ("OD" + Date.now() + Math.floor(Math.random() * 1000));
@@ -361,6 +401,15 @@ function doGet(e) {
       var prodSheet = ss.getSheetByName("Products");
       var products = [];
       if (prodSheet) {
+        var lastProductColumn = prodSheet.getLastColumn();
+        var productHeaders = lastProductColumn
+          ? prodSheet.getRange(1, 1, 1, lastProductColumn).getValues()[0]
+          : [];
+        var classLevelIndex = productHeaders.indexOf("Class Level");
+        var boardIndex = productHeaders.indexOf("Board");
+        var subjectIndex = productHeaders.indexOf("Subject");
+        var editionIndex = productHeaders.indexOf("Edition");
+        var contentsIndex = productHeaders.indexOf("Items Included");
         var pData = prodSheet.getDataRange().getValues();
         for (var pj = 1; pj < pData.length; pj++) {
           var pRow = pData[pj];
@@ -383,6 +432,11 @@ function doGet(e) {
             desc: String(pRow[6] || ""),
             photos: photos,
             image: photos[0] || "images/logo-app.png",
+            classLevel: classLevelIndex >= 0 ? String(pRow[classLevelIndex] || "") : "",
+            board: boardIndex >= 0 ? String(pRow[boardIndex] || "") : "",
+            subject: subjectIndex >= 0 ? String(pRow[subjectIndex] || "") : "",
+            edition: editionIndex >= 0 ? String(pRow[editionIndex] || "") : "",
+            contents: contentsIndex >= 0 ? String(pRow[contentsIndex] || "") : "",
             timestamp: pRow[0]
           });
         }

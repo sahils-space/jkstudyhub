@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#172a22">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -579,6 +579,7 @@
       max-height: 380px; overflow-y: auto; color: #1e293b;
     }
   </style>
+  <link rel="stylesheet" href="brand-theme.css?v=2">
 </head>
 <body id="accountBody">
 
@@ -689,6 +690,7 @@
       
       <!-- Orders Tab -->
       <div id="tab-orders" class="tab-pane active">
+        <p style="margin: -8px 0 16px; color: #59655e; font-size: 13px; line-height: 1.5;">Order status and delivery progress appear below. Need help with a delivery? <a href="https://wa.me/919622605714?text=Hi%20JK%20Study%20Hub%2C%20I%20need%20help%20tracking%20my%20order." target="_blank" rel="noopener">Contact our support team on WhatsApp</a>.</p>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
           <h2 class="content-header" style="margin-bottom: 0;">My Orders</h2>
           <div style="position: relative; flex: 1; max-width: 320px; min-width: 200px;">
@@ -812,16 +814,10 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').then(reg => {
-          reg.update();
           if (reg.waiting) {
             reg.waiting.postMessage({ action: 'skipWaiting' });
           }
         });
-      });
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) {
-          navigator.serviceWorker.getRegistration().then(reg => { if (reg) reg.update(); });
-        }
       });
     }
   </script>

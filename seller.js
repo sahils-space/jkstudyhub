@@ -2777,6 +2777,11 @@ async function handleSellerCatalogSubmit(e) {
   const stock = parseInt(document.getElementById('catStock')?.value || '20', 10);
   const badge = document.getElementById('catBadge')?.value || '✨ Fresh Stock';
   const desc = (document.getElementById('catDescription')?.value || '').trim();
+  const classLevel = document.getElementById('catClassLevel')?.value || '';
+  const board = document.getElementById('catBoard')?.value || '';
+  const subject = (document.getElementById('catSubject')?.value || '').trim();
+  const edition = (document.getElementById('catEdition')?.value || '').trim();
+  const contents = (document.getElementById('catContents')?.value || '').trim();
   const statusNotice = document.getElementById('sellerCatalogStatusNotice');
 
   if (!title || price <= 0 || !desc) {
@@ -2832,6 +2837,11 @@ async function handleSellerCatalogSubmit(e) {
       mrp: mrp,
       badge: badge,
       stock: stock,
+      classLevel: classLevel,
+      board: board,
+      subject: subject,
+      edition: edition,
+      contents: contents,
       desc: desc,
       description: desc,
       photos: finalPhotos,
@@ -2893,6 +2903,11 @@ async function handleSellerCatalogSubmit(e) {
       postData.append('mrp', String(mrp));
       postData.append('badge', badge);
       postData.append('description', desc);
+      postData.append('class_level', classLevel);
+      postData.append('board', board);
+      postData.append('subject', subject);
+      postData.append('edition', edition);
+      postData.append('contents', contents);
       postData.append('photo1', finalPhotos[0] || '');
       postData.append('photo2', finalPhotos[1] || '');
       postData.append('photo3', finalPhotos[2] || '');
@@ -2917,6 +2932,11 @@ async function handleSellerCatalogSubmit(e) {
         mrp: mrp,
         badge: badge,
         stock: stock,
+        classLevel: classLevel,
+        board: board,
+        subject: subject,
+        edition: edition,
+        contents: contents,
         desc: desc,
         description: desc,
         photos: finalPhotos,
@@ -3035,7 +3055,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "category": "stationery",
     "price": 185,
     "mrp": 200,
-    "badge": "⭐ Top Rated",
+    "badge": "✨ Featured",
     "desc": "CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.",
     "photos": [
       "images/products/classmate-geometry-box-1.jpg"
@@ -3329,27 +3349,6 @@ async function quickSavePublishedProductPrice(cleanId, prodTitle) {
       }
     });
     localStorage.setItem('jk_custom_products', JSON.stringify(prods));
-  } catch(e) {}
-
-  // 2. Dispatch to Google Sheet cloud
-  try {
-    const postData = new URLSearchParams();
-    postData.append('order_id', 'OD-PRICE-OVERRIDE');
-    postData.append('name', prodTitle);
-    postData.append('phone', String(newPrice));
-    postData.append('address', String(newMrp));
-    postData.append('product', JSON.stringify({ name: prodTitle, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
-    postData.append('amount', String(newPrice));
-    postData.append('txn_id', 'PRICE_OVERRIDE');
-    postData.append('status', 'Active');
-    postData.append('notes', JSON.stringify({ name: prodTitle, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
-
-    const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
-    fetch(endpoint, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: postData
-    }).catch(e => console.warn("Google Sheet price sync notice:", e));
   } catch(e) {}
 
   if (typeof showToast === 'function') {
@@ -3989,28 +3988,7 @@ async function saveSellerProductPriceFromRow(triggerEl) {
       }
     }
 
-    // 3. Dispatch to Google Sheets Apps Script endpoint (Guaranteed Cloud Sheet Persistence)
-    try {
-      const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
-      const postData = new URLSearchParams();
-      postData.append('order_id', 'OD-PRICE-OVERRIDE');
-      postData.append('name', productName);
-      postData.append('phone', String(newPrice));
-      postData.append('address', String(newMrp));
-      postData.append('product', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
-      postData.append('amount', String(newPrice));
-      postData.append('txn_id', 'PRICE_OVERRIDE');
-      postData.append('status', 'Active');
-      postData.append('notes', JSON.stringify({ name: productName, price: newPrice, mrp: newMrp, updatedAt: Date.now() }));
-
-      fetch(endpoint, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: postData
-      }).catch(e => console.warn("Google Sheet price sync notice:", e));
-    } catch(e) {}
-
-    // 4. Update in local catalogs if present
+    // 3. Update in local catalogs if present
     try {
       let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
       cat.forEach(item => {
@@ -4344,6 +4322,25 @@ function updateSellerInventoryBadges() {
   if (lowEl) lowEl.innerText = lowCount;
   const outEl = document.getElementById('inventoryOutOfStockCount');
   if (outEl) outEl.innerText = outCount;
+
+  const stockAlert = document.getElementById('inventoryStockAlert');
+  const stockAlertText = document.getElementById('inventoryStockAlertText');
+  if (stockAlert && stockAlertText) {
+    const alertCount = lowCount + outCount;
+    stockAlert.hidden = alertCount === 0;
+    stockAlert.style.display = alertCount > 0 ? 'flex' : 'none';
+    stockAlertText.textContent = alertCount > 0
+      ? `${lowCount} low-stock and ${outCount} sold-out product${alertCount === 1 ? '' : 's'} need attention.`
+      : '';
+  }
+}
+
+function filterInventoryByStatus(status) {
+  const statusFilter = document.getElementById('inventoryStatusFilter');
+  if (!statusFilter) return;
+  statusFilter.value = status;
+  renderSellerInventoryTable();
+  document.getElementById('sellerInventoryTableBody')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderSellerInventoryTable() {

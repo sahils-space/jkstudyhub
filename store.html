@@ -23,11 +23,11 @@
   </script>
   <!-- Official Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <link rel="stylesheet" href="promo-offers.css?v=1">
+  <link rel="stylesheet" href="promo-offers.css?v=2">
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK Study Hub - Books & School Copies at Less Than Bookshop Rates & Less Than MRP">
-  <meta property="og:description" content="Bestselling novels, school exercise copies at less than bookshop rates & less than MRP, Class 1st to 12th book sets, and board exam guides with Cash on Delivery across all J&K pincodes. Free same-day delivery in Pattan.">
+  <meta property="og:description" content="Browse novels, school exercise copies, book sets and board exam guides. Enter your PIN at checkout to confirm delivery availability, charges and payment options.">
   <meta property="og:image" content="https://jkstudyhub.online/images/logo-app.png">
   <meta property="og:url" content="https://jkstudyhub.online/store.html">
   <meta name="twitter:card" content="summary_large_image">
@@ -1980,7 +1980,11 @@
       .zapvi-carousel-arrow.next { right: 10px; }
       .zapvi-category-strip {
         display: flex;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
         overflow-x: auto;
+        overscroll-behavior-x: contain;
         gap: 12px;
         padding: 0 14px 10px;
         margin: 18px auto 26px;
@@ -2373,6 +2377,66 @@
       color: #ffffff;
       border-color: #2563eb;
       box-shadow: 0 3px 10px rgba(37, 99, 235, 0.22);
+    }
+    .store-advanced-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 9px;
+      margin-top: 12px;
+      align-items: end;
+    }
+    .store-advanced-filters label {
+      display: grid;
+      gap: 4px;
+      color: #59655e;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .store-advanced-filters input,
+    .store-advanced-filters select {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 38px;
+      padding: 7px 9px;
+      border: 1px solid #e5e1d7;
+      border-radius: 8px;
+      background: #fffefa;
+      color: #202a25;
+      font: inherit;
+      font-size: 12px;
+    }
+    .store-filter-reset {
+      min-height: 38px;
+      border: 1px solid #d6e1d8;
+      border-radius: 8px;
+      background: #edf3ef;
+      color: #244638;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .product-listing-details {
+      margin: 4px 0 12px;
+      padding: 12px 14px;
+      border: 1px solid #e5e1d7;
+      border-radius: 10px;
+      background: #fffefa;
+      color: #59655e;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .product-listing-details h4 {
+      margin: 0 0 7px;
+      color: #172a22;
+      font-size: 13px;
+    }
+    .product-listing-details p {
+      margin: 4px 0;
+    }
+    .product-listing-details a {
+      display: inline-block;
+      margin-top: 5px;
+      color: #315c4b;
+      font-weight: 700;
     }
 
     /* 3D Floating Commercial Advertisement Stage */
@@ -2808,6 +2872,20 @@
     body.dark-mode {
       background-color: #0b0f19 !important;
       color: #f1f5f9 !important;
+    }
+    body.dark-mode .store-advanced-filters label {
+      color: #cbd5e1;
+    }
+    body.dark-mode .store-advanced-filters input,
+    body.dark-mode .store-advanced-filters select {
+      background: #1f2937;
+      color: #f8fafc;
+      border-color: #475569;
+    }
+    body.dark-mode .store-filter-reset {
+      background: #244638;
+      color: #f7f5ef;
+      border-color: #527565;
     }
     body.dark-mode .zapvi-store-nav,
     body.dark-mode .mobile-bottom-nav,
@@ -3707,6 +3785,7 @@
   </style>
 
   <link rel="stylesheet" href="premium-theme.css?v=1">
+  <link rel="stylesheet" href="brand-theme.css?v=2">
 </head>
 <body>
 
@@ -3739,6 +3818,9 @@
           <a href="javascript:void(0)" class="zapvi-menu-item" onclick="openStoreCategorySection('academic', '10th')">
             <span>JKBOSE Class 10th &amp; 12th</span>
             <span class="zapvi-pill-new">NEW</span>
+          </a>
+          <a href="jk-bose-class-10-books.html" class="zapvi-menu-item" onclick="closeZapviDropdown()">
+            <span>Class 10 Books in Kashmir</span>
           </a>
           <a href="javascript:void(0)" class="zapvi-menu-item" onclick="openStoreCategorySection('academic', 'College')">
             <span>College &amp; University Guides</span>
@@ -3843,49 +3925,49 @@
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('copies', '')">
       <div class="zapvi-cat-img-wrap" style="background:#fef3c7;">
-        <img src="images/spiral-copies.webp" alt="School Copies &amp; Registers" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="School Copies &amp; Registers" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">Copies &amp; Registers</p>
     </a>
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('school-books', '')">
       <div class="zapvi-cat-img-wrap" style="background:#e0f2fe;">
-        <img src="images/school-bookset.webp" alt="School Books 1st to 12th" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="School Books 1st to 12th" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">School Books (1st–12th)</p>
     </a>
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('novels', '')">
       <div class="zapvi-cat-img-wrap">
-        <img src="images/books/atomic-habits-1.webp" alt="Novels &amp; Bestsellers" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/books/atomic-habits-1.webp" alt="Novels &amp; Bestsellers" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">Novels &amp; Bestsellers</p>
     </a>
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('academic', 'Syllabus')">
       <div class="zapvi-cat-img-wrap">
-        <img src="images/books/lucent-gk-1.webp" alt="JKBOSE Syllabus &amp; Guides" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/books/lucent-gk-1.webp" alt="JKBOSE Syllabus &amp; Guides" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">Syllabus &amp; Guides</p>
     </a>
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('academic', 'PYQs')">
       <div class="zapvi-cat-img-wrap">
-        <img src="images/spiral-copies.webp" alt="Solved Papers &amp; PYQs" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Solved Papers &amp; PYQs" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">Solved Papers &amp; PYQs</p>
     </a>
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('stationery', '')">
       <div class="zapvi-cat-img-wrap">
-        <img src="images/geometry-box.webp" alt="Stationery Supplies" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/geometry-box.webp" alt="Stationery Supplies" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">Stationery Supplies</p>
     </a>
 
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('stationery', 'Table')">
       <div class="zapvi-cat-img-wrap">
-        <img src="images/study-table.webp" alt="Study Lamps &amp; Tables" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/study-table.webp" alt="Study Lamps &amp; Tables" class="zapvi-cat-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
       </div>
       <p class="zapvi-cat-title">Study Lamps &amp; Desks</p>
     </a>
@@ -3930,6 +4012,41 @@
         </button>
       </div>
 
+      <div class="store-advanced-filters" aria-label="Filter products">
+        <label>Class
+          <select id="storeClassFilter" onchange="applyStoreAdvancedFilters()">
+            <option value="all">All classes</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </label>
+        <label>Subject or keyword
+          <input id="storeSubjectFilter" type="search" placeholder="e.g. Physics" oninput="applyStoreAdvancedFilters()">
+        </label>
+        <label>Board
+          <select id="storeBoardFilter" onchange="applyStoreAdvancedFilters()">
+            <option value="all">All boards</option>
+            <option value="jkbose">JKBOSE</option>
+            <option value="ncert">NCERT / CBSE</option>
+          </select>
+        </label>
+        <label>Minimum price
+          <input id="storeMinPrice" type="number" min="0" inputmode="numeric" placeholder="₹0" oninput="applyStoreAdvancedFilters()">
+        </label>
+        <label>Maximum price
+          <input id="storeMaxPrice" type="number" min="0" inputmode="numeric" placeholder="No limit" oninput="applyStoreAdvancedFilters()">
+        </label>
+        <label>Availability
+          <select id="storeAvailabilityFilter" onchange="applyStoreAdvancedFilters()">
+            <option value="all">All stock</option>
+            <option value="in_stock">In stock</option>
+            <option value="out_of_stock">Out of stock</option>
+          </select>
+        </label>
+        <button type="button" class="store-filter-reset" onclick="clearStoreAdvancedFilters()">Clear filters</button>
+      </div>
+
       <div id="storeSearchFeedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; color: #475569; justify-content: space-between; align-items: center;">
         <span id="searchResultCountText">Found 0 items</span>
         <button onclick="clearStoreSearch()" style="background: none; border: none; color: #2563eb; font-weight: 700; cursor: pointer; font-size: 12.5px;">Show All Items</button>
@@ -3939,7 +4056,7 @@
     <!-- P2: Trust & Cash on Delivery Guarantee Strip -->
     <div class="store-trust-strip">
       <div class="trust-pill cod"><i class="fa-solid fa-hand-holding-dollar"></i> <span><strong>Cash on Delivery (COD)</strong> Available Across J&amp;K</span></div>
-      <div class="trust-pill"><i class="fa-solid fa-truck-fast"></i> <span><strong>Fast 24–48h Delivery</strong> Across All 20 Districts</span></div>
+      <div class="trust-pill"><i class="fa-solid fa-truck-fast"></i> <span><strong>PIN-based delivery check</strong> Confirm coverage and charges at checkout</span></div>
       <div class="trust-pill"><i class="fa-solid fa-box-open"></i> <span><strong>Doorstep Verification</strong> Inspect Before Paying</span></div>
       <div class="trust-pill"><i class="fa-solid fa-certificate"></i> <span><strong>100% Genuine</strong> Books, Guides &amp; Solved Papers</span></div>
     </div>
@@ -3989,13 +4106,13 @@
         <div class="book-product-card" data-category="stationery">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'Spectra paper A4')"><i class="fa-solid fa-heart"></i></button>
           <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
-          
+
           <div class="swipe-photo-container" id="carousel-dyn-0">
             <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-dyn-0', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
             <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-dyn-0', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
             <div class="carousel-track">
-            <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4 - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Spectra paper A4')">
-            <img src="images/products/spectra-paper-a4-2.jpg" alt="Spectra paper A4 - Photo 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Spectra paper A4')">
+            <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4 - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Spectra paper A4')" decoding="async">
+            <img src="images/products/spectra-paper-a4-2.jpg" alt="Spectra paper A4 - Photo 2" class="carousel-img " loading="lazy" onclick="openBookDetailsModal('Spectra paper A4')" decoding="async">
             </div>
           <div class="carousel-dots">              <span class="carousel-dot active" onclick="setCardPhoto('carousel-dyn-0', 0, event)"></span>
               <span class="carousel-dot " onclick="setCardPhoto('carousel-dyn-0', 1, event)"></span>
@@ -4010,14 +4127,12 @@
               STATIONERY
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Spectra paper A4')">Spectra paper A4</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Spectra paper A4')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4025,7 +4140,7 @@
             </div>
 
             <p class="product-desc">Premium A4 sheets, best for printing notes and documents</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4046,10 +4161,10 @@
         <div class="book-product-card" data-category="stationery">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'DOMS COLOUR PENCILS')"><i class="fa-solid fa-heart"></i></button>
           <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
-          
+
           <div class="swipe-photo-container" id="carousel-dyn-1">
             <div class="carousel-track">
-            <img src="images/products/doms-colour-pencils-1.jpg" alt="DOMS COLOUR PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')">
+            <img src="images/products/doms-colour-pencils-1.jpg" alt="DOMS COLOUR PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4061,14 +4176,12 @@
               STATIONERY
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('DOMS COLOUR PENCILS')">DOMS COLOUR PENCILS</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('DOMS COLOUR PENCILS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4076,7 +4189,7 @@
             </div>
 
             <p class="product-desc">Doms colour pencils For Good drawing Unbreakable,premium, original.</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4097,10 +4210,10 @@
         <div class="book-product-card" data-category="academic">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'DOMS SMALL COLOUR PENCILS')"><i class="fa-solid fa-heart"></i></button>
           <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
-          
+
           <div class="swipe-photo-container" id="carousel-dyn-2">
             <div class="carousel-track">
-            <img src="images/products/doms-small-colour-pencils-1.jpg" alt="DOMS SMALL COLOUR PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')">
+            <img src="images/products/doms-small-colour-pencils-1.jpg" alt="DOMS SMALL COLOUR PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4112,14 +4225,12 @@
               ACADEMIC
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('DOMS SMALL COLOUR PENCILS')">DOMS SMALL COLOUR PENCILS</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('DOMS SMALL COLOUR PENCILS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4127,7 +4238,7 @@
             </div>
 
             <p class="product-desc">DOMS highly demanded Small Pencil colours, Original high Quality Colour.</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4147,11 +4258,11 @@
         </div>
         <div class="book-product-card" data-category="academic">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'Classmate Geometry Box')"><i class="fa-solid fa-heart"></i></button>
-          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ⭐ Top Rated</span>
-          
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Featured</span>
+
           <div class="swipe-photo-container" id="carousel-dyn-3">
             <div class="carousel-track">
-            <img src="images/products/classmate-geometry-box-1.jpg" alt="Classmate Geometry Box - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Classmate Geometry Box')">
+            <img src="images/products/classmate-geometry-box-1.jpg" alt="Classmate Geometry Box - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Classmate Geometry Box')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('Classmate Geometry Box')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4163,14 +4274,12 @@
               ACADEMIC
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Classmate Geometry Box')">Classmate Geometry Box</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('Classmate Geometry Box')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4178,7 +4287,7 @@
             </div>
 
             <p class="product-desc">CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4199,10 +4308,10 @@
         <div class="book-product-card" data-category="academic">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'WATER COLOURS DOMS')"><i class="fa-solid fa-heart"></i></button>
           <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
-          
+
           <div class="swipe-photo-container" id="carousel-dyn-4">
             <div class="carousel-track">
-            <img src="images/products/water-colours-doms-1.jpg" alt="WATER COLOURS DOMS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('WATER COLOURS DOMS')">
+            <img src="images/products/water-colours-doms-1.jpg" alt="WATER COLOURS DOMS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('WATER COLOURS DOMS')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('WATER COLOURS DOMS')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4214,14 +4323,12 @@
               ACADEMIC
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('WATER COLOURS DOMS')">WATER COLOURS DOMS</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('WATER COLOURS DOMS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4229,7 +4336,7 @@
             </div>
 
             <p class="product-desc">Water colours Doms, For water drawing painting and diagrams...</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4250,10 +4357,10 @@
         <div class="book-product-card" data-category="academic">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'DOMS GLUE STICK 10 PCS')"><i class="fa-solid fa-heart"></i></button>
           <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
-          
+
           <div class="swipe-photo-container" id="carousel-dyn-5">
             <div class="carousel-track">
-            <img src="images/products/doms-glue-stick-10-pcs-1.jpg" alt="DOMS GLUE STICK 10 PCS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')">
+            <img src="images/products/doms-glue-stick-10-pcs-1.jpg" alt="DOMS GLUE STICK 10 PCS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4265,14 +4372,12 @@
               ACADEMIC
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('DOMS GLUE STICK 10 PCS')">DOMS GLUE STICK 10 PCS</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('DOMS GLUE STICK 10 PCS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4280,7 +4385,7 @@
             </div>
 
             <p class="product-desc">Newly launched,good quality Glue For sticking the notes diagrams and photographs</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4301,10 +4406,10 @@
         <div class="book-product-card" data-category="stationery">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'NIXON DOMS PEN BUNDLE')"><i class="fa-solid fa-heart"></i></button>
           <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
-          
+
           <div class="swipe-photo-container" id="carousel-dyn-6">
             <div class="carousel-track">
-            <img src="images/products/nixon-doms-pen-bundle-1.jpg" alt="NIXON DOMS PEN BUNDLE - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')">
+            <img src="images/products/nixon-doms-pen-bundle-1.jpg" alt="NIXON DOMS PEN BUNDLE - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4316,14 +4421,12 @@
               STATIONERY
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('NIXON DOMS PEN BUNDLE')">NIXON DOMS PEN BUNDLE</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('NIXON DOMS PEN BUNDLE')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4331,7 +4434,7 @@
             </div>
 
             <p class="product-desc">SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4351,11 +4454,11 @@
         </div>
         <div class="book-product-card" data-category="stationery">
           <button class="wishlist-icon" onclick="toggleFavorite(this, 'PENCILS')"><i class="fa-solid fa-heart"></i></button>
-          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ⭐ Top Rated</span>
-          
+          <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ✨ Featured</span>
+
           <div class="swipe-photo-container" id="carousel-dyn-7">
             <div class="carousel-track">
-            <img src="images/products/pencils-1.jpg" alt="PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('PENCILS')">
+            <img src="images/products/pencils-1.jpg" alt="PENCILS - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('PENCILS')" decoding="async">
             </div>
             <div class="card-dim-tag" onclick="openBookDetailsModal('PENCILS')" title="Tap to inspect product">
               <i class="fa-solid fa-images"></i> 1 Photo
@@ -4367,14 +4470,12 @@
               STATIONERY
             </div>
             <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('PENCILS')">PENCILS</h3>
-            
+
             <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-              <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-              <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Stock</span>
+
+
               <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
             </div>
-
-            <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>Tomorrow / 24-48 Hrs</strong></div>
 
             <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
               <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('PENCILS')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
@@ -4382,7 +4483,7 @@
             </div>
 
             <p class="product-desc">DOMS PENCILS FOR THE GOOD WRITING PURPOSE AND DIAGRAMS AND OTHER THINGS</p>
-            
+
             <div class="product-footer">
               <div style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:baseline; gap:6px;">
@@ -4420,15 +4521,15 @@
       <!-- Book Card 1: Atomic Habits -->
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Atomic Habits')"><i class="fa-solid fa-heart"></i></button>
-        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-bolt"></i> Bestseller #1</span>
-        
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> Featured</span>
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-0">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-0', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-0', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/atomic-habits-1.webp" alt="Atomic Habits - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Atomic Habits')"><img src="images/books/atomic-habits-2.webp" alt="Atomic Habits - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Atomic Habits')"><img src="images/books/atomic-habits-3.webp" alt="Atomic Habits - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Atomic Habits')"><img src="images/books/atomic-habits-4.webp" alt="Atomic Habits - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Atomic Habits')">
+            <img src="images/books/atomic-habits-1.webp" alt="Atomic Habits - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Atomic Habits')" decoding="async"><img src="images/books/atomic-habits-2.webp" alt="Atomic Habits - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Atomic Habits')" loading="lazy" decoding="async"><img src="images/books/atomic-habits-3.webp" alt="Atomic Habits - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Atomic Habits')" loading="lazy" decoding="async"><img src="images/books/atomic-habits-4.webp" alt="Atomic Habits - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Atomic Habits')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4443,10 +4544,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By James Clear</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Atomic Habits')">Atomic Habits</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(1.2k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4476,14 +4577,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'The Psychology of Money')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#dbeafe; color:#1e40af; z-index:9;"><i class="fa-solid fa-bolt"></i> Youth Favorite</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-1">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-1', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-1', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/psychology-of-money-1.webp" alt="The Psychology of Money - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('The Psychology of Money')"><img src="images/books/psychology-of-money-2.webp" alt="The Psychology of Money - Photo 2" class="carousel-img " onclick="openBookDetailsModal('The Psychology of Money')"><img src="images/books/psychology-of-money-3.webp" alt="The Psychology of Money - Photo 3" class="carousel-img " onclick="openBookDetailsModal('The Psychology of Money')"><img src="images/books/psychology-of-money-4.webp" alt="The Psychology of Money - Photo 4" class="carousel-img " onclick="openBookDetailsModal('The Psychology of Money')">
+            <img src="images/books/psychology-of-money-1.webp" alt="The Psychology of Money - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('The Psychology of Money')" decoding="async"><img src="images/books/psychology-of-money-2.webp" alt="The Psychology of Money - Photo 2" class="carousel-img " onclick="openBookDetailsModal('The Psychology of Money')" loading="lazy" decoding="async"><img src="images/books/psychology-of-money-3.webp" alt="The Psychology of Money - Photo 3" class="carousel-img " onclick="openBookDetailsModal('The Psychology of Money')" loading="lazy" decoding="async"><img src="images/books/psychology-of-money-4.webp" alt="The Psychology of Money - Photo 4" class="carousel-img " onclick="openBookDetailsModal('The Psychology of Money')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4498,10 +4599,8 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Morgan Housel</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('The Psychology of Money')">The Psychology of Money</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
-            <span style="color:#94a3b8;">(950 reviews)</span>
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4531,14 +4630,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Deep Work')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#fef9c3; color:#854d0e; z-index:9;"><i class="fa-solid fa-bolt"></i> Exam Prep Must-Have</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-2">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-2', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-2', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/deep-work-1.webp" alt="Deep Work - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Deep Work')"><img src="images/books/deep-work-2.webp" alt="Deep Work - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Deep Work')"><img src="images/books/deep-work-3.webp" alt="Deep Work - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Deep Work')"><img src="images/books/deep-work-4.webp" alt="Deep Work - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Deep Work')">
+            <img src="images/books/deep-work-1.webp" alt="Deep Work - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Deep Work')" decoding="async"><img src="images/books/deep-work-2.webp" alt="Deep Work - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Deep Work')" loading="lazy" decoding="async"><img src="images/books/deep-work-3.webp" alt="Deep Work - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Deep Work')" loading="lazy" decoding="async"><img src="images/books/deep-work-4.webp" alt="Deep Work - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Deep Work')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4553,10 +4652,8 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Cal Newport</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Deep Work')">Deep Work</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
-            <span style="color:#94a3b8;">(820 reviews)</span>
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4586,14 +4683,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'The Alchemist')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#fef3c7; color:#92400e; z-index:9;"><i class="fa-solid fa-bolt"></i> Inspiring Classic</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-3">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-3', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-3', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/the-alchemist-1.webp" alt="The Alchemist - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('The Alchemist')"><img src="images/books/the-alchemist-2.webp" alt="The Alchemist - Photo 2" class="carousel-img " onclick="openBookDetailsModal('The Alchemist')"><img src="images/books/the-alchemist-3.webp" alt="The Alchemist - Photo 3" class="carousel-img " onclick="openBookDetailsModal('The Alchemist')"><img src="images/books/the-alchemist-4.webp" alt="The Alchemist - Photo 4" class="carousel-img " onclick="openBookDetailsModal('The Alchemist')">
+            <img src="images/books/the-alchemist-1.webp" alt="The Alchemist - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('The Alchemist')" decoding="async"><img src="images/books/the-alchemist-2.webp" alt="The Alchemist - Photo 2" class="carousel-img " onclick="openBookDetailsModal('The Alchemist')" loading="lazy" decoding="async"><img src="images/books/the-alchemist-3.webp" alt="The Alchemist - Photo 3" class="carousel-img " onclick="openBookDetailsModal('The Alchemist')" loading="lazy" decoding="async"><img src="images/books/the-alchemist-4.webp" alt="The Alchemist - Photo 4" class="carousel-img " onclick="openBookDetailsModal('The Alchemist')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4608,10 +4705,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Paulo Coelho</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('The Alchemist')">The Alchemist</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(2.1k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4641,14 +4738,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'The Kite Runner')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#ffedd5; color:#9a3412; z-index:9;"><i class="fa-solid fa-bolt"></i> Epic Masterpiece</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-4">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-4', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-4', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/the-kite-runner-1.webp" alt="The Kite Runner - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('The Kite Runner')"><img src="images/books/the-kite-runner-2.webp" alt="The Kite Runner - Photo 2" class="carousel-img " onclick="openBookDetailsModal('The Kite Runner')"><img src="images/books/the-kite-runner-3.webp" alt="The Kite Runner - Photo 3" class="carousel-img " onclick="openBookDetailsModal('The Kite Runner')"><img src="images/books/the-kite-runner-4.webp" alt="The Kite Runner - Photo 4" class="carousel-img " onclick="openBookDetailsModal('The Kite Runner')">
+            <img src="images/books/the-kite-runner-1.webp" alt="The Kite Runner - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('The Kite Runner')" decoding="async"><img src="images/books/the-kite-runner-2.webp" alt="The Kite Runner - Photo 2" class="carousel-img " onclick="openBookDetailsModal('The Kite Runner')" loading="lazy" decoding="async"><img src="images/books/the-kite-runner-3.webp" alt="The Kite Runner - Photo 3" class="carousel-img " onclick="openBookDetailsModal('The Kite Runner')" loading="lazy" decoding="async"><img src="images/books/the-kite-runner-4.webp" alt="The Kite Runner - Photo 4" class="carousel-img " onclick="openBookDetailsModal('The Kite Runner')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4663,10 +4760,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Khaled Hosseini</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('The Kite Runner')">The Kite Runner</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(1.8k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4696,14 +4793,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'A Thousand Splendid Suns')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#e0e7ff; color:#3730a3; z-index:9;"><i class="fa-solid fa-bolt"></i> Emotional Journey</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-5">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-5', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-5', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/thousand-splendid-suns-1.webp" alt="A Thousand Splendid Suns - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('A Thousand Splendid Suns')"><img src="images/books/thousand-splendid-suns-2.webp" alt="A Thousand Splendid Suns - Photo 2" class="carousel-img " onclick="openBookDetailsModal('A Thousand Splendid Suns')"><img src="images/books/thousand-splendid-suns-3.webp" alt="A Thousand Splendid Suns - Photo 3" class="carousel-img " onclick="openBookDetailsModal('A Thousand Splendid Suns')"><img src="images/books/thousand-splendid-suns-4.webp" alt="A Thousand Splendid Suns - Photo 4" class="carousel-img " onclick="openBookDetailsModal('A Thousand Splendid Suns')">
+            <img src="images/books/thousand-splendid-suns-1.webp" alt="A Thousand Splendid Suns - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('A Thousand Splendid Suns')" decoding="async"><img src="images/books/thousand-splendid-suns-2.webp" alt="A Thousand Splendid Suns - Photo 2" class="carousel-img " onclick="openBookDetailsModal('A Thousand Splendid Suns')" loading="lazy" decoding="async"><img src="images/books/thousand-splendid-suns-3.webp" alt="A Thousand Splendid Suns - Photo 3" class="carousel-img " onclick="openBookDetailsModal('A Thousand Splendid Suns')" loading="lazy" decoding="async"><img src="images/books/thousand-splendid-suns-4.webp" alt="A Thousand Splendid Suns - Photo 4" class="carousel-img " onclick="openBookDetailsModal('A Thousand Splendid Suns')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4718,10 +4815,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Khaled Hosseini</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('A Thousand Splendid Suns')">A Thousand Splendid Suns</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(1.5k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4751,14 +4848,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Secrets of Divine Love')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#dcfce7; color:#166534; z-index:9;"><i class="fa-solid fa-bolt"></i> Spiritual Bestseller</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-6">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-6', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-6', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/secrets-of-divine-love-1.webp" alt="Secrets of Divine Love - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Secrets of Divine Love')"><img src="images/books/secrets-of-divine-love-2.webp" alt="Secrets of Divine Love - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Secrets of Divine Love')"><img src="images/books/secrets-of-divine-love-3.webp" alt="Secrets of Divine Love - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Secrets of Divine Love')"><img src="images/books/secrets-of-divine-love-4.webp" alt="Secrets of Divine Love - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Secrets of Divine Love')">
+            <img src="images/books/secrets-of-divine-love-1.webp" alt="Secrets of Divine Love - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Secrets of Divine Love')" decoding="async"><img src="images/books/secrets-of-divine-love-2.webp" alt="Secrets of Divine Love - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Secrets of Divine Love')" loading="lazy" decoding="async"><img src="images/books/secrets-of-divine-love-3.webp" alt="Secrets of Divine Love - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Secrets of Divine Love')" loading="lazy" decoding="async"><img src="images/books/secrets-of-divine-love-4.webp" alt="Secrets of Divine Love - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Secrets of Divine Love')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4773,10 +4870,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By A. Helwa</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Secrets of Divine Love')">Secrets of Divine Love</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(1.3k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4806,14 +4903,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Reclaim Your Heart')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#f3e8ff; color:#6b21a8; z-index:9;"><i class="fa-solid fa-bolt"></i> Mental Peace Guide</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-7">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-7', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-7', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/reclaim-your-heart-1.webp" alt="Reclaim Your Heart - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Reclaim Your Heart')"><img src="images/books/reclaim-your-heart-2.webp" alt="Reclaim Your Heart - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Reclaim Your Heart')"><img src="images/books/reclaim-your-heart-3.webp" alt="Reclaim Your Heart - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Reclaim Your Heart')"><img src="images/books/reclaim-your-heart-4.webp" alt="Reclaim Your Heart - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Reclaim Your Heart')">
+            <img src="images/books/reclaim-your-heart-1.webp" alt="Reclaim Your Heart - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Reclaim Your Heart')" decoding="async"><img src="images/books/reclaim-your-heart-2.webp" alt="Reclaim Your Heart - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Reclaim Your Heart')" loading="lazy" decoding="async"><img src="images/books/reclaim-your-heart-3.webp" alt="Reclaim Your Heart - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Reclaim Your Heart')" loading="lazy" decoding="async"><img src="images/books/reclaim-your-heart-4.webp" alt="Reclaim Your Heart - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Reclaim Your Heart')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4828,10 +4925,8 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Yasmin Mogahed</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Reclaim Your Heart')">Reclaim Your Heart</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.8</span>
-            <span style="color:#94a3b8;">(920 reviews)</span>
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4861,14 +4956,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Wings of Fire')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#fee2e2; color:#991b1b; z-index:9;"><i class="fa-solid fa-bolt"></i> National Inspiration</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-8">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-8', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-8', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/wings-of-fire-1.webp" alt="Wings of Fire - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Wings of Fire')"><img src="images/books/wings-of-fire-2.webp" alt="Wings of Fire - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Wings of Fire')"><img src="images/books/wings-of-fire-3.webp" alt="Wings of Fire - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Wings of Fire')"><img src="images/books/wings-of-fire-4.webp" alt="Wings of Fire - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Wings of Fire')">
+            <img src="images/books/wings-of-fire-1.webp" alt="Wings of Fire - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Wings of Fire')" decoding="async"><img src="images/books/wings-of-fire-2.webp" alt="Wings of Fire - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Wings of Fire')" loading="lazy" decoding="async"><img src="images/books/wings-of-fire-3.webp" alt="Wings of Fire - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Wings of Fire')" loading="lazy" decoding="async"><img src="images/books/wings-of-fire-4.webp" alt="Wings of Fire - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Wings of Fire')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4883,10 +4978,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By A.P.J. Abdul Kalam</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Wings of Fire')">Wings of Fire</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(3.4k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4916,14 +5011,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Lucent\'s General Knowledge')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#fef3c7; color:#92400e; z-index:9;"><i class="fa-solid fa-bolt"></i> Exam Rank Booster</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-9">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-9', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-9', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/lucent-gk-1.webp" alt="Lucent's General Knowledge - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Lucent\'s General Knowledge')"><img src="images/books/lucent-gk-2.webp" alt="Lucent's General Knowledge - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Lucent\'s General Knowledge')"><img src="images/books/lucent-gk-3.webp" alt="Lucent's General Knowledge - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Lucent\'s General Knowledge')"><img src="images/books/lucent-gk-4.webp" alt="Lucent's General Knowledge - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Lucent\'s General Knowledge')">
+            <img src="images/books/lucent-gk-1.webp" alt="Lucent's General Knowledge - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Lucent\'s General Knowledge')" decoding="async"><img src="images/books/lucent-gk-2.webp" alt="Lucent's General Knowledge - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Lucent\'s General Knowledge')" loading="lazy" decoding="async"><img src="images/books/lucent-gk-3.webp" alt="Lucent's General Knowledge - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Lucent\'s General Knowledge')" loading="lazy" decoding="async"><img src="images/books/lucent-gk-4.webp" alt="Lucent's General Knowledge - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Lucent\'s General Knowledge')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4938,10 +5033,8 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By Lucent Publication</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Lucent\'s General Knowledge')">Lucent's General Knowledge</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.7</span>
-            <span style="color:#94a3b8;">(4.1k reviews)</span>
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -4971,14 +5064,14 @@
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Wren & Martin English Grammar')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#f1f5f9; color:#0f172a; z-index:9;"><i class="fa-solid fa-bolt"></i> Grammar Foundation</span>
-        
+
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="carousel-book-10">
           <div class="carousel-arrow prev" onclick="cycleCardPhoto('carousel-book-10', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="carousel-arrow next" onclick="cycleCardPhoto('carousel-book-10', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          
+
           <div class="carousel-track">
-            <img src="images/books/wren-martin-1.webp" alt="Wren & Martin English Grammar - Photo 1" class="carousel-img active" loading="eager" onclick="openBookDetailsModal('Wren & Martin English Grammar')"><img src="images/books/wren-martin-2.webp" alt="Wren & Martin English Grammar - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Wren & Martin English Grammar')"><img src="images/books/wren-martin-3.webp" alt="Wren & Martin English Grammar - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Wren & Martin English Grammar')"><img src="images/books/wren-martin-4.webp" alt="Wren & Martin English Grammar - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Wren & Martin English Grammar')">
+            <img src="images/books/wren-martin-1.webp" alt="Wren & Martin English Grammar - Photo 1" class="carousel-img active" loading="lazy" onclick="openBookDetailsModal('Wren & Martin English Grammar')" decoding="async"><img src="images/books/wren-martin-2.webp" alt="Wren & Martin English Grammar - Photo 2" class="carousel-img " onclick="openBookDetailsModal('Wren & Martin English Grammar')" loading="lazy" decoding="async"><img src="images/books/wren-martin-3.webp" alt="Wren & Martin English Grammar - Photo 3" class="carousel-img " onclick="openBookDetailsModal('Wren & Martin English Grammar')" loading="lazy" decoding="async"><img src="images/books/wren-martin-4.webp" alt="Wren & Martin English Grammar - Photo 4" class="carousel-img " onclick="openBookDetailsModal('Wren & Martin English Grammar')" loading="lazy" decoding="async">
           </div>
 
           <div class="carousel-dots">
@@ -4993,10 +5086,10 @@
         <div class="product-info">
           <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:2px;">By P.C. Wren & H. Martin</div>
           <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('Wren & Martin English Grammar')">Wren & Martin English Grammar</h3>
-          
+
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span style="color:#94a3b8;">(2.8k reviews)</span>
+
+
             <span style="margin-left:auto; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">Paperback</span>
           </div>
 
@@ -5025,8 +5118,8 @@
 
     </div>
 
-    
-    
+
+
     <!-- =========================================================================
          BANNER & QUICK FORM: SNAP & SEND SCHOOL BOOKLIST (LESS THAN BOOKSHOP RATES & MRP)
          ========================================================================= -->
@@ -5245,7 +5338,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Single-Line Exercise Notebooks" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Single-Line Exercise Notebooks" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Single-Line Exercise Copies (Pack of 6)</h3>
@@ -5269,7 +5362,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Single-Line Exercise Copies Mega Pack of 12" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Single-Line Exercise Copies Mega Pack of 12" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Single-Line Copies (Pack of 12 Mega Pack)</h3>
@@ -5293,7 +5386,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Four-Line English Copies" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Four-Line English Copies" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Four-Line English Copies (Pack of 6)</h3>
@@ -5317,7 +5410,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Two-Line Urdu Copies" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Two-Line Urdu Copies" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Two-Line Urdu Copies (Pack of 6)</h3>
@@ -5341,7 +5434,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Math Square Grid Copies" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Math Square Grid Copies" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Math Square Grid Copies (Pack of 6)</h3>
@@ -5365,7 +5458,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Science Practical Lab Notebook" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Science Practical Lab Notebook" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Science Practical Lab Copy (Hardbound)</h3>
@@ -5389,7 +5482,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Premium Spiral College Register" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Premium Spiral College Register" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Spiral College Register (240 Pages)</h3>
@@ -5413,7 +5506,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/spiral-copies.webp" alt="Hardcover College Register" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Hardcover College Register" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Hardcover Register (320 Pages Bound)</h3>
@@ -5502,11 +5595,11 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 1st Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 1st Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 1st Complete Book Set</h3>
-          <p class="product-desc">Full 6-Book Curriculum: English, Mathematics, EVS, Urdu, Hindi &amp; Art. Verified for your specific school syllabus upon checkout.</p>
+          <p class="product-desc">Full 6-Book Curriculum: English, Mathematics, EVS, Urdu, Hindi &amp; Art. Please confirm the applicable school syllabus with support before ordering.</p>
           <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
             <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
               <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
@@ -5526,7 +5619,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 2nd Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 2nd Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 2nd Complete Book Set</h3>
@@ -5550,7 +5643,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 3rd Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 3rd Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 3rd Complete Book Set</h3>
@@ -5574,7 +5667,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 4th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 4th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 4th Complete Book Set</h3>
@@ -5598,7 +5691,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 5th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 5th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 5th Complete Book Set</h3>
@@ -5622,7 +5715,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 6th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 6th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 6th Complete Book Set</h3>
@@ -5646,7 +5739,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 7th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 7th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 7th Complete Book Set</h3>
@@ -5670,7 +5763,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 8th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 8th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 8th Complete Book Set</h3>
@@ -5694,7 +5787,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 9th Textbooks Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 9th Textbooks Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 9th Textbooks Set (NCERT/JKBOSE)</h3>
@@ -5718,7 +5811,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 10th Board Textbooks Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 10th Board Textbooks Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 10th Board Set (All 5 Subjects)</h3>
@@ -5742,7 +5835,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 11th Medical Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 11th Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 11th Medical Set (Physics, Chem, Bio)</h3>
@@ -5766,7 +5859,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 11th Non-Medical Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 11th Non-Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 11th Non-Med Set (Physics, Chem, Math)</h3>
@@ -5790,7 +5883,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 11th Commerce Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 11th Commerce Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 11th Commerce Set (Accounts, BST, Eco)</h3>
@@ -5814,7 +5907,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 11th Arts Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 11th Arts Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 11th Arts Set (Pol Sci, History, Soc)</h3>
@@ -5838,7 +5931,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 12th Medical Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 12th Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 12th Medical Set (Physics, Chem, Bio)</h3>
@@ -5862,7 +5955,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 12th Non-Medical Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 12th Non-Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 12th Non-Med Set (Physics, Chem, Math)</h3>
@@ -5886,7 +5979,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 12th Commerce Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 12th Commerce Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 12th Commerce Set (Accounts, BST, Eco)</h3>
@@ -5910,7 +6003,7 @@
           <i class="fa-solid fa-clock"></i> Coming Soon
         </span>
         
-        <img src="images/school-bookset.webp" alt="Class 12th Arts Set" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/school-bookset.webp" alt="Class 12th Arts Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           
           <h3 class="product-title">Class 12th Arts Set (Pol Sci, History, Soc)</h3>
@@ -5947,7 +6040,7 @@
       <div class="product-card" style="border: 2px solid #fb923c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)')"><i class="fa-solid fa-heart"></i></button>
         <div style="position:relative;">
-          <img src="images/school-bookset.webp" alt="Class 10th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'">
+          <img src="images/school-bookset.webp" alt="Class 10th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
           <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
             <i class="fa-solid fa-fire"></i> 2026 ALL 5 SUBJECTS TOPPER PACK
           </span>
@@ -5955,7 +6048,7 @@
         <div class="product-info">
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
             <span style="background:#ffedd5; color:#9a3412; font-size:11px; font-weight:800; padding:2px 8px; border-radius:4px;">CLASS 10TH JKBOSE</span>
-            <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> 4.9 (Topper Choice)</span>
+            <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> Exam prep collection</span>
           </div>
           <h3 class="product-title" style="font-size:17px; font-weight:800; color:#0f172a;">JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)</h3>
           <p class="product-desc" style="color:#475569; font-size:12.5px; line-height:1.5;">
@@ -5992,7 +6085,7 @@
       <div class="product-card" style="border: 2px solid #8b5cf6; background: #faf5ff; box-shadow: 0 8px 24px rgba(139, 92, 246, 0.08);">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)')"><i class="fa-solid fa-heart"></i></button>
         <div style="position:relative;">
-          <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" alt="Class 12th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'">
+          <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" alt="Class 12th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
           <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #7c3aed, #6d28d9); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(124,58,237,0.35);">
             <i class="fa-solid fa-star"></i> 2026 BOARD SPECIAL • MERIT BOOSTER
           </span>
@@ -6000,7 +6093,6 @@
         <div class="product-info">
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
             <span style="background:#ede9fe; color:#6d28d9; font-size:11px; font-weight:800; padding:2px 8px; border-radius:4px;">CLASS 12TH JKBOSE</span>
-            <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> 5.0 (Top Rated)</span>
           </div>
           <h3 class="product-title" style="font-size:17px; font-weight:800; color:#0f172a;">JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)</h3>
           <p class="product-desc" style="color:#475569; font-size:12.5px; line-height:1.5;">
@@ -6040,7 +6132,7 @@
       <!-- New Item 1: JKBOSE Solved Papers & Revision Kit -->
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Board Exam Solved Papers Kit')"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=500" alt="JKBOSE Solved Papers" class="product-img">
+        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=500" alt="JKBOSE Solved Papers" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fee2e2; color:#b91c1c;"><i class="fa-solid fa-fire"></i> Exam Bestseller</span>
           <h3 class="product-title">JKBOSE Board Solved Papers &amp; Guide</h3>
@@ -6065,7 +6157,7 @@
       <!-- New Item 2: Complete Board Exam Stationery Combo Pack -->
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Board Exam Stationery Combo Pack')"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&q=80&w=500" alt="Exam Stationery Combo" class="product-img">
+        <img src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&q=80&w=500" alt="Exam Stationery Combo" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-bolt"></i> Value Combo Pack</span>
           <h3 class="product-title">Board Exam Stationery Combo</h3>
@@ -6090,7 +6182,7 @@
       <!-- New Item 3: Custom Notes Laser Printing & Spiral Binding -->
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Custom PDF Printing & Spiral Binding')"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=500" alt="Custom PDF Printing & Spiral Binding" class="product-img">
+        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=500" alt="Custom PDF Printing & Spiral Binding" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#e0e7ff; color:#3730a3;"><i class="fa-solid fa-print"></i> Print on Demand</span>
           <h3 class="product-title">PDF Printing &amp; Spiral Binding</h3>
@@ -6114,7 +6206,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" alt="Printed Notes" class="product-img">
+        <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" alt="Printed Notes" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">Top Seller</span>
           <h3 class="product-title">Printed PYQs & Syllabus</h3>
@@ -6133,7 +6225,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" alt="Instant Notes" class="product-img">
+        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" alt="Instant Notes" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">High Demand</span>
           <h3 class="product-title">Instant Notes (Per Subject)</h3>
@@ -6152,7 +6244,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" alt="Exam Kit" class="product-img">
+        <img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" alt="Exam Kit" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">Bundle & Save 20%</span>
           <h3 class="product-title">Exam Survival Kit</h3>
@@ -6171,7 +6263,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/spiral-copies.webp" alt="Spiral Notebooks" class="product-img">
+        <img src="images/spiral-copies.webp" alt="Spiral Notebooks" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Premium Spiral Copies (Set of 2)</h3>
           <p class="product-desc">High-GSM thick paper spiral notebooks perfect for rough work and heavy note-taking.</p>
@@ -6189,7 +6281,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/geometry-box.webp" alt="Geometry Box" class="product-img">
+        <img src="images/geometry-box.webp" alt="Geometry Box" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Geometry Box Pro</h3>
           <p class="product-desc">Advanced compass, precise scales, and everything you need for complex mathematical diagrams.</p>
@@ -6207,7 +6299,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/quran.webp" alt="Holy Quran" class="product-img">
+        <img src="images/quran.webp" alt="Holy Quran" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">The Holy Quran</h3>
           <p class="product-desc">Beautifully printed edition with clear, readable fonts. Perfect for daily recitation.</p>
@@ -6225,7 +6317,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/diary.webp" alt="Gift Diary" class="product-img">
+        <img src="images/diary.webp" alt="Gift Diary" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Beautiful Gift Diary</h3>
           <p class="product-desc">A gorgeous compact diary. Perfect as a Teacher's Day gift or for personal journaling.</p>
@@ -6243,7 +6335,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=500" alt="Premium Pens" class="product-img">
+        <img src="https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=500" alt="Premium Pens" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Premium Pen Set</h3>
           <p class="product-desc">A set of high-quality, smooth-writing premium pens for exams and professional use.</p>
@@ -6261,7 +6353,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/pen-stand.webp" alt="Pen Stand" class="product-img">
+        <img src="images/pen-stand.webp" alt="Pen Stand" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Desk Pen Stand</h3>
           <p class="product-desc">Keep your study desk organized and clean with this stylish and durable pen stand.</p>
@@ -6279,7 +6371,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/study-table.webp" alt="Study Table" class="product-img">
+        <img src="images/study-table.webp" alt="Study Table" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">Premium</span>
           <h3 class="product-title">Folding Study Table</h3>
@@ -6300,7 +6392,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="https://image.pollinations.ai/prompt/A_simple_modern_LED_study_table_lamp_product_photography_on_white_background?width=600&height=400&nologo=true" alt="Study Lamp" class="product-img">
+        <img src="https://image.pollinations.ai/prompt/A_simple_modern_LED_study_table_lamp_product_photography_on_white_background?width=600&height=400&nologo=true" alt="Study Lamp" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">LED Study Table Lamp</h3>
           <p class="product-desc">Bright, eye-friendly LED lamp for late-night study sessions. Flexible neck and modern design.</p>
@@ -6375,7 +6467,7 @@
       <!-- Coming Soon 1: Nursery & KG Interactive Activity & Phonics Kit -->
       <div class="product-card">
         <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/spiral-copies.webp" alt="Nursery & KG Phonics Kit" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="Nursery & KG Phonics Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-hourglass-half"></i> Coming Soon</span>
           <h3 class="product-title">Nursery &amp; KG Phonics &amp; Drawing Kit</h3>
@@ -6397,7 +6489,7 @@
       <!-- Coming Soon 2: JKBOSE Class 10th & 12th Board Guess Papers 2026 -->
       <div class="product-card">
         <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/books/lucent-gk-1.webp" alt="JKBOSE Board 2026 Guess Papers" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/books/lucent-gk-1.webp" alt="JKBOSE Board 2026 Guess Papers" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fee2e2; color:#991b1b;"><i class="fa-solid fa-fire"></i> High Demand</span>
           <h3 class="product-title">JKBOSE Board 2026 Super Guess Papers</h3>
@@ -6419,7 +6511,7 @@
       <!-- Coming Soon 3: Kashmir University & Cluster University College Starter Pack -->
       <div class="product-card">
         <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/spiral-copies.webp" alt="College Starter Register Pack" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/spiral-copies.webp" alt="College Starter Register Pack" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#e0e7ff; color:#3730a3;"><i class="fa-solid fa-graduation-cap"></i> College &amp; University</span>
           <h3 class="product-title">College Semester Pack (5 Big Registers + Pens)</h3>
@@ -6441,7 +6533,7 @@
       <!-- Coming Soon 4: NEET & JEE Droppers Foundation Formula Charts -->
       <div class="product-card">
         <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/books/atomic-habits-1.webp" alt="NEET / JEE Formula Handbook" class="product-img" onerror="this.src='images/logo-app.png'">
+        <img src="images/books/atomic-habits-1.webp" alt="NEET / JEE Formula Handbook" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-atom"></i> Competitive Prep</span>
           <h3 class="product-title">NEET &amp; JEE All-Formula Pocket Companion</h3>
@@ -6488,111 +6580,23 @@
 
     </div>
 
-    <!-- =========================================================================
-         SECTION: VERIFIED KASHMIR STUDENT REVIEWS & DELIVERY PROOF
-         ========================================================================= -->
-    <div id="section-reviews" style="margin-top: 60px; margin-bottom: 40px;">
-      <div style="text-align: center; max-width: 700px; margin: 0 auto 30px;">
-        <span style="background: #fef3c7; color: #b45309; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
-          <i class="fa-solid fa-star"></i> 4.9 / 5 Rating &bull; Verified J&amp;K Deliveries
-        </span>
-        <h2 class="category-title" style="margin: 10px 0 6px; border: none; font-size: 26px; justify-content: center; display: flex; align-items: center; gap: 8px;">
-          Loved by 1,000+ Students Across Kashmir
-        </h2>
-        <p style="font-size: 14px; color: #64748b; margin: 0;">
-          Real feedback from students and parents across Srinagar, Anantnag, Baramulla, Sopore, Pulwama, Kupwara and Pattan who ordered from JK Study Hub.
-        </p>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-        
-        <!-- Review 1 -->
-        <div style="background: white; border-radius: 14px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <div style="display: flex; gap: 3px; color: #f59e0b; font-size: 13px;">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-              </div>
-              <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;">
-                <i class="fa-solid fa-check-circle"></i> Verified Delivery
-              </span>
-            </div>
-            <p style="font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 14px;">
-              &ldquo;Ordered Atomic Habits and Psychology of Money novels. Delivered to Bemina, Srinagar within 24 hours with Cash on Delivery! Paper quality is 100% genuine and bookmarks were included.&rdquo;
-            </p>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
-              FB
-            </div>
-            <div>
-              <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">Faizan Bhat</h4>
-              <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">📍 Bemina, Srinagar &bull; Class 12th Student</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Review 2 -->
-        <div style="background: white; border-radius: 14px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <div style="display: flex; gap: 3px; color: #f59e0b; font-size: 13px;">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-              </div>
-              <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;">
-                <i class="fa-solid fa-check-circle"></i> Verified Delivery
-              </span>
-            </div>
-            <p style="font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 14px;">
-              &ldquo;Pre-booked exercise spiral copies for my brother. The price is strictly less than bookshop rates &amp; less than MRP in Baramulla. Very thick 80 GSM paper with zero ink bleed!&rdquo;
-            </p>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
-              SM
-            </div>
-            <div>
-              <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">Sahira Mir</h4>
-              <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">📍 Baramulla Town &bull; College Student</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Review 3 -->
-        <div style="background: white; border-radius: 14px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <div style="display: flex; gap: 3px; color: #f59e0b; font-size: 13px;">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-              </div>
-              <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;">
-                <i class="fa-solid fa-check-circle"></i> Verified Delivery
-              </span>
-            </div>
-            <p style="font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 14px;">
-              &ldquo;Got JKBOSE Class 10th solved question paper guides delivered in Anantnag. Everything was packaged neatly in waterproof envelope. Best study platform for J&amp;K students.&rdquo;
-            </p>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: #f3e8ff; color: #7e22ce; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
-              AD
-            </div>
-            <div>
-              <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">Abrar Dar</h4>
-              <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">📍 KP Road, Anantnag &bull; Class 10th</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
+    <div id="section-reviews" style="margin-top: 60px; margin-bottom: 40px; padding: 24px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fffefa; text-align: center;">
+      <h2 class="category-title" style="justify-content: center;">Customer feedback</h2>
+      <p style="max-width: 700px; margin: 10px auto 18px; color: #59655e; line-height: 1.6;">
+        We do not display ratings or testimonials until feedback has been confirmed with the customer. If you have ordered from us, you can share your experience directly with our support team.
+      </p>
+      <a href="https://wa.me/919622605714?text=Hi%20JK%20Study%20Hub%2C%20I%20would%20like%20to%20share%20feedback%20about%20my%20order." target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; background: #315c4b; color: #fffefa; font-weight: 700; text-decoration: none;">
+        <i class="fa-brands fa-whatsapp"></i> Share feedback
+      </a>
+    </div>
 
       <!-- Trust Badges Strip -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 25px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
           <i class="fa-solid fa-truck-fast" style="font-size: 24px; color: #2563eb;"></i>
           <div>
-            <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">Free Kashmir Delivery</h4>
-            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Express 24–48 hr doorstep reach</p>
+            <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">Free delivery on eligible orders</h4>
+            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Kashmir delivery is free at ₹499+; PIN confirms the charge</p>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
@@ -6759,7 +6763,7 @@
             <div id="addressFields" style="display:none; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11.5px; font-weight: 700; padding: 6px 10px; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                 <i class="fa-solid fa-gift" style="color:#10b981; font-size:14px;"></i>
-                <span><strong>FREE SHIPPING ACTIVE:</strong> ₹0 Delivery fee for all Kashmir districts!</span>
+                <span><strong>Delivery cost:</strong> Calculated from your PIN. Eligible Kashmir orders of ₹499+ qualify for free delivery.</span>
               </div>
 
               <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
@@ -6871,7 +6875,7 @@
                   Delivery Address
                 </div>
                 <div style="background: #eff6ff; color: #1e40af; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; margin-top: 6px; display: inline-flex; align-items: center; gap: 5px;">
-                  <i class="fa-solid fa-bolt" style="color: #2563eb;"></i> Estimated Doorstep Delivery: <strong>24–48 Hours</strong>
+                  <i class="fa-solid fa-truck-fast" style="color: #2563eb;"></i> Delivery timing is confirmed after PIN and order review.
                 </div>
               </div>
             </div>
@@ -7061,9 +7065,10 @@
           <div class="checkout-page-total-row"><span>Delivery</span><strong id="checkoutPageDelivery">Calculated by PIN</strong></div>
           <div class="checkout-page-total-row"><span>Platform fee</span><strong>₹5</strong></div>
           <div class="checkout-page-total-row" id="checkoutPageCodFeeRow" hidden><span>Cash on delivery fee</span><strong id="checkoutPageCodFee">₹0</strong></div>
+          <div class="checkout-page-total-row"><span>Payment method</span><strong id="checkoutPagePayment">Cash on Delivery</strong></div>
           <div class="checkout-page-total-row checkout-page-grand-total"><span>Total</span><strong id="checkoutPageTotal">₹0</strong></div>
         </div>
-        <p class="checkout-page-secure-note"><i class="fa-solid fa-shield-halved"></i> Your PIN code confirms delivery coverage and charges.</p>
+        <p class="checkout-page-secure-note"><i class="fa-solid fa-shield-halved"></i> Total includes the displayed discount, delivery and platform fee. Your PIN and payment choice determine any additional charges.</p>
       </aside>
     </div>
   </div>
@@ -7168,7 +7173,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=91.2"></script>
+  <script src="store.js?v=91.3"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
@@ -7234,7 +7239,7 @@
         <!-- Right: Book Details, Specs & Buying Actions -->
         <div class="modal-info" style="display:flex; flex-direction:column;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-            <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-bolt"></i> Verified Student Edition</span>
+            <span class="product-badge" style="background:#f3ecdf; color:#244638;"><i class="fa-solid fa-book"></i> Product listing</span>
             <span style="color:#10b981; font-size:12px; font-weight:800;" id="modalBookDiscount"></span>
           </div>
 
@@ -7244,14 +7249,14 @@
           <div class="product-price-panel" style="display:flex; align-items:baseline; gap:10px; padding:12px 16px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:14px;">
             <span id="modalBookPrice" style="font-size:28px; font-weight:800; color:#0f172a;"></span>
             <span id="modalBookMrp" style="font-size:15px; color:#94a3b8; text-decoration:line-through; font-weight:600;"></span>
-            <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;" id="modalPriceDeliveryBadge"><i class="fa-solid fa-truck-fast"></i> Kashmir Express Delivery</span>
+            <span style="margin-left:auto; font-size:12px; color:#10b981; font-weight:700;" id="modalPriceDeliveryBadge"><i class="fa-solid fa-truck-fast"></i> Delivery options by PIN</span>
           </div>
 
           <!-- Live Kashmir Pincode & Delivery Estimator -->
           <div class="modal-delivery-checker" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-bottom:14px;">
             <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
               <div style="font-size:12.5px; color:#15803d; font-weight:700;" id="modalDeliveryEstimateText">
-                <i class="fa-solid fa-truck-fast"></i> Delivery by <strong>Tomorrow</strong> in Kashmir
+                <i class="fa-solid fa-truck-fast"></i> Enter your PIN to check delivery availability and charges.
               </div>
               <div style="display:flex; align-items:center; gap:6px;">
                 <label style="font-size:11px; color:#166534; font-weight:700;">District:</label>
@@ -7275,20 +7280,19 @@
             <!-- Pincode Direct Solver -->
             <div class="pincode-input-wrap">
               <input type="text" id="modalPincodeInput" maxlength="6" placeholder="Enter 6-digit Pincode (e.g. 190001)" onkeypress="if(event.key==='Enter') applyModalPincodeCheck();">
-              <button type="button" onclick="applyModalPincodeCheck()">Check Date</button>
+              <button type="button" onclick="applyModalPincodeCheck()">Check PIN</button>
             </div>
 
             <div style="font-size:11px; color:#16a34a; margin-top:6px; font-weight:600; display:flex; align-items:center; gap:12px; flex-wrap:wrap;" id="modalDeliveryCountdown">
-              <span><i class="fa-solid fa-circle-check"></i> Cash on Delivery Available</span>
-              <span><i class="fa-solid fa-bolt"></i> Dispatched from Baramulla Hub</span>
+              <span>Enter your PIN to check coverage and delivery charges. Timing is confirmed after order review.</span>
             </div>
           </div>
 
           <!-- Student Trust Badges Strip -->
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; font-size:11.5px;">
-            <span class="student-trust-badge" style="background:#f0fdf4; color:#166534; border-color:#bbf7d0;"><i class="fa-solid fa-shield-check"></i> 100% Genuine Edition</span>
-            <span class="student-trust-badge"><i class="fa-solid fa-bolt"></i> Same-Day Kashmir Dispatch</span>
-            <span class="student-trust-badge" style="background:#fef3c7; color:#b45309; border-color:#fde68a;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery</span>
+            <span class="student-trust-badge" style="background:#f0fdf4; color:#166534; border-color:#bbf7d0;"><i class="fa-solid fa-list-check"></i> Check edition and condition</span>
+            <span class="student-trust-badge"><i class="fa-solid fa-truck-fast"></i> Delivery timing confirmed after order review</span>
+            <span class="student-trust-badge" style="background:#fef3c7; color:#b45309; border-color:#fde68a;"><i class="fa-solid fa-credit-card"></i> Payment options at checkout</span>
           </div>
 
           <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin-bottom:8px;">📏 Physical Dimensions &amp; Specifications</h4>
@@ -7315,58 +7319,29 @@
             </div>
           </div>
 
+          <section class="product-listing-details" aria-label="Edition and product contents">
+            <h4>Edition &amp; what’s included</h4>
+            <p><strong>Edition / condition:</strong> <span id="modalBookEdition">Please confirm with us if this is not specified in the listing.</span></p>
+            <p><strong>Included items:</strong> <span id="modalBookContents">Please contact us to confirm the exact contents before ordering.</span></p>
+            <a href="refund.html">Read the return and refund policy</a>
+          </section>
+
           <!-- Frequently Bought Together (Semester Bundle & Save) -->
           <div id="modalFrequentlyBoughtWidget"></div>
 
           <h4 style="font-size:14px; font-weight:700; color:#1e293b; margin:16px 0 6px;">Synopsis &amp; What You'll Learn</h4>
           <p id="modalBookDesc" style="font-size:13.5px; color:#475569; line-height:1.6; margin-bottom:14px;"></p>
 
-          <!-- Verified Student Reviews Section -->
+          <!-- Customer feedback -->
           <div class="modal-reviews-section" style="margin-top:10px; margin-bottom:18px; border-top:1px solid #e2e8f0; padding-top:12px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
               <h4 style="font-size:13.5px; font-weight:700; color:#1e293b; margin:0; display:flex; align-items:center; gap:6px;">
-                ⭐ Student Reviews &amp; Ratings <span id="modalRatingAvg" style="font-size:12px; color:#f59e0b; font-weight:800;">4.9 ★</span>
+                Customer reviews <span id="modalRatingAvg" style="font-size:12px; color:#59655e; font-weight:700;">No reviews yet</span>
               </h4>
-              <button type="button" onclick="toggleReviewForm()" style="font-size:11.5px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; padding:4px 10px; border-radius:6px; font-weight:700; cursor:pointer;">
-                <i class="fa-solid fa-pen"></i> Write Review
+              <button type="button" onclick="requestProductReview()" style="font-size:11.5px; background:#edf3ef; color:#244638; border:1px solid #d6e1d8; padding:4px 10px; border-radius:6px; font-weight:700; cursor:pointer;">
+                <i class="fa-brands fa-whatsapp"></i> Share feedback
               </button>
             </div>
-
-            <!-- Rating Breakdown Summary -->
-            <div class="rating-bars-container">
-              <div class="rating-bar-row"><span>5 ★</span><div class="rating-progress-track"><div class="rating-progress-fill" style="width: 88%;"></div></div><span>88%</span></div>
-              <div class="rating-bar-row"><span>4 ★</span><div class="rating-progress-track"><div class="rating-progress-fill" style="width: 9%;"></div></div><span>9%</span></div>
-              <div class="rating-bar-row"><span>3 ★</span><div class="rating-progress-track"><div class="rating-progress-fill" style="width: 3%;"></div></div><span>3%</span></div>
-            </div>
-
-            <!-- Student Photo Gallery -->
-            <div style="margin-bottom: 6px;">
-              <span style="font-size: 11.5px; font-weight: 700; color: #475569;">📷 Student Unboxing &amp; Book Photos:</span>
-              <div class="student-photo-gallery" id="studentPhotoGallery">
-                <img src="images/books/atomic-habits-1.webp" class="student-photo-thumb" alt="Delivered Book" onclick="window.open(this.src, '_blank')">
-                <img src="images/books/atomic-habits-2.webp" class="student-photo-thumb" alt="Print Quality" onclick="window.open(this.src, '_blank')">
-                <img src="images/books/psychology-of-money-1.webp" class="student-photo-thumb" alt="Original Paperback" onclick="window.open(this.src, '_blank')">
-                <img src="images/books/deep-work-1.webp" class="student-photo-thumb" alt="Kashmir Delivery" onclick="window.open(this.src, '_blank')">
-              </div>
-            </div>
-
-            <!-- Add Review Form (Collapsible) -->
-            <div id="addReviewFormBox" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-bottom:12px;">
-              <div style="display:flex; gap:8px; margin-bottom:8px;">
-                <input type="text" id="newReviewerName" placeholder="Your Name (e.g. Aaqib, Class 12)" style="flex:1; padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:6px;">
-                <select id="newReviewRating" style="padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:6px;">
-                  <option value="5">★★★★★ 5 Stars</option>
-                  <option value="4">★★★★☆ 4 Stars</option>
-                  <option value="3">★★★☆☆ 3 Stars</option>
-                </select>
-              </div>
-              <textarea id="newReviewText" placeholder="Write your honest review about print quality, packaging & delivery..." rows="2" style="width:100%; box-sizing:border-box; padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:6px; margin-bottom:8px;"></textarea>
-              <div style="display:flex; justify-content:flex-end; gap:8px;">
-                <button type="button" onclick="toggleReviewForm()" style="background:#f1f5f9; border:none; padding:5px 12px; border-radius:6px; font-size:11.5px; cursor:pointer;">Cancel</button>
-                <button type="button" onclick="submitStudentReview()" style="background:#2563eb; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">Post Review</button>
-              </div>
-            </div>
-
             <!-- Reviews List Container -->
             <div id="modalReviewsList" style="max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding-right:4px;">
               <!-- Dynamically populated -->
@@ -7437,7 +7412,7 @@
           <span style="font-size:20px;">📖</span>
           <div>
             <h3 id="samplePreviewBookTitle" style="margin:0; font-size:15px; font-weight:800; color:#0f172a;">Sample Preview</h3>
-            <p style="margin:0; font-size:11.5px; color:#64748b;">Read the first 5 pages before ordering • 100% Verified Quality</p>
+            <p style="margin:0; font-size:11.5px; color:#64748b;">Read the first 5 pages before ordering • Product details vary by listing</p>
           </div>
         </div>
         <button type="button" onclick="closeSamplePreviewModal()" class="label-close-btn">&times;</button>
@@ -7494,6 +7469,29 @@
       <i class="fa-brands fa-whatsapp"></i>
     </div>
   </a>
+
+  <aside class="store-floating-offers" id="storeFloatingOffers" aria-label="Current store offers">
+    <div class="store-floating-offers__header">
+      <span class="store-floating-offers__label"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> Store offers</span>
+      <button class="store-floating-offers__dismiss" type="button" aria-label="Dismiss store offers" onclick="document.getElementById('storeFloatingOffers').hidden = true">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="store-floating-offers__item store-floating-offers__item--saving">
+      <span class="store-floating-offers__icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></span>
+      <span class="store-floating-offers__copy">
+        <strong>Save ₹100 on orders ₹1,499+</strong>
+        <span>Discount applied automatically</span>
+      </span>
+    </div>
+    <div class="store-floating-offers__item store-floating-offers__item--delivery">
+      <span class="store-floating-offers__icon"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></span>
+      <span class="store-floating-offers__copy">
+        <strong>Free Kashmir delivery at ₹499+</strong>
+        <span>Check eligibility with your PIN</span>
+      </span>
+    </div>
+  </aside>
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v100';
+const CACHE_NAME = 'jk-study-hub-v103';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const urlsToCache = [
   './cart.html',
   './account.html',
   './seller.html',
+  './jk-bose-class-10-books.html',
   './reels.json',
   './ads-media.js',
   './print-cards.html',
@@ -14,6 +15,7 @@ const urlsToCache = [
   './seller.css',
   './seller.js',
   './premium-theme.css',
+  './brand-theme.css',
   './promo-offers.css',
   './style.css',
   './store.js',

@@ -10,6 +10,7 @@
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="seller.css?v=93.0">
+  <link rel="stylesheet" href="brand-theme.css?v=2">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -625,8 +626,37 @@
                     <option value="🔥 Bestseller">🔥 Bestseller</option>
                     <option value="⚡ Fast Dispatch">⚡ Fast Dispatch</option>
                     <option value="📚 Board Exam 2026">📚 Board Exam 2026</option>
-                    <option value="⭐ Top Rated">⭐ Top Rated</option>
+                    <option value="✨ Featured">✨ Featured</option>
                   </select>
+                </div>
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Class (if applicable)</label>
+                  <select id="catClassLevel" class="seller-lock-input">
+                    <option value="">Not class-specific</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Board (if applicable)</label>
+                  <select id="catBoard" class="seller-lock-input">
+                    <option value="">Not specified</option>
+                    <option value="JKBOSE">JKBOSE</option>
+                    <option value="NCERT / CBSE">NCERT / CBSE</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Subject (if applicable)</label>
+                  <input type="text" id="catSubject" class="seller-lock-input" placeholder="e.g. Physics">
+                </div>
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Edition / condition</label>
+                  <input type="text" id="catEdition" class="seller-lock-input" placeholder="e.g. 2025 edition, new">
+                </div>
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Items included</label>
+                  <input type="text" id="catContents" class="seller-lock-input" placeholder="e.g. 4 textbooks, 2 notebooks">
                 </div>
               </div>
 
@@ -968,6 +998,14 @@
               </div>
             </div>
 
+            <div id="inventoryStockAlert" role="status" hidden style="margin-bottom: 16px; padding: 12px 14px; border: 1px solid #fde68a; border-radius: 9px; background: #fffbeb; color: #78350f; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+              <span><i class="fa-solid fa-triangle-exclamation"></i> <strong id="inventoryStockAlertText"></strong></span>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-hub-secondary" onclick="filterInventoryByStatus('low_stock')">Review low stock</button>
+                <button type="button" class="btn-hub-secondary" onclick="filterInventoryByStatus('out_of_stock')">Review sold out</button>
+              </div>
+            </div>
+
             <!-- Filter & Search Toolbar -->
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; justify-content: space-between;">
               <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 1; max-width: 680px;">
@@ -1300,8 +1338,8 @@
                       Overlay Badge
                     </label>
                     <div style="display:flex; gap:8px;">
-                      <input type="text" id="sellerReelBadgeInput" class="form-control" value="🔥 Most Popular" placeholder="e.g. ⭐ 4.9 Bestseller, 📦 5 Subject Combo" oninput="updateSellerReelMockup()" style="flex:1; padding:8px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
-                      <button type="button" class="btn-hub-secondary" onclick="document.getElementById('sellerReelBadgeInput').value='⭐ 4.9 Bestseller'; updateSellerReelMockup();" style="font-size:11px; padding:6px 10px;">⭐ Star</button>
+                      <input type="text" id="sellerReelBadgeInput" class="form-control" value="✨ Featured" placeholder="e.g. ✨ Featured, 📦 5 Subject Combo" oninput="updateSellerReelMockup()" style="flex:1; padding:8px 12px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px;">
+                      <button type="button" class="btn-hub-secondary" onclick="document.getElementById('sellerReelBadgeInput').value='✨ Featured'; updateSellerReelMockup();" style="font-size:11px; padding:6px 10px;">✨ Featured</button>
                       <button type="button" class="btn-hub-secondary" onclick="document.getElementById('sellerReelBadgeInput').value='🔥 Trending Now'; updateSellerReelMockup();" style="font-size:11px; padding:6px 10px;">🔥 Fire</button>
                     </div>
                   </div>
@@ -1331,7 +1369,7 @@
                   <!-- Top Bar -->
                   <div style="position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; z-index: 5;">
                     <span id="mockupBadgeText" style="background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); color: #fff; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
-                      🔥 Most Popular
+                      ✨ Featured
                     </span>
                     <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">
                       <i class="fa-solid fa-volume-xmark"></i>
@@ -1630,6 +1668,6 @@
   <script src="analytics.js?v=1"></script>
   <!-- External Script -->
   <script src="ads-media.js?v=90.0"></script>
-  <script src="seller.js?v=93.0"></script>
+  <script src="seller.js?v=93.1"></script>
 </body>
 </html>

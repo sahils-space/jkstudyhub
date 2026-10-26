@@ -1,0 +1,671 @@
+:root {
+  --brand-ink: #172a22;
+  --brand-primary: #315c4b;
+  --brand-primary-strong: #244638;
+  --brand-secondary: #537b68;
+  --brand-accent: #b08d57;
+  --brand-accent-soft: #f3ecdf;
+  --brand-background: #f7f5ef;
+  --brand-surface: #fffefa;
+  --brand-surface-muted: #efede6;
+  --brand-text: #202a25;
+  --brand-muted: #59655e;
+  --brand-border: #e5e1d7;
+  --brand-focus: #668b76;
+}
+
+body {
+  background-color: var(--brand-background);
+  color: var(--brand-text);
+  --primary-navy: var(--brand-ink);
+  --primary-indigo: var(--brand-primary-strong);
+  --primary-blue: var(--brand-primary);
+  --primary-light: var(--brand-surface-muted);
+  --accent-teal: var(--brand-secondary);
+  --accent-cyan: var(--brand-primary);
+  --accent-amber: var(--brand-accent);
+  --accent-amber-light: var(--brand-accent-soft);
+  --bg-slate: var(--brand-background);
+  --bg-white: var(--brand-surface);
+  --bg-subtle: var(--brand-surface-muted);
+  --text-dark: var(--brand-text);
+  --text-muted: var(--brand-muted);
+  --border-color: var(--brand-border);
+  --border-focus: var(--brand-focus);
+  --hub-blue: var(--brand-primary);
+  --hub-blue-dark: var(--brand-primary-strong);
+  --hub-blue-light: var(--brand-accent-soft);
+  --hub-blue-border: #d6e1d8;
+  --hub-text-main: var(--brand-text);
+  --hub-text-sub: var(--brand-muted);
+  --hub-border: var(--brand-border);
+  --hub-bg: var(--brand-background);
+  --hub-card-bg: var(--brand-surface);
+  --hub-blue-badge: var(--brand-accent-soft);
+  --hub-blue-text: var(--brand-primary);
+}
+
+body:not(.dark-mode) {
+  background-image:
+    radial-gradient(ellipse at 8% 4%, rgba(176, 141, 87, 0.1), transparent 38%),
+    radial-gradient(ellipse at 94% 22%, rgba(83, 123, 104, 0.08), transparent 36%),
+    linear-gradient(180deg, #faf9f5 0%, #f3f1ea 58%, #f7f5ef 100%) !important;
+}
+
+::selection {
+  background: #e2ece4;
+  color: var(--brand-ink);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(83, 123, 104, 0.55);
+  outline-offset: 2px;
+}
+
+.main-header,
+.top-brand-wrapper,
+.navbar,
+.exam-countdown-topbar,
+.main-footer {
+  background-color: var(--brand-ink);
+}
+
+.top-brand-wrapper {
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(176, 141, 87, 0.2), transparent 62%),
+    linear-gradient(180deg, #172a22 0%, #1d382c 100%);
+  border-color: rgba(223, 205, 166, 0.2);
+}
+
+.top-brand-wrapper::after {
+  background: radial-gradient(ellipse at center, rgba(176, 141, 87, 0.18), transparent 70%);
+}
+
+.exam-countdown-topbar,
+.navbar {
+  background-image: linear-gradient(100deg, #14231d 0%, #1d382c 54%, #172a22 100%);
+}
+
+.hero-section {
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(176, 141, 87, 0.2), transparent 55%),
+    radial-gradient(ellipse at 8% 62%, rgba(83, 123, 104, 0.2), transparent 45%),
+    linear-gradient(180deg, #1d382c 0%, #172a22 64%, #14231d 100%);
+}
+
+.zapvi-top-bar {
+  background: linear-gradient(100deg, #172a22 0%, #315c4b 58%, #172a22 100%) !important;
+}
+
+.main-footer {
+  background: linear-gradient(110deg, #172a22, #1d382c) !important;
+}
+
+.seller-lock-btn,
+.seller-lock-btn:hover {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-strong)) !important;
+}
+
+.seller-lock-icon {
+  background: var(--brand-accent-soft) !important;
+  color: var(--brand-primary) !important;
+}
+
+.seller-lock-title,
+.store-title-text {
+  color: var(--brand-ink) !important;
+}
+
+#sellerAuthLockScreen {
+  background: radial-gradient(circle at 50% 20%, #315c4b 0%, #172a22 100%) !important;
+}
+
+.hero-title-accent {
+  background-image: linear-gradient(135deg, #faf9f5 18%, #e2c995 68%, #b08d57 100%);
+}
+
+.zapvi-top-bar span strong,
+.zapvi-logo-bolt,
+.exam-badge-tag i,
+.t-val,
+.hero-stat-pill i {
+  color: #e0c28b;
+}
+
+.zapvi-store-nav,
+.mobile-bottom-nav {
+  background-color: var(--brand-surface);
+  border-color: var(--brand-border);
+}
+
+.zapvi-logo,
+.zapvi-nav-link:hover,
+.zapvi-nav-link.active,
+.zapvi-icon-btn,
+.back-btn-pill {
+  color: var(--brand-primary);
+}
+
+.zapvi-icon-btn:hover,
+.back-btn-pill:hover,
+.nav-item:hover,
+.nav-item.active {
+  background-color: var(--brand-surface-muted);
+  color: var(--brand-primary-strong);
+}
+
+.nav-item.jkbose-btn,
+.nav-library-btn,
+.btn-primary,
+.store-nav-btn.active,
+.portal-window-btn,
+.btn-exam-datesheet,
+.zapvi-pill-new,
+.fk-tab-btn.active,
+.checkout-step-tab.active .step-circle,
+.btn-primary,
+.buy-btn,
+.btn-add-cart,
+.reel-shop-now-btn,
+.sticky-cart-btn-checkout {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-strong)) !important;
+  border-color: var(--brand-primary) !important;
+  color: #fffefa !important;
+  box-shadow: 0 5px 16px rgba(36, 70, 56, 0.2);
+}
+
+.nav-item.jkbose-btn:hover,
+.nav-library-btn:hover,
+.btn-primary:hover,
+.store-nav-btn.active:hover,
+.portal-window-btn:hover,
+.buy-btn:hover,
+.btn-add-cart:hover,
+.reel-shop-now-btn:hover,
+.sticky-cart-btn-checkout:hover {
+  background: var(--brand-primary-strong) !important;
+  border-color: var(--brand-primary-strong) !important;
+}
+
+.zapvi-slide-btn,
+.yellow-btn,
+.circle-badge-pill,
+.section-tag,
+.store-portals-section .section-tag,
+.portal-badge,
+.product-page-offer-chip {
+  background: var(--brand-accent-soft) !important;
+  color: #765c34 !important;
+}
+
+.zapvi-slide-btn,
+.yellow-btn {
+  border: 1px solid rgba(176, 141, 87, 0.45);
+}
+
+.store-portals-section {
+  background: linear-gradient(180deg, #f5f2e9 0%, #eeece3 100%) !important;
+  border-color: var(--brand-border) !important;
+}
+
+.section-title,
+.store-portals-section .section-title,
+.portal-title,
+.category-title,
+.zapvi-cat-title,
+.product-title,
+.product-price,
+.zapvi-order-heading {
+  color: var(--brand-primary-strong) !important;
+}
+
+.store-portals-section .title-underline {
+  background: linear-gradient(90deg, var(--brand-primary), var(--brand-accent)) !important;
+}
+
+.store-portal-card,
+.zapvi-cat-card,
+.store-search-container,
+.product-card,
+.book-product-card,
+.account-content,
+.user-profile-card,
+.account-menu,
+.zapvi-tracking-card,
+.checkout-card,
+.cart-item,
+.cart-summary,
+.checkout-review-card {
+  background-color: var(--brand-surface);
+  border-color: var(--brand-border);
+}
+
+.store-portal-card:hover,
+.zapvi-cat-card:hover,
+.product-card:hover,
+.book-product-card:hover {
+  border-color: #c8b995;
+  box-shadow: 0 14px 30px rgba(36, 70, 56, 0.12);
+}
+
+.portal-icon-box,
+.zapvi-cat-img-wrap {
+  background-color: var(--brand-surface-muted) !important;
+  color: var(--brand-primary) !important;
+}
+
+.jk-offers {
+  background: #f4f1e8;
+}
+
+.jk-offer {
+  border-color: var(--brand-border);
+  background: linear-gradient(115deg, var(--brand-surface) 5%, #f4f1e8 100%);
+}
+
+.jk-offer__eyebrow,
+.store-floating-offers__item--saving {
+  background: var(--brand-accent-soft);
+  color: #765c34;
+}
+
+.jk-offer__title,
+.store-floating-offers__copy strong {
+  color: var(--brand-ink);
+}
+
+.store-floating-offers {
+  border-color: var(--brand-border);
+  background: rgba(255, 254, 250, 0.97);
+}
+
+.store-floating-offers__item--saving .store-floating-offers__icon {
+  background: #eee6d6;
+  color: #765c34;
+}
+
+.account-menu a.active,
+.nav-action-link.active {
+  background: #edf3ef;
+  color: var(--brand-primary);
+}
+
+.account-menu a.active i,
+.mobile-nav-item.active i,
+.nav-action-link:hover,
+.zapvi-breadcrumbs a:hover,
+.mobile-nav-item.active {
+  color: var(--brand-secondary);
+}
+
+.fk-tab-btn.active,
+.checkout-step-tab.active .step-label {
+  color: var(--brand-primary);
+}
+
+.fk-role-btn.active,
+.checkout-header,
+.invoice-box,
+.checkout-review-card,
+.shipping-modal-header,
+.shipping-label-body,
+.scanner-manual-wrap,
+.form-input,
+.form-control {
+  background-color: #f3f1ea;
+}
+
+.form-input:focus,
+.form-control:focus,
+.scanner-manual-wrap input:focus,
+.photo-upload-slot:hover {
+  border-color: var(--brand-focus) !important;
+}
+
+.store-nav,
+.zapvi-dropdown-menu,
+.checkout-header {
+  background-color: var(--brand-surface);
+}
+
+.store-nav .logo,
+.zapvi-menu-item:hover,
+.back-btn:hover,
+.empty-state h3 {
+  color: var(--brand-ink);
+}
+
+.nav-action-link:hover {
+  background: var(--brand-surface-muted);
+}
+
+.step-circle {
+  background-color: var(--brand-surface-muted);
+  border-color: var(--brand-border);
+}
+
+.checkout-stepper-progress {
+  background: var(--brand-primary);
+}
+
+.store-nav-btn.active,
+.btn-edit-step {
+  background: #edf3ef;
+  color: var(--brand-primary);
+  border-color: #d6e1d8;
+}
+
+.zapvi-avatar-circle {
+  background: linear-gradient(135deg, var(--brand-accent), var(--brand-primary-strong));
+}
+
+.zapvi-status-badge.delivered,
+.checkout-step-tab.completed .step-circle {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.zapvi-status-badge.cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.zapvi-status-badge.in-progress {
+  background: #f3ecdf;
+  color: var(--brand-primary);
+  border-color: #d6e1d8;
+}
+
+body.dark-mode {
+  --brand-background: #070b14;
+  --brand-surface: #111827;
+  --brand-surface-muted: #1f2937;
+  --brand-text: #fffefa;
+  --brand-muted: #cbd5e1;
+  --brand-border: #334155;
+  background-color: var(--brand-background) !important;
+  color: var(--brand-text);
+}
+
+body.dark-mode {
+  background-image:
+    radial-gradient(ellipse at 8% 4%, rgba(83, 123, 104, 0.12), transparent 38%),
+    radial-gradient(ellipse at 94% 22%, rgba(176, 141, 87, 0.08), transparent 36%) !important;
+}
+
+body.dark-mode .zapvi-top-bar,
+body.dark-mode .main-header,
+body.dark-mode .navbar,
+body.dark-mode .exam-countdown-topbar,
+body.dark-mode .main-footer,
+body.dark-mode .store-nav,
+body.dark-mode .zapvi-store-nav,
+body.dark-mode .mobile-bottom-nav {
+  background-color: #0b0f19 !important;
+  border-color: var(--brand-border) !important;
+}
+
+body.dark-mode .zapvi-top-bar {
+  background-image: linear-gradient(100deg, #0b0f19 0%, #1d382c 58%, #0b0f19 100%) !important;
+}
+
+body.dark-mode .main-footer,
+body.dark-mode footer[style*="background: #0f172a"],
+body.dark-mode footer[style*="background:#0f172a"] {
+  background: linear-gradient(110deg, #0b0f19, #111827) !important;
+}
+
+body.dark-mode .top-brand-wrapper {
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(176, 141, 87, 0.15), transparent 62%),
+    linear-gradient(180deg, #0b0f19 0%, #1d382c 100%) !important;
+}
+
+body.dark-mode .hero-section {
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(176, 141, 87, 0.16), transparent 55%),
+    radial-gradient(ellipse at 8% 62%, rgba(83, 123, 104, 0.14), transparent 45%),
+    linear-gradient(180deg, #1d382c 0%, #0b0f19 64%, #070b14 100%) !important;
+}
+
+body.dark-mode .zapvi-store-nav,
+body.dark-mode .mobile-bottom-nav,
+body.dark-mode .store-portal-card,
+body.dark-mode .zapvi-cat-card,
+body.dark-mode .store-search-container,
+body.dark-mode .product-card,
+body.dark-mode .book-product-card,
+body.dark-mode .account-content,
+body.dark-mode .user-profile-card,
+body.dark-mode .account-menu,
+body.dark-mode .zapvi-tracking-card,
+body.dark-mode .checkout-card,
+body.dark-mode .store-floating-offers {
+  background-color: var(--brand-surface) !important;
+  border-color: var(--brand-border) !important;
+  color: var(--brand-text);
+}
+
+body.dark-mode .store-floating-offers__item,
+body.dark-mode .checkout-review-card,
+body.dark-mode .invoice-box {
+  background-color: var(--brand-surface-muted);
+}
+
+body.dark-mode .store-floating-offers__copy strong,
+body.dark-mode .portal-title,
+body.dark-mode .product-title,
+body.dark-mode .zapvi-order-heading {
+  color: var(--brand-text) !important;
+}
+
+body.dark-mode .store-floating-offers__copy span,
+body.dark-mode .empty-state p {
+  color: var(--brand-muted);
+}
+
+body.dark-mode .jk-offers,
+body.dark-mode .store-portals-section {
+  background: #0b0f19 !important;
+}
+
+body.dark-mode .jk-offer,
+body.dark-mode .jk-offer--delivery {
+  background: linear-gradient(115deg, #111827 5%, #111827 100%) !important;
+  border-color: var(--brand-border) !important;
+}
+
+body.dark-mode .jk-offer__title,
+body.dark-mode .jk-offer__description,
+body.dark-mode .jk-offers__heading,
+body.dark-mode .store-floating-offers__label {
+  color: var(--brand-text) !important;
+}
+
+body.dark-mode .store-floating-offers__item--saving {
+  background: #29362e !important;
+}
+
+body.dark-mode .store-floating-offers__item--delivery {
+  background: #20372e !important;
+}
+
+body.dark-mode .account-menu a,
+body.dark-mode .zapvi-menu-item,
+body.dark-mode .zapvi-nav-link,
+body.dark-mode .zapvi-icon-btn,
+body.dark-mode .store-nav .logo,
+body.dark-mode .nav-action-link,
+body.dark-mode .form-label,
+body.dark-mode .checkout-review-header h4,
+body.dark-mode .invoice-row,
+body.dark-mode .empty-state h3 {
+  color: var(--brand-text);
+}
+
+body.dark-mode .zapvi-dropdown-menu,
+body.dark-mode .checkout-header,
+body.dark-mode .invoice-box,
+body.dark-mode .checkout-review-card,
+body.dark-mode .shipping-modal-header,
+body.dark-mode .shipping-label-body,
+body.dark-mode .scanner-manual-wrap,
+body.dark-mode .form-input,
+body.dark-mode .form-control,
+body.dark-mode .fk-role-toggle,
+body.dark-mode .fk-tab-btn {
+  background-color: var(--brand-surface-muted) !important;
+  border-color: var(--brand-border) !important;
+  color: var(--brand-text);
+}
+
+body.dark-mode .zapvi-menu-item:hover,
+body.dark-mode .account-menu a.active,
+body.dark-mode .nav-action-link.active,
+body.dark-mode .btn-edit-step {
+  background-color: #20372e !important;
+  color: #a9c6b3 !important;
+}
+
+body.dark-mode .zapvi-breadcrumbs,
+body.dark-mode .zapvi-breadcrumbs a,
+body.dark-mode .zapvi-profile-meta p,
+body.dark-mode .zapvi-order-submeta,
+body.dark-mode .form-input::placeholder,
+body.dark-mode .form-control::placeholder {
+  color: var(--brand-muted);
+}
+
+body.dark-mode .section-title,
+body.dark-mode .category-title,
+body.dark-mode .zapvi-cat-title,
+body.dark-mode .product-price,
+body.dark-mode .portal-title {
+  color: #fffefa !important;
+}
+
+body:not(.dark-mode) .zapvi-top-bar,
+body:not(.dark-mode) .main-header,
+body:not(.dark-mode) .navbar,
+body:not(.dark-mode) .exam-countdown-topbar,
+body:not(.dark-mode) .main-footer {
+  color: #faf9f5;
+}
+
+body:not(.dark-mode) .main-footer,
+body:not(.dark-mode) footer[style*="background: #0f172a"],
+body:not(.dark-mode) footer[style*="background:#0f172a"] {
+  background: linear-gradient(110deg, #172a22, #1d382c) !important;
+}
+
+body:not(.dark-mode) .zapvi-store-nav,
+body:not(.dark-mode) .store-nav,
+body:not(.dark-mode) .mobile-bottom-nav,
+body:not(.dark-mode) .zapvi-dropdown-menu,
+body:not(.dark-mode) .checkout-card,
+body:not(.dark-mode) .account-menu,
+body:not(.dark-mode) .account-content,
+body:not(.dark-mode) .cart-summary,
+body:not(.dark-mode) .cart-item {
+  background-color: var(--brand-surface);
+  border-color: var(--brand-border);
+}
+
+body:not(.dark-mode) .account-menu a.active,
+body:not(.dark-mode) .nav-action-link.active,
+body:not(.dark-mode) .store-nav-btn.active,
+body:not(.dark-mode) .btn-edit-step {
+  background-color: var(--brand-accent-soft);
+  color: var(--brand-primary-strong);
+}
+
+body:not(.dark-mode) .step-circle,
+body:not(.dark-mode) .checkout-review-card,
+body:not(.dark-mode) .invoice-box,
+body:not(.dark-mode) .form-input,
+body:not(.dark-mode) .form-control {
+  background-color: #f7f5ef;
+  border-color: var(--brand-border);
+}
+
+body:not(.dark-mode) .zapvi-breadcrumbs a:hover,
+body:not(.dark-mode) .mobile-nav-item.active,
+body:not(.dark-mode) .mobile-nav-item.active i,
+body:not(.dark-mode) .account-menu a.active i {
+  color: var(--brand-secondary) !important;
+}
+
+body:not(.dark-mode) [style*="color: #0f172a"],
+body:not(.dark-mode) [style*="color:#0f172a"],
+body:not(.dark-mode) [style*="color: #1e293b"],
+body:not(.dark-mode) [style*="color:#1e293b"] {
+  color: var(--brand-ink) !important;
+}
+
+body.dark-mode [style*="color: #0f172a"],
+body.dark-mode [style*="color:#0f172a"],
+body.dark-mode [style*="color: #1e293b"],
+body.dark-mode [style*="color:#1e293b"] {
+  color: var(--brand-text) !important;
+}
+
+/* Recolor legacy inline blue accents while preserving success, warning, and error states. */
+[style*="color:#2563eb"],
+[style*="color: #2563eb"],
+[style*="color:#1e40af"],
+[style*="color: #1e40af"],
+[style*="color:#1d4ed8"],
+[style*="color: #1d4ed8"] {
+  color: var(--brand-primary) !important;
+}
+
+[style*="background: linear-gradient(90deg, #1e3a8a"],
+[style*="background: linear-gradient(135deg, #1e3a8a"],
+[style*="background: linear-gradient(135deg, #1e40af"],
+[style*="background: linear-gradient(135deg, #1e40af,"],
+[style*="background: linear-gradient(90deg, #0f172a"],
+[style*="background: linear-gradient(135deg, #1e40af, #2563eb"] {
+  background: linear-gradient(105deg, var(--brand-ink), var(--brand-primary), var(--brand-primary-strong)) !important;
+  border-color: var(--brand-primary) !important;
+  color: #faf9f5 !important;
+}
+
+[style*="background:#2563eb"],
+[style*="background: #2563eb"],
+[style*="background-color:#2563eb"],
+[style*="background-color: #2563eb"],
+[style*="background:#1e40af"],
+[style*="background: #1e40af"],
+[style*="background: linear-gradient(135deg, #1e40af"],
+[style*="background: linear-gradient(135deg, #2563eb"] {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-strong)) !important;
+  border-color: var(--brand-primary) !important;
+  color: #faf9f5 !important;
+}
+
+[style*="background:#eff6ff"],
+[style*="background: #eff6ff"],
+[style*="background:#dbeafe"],
+[style*="background: #dbeafe"] {
+  background-color: var(--brand-accent-soft) !important;
+}
+
+[style*="border:1px solid #bfdbfe"],
+[style*="border: 1px solid #bfdbfe"],
+[style*="border:1.5px solid #bfdbfe"],
+[style*="border: 1.5px solid #bfdbfe"] {
+  border-color: #d6e1d8 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

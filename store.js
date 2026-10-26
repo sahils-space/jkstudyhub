@@ -1095,9 +1095,7 @@ const PRODUCT_CATALOG = {
     mrp: 499,
     price: 249,
     category: "books",
-    badge: "Bestseller #1",
-    rating: "4.9",
-    reviews: "1.2k",
+    badge: "✨ Featured",
     image: "images/books/atomic-habits-1.webp",
     images: ["images/books/atomic-habits-1.webp", "images/books/atomic-habits-2.webp", "images/books/atomic-habits-3.webp", "images/books/atomic-habits-4.webp"],
     desc: "An easy and proven way to build good habits and break bad ones. The #1 self-discipline handbook for students and high achievers.",
@@ -1117,8 +1115,6 @@ const PRODUCT_CATALOG = {
     price: 220,
     category: "books",
     badge: "Youth Favorite",
-    rating: "4.8",
-    reviews: "950",
     image: "images/books/psychology-of-money-1.webp",
     images: ["images/books/psychology-of-money-1.webp", "images/books/psychology-of-money-2.webp", "images/books/psychology-of-money-3.webp", "images/books/psychology-of-money-4.webp"],
     desc: "Timeless lessons on wealth, greed, and happiness. Crucial financial wisdom every young student should understand before college.",
@@ -1138,8 +1134,6 @@ const PRODUCT_CATALOG = {
     price: 239,
     category: "books",
     badge: "Exam Prep Must-Have",
-    rating: "4.8",
-    reviews: "820",
     image: "images/books/deep-work-1.webp",
     images: ["images/books/deep-work-1.webp", "images/books/deep-work-2.webp", "images/books/deep-work-3.webp", "images/books/deep-work-4.webp"],
     desc: "Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.",
@@ -1159,8 +1153,6 @@ const PRODUCT_CATALOG = {
     price: 179,
     category: "books",
     badge: "Inspiring Classic",
-    rating: "4.9",
-    reviews: "2.1k",
     image: "images/books/the-alchemist-1.webp",
     images: ["images/books/the-alchemist-1.webp", "images/books/the-alchemist-2.webp", "images/books/the-alchemist-3.webp", "images/books/the-alchemist-4.webp"],
     desc: "A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.",
@@ -1180,8 +1172,6 @@ const PRODUCT_CATALOG = {
     price: 260,
     category: "books",
     badge: "Epic Masterpiece",
-    rating: "4.9",
-    reviews: "1.8k",
     image: "images/books/the-kite-runner-1.webp",
     images: ["images/books/the-kite-runner-1.webp", "images/books/the-kite-runner-2.webp", "images/books/the-kite-runner-3.webp", "images/books/the-kite-runner-4.webp"],
     desc: "An unforgettable, heartbreaking story of the unlikely friendship between a wealthy boy and the son of his father's servant in Afghanistan.",
@@ -1201,8 +1191,6 @@ const PRODUCT_CATALOG = {
     price: 260,
     category: "books",
     badge: "Emotional Journey",
-    rating: "4.9",
-    reviews: "1.5k",
     image: "images/books/thousand-splendid-suns-1.webp",
     images: ["images/books/thousand-splendid-suns-1.webp", "images/books/thousand-splendid-suns-2.webp", "images/books/thousand-splendid-suns-3.webp", "images/books/thousand-splendid-suns-4.webp"],
     desc: "A breathtaking story of two women brought together by war and tragedy in Kabul. Unputdownable modern literature.",
@@ -1222,8 +1210,6 @@ const PRODUCT_CATALOG = {
     price: 299,
     category: "books",
     badge: "Spiritual Bestseller",
-    rating: "4.9",
-    reviews: "1.3k",
     image: "images/books/secrets-of-divine-love-1.webp",
     images: ["images/books/secrets-of-divine-love-1.webp", "images/books/secrets-of-divine-love-2.webp", "images/books/secrets-of-divine-love-3.webp", "images/books/secrets-of-divine-love-4.webp"],
     desc: "A heart-centered, practical guide to using the Quran and Islamic spirituality to awaken divine love, peace, and hope.",
@@ -1243,8 +1229,6 @@ const PRODUCT_CATALOG = {
     price: 250,
     category: "books",
     badge: "Mental Peace Guide",
-    rating: "4.8",
-    reviews: "920",
     image: "images/books/reclaim-your-heart-1.webp",
     images: ["images/books/reclaim-your-heart-1.webp", "images/books/reclaim-your-heart-2.webp", "images/books/reclaim-your-heart-3.webp", "images/books/reclaim-your-heart-4.webp"],
     desc: "Manual on freeing the heart from life's attachments, overcoming emotional pain, and staying mentally strong as a student.",
@@ -1264,8 +1248,6 @@ const PRODUCT_CATALOG = {
     price: 199,
     category: "books",
     badge: "National Inspiration",
-    rating: "4.9",
-    reviews: "3.4k",
     image: "images/books/wings-of-fire-1.webp",
     images: ["images/books/wings-of-fire-1.webp", "images/books/wings-of-fire-2.webp", "images/books/wings-of-fire-3.webp", "images/books/wings-of-fire-4.webp"],
     desc: "Inspiring autobiography of Dr. Kalam—from a humble boy in Rameswaram to leading India's space and missile programs.",
@@ -1285,8 +1267,6 @@ const PRODUCT_CATALOG = {
     price: 250,
     category: "books",
     badge: "Exam Rank Booster",
-    rating: "4.7",
-    reviews: "4.1k",
     image: "images/books/lucent-gk-1.webp",
     images: ["images/books/lucent-gk-1.webp", "images/books/lucent-gk-2.webp", "images/books/lucent-gk-3.webp", "images/books/lucent-gk-4.webp"],
     desc: "Essential handbook covering Indian History, Polity, Geography, Economy, and General Science. The Bible for JKSSB & SSC exams.",
@@ -1306,8 +1286,6 @@ const PRODUCT_CATALOG = {
     price: 290,
     category: "books",
     badge: "Grammar Foundation",
-    rating: "4.9",
-    reviews: "2.8k",
     image: "images/books/wren-martin-1.webp",
     images: ["images/books/wren-martin-1.webp", "images/books/wren-martin-2.webp", "images/books/wren-martin-3.webp", "images/books/wren-martin-4.webp"],
     desc: "High School English Grammar and Composition. Comprehensive rules, sentence structures, vocabulary, and writing techniques.",
@@ -1715,6 +1693,7 @@ function updateNavBadges() {
   const stickyCartBadge = document.getElementById('stickyCartBadge');
   const stickyCartCountLabel = document.getElementById('stickyCartCountLabel');
   const stickyCartTotalPrice = document.getElementById('stickyCartTotalPrice');
+  const floatingOffers = document.getElementById('storeFloatingOffers');
 
   if (stickyCartBar) {
     if (totalCartQty > 0) {
@@ -1725,6 +1704,9 @@ function updateNavBadges() {
     } else {
       stickyCartBar.style.display = 'none';
     }
+  }
+  if (floatingOffers) {
+    floatingOffers.classList.toggle('is-cart-active', totalCartQty > 0);
   }
 
   const cartBadges = document.querySelectorAll('.nav-badge-count, #cartCount');
@@ -5583,6 +5565,7 @@ function updateCheckoutPageSummary(deliveryInfo, discount, total, codFee) {
   const deliveryEl = document.getElementById('checkoutPageDelivery');
   const codFeeRow = document.getElementById('checkoutPageCodFeeRow');
   const codFeeEl = document.getElementById('checkoutPageCodFee');
+  const paymentEl = document.getElementById('checkoutPagePayment');
   const totalEl = document.getElementById('checkoutPageTotal');
   if (subtotalEl) subtotalEl.textContent = `₹${subtotal}`;
   if (discountRow) discountRow.hidden = discount <= 0;
@@ -5590,6 +5573,8 @@ function updateCheckoutPageSummary(deliveryInfo, discount, total, codFee) {
   if (deliveryEl) deliveryEl.textContent = deliveryInfo.fee === 0 ? 'FREE' : `₹${deliveryInfo.fee}`;
   if (codFeeRow) codFeeRow.hidden = codFee <= 0;
   if (codFeeEl) codFeeEl.textContent = `₹${codFee}`;
+  const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+  if (paymentEl) paymentEl.textContent = selectedPayment === 'online' ? 'Online payment' : 'Cash on Delivery';
   if (totalEl) totalEl.textContent = `₹${total}`;
 }
 
@@ -6235,54 +6220,17 @@ function safeEscape(str) {
   });
 }
 
-// --- DYNAMIC ESTIMATED DELIVERY DATE ENGINE ---
-function getEstimatedDeliveryInfo(district = 'Pattan') {
-  const now = new Date();
-  const currentHour = now.getHours();
-  const isBeforeCutoff = currentHour < 16; // 4:00 PM cutoff for same-day dispatch
-  
-  // Fast Kashmir zones (1 day if ordered before 4 PM, otherwise 2 days)
-  const isFastZone = /pattan|baramulla|sopore|srinagar|budgam/i.test(district || 'pattan');
-  const daysToAdd = isBeforeCutoff ? (isFastZone ? 1 : 2) : (isFastZone ? 2 : 3);
-  
-  const targetDate = new Date(now);
-  targetDate.setDate(now.getDate() + daysToAdd);
-  
-  const options = { weekday: 'short', day: 'numeric', month: 'short' };
-  const dateStr = targetDate.toLocaleDateString('en-IN', options);
-  
-  let label = '';
-  if (daysToAdd === 1) {
-    label = `Tomorrow (${dateStr})`;
-  } else {
-    label = dateStr;
-  }
-  
-  const hoursLeft = isBeforeCutoff ? (16 - currentHour) : (24 - currentHour + 16);
-  const countdownText = isBeforeCutoff 
-    ? `Order within ${hoursLeft} hr${hoursLeft > 1 ? 's' : ''} for same-day dispatch`
-    : `Express dispatch tomorrow morning`;
-    
-  return {
-    label: label,
-    countdownText: countdownText,
-    isTomorrow: daysToAdd === 1,
-    badgeHtml: `<div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>${label}</strong></div>`
-  };
-}
-
-// Inject live delivery promise badges to all product cards across storefront
+// Add a delivery-check prompt to product cards without promising an unverified date.
 function injectStoreDeliveryBadges() {
   if (typeof document === 'undefined') return;
   const cards = document.querySelectorAll('.book-product-card');
-  const delInfo = getEstimatedDeliveryInfo();
   cards.forEach(card => {
     if (!card.querySelector('.delivery-estimate-badge')) {
       const info = card.querySelector('.product-info');
       if (info) {
         const badge = document.createElement('div');
         badge.className = 'delivery-estimate-badge';
-        badge.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong>`;
+        badge.innerHTML = '<i class="fa-solid fa-truck-fast"></i> Check delivery options at checkout';
         const desc = info.querySelector('.product-desc');
         if (desc) {
           info.insertBefore(badge, desc);
@@ -6307,8 +6255,6 @@ function showOrderConfirmationModal(orderRecord, isCod) {
     document.body.appendChild(modal);
   }
 
-  const delInfo = getEstimatedDeliveryInfo(orderRecord.address);
-
   // Send formatted order slip to JK Study Hub Dispatch (+91 9622605714)
   const waReceiptText = `*📦 NEW ORDER CONFIRMATION - JK STUDY HUB*%0A%0A` +
     `Hello JK Study Hub! I have placed an order on your website:%0A%0A` +
@@ -6318,7 +6264,7 @@ function showOrderConfirmationModal(orderRecord, isCod) {
     `👤 *Student Name:* ${encodeURIComponent(orderRecord.name)}%0A` +
     `📞 *Phone Number:* ${encodeURIComponent(orderRecord.phone)}%0A` +
     `📍 *Delivery Address:* ${encodeURIComponent(orderRecord.address)}%0A` +
-    `🚚 *Estimated Delivery:* ${encodeURIComponent(delInfo.label)}%0A` +
+    `🚚 *Delivery timing:* To be confirmed after PIN verification and order review.%0A` +
     (orderRecord.deliveryOtp ? `🔐 *Doorstep OTP:* ${orderRecord.deliveryOtp}%0A` : '') +
     `%0APlease confirm my order and send dispatch tracking!`;
 
@@ -6340,8 +6286,8 @@ function showOrderConfirmationModal(orderRecord, isCod) {
         <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:10px; padding:12px; margin-bottom:14px; display:flex; align-items:center; gap:10px;">
           <div style="font-size:24px; color:#16a34a;"><i class="fa-solid fa-truck-fast"></i></div>
           <div>
-            <div style="font-size:13px; font-weight:800; color:#166534;">Estimated Delivery: ${delInfo.label}</div>
-            <div style="font-size:11.5px; color:#15803d;">Same-Day Express Dispatch from Baramulla Hub (₹0 Free Delivery)</div>
+            <div style="font-size:13px; font-weight:800; color:#166534;">Delivery timing is confirmed after order review.</div>
+            <div style="font-size:11.5px; color:#15803d;">The applicable delivery charge is shown in your order total.</div>
           </div>
         </div>
 
@@ -6456,7 +6402,7 @@ function initShop() {
       ) {
         syncCustomProductsWithSheet();
       }
-    }, 60000);
+    }, 300000);
   }
 }
 
@@ -7223,7 +7169,7 @@ function renderAccountOrders() {
     const safeOrderId = o.orderId || ('ORD-' + index);
     const isCod = isCodOrder(o);
     const statusInfo = getOrderStatusInfo(o.status, o);
-    const waMessage = encodeURIComponent(`Hi JK Study Hub, I am inquiring about my Order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'Prepaid Online'}) for ${o.product}.`);
+    const waMessage = encodeURIComponent(`Hi JK Study Hub, I need help tracking order ${safeOrderId} (${isCod ? 'Cash on Delivery' : 'prepaid'}) for ${o.product}. Current status shown: ${statusInfo.label}.`);
 
     let s1Class = 'completed';
     let s2Class = statusInfo.step >= 2 ? 'completed' : (statusInfo.step === 1 ? 'active' : '');
@@ -7277,19 +7223,19 @@ function renderAccountOrders() {
                 ${statusInfo.step >= 3 ? '<i class="fa-solid fa-check"></i>' : ''}
               </div>
               <div class="zapvi-timeline-label" style="${statusInfo.step >= 3 ? '' : 'color: #94a3b8; font-weight: 600;'}">Out for delivery</div>
-              <div class="zapvi-timeline-date">${statusInfo.step >= 3 ? 'Arriving today' : 'Pending'}</div>
+              <div class="zapvi-timeline-date">${statusInfo.step >= 3 ? 'In delivery' : 'Awaiting dispatch'}</div>
             </div>
             <div class="zapvi-timeline-node">
               <div class="zapvi-timeline-dot" style="${statusInfo.step >= 4 ? '' : 'background: #cbd5e1;'}">
                 ${statusInfo.step >= 4 ? '<i class="fa-solid fa-check"></i>' : ''}
               </div>
               <div class="zapvi-timeline-label" style="${statusInfo.step >= 4 ? '' : 'color: #94a3b8; font-weight: 600;'}">Delivered</div>
-              <div class="zapvi-timeline-date">${statusInfo.step >= 4 ? 'Doorstep Handover' : 'Expected soon'}</div>
+              <div class="zapvi-timeline-date">${statusInfo.step >= 4 ? 'Doorstep handover complete' : 'Not yet delivered'}</div>
             </div>
           </div>
           
           <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-            <a href="javascript:void(0)" onclick="alert('Tracking Status:\\n• Order: #${safeOrderId}\\n• Hub: Pattan 193121\\n• Status: ${statusInfo.label}\\n• Notes: ${statusInfo.summaryText}')" style="font-size: 13px; font-weight: 700; color: #0f172a; text-decoration: underline; cursor: pointer;">
+            <a href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="font-size: 13px; font-weight: 700; color: #0f172a; text-decoration: underline; cursor: pointer;">
               See all updates ⌵
             </a>
             <span style="font-size: 12px; color: #64748b; font-weight: 600;">
@@ -7304,9 +7250,9 @@ function renderAccountOrders() {
               <span>Standard Delivery</span>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <button type="button" class="zapvi-track-btn" onclick="alert('Live Parcel Status:\\nOrder #${safeOrderId}\\nCurrent State: ${statusInfo.label}\\nEstimated: 24-48 Hours')">
-                <i class="fa-solid fa-location-crosshairs"></i> Track parcel
-              </button>
+              <a class="zapvi-track-btn" href="https://wa.me/919622605714?text=${waMessage}" target="_blank" rel="noopener" style="text-decoration:none;">
+                <i class="fa-solid fa-location-crosshairs"></i> Ask about tracking
+              </a>
               <button type="button" class="zapvi-invoice-btn" onclick="printOrderReceipt('${safeOrderId}')">
                 <i class="fa-solid fa-file-invoice"></i> Tax Invoice
               </button>
@@ -7354,8 +7300,8 @@ function renderAccountOrders() {
         <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             ${(o.status === 'Delivered') ? `
-              <a href="https://wa.me/919622605714?text=${encodeURIComponent('Hi JK Study Hub! I received my parcel for Order ' + safeOrderId + ' (' + o.product + '). My rating for print quality and delivery is: 5 Stars ⭐⭐⭐⭐⭐')}" target="_blank" rel="noopener" style="background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
-                ⭐ Rate Quality (WhatsApp)
+              <a href="https://wa.me/919622605714?text=${encodeURIComponent('Hi JK Study Hub, I received my order ' + safeOrderId + ' (' + o.product + ') and would like to share feedback: ')}" target="_blank" rel="noopener" style="background: #fefce8; color: #854d0e; border: 1.5px solid #fef08a; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                <i class="fa-brands fa-whatsapp"></i> Share Feedback
               </a>
             ` : ''}
 
@@ -7573,9 +7519,7 @@ const BOOK_CATALOG_DATA = [
     "mrp": 499,
     "price": 249,
     "category": "books",
-    "badge": "Bestseller #1",
-    "rating": "4.9",
-    "reviews": "1.2k",
+    "badge": "✨ Featured",
     "desc": "An easy and proven way to build good habits and break bad ones. The #1 self-discipline handbook for students and high achievers.",
     "length": "19.8 cm",
     "width": "12.9 cm",
@@ -7603,8 +7547,6 @@ const BOOK_CATALOG_DATA = [
     "price": 220,
     "category": "books",
     "badge": "Youth Favorite",
-    "rating": "4.8",
-    "reviews": "950",
     "desc": "Timeless lessons on wealth, greed, and happiness. Crucial financial wisdom every young student should understand before college.",
     "length": "19.8 cm",
     "width": "12.9 cm",
@@ -7632,8 +7574,6 @@ const BOOK_CATALOG_DATA = [
     "price": 240,
     "category": "books",
     "badge": "Exam Prep Must-Have",
-    "rating": "4.8",
-    "reviews": "820",
     "desc": "Rules for focused success in a distracted world. Master deep study concentration for NEET, JEE, and competitive exams.",
     "length": "19.8 cm",
     "width": "12.8 cm",
@@ -7661,8 +7601,6 @@ const BOOK_CATALOG_DATA = [
     "price": 180,
     "category": "books",
     "badge": "Inspiring Classic",
-    "rating": "4.9",
-    "reviews": "2.1k",
     "desc": "A magical fable about following your dream. Beautiful, simple English prose that boosts reading fluency and vocabulary.",
     "length": "19.8 cm",
     "width": "12.9 cm",
@@ -7690,8 +7628,6 @@ const BOOK_CATALOG_DATA = [
     "price": 260,
     "category": "books",
     "badge": "Epic Masterpiece",
-    "rating": "4.9",
-    "reviews": "1.8k",
     "desc": "An unforgettable, heartbreaking story of the unlikely friendship between a wealthy boy and the son of his father's servant in Afghanistan.",
     "length": "19.8 cm",
     "width": "12.9 cm",
@@ -7719,8 +7655,6 @@ const BOOK_CATALOG_DATA = [
     "price": 260,
     "category": "books",
     "badge": "Emotional Journey",
-    "rating": "4.9",
-    "reviews": "1.5k",
     "desc": "A breathtaking story of two women brought together by war and tragedy in Kabul. Unputdownable modern literature.",
     "length": "19.8 cm",
     "width": "12.9 cm",
@@ -7748,8 +7682,6 @@ const BOOK_CATALOG_DATA = [
     "price": 299,
     "category": "books",
     "badge": "Spiritual Bestseller",
-    "rating": "4.9",
-    "reviews": "1.3k",
     "desc": "A heart-centered, practical guide to using the Quran and Islamic spirituality to awaken divine love, peace, and hope.",
     "length": "21.6 cm",
     "width": "14.0 cm",
@@ -7777,8 +7709,6 @@ const BOOK_CATALOG_DATA = [
     "price": 250,
     "category": "books",
     "badge": "Mental Peace Guide",
-    "rating": "4.8",
-    "reviews": "920",
     "desc": "Manual on freeing the heart from life's attachments, overcoming emotional pain, and staying mentally strong as a student.",
     "length": "20.3 cm",
     "width": "13.3 cm",
@@ -7806,8 +7736,6 @@ const BOOK_CATALOG_DATA = [
     "price": 199,
     "category": "books",
     "badge": "National Inspiration",
-    "rating": "4.9",
-    "reviews": "3.4k",
     "desc": "Inspiring autobiography of Dr. Kalam\u2014from a humble boy in Rameswaram to leading India's space and missile programs.",
     "length": "19.8 cm",
     "width": "13.0 cm",
@@ -7835,8 +7763,6 @@ const BOOK_CATALOG_DATA = [
     "price": 250,
     "category": "books",
     "badge": "Exam Rank Booster",
-    "rating": "4.7",
-    "reviews": "4.1k",
     "desc": "Essential handbook covering Indian History, Polity, Geography, Economy, and General Science. The Bible for JKSSB & SSC exams.",
     "length": "24.0 cm",
     "width": "18.0 cm",
@@ -7864,8 +7790,6 @@ const BOOK_CATALOG_DATA = [
     "price": 290,
     "category": "books",
     "badge": "Grammar Foundation",
-    "rating": "4.9",
-    "reviews": "2.8k",
     "desc": "High School English Grammar and Composition. Comprehensive rules, sentence structures, vocabulary, and writing techniques.",
     "length": "24.0 cm",
     "width": "18.0 cm",
@@ -8045,47 +7969,48 @@ if (typeof document !== 'undefined') {
 // KASHMIR PINCODE & LIVE DELIVERY ESTIMATOR
 // =========================================================================
 const KASHMIR_PINCODE_DB = {
-  '190': { district: 'Srinagar', days: 1, label: 'Tomorrow', hub: 'Srinagar Central Hub' },
-  '191': { district: 'Ganderbal / Kupwara', days: 2, label: 'in 1-2 Days', hub: 'North Kashmir Hub' },
-  '192': { district: 'Anantnag / Pulwama', days: 2, label: 'in 1-2 Days', hub: 'South Kashmir Hub' },
-  '193': { district: 'Baramulla / Pattan / Sopore', days: 1, label: 'Tomorrow / Same Day', hub: 'Baramulla Express Hub' },
-  '194': { district: 'Ladakh / Kargil', days: 3, label: 'in 2-3 Days', hub: 'Highland Logistics' },
-  '180': { district: 'Jammu City', days: 2, label: 'in 2 Days', hub: 'Jammu Regional Hub' },
-  '181': { district: 'Samba / RS Pura', days: 2, label: 'in 2-3 Days', hub: 'Jammu South Hub' },
-  '182': { district: 'Udhampur / Reasi', days: 3, label: 'in 2-3 Days', hub: 'Chenab Hub' },
-  '184': { district: 'Kathua', days: 3, label: 'in 2-3 Days', hub: 'Kathua Hub' },
-  '185': { district: 'Rajouri / Poonch', days: 3, label: 'in 3 Days', hub: 'Pir Panjal Hub' }
+  '190': { district: 'Srinagar' },
+  '191': { district: 'Ganderbal / Kupwara' },
+  '192': { district: 'Anantnag / Pulwama' },
+  '193': { district: 'Baramulla / Pattan / Sopore' },
+  '194': { district: 'Ladakh / Kargil' },
+  '180': { district: 'Jammu City' },
+  '181': { district: 'Samba / RS Pura' },
+  '182': { district: 'Udhampur / Reasi' },
+  '184': { district: 'Kathua' },
+  '185': { district: 'Rajouri / Poonch' }
 };
 
 function getKashmirPincodeInfo(pincode) {
   const pin = String(pincode || '').trim().replace(/\D/g, '');
   if (pin.length < 3) return null;
   const prefix = pin.substring(0, 3);
-  return KASHMIR_PINCODE_DB[prefix] || { district: 'Kashmir Region', days: 2, label: 'in 2-3 Days', hub: 'Kashmir Central Dispatch' };
+  return KASHMIR_PINCODE_DB[prefix] || { district: 'Kashmir Region' };
 }
 
 function applyModalPincodeCheck(customPin) {
   const input = document.getElementById('modalPincodeInput');
-  const pin = customPin || (input ? input.value.trim() : '');
+  const pin = String(customPin || (input ? input.value : '')).trim().replace(/\D/g, '');
   const textEl = document.getElementById('modalDeliveryEstimateText');
   const countEl = document.getElementById('modalDeliveryCountdown');
   const picker = document.getElementById('modalDistrictPicker');
 
-  if (!pin || pin.length < 3) {
+  if (!/^\d{6}$/.test(pin)) {
     if (typeof showToast === 'function') showToast('⚠️ Please enter a valid 6-digit Pincode');
     return;
   }
 
   const info = getKashmirPincodeInfo(pin);
+  if (input) input.value = pin;
   try {
     localStorage.setItem('jk_delivery_pincode', pin);
   } catch(e) {}
 
   if (textEl) {
-    textEl.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Fast Delivery by <strong>${info.label}</strong> to ${info.district} (${pin})`;
+    textEl.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Delivery options for <strong>${safeEscape(info.district)}</strong> (${pin}); confirm availability and charges at checkout.`;
   }
   if (countEl) {
-    countEl.innerHTML = `<span><i class="fa-solid fa-circle-check"></i> Cash on Delivery Active</span> <span><i class="fa-solid fa-bolt"></i> Dispatched via ${info.hub}</span>`;
+    countEl.textContent = 'Delivery timing is confirmed after PIN verification and order review.';
   }
   if (picker && info.district) {
     // Sync picker if option matches
@@ -8098,7 +8023,7 @@ function applyModalPincodeCheck(customPin) {
   }
 
   if (typeof showToast === 'function' && !customPin) {
-    showToast(`📍 Delivery confirmed for ${info.district} (${pin})`);
+    showToast(`📍 PIN saved. Confirm delivery availability and charges at checkout.`);
   }
 }
 
@@ -9204,7 +9129,7 @@ function renderSamplePreviewPage() {
       <!-- Page Footer -->
       <div class="book-page-footer">
         <div style="font-size: 11.5px; color: #166534; font-weight: 700;">
-          ✓ 100% Genuine Print Sample • 70 GSM Cream Paper
+          Sample pages are illustrative; confirm product specifications on the listing.
         </div>
         <div style="font-weight: 800; color: #78716c;">
           — ${safeEscape(page.pageNumber)} —
@@ -9237,93 +9162,22 @@ function renderSamplePreviewPage() {
 
 
 // =========================================================================
-// AUTHENTIC STUDENT PHOTO REVIEWS WITH COLLEGE & SEMESTER BADGES
-// =========================================================================
-const ENHANCED_STUDENT_REVIEWS = {
-  "Atomic Habits": [
-    { name: "Aaqib Lone", college: "Kashmir University (B.Sc 3rd Sem)", rating: 5, date: "Yesterday", comment: "Super crisp print and authentic cream paper! Delivered to Baramulla in less than 24 hours. Must-read for every board and college student." },
-    { name: "Iqra Jan", college: "Cluster University Srinagar", rating: 5, date: "3 days ago", comment: "Neat packaging with thick bubble wrap. Genuine book at nearly half the local market rate. COD was seamless." },
-    { name: "Faizan Mir", college: "Govt Degree College Baramulla", rating: 5, date: "1 week ago", comment: "The delivery boy called before reaching my home. Clear typeface with no misprints whatsoever." }
-  ],
-  "The Psychology of Money": [
-    { name: "Mehreen Zehra", college: "Kashmir University (Commerce)", rating: 5, date: "2 days ago", comment: "Timeless financial wisdom. Delivered same day in Pattan! Original paperback print edition with genuine binding." },
-    { name: "Tanveer Hassan", college: "GDC Sopore (B.A 4th Sem)", rating: 5, date: "4 days ago", comment: "Clear readable typeface and thick 70 GSM paper. 10/10 service from JK Study Hub." }
-  ],
-  "Deep Work": [
-    { name: "Zubair Ahmad", college: "NIT Srinagar (Aspirant)", rating: 5, date: "3 days ago", comment: "Helped me cut phone distractions completely for my upcoming exams. Genuine paperback edition!" }
-  ],
-  "default": [
-    { name: "Saima Bashir", college: "JKBOSE 12th Medical (Baramulla)", rating: 5, date: "Recently", comment: "Original paperback edition with crystal clear print quality. Fast doorstep Kashmir delivery!" },
-    { name: "Umar Farooq", college: "Kashmir University Scholar", rating: 5, date: "Recently", comment: "Great protective packaging and verified student quality. Highly recommended for all students." }
-  ]
-};
-
-function renderBookReviews(bookName) {
-  const container = document.getElementById('modalReviewsList');
-  const avgEl = document.getElementById('modalRatingAvg');
-  if (!container) return;
-
-  const defaultList = ENHANCED_STUDENT_REVIEWS[bookName] || ENHANCED_STUDENT_REVIEWS['default'];
-  let custom = {};
-  try {
-    custom = JSON.parse(localStorage.getItem('jk_student_reviews_custom') || '{}');
-  } catch(e) {}
-  const userReviews = custom[bookName] || [];
-  const reviews = [...userReviews, ...defaultList];
-
-  if (avgEl && reviews.length > 0) {
-    const avg = (reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1);
-    avgEl.innerHTML = `⭐ ${avg} (${reviews.length} Verified Student Reviews)`;
-  }
-
-  let html = '';
-  reviews.forEach(r => {
-    let stars = '';
-    const rating = Number(r.rating) || 5;
-    for (let i = 0; i < 5; i++) {
-      stars += i < rating ? '<i class="fa-solid fa-star" style="color:#f59e0b;"></i> ' : '<i class="fa-regular fa-star" style="color:#cbd5e1;"></i> ';
-    }
-    const collegeTag = r.college || 'Verified Student • Kashmir';
-    html += `
-      <div class="student-review-card" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; margin-bottom:6px;">
-        <div class="rev-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <span class="rev-author" style="font-size:12.5px; font-weight:700; color:#1e293b; display:flex; align-items:center; gap:6px;">
-            <i class="fa-solid fa-circle-user" style="color:#2563eb;"></i> ${safeEscape(r.name)}
-            <span class="verified-uni-badge"><i class="fa-solid fa-graduation-cap"></i> ${safeEscape(collegeTag)}</span>
-          </span>
-          <span class="rev-stars" style="font-size:11px;">${stars}</span>
-        </div>
-        <p class="rev-comment" style="font-size:12px; color:#475569; margin:4px 0; line-height:1.5;">${safeEscape(r.comment)}</p>
-        <div style="font-size:10.5px; color:#94a3b8; display:flex; justify-content:space-between;">
-          <span style="color:#16a34a; font-weight:600;"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
-          <span>${safeEscape(r.date || 'Recent')}</span>
-        </div>
-      </div>
-    `;
-  });
-  container.innerHTML = html;
-}
-
-
-// =========================================================================
 // 1-CLICK "ORDER ON WHATSAPP" DIRECT ENGINE
 // =========================================================================
 function orderViaWhatsApp(productName, price, category) {
   const effectivePrice = getCustomPrice(productName, price);
   const pin = localStorage.getItem('jk_delivery_pincode') || '193121';
   const info = (typeof getKashmirPincodeInfo === 'function' ? getKashmirPincodeInfo(pin) : null) || { district: 'Pattan / Baramulla, Kashmir' };
-  
-  const isPattan = (pin === '193121');
-  const deliveryText = isPattan ? 'Free Pattan Delivery (₹0)' : 'Doorstep Kashmir Delivery';
+  const msg = [
+    'Hi JK Study Hub! I would like to ask about ordering this product.',
+    '',
+    `Product: ${productName}`,
+    `Item price: ₹${effectivePrice}`,
+    `Destination: ${info.district || 'Pattan / Baramulla'} (PIN: ${pin})`,
+    'Please confirm delivery availability, charges, current offers and payment options before I place the order.'
+  ].join('\n');
 
-  const msg = `Hi JK Study Hub! I want to order this with Cash on Delivery:%0A%0A` +
-              `📦 *Product:* ${encodeURIComponent(productName)}%0A` +
-              `💵 *Price:* ₹${effectivePrice} (${deliveryText})%0A` +
-              `📍 *Destination:* ${encodeURIComponent(info.district || 'Pattan / Baramulla')} (Pincode: ${pin})%0A` +
-              `💳 *Payment:* Cash on Delivery (Pay at Doorstep)%0A%0A` +
-              `Please confirm my order dispatch!`;
-
-  window.open(`https://wa.me/919622605714?text=${msg}`, '_blank');
+  window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
 }
 
 function orderBookViaWhatsApp(bookName, price) {
@@ -9369,28 +9223,32 @@ function openBookDetailsModal(bookName) {
 
   document.getElementById('modalBookTitle').innerText = book.name;
   document.title = `${book.name} | JK Study Hub`;
-  document.getElementById('modalBookAuthor').innerText = 'By ' + (book.author || 'Renowned Author');
+  document.getElementById('modalBookAuthor').innerText = book.author ? 'By ' + book.author : 'Product details';
   document.getElementById('modalBookPrice').innerText = '₹' + effectivePrice;
   document.getElementById('modalBookMrp').innerText = '₹' + effectiveMrp;
-  document.getElementById('modalBookDesc').innerText = book.desc || 'High quality paperback verified for students.';
+  document.getElementById('modalBookDesc').innerText = book.desc || 'Product description not provided.';
+  const editionEl = document.getElementById('modalBookEdition');
+  const contentsEl = document.getElementById('modalBookContents');
+  if (editionEl) editionEl.textContent = book.edition || book.condition || 'Not specified in the listing. Contact us to confirm before ordering.';
+  if (contentsEl) contentsEl.textContent = book.contents || book.includedItems || 'Not specified in the listing. Contact us to confirm before ordering.';
   
   const discount = Math.max(0, Math.round(((effectiveMrp - effectivePrice) / effectiveMrp) * 100));
   document.getElementById('modalBookDiscount').innerText = discount + '% OFF';
 
   // Render Specs
   const specs = book.specs || {
-    length: book.length || '19.8 cm',
-    width: book.width || '12.9 cm',
-    thickness: book.thickness || '2.2 cm',
-    pages: book.pages || '300 pgs',
-    paper: book.paper || '70 GSM Cream'
+    length: book.length || 'Not specified',
+    width: book.width || 'Not specified',
+    thickness: book.thickness || 'Not specified',
+    pages: book.pages || 'Not specified',
+    paper: book.paper || 'Not specified'
   };
 
-  document.getElementById('specLength').innerText = specs.length;
-  document.getElementById('specWidth').innerText = specs.width;
-  document.getElementById('specThickness').innerText = specs.thickness;
-  document.getElementById('specPages').innerText = specs.pages;
-  document.getElementById('specPaper').innerText = specs.paper;
+  document.getElementById('specLength').innerText = specs.length || 'Not specified';
+  document.getElementById('specWidth').innerText = specs.width || 'Not specified';
+  document.getElementById('specThickness').innerText = specs.thickness || 'Not specified';
+  document.getElementById('specPages').innerText = specs.pages || 'Not specified';
+  document.getElementById('specPaper').innerText = specs.paper || 'Not specified';
 
   // Render Thumbnails
   const thumbContainer = document.getElementById('modalThumbnails');
@@ -9435,7 +9293,7 @@ function openBookDetailsModal(bookName) {
   renderFrequentlyBoughtTogether(book.name);
 
   // Render Student Reviews
-  renderBookReviews(book.name);
+  renderBookReviews();
 
   modal.classList.add('active');
 }
@@ -9472,154 +9330,76 @@ function orderDirectlyViaWhatsApp() {
   const name = nameInput ? nameInput.value.trim() : '';
   const phone = phoneInput ? phoneInput.value.trim() : '';
   const city = citySelect ? citySelect.value : 'Baramulla';
-  const pin = pinInput ? pinInput.value.trim() : '193121';
+  const pin = pinInput ? pinInput.value.trim() : '';
   const addr = addrInput ? addrInput.value.trim() : '';
   const prod = currentCheckoutProduct || 'Study Books / Notes';
-  const price = (currentCheckoutPrice || 0) + 5;
+  if (!/^\d{6}$/.test(pin)) {
+    alert('Please enter a valid 6-digit PIN code before requesting an order total.');
+    if (pinInput) pinInput.focus();
+    return;
+  }
 
-  const msg = `Hi JK Study Hub! I want to place a Cash on Delivery order directly via WhatsApp:%0A%0A` +
-              `📚 *Product:* ${encodeURIComponent(prod)}%0A` +
-              `💵 *Total Amount (COD):* ₹${price}%0A` +
-              `👤 *Name:* ${encodeURIComponent(name || 'Student')}%0A` +
-              `📱 *Phone:* ${encodeURIComponent(phone || 'N/A')}%0A` +
-              `📍 *Pincode:* ${pin}%0A` +
-              `🏡 *Address:* ${encodeURIComponent(addr ? addr + ', ' + city : city)}%0A%0A` +
-              `Please confirm my doorstep order with Kashmir Express dispatch!`;
+  const deliveryInfo = getCheckoutDeliveryInfo();
+  const itemPrice = Number(currentCheckoutPrice) || 0;
+  const autoDiscount = itemPrice >= 1499 ? 100 : 0;
+  const repeatDiscount = Number(activeRepeatDiscountAmount) || 0;
+  const discount = autoDiscount + repeatDiscount;
+  const finalItemPrice = Math.max(0, itemPrice - discount);
+  const platformFee = 5;
+  const codFee = Number(deliveryInfo.codFee) || 0;
+  const total = finalItemPrice + deliveryInfo.fee + platformFee + codFee;
+  const msg = [
+    'Hi JK Study Hub! Please confirm this Cash on Delivery order total.',
+    '',
+    `Product: ${prod}`,
+    `Item price: ₹${itemPrice}`,
+    `Discount: -₹${discount}`,
+    `Delivery: ₹${deliveryInfo.fee} (${deliveryInfo.districtName})`,
+    `Platform fee: ₹${platformFee}`,
+    `COD fee: ₹${codFee}`,
+    `Estimated total: ₹${total}`,
+    '',
+    `Name: ${name || 'Student'}`,
+    `Phone: ${phone || 'N/A'}`,
+    `PIN: ${pin}`,
+    `Address: ${addr ? addr + ', ' + city : city}`,
+    '',
+    'Please confirm availability and the final amount before dispatch.'
+  ].join('\n');
 
-  const url = `https://api.whatsapp.com/send?phone=919622605714&text=${msg}`;
+  const url = `https://api.whatsapp.com/send?phone=919622605714&text=${encodeURIComponent(msg)}`;
   const win = window.open(url, '_blank');
   if (!win || win.closed || typeof win.closed === 'undefined') {
     window.location.href = url;
   }
 }
 
-// --- STUDENT RATINGS & VERIFIED REVIEWS ENGINE ---
-const DEFAULT_STUDENT_REVIEWS = {
-  "Atomic Habits": [
-    { name: "Aaqib Lone", role: "Class 12th, Baramulla", rating: 5, date: "Yesterday", comment: "Super crisp print and authentic cream paper! Delivered to Baramulla in less than 24 hours. Must-read for board students." },
-    { name: "Iqra Jan", role: "JKBOSE Aspirant, Sopore", rating: 5, date: "3 days ago", comment: "Neat packaging with bubble wrap. Genuine book at nearly half the local market rate." },
-    { name: "Umar Farooq", role: "KU Scholar, Srinagar", rating: 5, date: "1 week ago", comment: "Cash on delivery was smooth. The delivery boy called before reaching my home." }
-  ],
-  "The Psychology of Money": [
-    { name: "Faizan Mir", role: "B.Com, Pattan", rating: 5, date: "2 days ago", comment: "Timeless financial wisdom. Delivered same day in Pattan! Original print edition." },
-    { name: "Mehreen Zehra", role: "Class 11th, Budgam", rating: 5, date: "4 days ago", comment: "Clear readable typeface and thick paper. 10/10 service from JK Study Hub." }
-  ],
-  "Deep Work": [
-    { name: "Tanveer Hassan", role: "NEET Aspirant, Baramulla", rating: 5, date: "3 days ago", comment: "Helped me cut phone distractions completely. Genuine paperback edition!" }
-  ],
-  "default": [
-    { name: "Zubair Ahmad", role: "Verified Student, Baramulla", rating: 5, date: "Recently", comment: "Original paperback edition with crystal clear print quality. Fast doorstep delivery." },
-    { name: "Saima Bashir", role: "JKBOSE Aspirant, Sopore", rating: 5, date: "Recently", comment: "Great protective packaging and verified student quality. Highly recommended!" }
-  ]
-};
-
-function getBookReviews(bookName) {
-  let custom = {};
-  try {
-    custom = JSON.parse(localStorage.getItem('jk_student_reviews_custom') || '{}');
-  } catch(e) {}
-
-  const userReviews = custom[bookName] || [];
-  const defaultList = DEFAULT_STUDENT_REVIEWS[bookName] || DEFAULT_STUDENT_REVIEWS['default'];
-  return [...userReviews, ...defaultList];
-}
-
-function renderBookReviews(bookName) {
+function renderBookReviews() {
   const container = document.getElementById('modalReviewsList');
   const avgEl = document.getElementById('modalRatingAvg');
   if (!container) return;
 
-  const reviews = getBookReviews(bookName);
-  if (avgEl && reviews.length > 0) {
-    const avg = (reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1);
-    avgEl.innerHTML = `⭐ ${avg} (${reviews.length} Verified Reviews)`;
-  }
-
-  let html = '';
-  reviews.forEach(r => {
-    let stars = '';
-    const rating = Number(r.rating) || 5;
-    for (let i = 0; i < 5; i++) {
-      stars += i < rating ? '<i class="fa-solid fa-star"></i> ' : '<i class="fa-regular fa-star"></i> ';
-    }
-    html += `
-      <div class="student-review-card">
-        <div class="rev-head">
-          <span class="rev-author"><i class="fa-solid fa-circle-user" style="color:#2563eb;"></i> ${safeEscape(r.name)} <span class="rev-tag">Verified Student</span></span>
-          <span class="rev-stars">${stars}</span>
-        </div>
-        <p class="rev-comment">${safeEscape(r.comment)}</p>
-        <div style="font-size:10.5px; color:#94a3b8; margin-top:3px; display:flex; justify-content:space-between;">
-          <span>${safeEscape(r.role || 'Student')}</span>
-          <span>${safeEscape(r.date || 'Recent')}</span>
-        </div>
-      </div>
-    `;
-  });
-  container.innerHTML = html;
+  if (avgEl) avgEl.textContent = 'No reviews yet';
+  container.textContent = 'No customer reviews have been published yet. We only publish feedback after confirming it with the customer.';
 }
 
 function updateModalDeliveryEstimate(district) {
-  const delInfo = getEstimatedDeliveryInfo(district);
   const textEl = document.getElementById('modalDeliveryEstimateText');
   const countEl = document.getElementById('modalDeliveryCountdown');
   if (textEl) {
-    textEl.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong> in ${safeEscape(district)}`;
+    textEl.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Delivery options for <strong>${safeEscape(district)}</strong>; confirm availability and charges at checkout.`;
   }
   if (countEl) {
-    countEl.innerHTML = `${delInfo.countdownText} • 100% Free Kashmir Delivery`;
+    countEl.textContent = 'Delivery timing is confirmed after PIN verification and order review.';
   }
 }
 
-function toggleReviewForm() {
-  const box = document.getElementById('addReviewFormBox');
-  if (box) {
-    box.style.display = box.style.display === 'none' ? 'block' : 'none';
-  }
-}
-
-function submitStudentReview() {
-  if (!currentModalBook) return;
-  const nameInput = document.getElementById('newReviewerName');
-  const ratingInput = document.getElementById('newReviewRating');
-  const textInput = document.getElementById('newReviewText');
-
-  const name = nameInput ? nameInput.value.trim() : '';
-  const comment = textInput ? textInput.value.trim() : '';
-  const rating = ratingInput ? parseInt(ratingInput.value) || 5 : 5;
-
-  if (!name || !comment) {
-    alert("Please enter your name and review comment.");
-    return;
-  }
-
-  let custom = {};
-  try {
-    custom = JSON.parse(localStorage.getItem('jk_student_reviews_custom') || '{}');
-  } catch(e) {}
-
-  if (!custom[currentModalBook.name]) {
-    custom[currentModalBook.name] = [];
-  }
-
-  custom[currentModalBook.name].unshift({
-    name: name,
-    role: "Verified Student",
-    rating: rating,
-    date: "Just now",
-    comment: comment
-  });
-
-  localStorage.setItem('jk_student_reviews_custom', JSON.stringify(custom));
-
-  if (nameInput) nameInput.value = '';
-  if (textInput) textInput.value = '';
-  toggleReviewForm();
-
-  renderBookReviews(currentModalBook.name);
-  if (typeof showToast === 'function') {
-    showToast("⭐ Thank you! Your review has been published.");
-  }
+function requestProductReview() {
+  const productName = currentModalBook?.name || 'a JK Study Hub order';
+  const message = encodeURIComponent(`Hi JK Study Hub, I would like to share feedback about ${productName}.`);
+  const reviewWindow = window.open(`https://wa.me/919622605714?text=${message}`, '_blank');
+  if (reviewWindow) reviewWindow.opener = null;
+  else window.location.href = `https://wa.me/919622605714?text=${message}`;
 }
 
 function setModalPhoto(idx) {
@@ -9673,6 +9453,69 @@ function cycleModalPhoto(delta) {
 // ==========================================
 
 let currentStoreCategory = 'all';
+
+function getStoreAdvancedFilterValues() {
+  return {
+    classLevel: document.getElementById('storeClassFilter')?.value || 'all',
+    subject: (document.getElementById('storeSubjectFilter')?.value || '').trim().toLowerCase(),
+    board: document.getElementById('storeBoardFilter')?.value || 'all',
+    minPrice: Number(document.getElementById('storeMinPrice')?.value) || 0,
+    maxPrice: Number(document.getElementById('storeMaxPrice')?.value) || 0,
+    availability: document.getElementById('storeAvailabilityFilter')?.value || 'all'
+  };
+}
+
+function hasActiveStoreAdvancedFilters(filters = getStoreAdvancedFilterValues()) {
+  return filters.classLevel !== 'all' || !!filters.subject || filters.board !== 'all' ||
+    filters.minPrice > 0 || filters.maxPrice > 0 || filters.availability !== 'all';
+}
+
+function matchesStoreAdvancedFilters(card, filters = getStoreAdvancedFilterValues()) {
+  const title = card.querySelector('.product-title, .book-title, h3, h4')?.textContent.trim() || '';
+  const description = card.querySelector('.product-desc, .book-author, p')?.textContent.trim() || '';
+  const content = `${title} ${description} ${card.textContent} ${card.dataset.subject || ''} ${card.dataset.board || ''}`.toLowerCase();
+  const priceText = card.querySelector('.product-price, .book-price')?.textContent || '';
+  const price = Number(priceText.replace(/[^\d.]/g, '')) || 0;
+
+  if (filters.classLevel !== 'all') {
+    const level = filters.classLevel;
+    const classPattern = new RegExp(`\\bclass\\s*${level}\\b|\\b${level}(?:st|nd|rd|th)\\b`, 'i');
+    if (card.dataset.classLevel !== level && !classPattern.test(content)) return false;
+  }
+
+  if (filters.subject && !content.includes(filters.subject)) return false;
+
+  if (filters.board === 'jkbose' && card.dataset.board !== 'JKBOSE' && !/\b(jk\s*bose|jkbose|jk board|jammu and kashmir board)\b/i.test(content)) return false;
+  if (filters.board === 'ncert' && card.dataset.board !== 'NCERT / CBSE' && !/\b(ncert|cbse)\b/i.test(content)) return false;
+
+  if (filters.minPrice && price < filters.minPrice) return false;
+  if (filters.maxPrice && price > filters.maxPrice) return false;
+
+  if (filters.availability !== 'all') {
+    const outOfStock = card.dataset.stockStatus
+      ? card.dataset.stockStatus === 'out_of_stock'
+      : isProductOutOfStock(title);
+    if (filters.availability === 'in_stock' && outOfStock) return false;
+    if (filters.availability === 'out_of_stock' && !outOfStock) return false;
+  }
+  return true;
+}
+
+function applyStoreAdvancedFilters() {
+  handleStoreLiveSearch(document.getElementById('storeSearchInput')?.value || '');
+}
+
+function clearStoreAdvancedFilters() {
+  ['storeClassFilter', 'storeBoardFilter', 'storeAvailabilityFilter'].forEach(id => {
+    const select = document.getElementById(id);
+    if (select) select.value = 'all';
+  });
+  ['storeSubjectFilter', 'storeMinPrice', 'storeMaxPrice'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) input.value = '';
+  });
+  applyStoreAdvancedFilters();
+}
 
 function getCardCategoryType(card) {
   if (!card) return 'all';
@@ -9806,13 +9649,15 @@ function handleStoreLiveSearch(query) {
     allCards.forEach(card => {
       const cardCat = getCardCategoryType(card);
       const catMatch = (currentStoreCategory === 'all' || currentStoreCategory === cardCat);
-      if (catMatch) {
+      if (catMatch && matchesStoreAdvancedFilters(card)) {
         card.style.display = 'flex';
         matchCount++;
       } else {
         card.style.display = 'none';
       }
     });
+    const hasAdvancedFilters = hasActiveStoreAdvancedFilters();
+    if (emptyState) emptyState.style.display = hasAdvancedFilters && matchCount === 0 ? 'block' : 'none';
 
     if (secComingSoon) {
       const parentHeading = secComingSoon.closest('div');
@@ -9854,9 +9699,9 @@ function handleStoreLiveSearch(query) {
     }
 
     if (feedback && countText) {
-      if (currentStoreCategory !== 'all') {
+      if (currentStoreCategory !== 'all' || hasAdvancedFilters) {
         feedback.style.display = 'flex';
-        countText.innerText = `Showing ${currentStoreCategory.toUpperCase()} (${matchCount} items)`;
+        countText.innerText = `Showing ${matchCount} matching item${matchCount === 1 ? '' : 's'}`;
       } else {
         feedback.style.display = 'none';
       }
@@ -9878,6 +9723,7 @@ function handleStoreLiveSearch(query) {
     const imgEl = card.querySelector('img');
     const img = imgEl ? (imgEl.getAttribute('src') || '') : '';
     const cardCat = getCardCategoryType(card);
+    if (!matchesStoreAdvancedFilters(card)) return;
 
     const titleLower = title.toLowerCase();
     const descLower = desc.toLowerCase();
@@ -9964,7 +9810,7 @@ function handleStoreLiveSearch(query) {
     if (topResultsSec && topResultsGrid) {
       topResultsSec.style.display = 'block';
       if (topResultsHeading) {
-        topResultsHeading.innerHTML = `Matching Products for "<span style="color:#2563eb;">${query}</span>" (${scoredMatches.length})`;
+        topResultsHeading.textContent = `Matching Products for "${query}" (${scoredMatches.length})`;
       }
       if (topResultsSubtitle) {
         topResultsSubtitle.innerText = `Top-ranked items surfaced first. Tap Buy Now or Add to Cart to order.`;
@@ -10161,7 +10007,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 185,
     "mrp": 200,
-    "badge": "⭐ Top Rated",
+    "badge": "✨ Featured",
     "desc": "CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.",
     "photos": [
       "images/products/classmate-geometry-box-1.jpg"
@@ -10282,25 +10128,20 @@ function registerCustomProductInCatalogs(p) {
   // Register in PRODUCT_CATALOG
   if (typeof PRODUCT_CATALOG !== 'undefined') {
     PRODUCT_CATALOG[prodName] = {
-      author: p.category === 'books' ? 'JK Study Hub Verified' : 'JK Study Hub Official',
+      author: p.author || '',
       mrp: mrp,
       price: price,
       category: p.category || 'books',
       badge: p.badge || 'Fresh Stock',
-      rating: '5.0',
-      reviews: 'New',
       image: mainPhoto,
       images: allPhotos,
       desc: p.desc || p.description || '',
-      specs: {
-        length: 'Authentic Edition',
-        width: 'Verified Paper',
-        thickness: 'Study Ready',
-        pages: 'Complete Set',
-        paper: 'Official Stock',
-        binding: 'Original',
-        language: 'English / Urdu'
-      }
+      classLevel: p.classLevel || '',
+      board: p.board || '',
+      subject: p.subject || '',
+      edition: p.edition || '',
+      contents: p.contents || '',
+      specs: p.specs || {}
     };
   }
 
@@ -10309,22 +10150,25 @@ function registerCustomProductInCatalogs(p) {
     const existingIdx = BOOK_CATALOG_DATA.findIndex(b => b.name === prodName);
     const entry = {
       name: prodName,
-      author: p.category === 'books' ? 'JK Study Hub Verified' : 'JK Study Hub Official',
+      author: p.author || '',
       mrp: mrp,
       price: price,
       category: p.category || 'books',
       badge: p.badge || 'Fresh Stock',
-      rating: '5.0',
-      reviews: 'New',
       desc: p.desc || p.description || '',
       photos: allPhotos,
       allImages: allPhotos,
       dimSvg: allPhotos[allPhotos.length - 1] || mainPhoto,
-      length: 'Authentic Edition',
-      width: 'Verified Paper',
-      thickness: 'Study Ready',
-      pages: 'Complete Set',
-      paper: 'Official Stock'
+      classLevel: p.classLevel || '',
+      board: p.board || '',
+      subject: p.subject || '',
+      edition: p.edition || '',
+      contents: p.contents || '',
+      length: p.length || '',
+      width: p.width || '',
+      thickness: p.thickness || '',
+      pages: p.pages || '',
+      paper: p.paper || ''
     };
     if (existingIdx >= 0) {
       BOOK_CATALOG_DATA[existingIdx] = entry;
@@ -10704,6 +10548,11 @@ async function syncCustomProductsWithSheet() {
               photos: prodPhotos,
               image: prodPhotos[0] || 'images/logo-app.png',
               allImages: prodPhotos,
+              classLevel: p.classLevel || '',
+              board: p.board || '',
+              subject: p.subject || '',
+              edition: p.edition || '',
+              contents: p.contents || '',
               status: p.status || 'Active',
               timestamp: p.timestamp || ''
             };
@@ -10792,6 +10641,11 @@ async function syncCustomProductsWithSheet() {
             const prodCategory = (parsedMeta && parsedMeta.category) || 'stationery';
             const prodBadge = (parsedMeta && parsedMeta.badge) || '✨ Fresh Stock';
             const prodDesc = (parsedMeta && (parsedMeta.desc || parsedMeta.description)) || (o.notes !== 'Owner Catalog Listing' && o.notes !== 'Seller Catalog Listing' ? o.notes : '') || '';
+            const prodClassLevel = (parsedMeta && parsedMeta.classLevel) || '';
+            const prodBoard = (parsedMeta && parsedMeta.board) || '';
+            const prodSubject = (parsedMeta && parsedMeta.subject) || '';
+            const prodEdition = (parsedMeta && parsedMeta.edition) || '';
+            const prodContents = (parsedMeta && parsedMeta.contents) || '';
             
             let prodPhotos = [];
             if (parsedMeta && Array.isArray(parsedMeta.photos) && parsedMeta.photos.length > 0) {
@@ -10816,6 +10670,11 @@ async function syncCustomProductsWithSheet() {
               photos: prodPhotos,
               image: prodPhotos[0] || 'images/logo-app.png',
               allImages: prodPhotos,
+              classLevel: prodClassLevel,
+              board: prodBoard,
+              subject: prodSubject,
+              edition: prodEdition,
+              contents: prodContents,
               status: (parsedMeta && parsedMeta.status) || 'Active',
               timestamp: (parsedMeta && parsedMeta.timestamp) || o.timestamp || ''
             };
@@ -10850,11 +10709,20 @@ async function syncCustomProductsWithSheet() {
           mergedMap.set(sp.id, sp);
         } else {
           const existing = mergedMap.get(sp.id);
+          const merged = {
+            ...existing,
+            ...sp,
+            classLevel: sp.classLevel || existing.classLevel || '',
+            board: sp.board || existing.board || '',
+            subject: sp.subject || existing.subject || '',
+            edition: sp.edition || existing.edition || '',
+            contents: sp.contents || existing.contents || ''
+          };
           // If existing already has clean images/ path, preserve it!
           if (existing.image && existing.image.startsWith('images/')) {
-            mergedMap.set(sp.id, { ...sp, photos: existing.photos, image: existing.image, allImages: existing.photos });
+            mergedMap.set(sp.id, { ...merged, photos: existing.photos, image: existing.image, allImages: existing.photos });
           } else {
-            mergedMap.set(sp.id, sp);
+            mergedMap.set(sp.id, merged);
           }
         }
       });
@@ -10989,7 +10857,6 @@ function renderDynamicStoreProducts() {
 
   section.style.display = 'block';
 
-  const delInfo = getEstimatedDeliveryInfo();
   let html = '';
   CUSTOM_PRODUCTS.forEach((prod, index) => {
     const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
@@ -11002,11 +10869,17 @@ function renderDynamicStoreProducts() {
     const mrp = getCustomMrp(pName, rawMrp);
     const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
     const badgeText = prod.badge || '✨ Fresh Stock';
+    const safeClassLevel = /^[0-9]{1,2}$/.test(String(prod.classLevel || '')) ? String(prod.classLevel) : '';
+    const safeBoard = ['JKBOSE', 'NCERT / CBSE'].includes(prod.board) ? prod.board : '';
+    const stock = getProductStock(pName);
+    const isOutOfStock = stock.status === 'out_of_stock' || Number(stock.qty) <= 0;
+    const isLowStock = !isOutOfStock && (stock.status === 'low_stock' || (Number(stock.qty) > 0 && Number(stock.qty) <= 5));
+    const stockLabel = isOutOfStock ? 'Out of stock' : (isLowStock ? `Only ${Number(stock.qty)} left` : 'In stock');
 
     // Photos track
     let trackHtml = '';
     photos.forEach((ph, pIdx) => {
-      trackHtml += `<img src="${ph}" alt="${prod.name} - Photo ${pIdx + 1}" class="carousel-img ${pIdx === 0 ? 'active' : ''}" loading="lazy" onclick="openBookDetailsModal('${safeName}')">`;
+      trackHtml += `<img src="${ph}" alt="${safeEscape(pName)} - Photo ${pIdx + 1}" class="carousel-img ${pIdx === 0 ? 'active' : ''}" loading="lazy" decoding="async" onclick="openBookDetailsModal('${safeName}')">`;
     });
 
     // Carousel dots
@@ -11018,7 +10891,7 @@ function renderDynamicStoreProducts() {
     }
 
     html += `
-      <div class="book-product-card" data-category="${prod.category || 'books'}">
+      <div class="book-product-card" data-category="${safeEscape(prod.category || 'books')}" data-class-level="${safeClassLevel}" data-board="${safeEscape(safeBoard)}" data-subject="${safeEscape(prod.subject || '')}" data-stock-status="${isOutOfStock ? 'out_of_stock' : (isLowStock ? 'low_stock' : 'in_stock')}">
         <button class="wishlist-icon" onclick="toggleFavorite(this, '${safeName}')"><i class="fa-solid fa-heart"></i></button>
         <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ${badgeText}</span>
         
@@ -11042,24 +10915,23 @@ function renderDynamicStoreProducts() {
 
         <div class="product-info">
           <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
-            ${(prod.category || 'books').toUpperCase()}
+            ${safeEscape(prod.category || 'books')}${safeClassLevel ? ` · Class ${safeClassLevel}` : ''}${safeBoard ? ` · ${safeEscape(safeBoard)}` : ''}${prod.subject ? ` · ${safeEscape(prod.subject)}` : ''}
           </div>
-          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('${safeName}')">${prod.name || prod.title}</h3>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('${safeName}')">${safeEscape(pName)}</h3>
           
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9</span>
-            <span class="student-trust-badge"><i class="fa-solid fa-circle-check"></i> Verified Edition</span>
-            <span style="margin-left:auto; background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In Stock</span>
+            <span class="student-trust-badge">${safeClassLevel || safeBoard ? 'Catalog details' : 'Seller listing'}</span>
+            <span style="margin-left:auto; background:${isOutOfStock ? '#fef2f2' : (isLowStock ? '#fffbeb' : '#f0fdf4')}; color:${isOutOfStock ? '#b91c1c' : (isLowStock ? '#b45309' : '#166534')}; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">${stockLabel}</span>
           </div>
 
-          <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Get it by <strong>${delInfo.label}</strong></div>
+          <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Check delivery options and charges at checkout</div>
 
           <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
             <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('${safeName}')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
             <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('${safeName}', ${price})"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
           </div>
 
-          <p class="product-desc">${prod.desc || prod.description || 'Authentic verified student edition from JK Study Hub.'}</p>
+          <p class="product-desc">${safeEscape(prod.desc || prod.description || 'Product description not provided in the listing.')}</p>
           
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
