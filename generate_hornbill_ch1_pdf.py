@@ -11,7 +11,11 @@ from reportlab.pdfgen import canvas
 os.makedirs('cyqs', exist_ok=True)
 PDF_PATH = 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf'
 
-class CYQBrandedCanvas(canvas.Canvas):
+class CYQNumberedCanvas(canvas.Canvas):
+    """
+    Saves page states and only draws the dynamic 'Page X of Y' string at the bottom,
+    leaving all background decorations and watermark in the true background.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._saved_page_states = []
@@ -24,90 +28,95 @@ class CYQBrandedCanvas(canvas.Canvas):
         num_pages = len(self._saved_page_states)
         for state in self._saved_page_states:
             self.__dict__.update(state)
-            self.draw_decorations(num_pages)
+            w, h = A4
+            self.setFont('Helvetica-Bold', 8.5)
+            self.setFillColor(colors.HexColor('#1e293b'))
+            self.drawRightString(w - 38, 24, f"Page {self._pageNumber} of {num_pages}")
             super().showPage()
         super().save()
 
-    def draw_decorations(self, total_pages):
-        page_num = self._pageNumber
-        w, h = A4
 
-        # ----------------------------------------------------
-        # 1. Subtle Diagonal Watermark
-        # ----------------------------------------------------
-        self.saveState()
-        self.setFont('Helvetica-Bold', 46)
-        self.setFillColor(colors.HexColor('#f1f5f9'))
-        self.translate(w / 2.0, h / 2.0)
-        self.rotate(45)
-        self.drawCentredString(0, 0, "JKSTUDYHUB.ONLINE")
-        self.restoreState()
+def draw_page_background(canvas_obj, doc):
+    """
+    Drawn BEFORE any flowable text is placed onto the page,
+    ensuring the watermark is placed underneath the text in the true background.
+    """
+    w, h = A4
+    page_num = canvas_obj._pageNumber
 
-        # ----------------------------------------------------
-        # 2. Header
-        # ----------------------------------------------------
-        if page_num == 1:
-            # Full Navy Header Block
-            self.setFillColor(colors.HexColor('#091e42'))  # deep navy
-            self.rect(0, h - 58, w, 58, fill=True, stroke=False)
+    # ----------------------------------------------------
+    # 1. True Background Watermark (Faint 5% Opacity, Centered)
+    # ----------------------------------------------------
+    canvas_obj.saveState()
+    canvas_obj.setFont('Helvetica-Bold', 44)
+    canvas_obj.setFillAlpha(0.05)  # Very faint so it never interferes with text
+    canvas_obj.setFillColor(colors.HexColor('#0f172a'))
+    canvas_obj.translate(w / 2.0, h / 2.0)
+    canvas_obj.rotate(45)
+    canvas_obj.drawCentredString(0, 0, "JKSTUDYHUB.ONLINE")
+    canvas_obj.restoreState()
 
-            # Left Branding Text
-            self.setFont('Helvetica-Bold', 16)
-            self.setFillColor(colors.white)
-            self.drawString(38, h - 28, "JK STUDY HUB")
+    # ----------------------------------------------------
+    # 2. Header Block
+    # ----------------------------------------------------
+    if page_num == 1:
+        # Full Navy Header Block
+        canvas_obj.setFillColor(colors.HexColor('#091e42'))
+        canvas_obj.rect(0, h - 58, w, 58, fill=True, stroke=False)
 
-            self.setFont('Helvetica', 8)
-            self.setFillColor(colors.HexColor('#93c5fd'))
-            self.drawString(38, h - 44, "JAMMU & KASHMIR BOARD EXAMINATION PORTAL  |  SESSION 2025-26")
+        # Left Branding Text
+        canvas_obj.setFont('Helvetica-Bold', 16)
+        canvas_obj.setFillColor(colors.white)
+        canvas_obj.drawString(38, h - 28, "JK STUDY HUB")
 
-            # Right Portal URL
-            self.setFont('Helvetica-Bold', 11)
-            self.setFillColor(colors.HexColor('#38bdf8'))
-            self.drawRightString(w - 38, h - 30, "jkstudyhub.online")
+        canvas_obj.setFont('Helvetica', 8)
+        canvas_obj.setFillColor(colors.HexColor('#93c5fd'))
+        canvas_obj.drawString(38, h - 44, "JAMMU & KASHMIR BOARD EXAMINATION PORTAL  |  SESSION 2025-26")
 
-            # Secondary Banner Bar
-            self.setFillColor(colors.HexColor('#047857'))  # rich emerald green
-            self.rect(38, h - 90, w - 76, 26, fill=True, stroke=False)
+        # Right Portal URL
+        canvas_obj.setFont('Helvetica-Bold', 11)
+        canvas_obj.setFillColor(colors.HexColor('#38bdf8'))
+        canvas_obj.drawRightString(w - 38, h - 30, "jkstudyhub.online")
 
-            self.setFont('Helvetica-Bold', 9.5)
-            self.setFillColor(colors.white)
-            self.drawString(48, h - 77, "CLASS 11TH ENGLISH (HORNBILL)  •  COMPLETE CHAPTER SUMMARY")
+        # Secondary Banner Bar
+        canvas_obj.setFillColor(colors.HexColor('#047857'))
+        canvas_obj.rect(38, h - 90, w - 76, 26, fill=True, stroke=False)
 
-            self.setFont('Helvetica-Bold', 8)
-            self.setFillColor(colors.HexColor('#a7f3d0'))
-            self.drawRightString(w - 48, h - 77, "NCERT / JKBOSE BOARD SYLLABUS")
-        else:
-            # Compact Top Header for Subsequent Pages
-            self.setFillColor(colors.HexColor('#091e42'))
-            self.rect(0, h - 42, w, 42, fill=True, stroke=False)
+        canvas_obj.setFont('Helvetica-Bold', 9.5)
+        canvas_obj.setFillColor(colors.white)
+        canvas_obj.drawString(48, h - 77, "CLASS 11TH ENGLISH (HORNBILL)  •  COMPLETE CHAPTER SUMMARY")
 
-            self.setFont('Helvetica-Bold', 10.5)
-            self.setFillColor(colors.white)
-            self.drawString(38, h - 26, "JK STUDY HUB  |  Class 11th English (Hornbill)")
+        canvas_obj.setFont('Helvetica-Bold', 8)
+        canvas_obj.setFillColor(colors.HexColor('#a7f3d0'))
+        canvas_obj.drawRightString(w - 48, h - 77, "NCERT / JKBOSE BOARD SYLLABUS")
+    else:
+        # Compact Top Header for Subsequent Pages
+        canvas_obj.setFillColor(colors.HexColor('#091e42'))
+        canvas_obj.rect(0, h - 42, w, 42, fill=True, stroke=False)
 
-            self.setFont('Helvetica-Bold', 9.5)
-            self.setFillColor(colors.HexColor('#38bdf8'))
-            self.drawRightString(w - 38, h - 26, "Ch 1: The Portrait of a Lady — Khushwant Singh")
+        canvas_obj.setFont('Helvetica-Bold', 10.5)
+        canvas_obj.setFillColor(colors.white)
+        canvas_obj.drawString(38, h - 26, "JK STUDY HUB  |  Class 11th English (Hornbill)")
 
-            # Thin accent line below runner
-            self.setStrokeColor(colors.HexColor('#047857'))
-            self.setLineWidth(2)
-            self.line(0, h - 44, w, h - 44)
+        canvas_obj.setFont('Helvetica-Bold', 9.5)
+        canvas_obj.setFillColor(colors.HexColor('#38bdf8'))
+        canvas_obj.drawRightString(w - 38, h - 26, "Ch 1: The Portrait of a Lady — Khushwant Singh")
 
-        # ----------------------------------------------------
-        # 3. Footer
-        # ----------------------------------------------------
-        self.setStrokeColor(colors.HexColor('#cbd5e1'))
-        self.setLineWidth(0.75)
-        self.line(38, 38, w - 38, 38)
+        # Thin accent line below runner
+        canvas_obj.setStrokeColor(colors.HexColor('#047857'))
+        canvas_obj.setLineWidth(2)
+        canvas_obj.line(0, h - 44, w, h - 44)
 
-        self.setFont('Helvetica', 7.5)
-        self.setFillColor(colors.HexColor('#64748b'))
-        self.drawString(38, 24, "JK STUDY HUB | OFFICIAL EDUCATIONAL & BOARD RESOURCE PORTAL | HTTPS://JKSTUDYHUB.ONLINE/")
+    # ----------------------------------------------------
+    # 3. Footer Base Line & Branding
+    # ----------------------------------------------------
+    canvas_obj.setStrokeColor(colors.HexColor('#cbd5e1'))
+    canvas_obj.setLineWidth(0.75)
+    canvas_obj.line(38, 38, w - 38, 38)
 
-        self.setFont('Helvetica-Bold', 8.5)
-        self.setFillColor(colors.HexColor('#1e293b'))
-        self.drawRightString(w - 38, 24, f"Page {page_num} of {total_pages}")
+    canvas_obj.setFont('Helvetica', 7.5)
+    canvas_obj.setFillColor(colors.HexColor('#64748b'))
+    canvas_obj.drawString(38, 24, "JK STUDY HUB | OFFICIAL EDUCATIONAL & BOARD RESOURCE PORTAL | HTTPS://JKSTUDYHUB.ONLINE/")
 
 
 def build_pdf():
@@ -122,7 +131,7 @@ def build_pdf():
 
     styles = getSampleStyleSheet()
 
-    # Custom Paragraph Styles with larger, comfortable typography
+    # Custom Paragraph Styles with large, crisp, legible typography
     ch_title_style = ParagraphStyle(
         'ChapterTitle',
         fontName='Helvetica-Bold',
@@ -162,17 +171,6 @@ def build_pdf():
         keepWithNext=True
     )
 
-    h2_style = ParagraphStyle(
-        'Heading2Custom',
-        fontName='Helvetica-Bold',
-        fontSize=11.5,
-        leading=15,
-        textColor=colors.HexColor('#065f46'),
-        spaceBefore=10,
-        spaceAfter=4,
-        keepWithNext=True
-    )
-
     body_style = ParagraphStyle(
         'BodyCustom',
         fontName='Helvetica',
@@ -180,17 +178,7 @@ def build_pdf():
         leading=16,
         textColor=colors.HexColor('#1e293b'),
         spaceAfter=8,
-        alignment=4 # Justified
-    )
-
-    quote_style = ParagraphStyle(
-        'QuoteStyle',
-        fontName='Helvetica-Oblique',
-        fontSize=10.5,
-        leading=15,
-        textColor=colors.HexColor('#1e3a8a'),
-        spaceBefore=4,
-        spaceAfter=6
+        alignment=4  # Justified
     )
 
     bullet_style = ParagraphStyle(
@@ -235,7 +223,7 @@ def build_pdf():
     story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#047857'), spaceAfter=12, spaceBefore=0))
 
     # -----------------------------------------------------------------
-    # Section: Overview & Introduction
+    # Section 1: Overview & Introduction
     # -----------------------------------------------------------------
     story.append(Paragraph("1. Chapter Overview & Introduction", h1_style))
     story.append(Paragraph(
@@ -255,7 +243,7 @@ def build_pdf():
     ))
 
     # -----------------------------------------------------------------
-    # Section: Childhood in the Village
+    # Section 2: Childhood in the Village
     # -----------------------------------------------------------------
     story.append(Paragraph("2. Phase I: Childhood Days in the Village", h1_style))
     story.append(Paragraph(
@@ -274,7 +262,7 @@ def build_pdf():
     story.append(Paragraph("• <b>Feeding Village Dogs:</b> On their walk back home, stray village dogs gathered at the temple door. The grandmother fed them pieces of stale chapattis, and the dogs growled and fought among themselves as they followed them home.", bullet_style))
 
     # -----------------------------------------------------------------
-    # Section: Turning Point - City Life
+    # Section 3: Turning Point - City Life
     # -----------------------------------------------------------------
     story.append(Paragraph("3. Phase II: Shift to the City — The Turning Point", h1_style))
     story.append(Paragraph(
@@ -293,7 +281,7 @@ def build_pdf():
     story.append(Paragraph("• <b>The Disapproval of Music:</b> When the author announced that he was taking music lessons at school, she was deeply distressed. To her orthodox mindset, music was the monopoly of beggars and harlots, unsuitable for gentlemen. She rarely spoke to him after that, expressing her disapproval through dignified silence.", bullet_style))
 
     # -----------------------------------------------------------------
-    # Section: University & Separation
+    # Section 4: University & Separation
     # -----------------------------------------------------------------
     story.append(Paragraph("4. Phase III: University Days, Seclusion & Loneliness", h1_style))
     story.append(Paragraph(
@@ -310,7 +298,7 @@ def build_pdf():
     story.append(Paragraph("2. <b>The Happiest Half-Hour (Sparrow Feeding):</b> In the afternoon, she broke bread into tiny crumbs and scattered them in the veranda. Hundreds of sparrows flocked around her—perching on her feet, sitting on her lap, shoulders, and even resting on her head. She never shooed them away; instead, she smiled and softly talked to them. This peaceful ritual was without doubt the happiest half-hour of her entire day.", bullet_style))
 
     # -----------------------------------------------------------------
-    # Section: Departure Abroad & Reunion
+    # Section 5: Departure Abroad & Reunion
     # -----------------------------------------------------------------
     story.append(Paragraph("5. Author's Departure Abroad & Return After 5 Years", h1_style))
     story.append(Paragraph(
@@ -329,7 +317,7 @@ def build_pdf():
     ))
 
     # -----------------------------------------------------------------
-    # Section: The Unusual Evening & The Demise
+    # Section 6: The Unusual Evening & Demise
     # -----------------------------------------------------------------
     story.append(Paragraph("6. The Unusual Evening & The Peaceful Demise", h1_style))
     story.append(Paragraph(
@@ -348,7 +336,7 @@ def build_pdf():
     ))
 
     # -----------------------------------------------------------------
-    # Section: The Sparrows' Silent Mourning
+    # Section 7: The Sparrows' Silent Mourning
     # -----------------------------------------------------------------
     story.append(Paragraph("7. The Sparrows' Silent Mourning", h1_style))
     story.append(Paragraph(
@@ -365,7 +353,7 @@ def build_pdf():
     ))
 
     # -----------------------------------------------------------------
-    # Section: Key Themes & Examination Takeaways Box
+    # Section 8: Examination Takeaways Box
     # -----------------------------------------------------------------
     story.append(Spacer(1, 8))
     
@@ -396,7 +384,13 @@ def build_pdf():
 
     story.append(exam_table)
 
-    doc.build(story, canvasmaker=CYQBrandedCanvas)
+    # Build document with draw_page_background callback
+    doc.build(
+        story,
+        canvasmaker=CYQNumberedCanvas,
+        onFirstPage=draw_page_background,
+        onLaterPages=draw_page_background
+    )
     print(f"Successfully generated {PDF_PATH} ({os.path.getsize(PDF_PATH)} bytes)")
 
 if __name__ == '__main__':

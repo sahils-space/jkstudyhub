@@ -1038,6 +1038,34 @@ const SYLLABUS_PDF_DATA = {
       type: paperType || 'Board Paper'
     }));
 
+    if (p.isHornbillHub) {
+      return `
+        <div class="modal-paper-item" onclick="if (!event.target.closest('.item-actions') && !event.target.closest('.item-btn-star')) { openHornbillChaptersModal(activeCyqContext); }" style="cursor: pointer; border: 1.5px solid #10b981; background: #f0fdf4;">
+          <div class="item-info">
+            <div class="item-icon" style="background: #047857; color: white;">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="item-text">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span style="background: #047857; color: white; font-size: 10px; font-weight: 800; padding: 1px 7px; border-radius: 4px; text-transform: uppercase;">Chapter Hub</span>
+                <span style="font-size: 11px; color: #047857; font-weight: 700;">NCERT / JKBOSE Literature</span>
+              </div>
+              <h4 style="color: #064e3b; font-weight: 800;">${p.name}</h4>
+              <p><i class="fa-solid fa-layer-group" style="color: #059669;"></i> ${p.marks}</p>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button type="button" class="item-btn-open" style="background: #047857; color: white; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;" onclick="openHornbillChaptersModal(activeCyqContext);">
+              <i class="fa-solid fa-folder-open"></i> Open Chapters
+            </button>
+            <a href="${p.file}" target="_blank" class="item-btn-open" style="background: #059669; color: white;" title="View Chapter 1 Summary PDF directly" onclick="handlePaperAccess('${safeData}', 'Viewed')">
+              <i class="fa-solid fa-eye"></i> Ch 1
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
     return `
       <div class="modal-paper-item" onclick="if (!event.target.closest('.item-actions') && !event.target.closest('.item-btn-star')) { window.open('${p.file}', '_blank'); handlePaperAccess('${safeData}', 'Viewed'); }" style="cursor: pointer;">
         <div class="item-info">
@@ -1133,13 +1161,129 @@ const SYLLABUS_PDF_DATA = {
   const modalCyqSubtitle = document.getElementById('modalCyqSubtitle');
   const modalCyqList = document.getElementById('modalCyqList');
 
+  let activeCyqContext = '11-med';
+
   const HORNBILL_SUMMARY_PAPER = {
     name: 'Hornbill: Complete Chapters Summary',
-    marks: 'Chapter 1: The Portrait of a Lady by Khushwant Singh (Full Detailed Summary)',
+    marks: 'Chapter 1: The Portrait of a Lady (Available) • Ch 2 & 3 in Preparation',
+    isHornbillHub: true,
     file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
     icon: 'fa-book-open',
-    badge: 'Hornbill Summary'
+    badge: 'Hornbill Hub'
   };
+
+  const HORNBILL_CHAPTERS = [
+    {
+      id: 1,
+      type: 'Prose',
+      title: 'Chapter 1: The Portrait of a Lady',
+      author: 'Khushwant Singh',
+      desc: 'Autobiographical memoir of the author\'s grandmother, her spiritual devotion, and the sparrows\' silent mourning.',
+      file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
+    },
+    {
+      id: 2,
+      type: 'Prose',
+      title: "Chapter 2: We're Not Afraid to Die... if We Can All Be Together",
+      author: 'Gordon Cook & Alan East',
+      desc: 'Heroic survival journey of a family facing turbulent storms and monstrous waves in the Southern Indian Ocean.',
+      file: '',
+      status: 'pending',
+      badge: 'Adding Next'
+    },
+    {
+      id: 3,
+      type: 'Prose',
+      title: 'Chapter 3: Discovering Tut: The Saga Continues',
+      author: 'A.R. Williams',
+      desc: 'Fascinating forensic investigation, CT scans, and historical mystery of Egypt\'s teenage king Tutankhamun.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 4,
+      type: 'Poem',
+      title: 'Poem 1: A Photograph',
+      author: 'Shirley Toulson',
+      desc: 'Emotional contemplation on a vintage snapshot of the poet\'s mother, mortality, and the silence of loss.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 5,
+      type: 'Poem',
+      title: 'Poem 2: The Laburnum Top',
+      author: 'Ted Hughes',
+      desc: 'The sudden burst of life, sound, and vitality brought by a mother goldfinch to a silent yellow laburnum tree.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 6,
+      type: 'Poem',
+      title: 'Poem 3: The Voice of the Rain',
+      author: 'Walt Whitman',
+      desc: 'Nature\'s cyclic poem: rain rising invisible from the land, quenching drought, and returning with blessings.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 7,
+      type: 'Poem',
+      title: 'Poem 4: Childhood',
+      author: 'Markus Natten',
+      desc: 'Reflective philosophical inquiry into when childhood innocence vanished and adult hypocrisy began.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 8,
+      type: 'Prose',
+      title: 'Chapter 4: The Browning Version',
+      author: 'Terence Rattigan',
+      desc: 'One-act drama highlighting classical teacher Andrew Crocker-Harris, student Taplow, and emotional loneliness.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 9,
+      type: 'Prose',
+      title: 'Chapter 5: The Adventure',
+      author: 'Jayant Narlikar',
+      desc: 'Professor Gangadharpant Gaitonde\'s mind-bending journey into an alternate timeline where the Marathas won Panipat.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 10,
+      type: 'Prose',
+      title: 'Chapter 6: Silk Road',
+      author: 'Nick Middleton',
+      desc: 'Vivid travelogue traversing the Tibetan plateau, salt flats, and treacherous passes on the pilgrim path to Mount Kailash.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    },
+    {
+      id: 11,
+      type: 'Poem',
+      title: 'Poem 5: Father to Son',
+      author: 'Elizabeth Jennings',
+      desc: 'A poignant exploration of generational estrangement, emotional distance, and yearning for familial love.',
+      file: '',
+      status: 'upcoming',
+      badge: 'Upcoming'
+    }
+  ];
 
   const CYQ_DATA = {
     '11-med': {
@@ -1243,6 +1387,7 @@ const SYLLABUS_PDF_DATA = {
   };
 
   window.openCyqModal = function(contextKey) {
+    activeCyqContext = contextKey;
     const data = CYQ_DATA[contextKey];
     if (!data || !cyqModalOverlay) return;
 
@@ -1280,6 +1425,118 @@ const SYLLABUS_PDF_DATA = {
   window.closeCyqModal = function(e) {
     if (e.target === cyqModalOverlay) {
       closeCyqModalDirect();
+    }
+  };
+
+  // =========================================================
+  // HORNBILL CHAPTERS SUB-MENU MODAL CONTROLLER
+  // =========================================================
+
+  const hornbillModalOverlay = document.getElementById('hornbillModalOverlay');
+  const modalHornbillList = document.getElementById('modalHornbillList');
+
+  window.openHornbillChaptersModal = function(fromContext) {
+    if (fromContext) activeCyqContext = fromContext;
+    if (cyqModalOverlay) cyqModalOverlay.classList.remove('active');
+
+    if (!hornbillModalOverlay || !modalHornbillList) return;
+
+    let html = `
+      <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
+        <span style="font-size: 22px;">📚</span>
+        <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
+          <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
+          <strong>Chapter 1 (The Portrait of a Lady)</strong> is ready and available in official CYQ PDF format below. Additional chapters (Ch 2, Ch 3...) will be activated as we add them.
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+    `;
+
+    HORNBILL_CHAPTERS.forEach((c) => {
+      const isAvailable = c.status === 'available';
+      const isPending = c.status === 'pending';
+
+      const borderStyle = isAvailable ? 'border: 1.5px solid #059669; background: #ffffff; box-shadow: 0 2px 8px rgba(5,150,105,0.08);' : (isPending ? 'border: 1.5px solid #fde68a; background: #fffbeb;' : 'border: 1px solid #e2e8f0; background: #f8fafc; opacity: 0.85;');
+      const badgeBg = isAvailable ? '#ecfdf5' : (isPending ? '#fef3c7' : '#f1f5f9');
+      const badgeColor = isAvailable ? '#047857' : (isPending ? '#b45309' : '#64748b');
+      const badgeBorder = isAvailable ? '#a7f3d0' : (isPending ? '#fcd34d' : '#e2e8f0');
+
+      let actionHtml = '';
+      if (isAvailable) {
+        const safeData = encodeURIComponent(JSON.stringify({
+          name: c.title,
+          file: c.file,
+          marks: c.author,
+          icon: 'fa-book-open',
+          type: 'Hornbill Summary'
+        }));
+        actionHtml = `
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <a href="${c.file}" target="_blank" class="item-btn-open" style="background: #047857; color: #ffffff; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;" onclick="handlePaperAccess('${safeData}', 'Viewed')">
+              <i class="fa-solid fa-eye"></i> View Summary
+            </a>
+            <a href="${c.file}" download class="item-btn-open" style="background: #0f172a; color: #ffffff; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;" title="Download PDF" onclick="handlePaperAccess('${safeData}', 'Downloaded')">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        `;
+      } else if (isPending) {
+        actionHtml = `
+          <span style="background: #fef3c7; color: #92400e; font-size: 11.5px; font-weight: 700; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #fde68a;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Adding Next
+          </span>
+        `;
+      } else {
+        actionHtml = `
+          <span style="background: #f1f5f9; color: #94a3b8; font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: 8px;">
+            Upcoming
+          </span>
+        `;
+      }
+
+      html += `
+        <div style="border-radius: 12px; padding: 14px 16px; ${borderStyle} display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; transition: all 0.2s ease;">
+          <div style="flex: 1; min-width: 240px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder}; font-size: 10.5px; font-weight: 800; padding: 1px 7px; border-radius: 9999px;">
+                ${c.badge}
+              </span>
+              <span style="font-size: 11px; font-weight: 700; color: #64748b;">${c.type}</span>
+            </div>
+            <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #0f172a;">${c.title}</h4>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #047857; font-weight: 600;"><i class="fa-solid fa-pen-nib" style="margin-right: 4px; font-size: 11px;"></i>${c.author}</p>
+            <p style="margin: 4px 0 0; font-size: 11.5px; color: #64748b; line-height: 1.4;">${c.desc}</p>
+          </div>
+          <div>
+            ${actionHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    modalHornbillList.innerHTML = html;
+    hornbillModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeHornbillModalDirect = function() {
+    if (hornbillModalOverlay) {
+      hornbillModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.closeHornbillModal = function(e) {
+    if (e.target === hornbillModalOverlay) {
+      closeHornbillModalDirect();
+    }
+  };
+
+  window.backToCyqModal = function() {
+    closeHornbillModalDirect();
+    if (window.openCyqModal && activeCyqContext) {
+      window.openCyqModal(activeCyqContext);
     }
   };
 

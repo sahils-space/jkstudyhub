@@ -569,6 +569,32 @@
     </div>
   </div>
 
+  <!-- Interactive Hornbill Chapters Sub-Menu Modal -->
+  <div class="modal-overlay" id="hornbillModalOverlay" onclick="closeHornbillModal(event)">
+    <div class="modal-card" id="hornbillModalCard" style="max-width: 680px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #064e3b, #047857);">
+        <div class="modal-title-wrap">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase;">Class 11th English Core</span>
+            <span style="color: #a7f3d0; font-size: 12px; font-weight: 700;">NCERT & JKBOSE</span>
+          </div>
+          <h3 id="modalHornbillTitle" style="color: #fff; font-size: 18px; font-weight: 800; margin: 0;">Hornbill: Complete Chapters Summary</h3>
+          <p id="modalHornbillSubtitle" style="color: #d1fae5; font-size: 12.5px; margin: 2px 0 0;">Chapter-wise revision notes, character sketches & examination summaries</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeHornbillModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalHornbillList" style="max-height: 70vh; overflow-y: auto; padding: 18px 20px;">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+        <button type="button" onclick="backToCyqModal()" style="background: transparent; color: #047857; border: 1.5px solid #047857; padding: 7px 16px; border-radius: 9999px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-arrow-left"></i> Back to CYQs
+        </button>
+        <button type="button" onclick="closeHornbillModalDirect()" style="background: #064e3b; color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Interactive PYQs (Previous Year Board Papers) Popup Modal -->
   <div class="modal-overlay" id="pyqModalOverlay" onclick="closePyqModal(event)">
     <div class="modal-card" id="pyqModalCard">
@@ -852,7 +878,7 @@
   <script src="analytics.js?v=1"></script>
 
   <!-- Syllabus Dataset & Main JavaScript File -->
-  <script src="script.js?v=31"></script>
+  <script src="script.js?v=32"></script>
 
   <!-- Floating Store Button (Right Side on Both Mobile & Laptop) -->
   <a href="store.html" class="floating-store-btn" aria-label="Visit Book &amp; Stationery Store">
