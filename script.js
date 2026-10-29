@@ -1201,6 +1201,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Poem 1'
   };
 
+  const HORNBILL_P2_PAPER = {
+    name: 'Hornbill Poem 2: The Laburnum Top',
+    marks: 'Poet: Ted Hughes • Full Detailed Summary & Poetic Devices',
+    file: 'cyqs/class-11-english-hornbill-the-laburnum-top-summary.pdf',
+    icon: 'fa-feather-pointed',
+    badge: 'Hornbill Poem 2'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1248,9 +1256,9 @@ const SYLLABUS_PDF_DATA = {
       title: 'Poem 2: The Laburnum Top',
       author: 'Ted Hughes',
       desc: 'The sudden burst of life, sound, and vitality brought by a mother goldfinch to a silent yellow laburnum tree.',
-      file: '',
-      status: 'pending',
-      badge: 'Adding Next'
+      file: 'cyqs/class-11-english-hornbill-the-laburnum-top-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 6,
@@ -1259,8 +1267,8 @@ const SYLLABUS_PDF_DATA = {
       author: 'Walt Whitman',
       desc: 'Nature\'s cyclic poem: rain rising invisible from the land, quenching drought, and returning with blessings.',
       file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      status: 'pending',
+      badge: 'Adding Next'
     },
     {
       id: 7,
@@ -1351,7 +1359,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
-        HORNBILL_P1_PAPER
+        HORNBILL_P1_PAPER,
+        HORNBILL_P2_PAPER
       ],
       notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
@@ -1377,7 +1386,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
-        HORNBILL_P1_PAPER
+        HORNBILL_P1_PAPER,
+        HORNBILL_P2_PAPER
       ],
       notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
@@ -1389,7 +1399,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
-        HORNBILL_P1_PAPER
+        HORNBILL_P1_PAPER,
+        HORNBILL_P2_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
@@ -1401,7 +1412,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
-        HORNBILL_P1_PAPER
+        HORNBILL_P1_PAPER,
+        HORNBILL_P2_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
@@ -1498,7 +1510,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapter 1 (The Portrait of a Lady)</strong>, <strong>Chapter 2 (We're Not Afraid to Die...)</strong>, <strong>Chapter 3 (Discovering Tut)</strong>, and <strong>Poem 1 (A Photograph)</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapters 1, 2, 3</strong> and <strong>Poems 1 &amp; 2 (A Photograph, The Laburnum Top)</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
