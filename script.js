@@ -1209,6 +1209,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Poem 2'
   };
 
+  const HORNBILL_P3_PAPER = {
+    name: 'Hornbill Poem 3: The Voice of the Rain',
+    marks: 'Poet: Walt Whitman • Full Detailed Summary & Poetic Devices',
+    file: 'cyqs/class-11-english-hornbill-the-voice-of-the-rain-summary.pdf',
+    icon: 'fa-cloud-showers-heavy',
+    badge: 'Hornbill Poem 3'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1266,9 +1274,9 @@ const SYLLABUS_PDF_DATA = {
       title: 'Poem 3: The Voice of the Rain',
       author: 'Walt Whitman',
       desc: 'Nature\'s cyclic poem: rain rising invisible from the land, quenching drought, and returning with blessings.',
-      file: '',
-      status: 'pending',
-      badge: 'Adding Next'
+      file: 'cyqs/class-11-english-hornbill-the-voice-of-the-rain-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 7,
@@ -1277,8 +1285,8 @@ const SYLLABUS_PDF_DATA = {
       author: 'Markus Natten',
       desc: 'Reflective philosophical inquiry into when childhood innocence vanished and adult hypocrisy began.',
       file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      status: 'pending',
+      badge: 'Adding Next'
     },
     {
       id: 8,
@@ -1360,7 +1368,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER
+        HORNBILL_P2_PAPER,
+        HORNBILL_P3_PAPER
       ],
       notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
@@ -1387,7 +1396,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER
+        HORNBILL_P2_PAPER,
+        HORNBILL_P3_PAPER
       ],
       notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
@@ -1400,7 +1410,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER
+        HORNBILL_P2_PAPER,
+        HORNBILL_P3_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
@@ -1413,7 +1424,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER
+        HORNBILL_P2_PAPER,
+        HORNBILL_P3_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
@@ -1510,7 +1522,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapters 1, 2, 3</strong> and <strong>Poems 1 &amp; 2 (A Photograph, The Laburnum Top)</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapters 1, 2, 3</strong> and <strong>Poems 1, 2 &amp; 3 (A Photograph, The Laburnum Top, The Voice of the Rain)</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
