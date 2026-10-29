@@ -1241,6 +1241,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Prose'
   };
 
+  const HORNBILL_SILK_ROAD_PAPER = {
+    name: 'Hornbill: Silk Road',
+    marks: 'Author: Nick Middleton • Full Detailed Summary & Analysis',
+    file: 'cyqs/class-11-english-hornbill-silk-road-summary.pdf',
+    icon: 'fa-mountain-sun',
+    badge: 'Hornbill Prose'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1348,9 +1356,9 @@ const SYLLABUS_PDF_DATA = {
       title: 'Chapter 6: Silk Road',
       author: 'Nick Middleton',
       desc: 'Vivid travelogue traversing the Tibetan plateau, salt flats, and treacherous passes on the pilgrim path to Mount Kailash.',
-      file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      file: 'cyqs/class-11-english-hornbill-silk-road-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 11,
@@ -1403,6 +1411,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
         HORNBILL_ADVENTURE_PAPER,
+        HORNBILL_SILK_ROAD_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1434,6 +1443,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
         HORNBILL_ADVENTURE_PAPER,
+        HORNBILL_SILK_ROAD_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1451,6 +1461,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
         HORNBILL_ADVENTURE_PAPER,
+        HORNBILL_SILK_ROAD_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1468,6 +1479,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
         HORNBILL_ADVENTURE_PAPER,
+        HORNBILL_SILK_ROAD_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1568,7 +1580,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapters 1, 2, 3, The Ailing Planet, The Adventure</strong> and <strong>Poems 1–4</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapters 1, 2, 3, The Ailing Planet, The Adventure, Silk Road</strong> and <strong>Poems 1–4</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
