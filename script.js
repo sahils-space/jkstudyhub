@@ -1217,6 +1217,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Poem 3'
   };
 
+  const HORNBILL_AILING_PAPER = {
+    name: 'Hornbill: The Ailing Planet',
+    marks: 'Author: Nani Palkhivala • Full Detailed Summary & Analysis',
+    file: 'cyqs/class-11-english-hornbill-the-ailing-planet-summary.pdf',
+    icon: 'fa-earth-americas',
+    badge: 'Hornbill Prose'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1245,6 +1253,16 @@ const SYLLABUS_PDF_DATA = {
       author: 'A.R. Williams',
       desc: 'Fascinating forensic investigation, 1,700 digital CT scans, and historical mystery of Egypt\'s teenage king Tutankhamun.',
       file: 'cyqs/class-11-english-hornbill-discovering-tut-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
+    },
+    {
+      id: 'ailing-planet',
+      type: 'Prose',
+      title: "The Ailing Planet: The Green Movement's Role",
+      author: 'Nani Palkhivala',
+      desc: 'Landmark essay on sustainable development, ecological crisis, the four biological systems, and humanity\'s moral stewardship.',
+      file: 'cyqs/class-11-english-hornbill-the-ailing-planet-summary.pdf',
       status: 'available',
       badge: 'Available Now (PDF)'
     },
@@ -1367,6 +1385,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
+        HORNBILL_AILING_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER
@@ -1395,6 +1414,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
+        HORNBILL_AILING_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER
@@ -1409,6 +1429,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
+        HORNBILL_AILING_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER
@@ -1423,6 +1444,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
+        HORNBILL_AILING_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER
@@ -1522,7 +1544,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapters 1, 2, 3</strong> and <strong>Poems 1, 2 &amp; 3 (A Photograph, The Laburnum Top, The Voice of the Rain)</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapters 1, 2, 3, The Ailing Planet</strong> and <strong>Poems 1, 2 &amp; 3</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
