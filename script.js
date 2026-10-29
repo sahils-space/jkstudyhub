@@ -1040,7 +1040,7 @@ const SYLLABUS_PDF_DATA = {
 
     if (p.isHornbillHub) {
       return `
-        <div class="modal-paper-item" onclick="if (!event.target.closest('.item-actions') && !event.target.closest('.item-btn-star')) { openHornbillChaptersModal(activeCyqContext); }" style="cursor: pointer; border: 1.5px solid #10b981; background: #f0fdf4;">
+        <div class="modal-paper-item" onclick="openHornbillChaptersModal();" style="cursor: pointer; border: 1.5px solid #059669; background: #ecfdf5;">
           <div class="item-info">
             <div class="item-icon" style="background: #047857; color: white;">
               <i class="fa-solid fa-book-open"></i>
@@ -1055,12 +1055,9 @@ const SYLLABUS_PDF_DATA = {
             </div>
           </div>
           <div class="item-actions">
-            <button type="button" class="item-btn-open" style="background: #047857; color: white; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;" onclick="openHornbillChaptersModal(activeCyqContext);">
+            <button type="button" class="item-btn-open" style="background: #047857; color: white; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; border: none; cursor: pointer;" onclick="event.stopPropagation(); openHornbillChaptersModal();">
               <i class="fa-solid fa-folder-open"></i> Open Chapters
             </button>
-            <a href="${p.file}" target="_blank" class="item-btn-open" style="background: #059669; color: white;" title="View Chapter 1 Summary PDF directly" onclick="handlePaperAccess('${safeData}', 'Viewed')">
-              <i class="fa-solid fa-eye"></i> Ch 1
-            </a>
           </div>
         </div>
       `;
@@ -1161,15 +1158,39 @@ const SYLLABUS_PDF_DATA = {
   const modalCyqSubtitle = document.getElementById('modalCyqSubtitle');
   const modalCyqList = document.getElementById('modalCyqList');
 
-  let activeCyqContext = '11-med';
+  window.activeCyqContext = '11-med';
 
-  const HORNBILL_SUMMARY_PAPER = {
-    name: 'Hornbill: Complete Chapters Summary',
-    marks: 'Ch 1 (Portrait of a Lady), Ch 2 (We\'re Not Afraid to Die) & Ch 3 (Discovering Tut) Available',
+  const HORNBILL_HUB_PAPER = {
+    name: 'Hornbill: Complete Chapters Hub (All Chapters Directory)',
+    marks: 'Browse all prose chapters and poems in a dedicated chapter window',
     isHornbillHub: true,
     file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
-    icon: 'fa-book-open',
+    icon: 'fa-book-atlas',
     badge: 'Hornbill Hub'
+  };
+
+  const HORNBILL_CH1_PAPER = {
+    name: 'Hornbill Ch 1: The Portrait of a Lady',
+    marks: 'Author: Khushwant Singh • Full Detailed Summary & Analysis',
+    file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
+    icon: 'fa-book-open',
+    badge: 'Hornbill Ch 1'
+  };
+
+  const HORNBILL_CH2_PAPER = {
+    name: 'Hornbill Ch 2: We\'re Not Afraid to Die…',
+    marks: 'Authors: Gordon Cook & Alan East • Full Detailed Summary & Analysis',
+    file: 'cyqs/class-11-english-hornbill-were-not-afraid-to-die-summary.pdf',
+    icon: 'fa-ship',
+    badge: 'Hornbill Ch 2'
+  };
+
+  const HORNBILL_CH3_PAPER = {
+    name: 'Hornbill Ch 3: Discovering Tut: The Saga Continues',
+    marks: 'Author: A.R. Williams • Full Detailed Summary & Analysis',
+    file: 'cyqs/class-11-english-hornbill-discovering-tut-summary.pdf',
+    icon: 'fa-monument',
+    badge: 'Hornbill Ch 3'
   };
 
   const HORNBILL_CHAPTERS = [
@@ -1318,7 +1339,10 @@ const SYLLABUS_PDF_DATA = {
           icon: 'fa-dna',
           badge: 'High Priority CYQ'
         },
-        HORNBILL_SUMMARY_PAPER
+        HORNBILL_HUB_PAPER,
+        HORNBILL_CH1_PAPER,
+        HORNBILL_CH2_PAPER,
+        HORNBILL_CH3_PAPER
       ],
       notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
@@ -1340,7 +1364,10 @@ const SYLLABUS_PDF_DATA = {
           icon: 'fa-flask',
           badge: 'High Priority CYQ'
         },
-        HORNBILL_SUMMARY_PAPER
+        HORNBILL_HUB_PAPER,
+        HORNBILL_CH1_PAPER,
+        HORNBILL_CH2_PAPER,
+        HORNBILL_CH3_PAPER
       ],
       notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
@@ -1348,7 +1375,10 @@ const SYLLABUS_PDF_DATA = {
       title: 'Class 11th • Commerce Stream CYQs',
       subtitle: 'Crucial Year-End Questions & Literature Summaries (JKBOSE Board Exam)',
       papers: [
-        HORNBILL_SUMMARY_PAPER
+        HORNBILL_HUB_PAPER,
+        HORNBILL_CH1_PAPER,
+        HORNBILL_CH2_PAPER,
+        HORNBILL_CH3_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
@@ -1356,7 +1386,10 @@ const SYLLABUS_PDF_DATA = {
       title: 'Class 11th • Arts & Humanities CYQs',
       subtitle: 'Crucial Year-End Questions & Literature Summaries (JKBOSE Board Exam)',
       papers: [
-        HORNBILL_SUMMARY_PAPER
+        HORNBILL_HUB_PAPER,
+        HORNBILL_CH1_PAPER,
+        HORNBILL_CH2_PAPER,
+        HORNBILL_CH3_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
@@ -1436,10 +1469,17 @@ const SYLLABUS_PDF_DATA = {
   const modalHornbillList = document.getElementById('modalHornbillList');
 
   window.openHornbillChaptersModal = function(fromContext) {
-    if (fromContext) activeCyqContext = fromContext;
-    if (cyqModalOverlay) cyqModalOverlay.classList.remove('active');
+    if (fromContext) window.activeCyqContext = fromContext;
+    const overlay = document.getElementById('hornbillModalOverlay');
+    const list = document.getElementById('modalHornbillList');
 
-    if (!hornbillModalOverlay || !modalHornbillList) return;
+    if (!overlay || !list) {
+      console.warn('Hornbill modal overlay elements not found');
+      return;
+    }
+
+    overlay.style.zIndex = '10002';
+    overlay.style.display = 'flex';
 
     let html = `
       <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
@@ -1515,28 +1555,33 @@ const SYLLABUS_PDF_DATA = {
     });
 
     html += `</div>`;
-    modalHornbillList.innerHTML = html;
-    hornbillModalOverlay.classList.add('active');
+    list.innerHTML = html;
+    overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
   };
 
   window.closeHornbillModalDirect = function() {
-    if (hornbillModalOverlay) {
-      hornbillModalOverlay.classList.remove('active');
+    const overlay = document.getElementById('hornbillModalOverlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+      overlay.style.display = '';
       document.body.style.overflow = '';
     }
   };
 
   window.closeHornbillModal = function(e) {
-    if (e.target === hornbillModalOverlay) {
+    const overlay = document.getElementById('hornbillModalOverlay');
+    if (e.target === overlay) {
       closeHornbillModalDirect();
     }
   };
 
   window.backToCyqModal = function() {
-    closeHornbillModalDirect();
-    if (window.openCyqModal && activeCyqContext) {
-      window.openCyqModal(activeCyqContext);
+    window.closeHornbillModalDirect();
+    const cyqOverlay = document.getElementById('cyqModalOverlay');
+    if (cyqOverlay) {
+      cyqOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
     }
   };
 
