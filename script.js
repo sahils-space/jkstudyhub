@@ -1249,6 +1249,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Prose'
   };
 
+  const HORNBILL_P5_PAPER = {
+    name: 'Hornbill Poem 5: Father to Son',
+    marks: 'Poet: Elizabeth Jennings • Full Detailed Summary & Poetic Devices',
+    file: 'cyqs/class-11-english-hornbill-father-to-son-summary.pdf',
+    icon: 'fa-people-roof',
+    badge: 'Hornbill Poem 5'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1366,9 +1374,9 @@ const SYLLABUS_PDF_DATA = {
       title: 'Poem 5: Father to Son',
       author: 'Elizabeth Jennings',
       desc: 'A poignant exploration of generational estrangement, emotional distance, and yearning for familial love.',
-      file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      file: 'cyqs/class-11-english-hornbill-father-to-son-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     }
   ];
 
@@ -1415,7 +1423,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER
+        HORNBILL_P4_PAPER,
+        HORNBILL_P5_PAPER
       ],
       notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
@@ -1447,7 +1456,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER
+        HORNBILL_P4_PAPER,
+        HORNBILL_P5_PAPER
       ],
       notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
@@ -1465,7 +1475,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER
+        HORNBILL_P4_PAPER,
+        HORNBILL_P5_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
@@ -1483,7 +1494,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER
+        HORNBILL_P4_PAPER,
+        HORNBILL_P5_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
@@ -1580,7 +1592,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapters 1, 2, 3, The Ailing Planet, The Adventure, Silk Road</strong> and <strong>Poems 1–4</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapters 1, 2, 3, The Ailing Planet, The Adventure, Silk Road</strong> and <strong>Poems 1–5 (All Core Poems)</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
