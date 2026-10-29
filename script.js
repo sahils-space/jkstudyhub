@@ -1165,7 +1165,7 @@ const SYLLABUS_PDF_DATA = {
 
   const HORNBILL_SUMMARY_PAPER = {
     name: 'Hornbill: Complete Chapters Summary',
-    marks: 'Chapter 1: The Portrait of a Lady (Available) • Ch 2 & 3 in Preparation',
+    marks: 'Ch 1 (The Portrait of a Lady) & Ch 2 (We\'re Not Afraid to Die) Available • Click to Open',
     isHornbillHub: true,
     file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
     icon: 'fa-book-open',
@@ -1188,10 +1188,10 @@ const SYLLABUS_PDF_DATA = {
       type: 'Prose',
       title: "Chapter 2: We're Not Afraid to Die... if We Can All Be Together",
       author: 'Gordon Cook & Alan East',
-      desc: 'Heroic survival journey of a family facing turbulent storms and monstrous waves in the Southern Indian Ocean.',
-      file: '',
-      status: 'pending',
-      badge: 'Adding Next'
+      desc: 'Heroic survival voyage of a family facing turbulent storms, monstrous waves, and finding Ile Amsterdam in the Indian Ocean.',
+      file: 'cyqs/class-11-english-hornbill-were-not-afraid-to-die-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 3,
@@ -1200,8 +1200,8 @@ const SYLLABUS_PDF_DATA = {
       author: 'A.R. Williams',
       desc: 'Fascinating forensic investigation, CT scans, and historical mystery of Egypt\'s teenage king Tutankhamun.',
       file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      status: 'pending',
+      badge: 'Adding Next'
     },
     {
       id: 4,
@@ -1446,7 +1446,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapter 1 (The Portrait of a Lady)</strong> is ready and available in official CYQ PDF format below. Additional chapters (Ch 2, Ch 3...) will be activated as we add them.
+          <strong>Chapter 1 (The Portrait of a Lady)</strong> and <strong>Chapter 2 (We're Not Afraid to Die...)</strong> are ready and available in official CYQ PDF format below. Additional chapters will be activated as we add them.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
