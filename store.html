@@ -23,7 +23,7 @@
   </script>
   <!-- Official Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <link rel="stylesheet" href="promo-offers.css?v=2">
+  <link rel="stylesheet" href="promo-offers.css?v=3">
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK Study Hub - Books & School Copies at Less Than Bookshop Rates & Less Than MRP">
@@ -7173,7 +7173,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=91.3"></script>
+  <script src="store.js?v=91.4"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
@@ -7473,7 +7473,7 @@
   <aside class="store-floating-offers" id="storeFloatingOffers" aria-label="Current store offers">
     <div class="store-floating-offers__header">
       <span class="store-floating-offers__label"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> Store offers</span>
-      <button class="store-floating-offers__dismiss" type="button" aria-label="Dismiss store offers" onclick="document.getElementById('storeFloatingOffers').hidden = true">
+      <button class="store-floating-offers__dismiss" type="button" aria-label="Dismiss store offers" onclick="dismissStoreOffers(event)">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
     </div>
@@ -7492,6 +7492,38 @@
       </span>
     </div>
   </aside>
+
+  <script>
+    function dismissStoreOffers(e) {
+      if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      }
+      var el = document.getElementById('storeFloatingOffers');
+      if (el) {
+        el.classList.add('is-dismissed');
+        el.style.setProperty('display', 'none', 'important');
+        el.hidden = true;
+        try {
+          sessionStorage.setItem('store_offers_dismissed', 'true');
+        } catch(err) {}
+      }
+    }
+    window.dismissStoreOffers = dismissStoreOffers;
+
+    (function() {
+      try {
+        if (sessionStorage.getItem('store_offers_dismissed') === 'true') {
+          var el = document.getElementById('storeFloatingOffers');
+          if (el) {
+            el.classList.add('is-dismissed');
+            el.style.setProperty('display', 'none', 'important');
+            el.hidden = true;
+          }
+        }
+      } catch(err) {}
+    })();
+  </script>
 
 </body>
 </html>

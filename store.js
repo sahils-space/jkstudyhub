@@ -1706,7 +1706,16 @@ function updateNavBadges() {
     }
   }
   if (floatingOffers) {
-    floatingOffers.classList.toggle('is-cart-active', totalCartQty > 0);
+    var isDismissed = floatingOffers.classList.contains('is-dismissed') || 
+                      floatingOffers.hidden || 
+                      (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('store_offers_dismissed') === 'true');
+    if (isDismissed) {
+      floatingOffers.classList.add('is-dismissed');
+      floatingOffers.style.setProperty('display', 'none', 'important');
+      floatingOffers.hidden = true;
+    } else {
+      floatingOffers.classList.toggle('is-cart-active', totalCartQty > 0);
+    }
   }
 
   const cartBadges = document.querySelectorAll('.nav-badge-count, #cartCount');
