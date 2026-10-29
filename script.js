@@ -1233,6 +1233,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Poem 4'
   };
 
+  const HORNBILL_ADVENTURE_PAPER = {
+    name: 'Hornbill: The Adventure',
+    marks: 'Author: Jayant Narlikar • Full Detailed Summary & Analysis',
+    file: 'cyqs/class-11-english-hornbill-the-adventure-summary.pdf',
+    icon: 'fa-compass',
+    badge: 'Hornbill Prose'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1330,9 +1338,9 @@ const SYLLABUS_PDF_DATA = {
       title: 'Chapter 5: The Adventure',
       author: 'Jayant Narlikar',
       desc: 'Professor Gangadharpant Gaitonde\'s mind-bending journey into an alternate timeline where the Marathas won Panipat.',
-      file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      file: 'cyqs/class-11-english-hornbill-the-adventure-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 10,
@@ -1394,6 +1402,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
+        HORNBILL_ADVENTURE_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1424,6 +1433,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
+        HORNBILL_ADVENTURE_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1440,6 +1450,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
+        HORNBILL_ADVENTURE_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1456,6 +1467,7 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_CH2_PAPER,
         HORNBILL_CH3_PAPER,
         HORNBILL_AILING_PAPER,
+        HORNBILL_ADVENTURE_PAPER,
         HORNBILL_P1_PAPER,
         HORNBILL_P2_PAPER,
         HORNBILL_P3_PAPER,
@@ -1556,7 +1568,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapters 1, 2, 3, The Ailing Planet</strong> and <strong>Poems 1, 2, 3 &amp; 4 (Childhood)</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapters 1, 2, 3, The Ailing Planet, The Adventure</strong> and <strong>Poems 1–4</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
