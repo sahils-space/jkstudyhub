@@ -1193,6 +1193,14 @@ const SYLLABUS_PDF_DATA = {
     badge: 'Hornbill Ch 3'
   };
 
+  const HORNBILL_P1_PAPER = {
+    name: 'Hornbill Poem 1: A Photograph',
+    marks: 'Poet: Shirley Toulson • Full Detailed Summary & Poetic Devices',
+    file: 'cyqs/class-11-english-hornbill-a-photograph-summary.pdf',
+    icon: 'fa-camera-retro',
+    badge: 'Hornbill Poem 1'
+  };
+
   const HORNBILL_CHAPTERS = [
     {
       id: 1,
@@ -1230,9 +1238,9 @@ const SYLLABUS_PDF_DATA = {
       title: 'Poem 1: A Photograph',
       author: 'Shirley Toulson',
       desc: 'Emotional contemplation on a vintage snapshot of the poet\'s mother, mortality, and the silence of loss.',
-      file: '',
-      status: 'pending',
-      badge: 'Adding Next'
+      file: 'cyqs/class-11-english-hornbill-a-photograph-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 5,
@@ -1241,8 +1249,8 @@ const SYLLABUS_PDF_DATA = {
       author: 'Ted Hughes',
       desc: 'The sudden burst of life, sound, and vitality brought by a mother goldfinch to a silent yellow laburnum tree.',
       file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      status: 'pending',
+      badge: 'Adding Next'
     },
     {
       id: 6,
@@ -1342,7 +1350,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_HUB_PAPER,
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER
+        HORNBILL_CH3_PAPER,
+        HORNBILL_P1_PAPER
       ],
       notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
@@ -1367,7 +1376,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_HUB_PAPER,
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER
+        HORNBILL_CH3_PAPER,
+        HORNBILL_P1_PAPER
       ],
       notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
@@ -1378,7 +1388,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_HUB_PAPER,
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER
+        HORNBILL_CH3_PAPER,
+        HORNBILL_P1_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
@@ -1389,7 +1400,8 @@ const SYLLABUS_PDF_DATA = {
         HORNBILL_HUB_PAPER,
         HORNBILL_CH1_PAPER,
         HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER
+        HORNBILL_CH3_PAPER,
+        HORNBILL_P1_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
@@ -1486,7 +1498,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapter 1 (The Portrait of a Lady)</strong>, <strong>Chapter 2 (We're Not Afraid to Die...)</strong>, and <strong>Chapter 3 (Discovering Tut: The Saga Continues)</strong> are ready and available in official CYQ PDF format below.
+          <strong>Chapter 1 (The Portrait of a Lady)</strong>, <strong>Chapter 2 (We're Not Afraid to Die...)</strong>, <strong>Chapter 3 (Discovering Tut)</strong>, and <strong>Poem 1 (A Photograph)</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
