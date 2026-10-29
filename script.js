@@ -1165,7 +1165,7 @@ const SYLLABUS_PDF_DATA = {
 
   const HORNBILL_SUMMARY_PAPER = {
     name: 'Hornbill: Complete Chapters Summary',
-    marks: 'Ch 1 (The Portrait of a Lady) & Ch 2 (We\'re Not Afraid to Die) Available • Click to Open',
+    marks: 'Ch 1 (Portrait of a Lady), Ch 2 (We\'re Not Afraid to Die) & Ch 3 (Discovering Tut) Available',
     isHornbillHub: true,
     file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
     icon: 'fa-book-open',
@@ -1198,10 +1198,10 @@ const SYLLABUS_PDF_DATA = {
       type: 'Prose',
       title: 'Chapter 3: Discovering Tut: The Saga Continues',
       author: 'A.R. Williams',
-      desc: 'Fascinating forensic investigation, CT scans, and historical mystery of Egypt\'s teenage king Tutankhamun.',
-      file: '',
-      status: 'pending',
-      badge: 'Adding Next'
+      desc: 'Fascinating forensic investigation, 1,700 digital CT scans, and historical mystery of Egypt\'s teenage king Tutankhamun.',
+      file: 'cyqs/class-11-english-hornbill-discovering-tut-summary.pdf',
+      status: 'available',
+      badge: 'Available Now (PDF)'
     },
     {
       id: 4,
@@ -1210,8 +1210,8 @@ const SYLLABUS_PDF_DATA = {
       author: 'Shirley Toulson',
       desc: 'Emotional contemplation on a vintage snapshot of the poet\'s mother, mortality, and the silence of loss.',
       file: '',
-      status: 'upcoming',
-      badge: 'Upcoming'
+      status: 'pending',
+      badge: 'Adding Next'
     },
     {
       id: 5,
@@ -1446,7 +1446,7 @@ const SYLLABUS_PDF_DATA = {
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
           <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapter 1 (The Portrait of a Lady)</strong> and <strong>Chapter 2 (We're Not Afraid to Die...)</strong> are ready and available in official CYQ PDF format below. Additional chapters will be activated as we add them.
+          <strong>Chapter 1 (The Portrait of a Lady)</strong>, <strong>Chapter 2 (We're Not Afraid to Die...)</strong>, and <strong>Chapter 3 (Discovering Tut: The Saga Continues)</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
