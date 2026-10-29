@@ -1413,18 +1413,7 @@ const SYLLABUS_PDF_DATA = {
           icon: 'fa-dna',
           badge: 'High Priority CYQ'
         },
-        HORNBILL_HUB_PAPER,
-        HORNBILL_CH1_PAPER,
-        HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER,
-        HORNBILL_AILING_PAPER,
-        HORNBILL_ADVENTURE_PAPER,
-        HORNBILL_SILK_ROAD_PAPER,
-        HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER,
-        HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER,
-        HORNBILL_P5_PAPER
+        HORNBILL_HUB_PAPER
       ],
       notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
@@ -1446,18 +1435,7 @@ const SYLLABUS_PDF_DATA = {
           icon: 'fa-flask',
           badge: 'High Priority CYQ'
         },
-        HORNBILL_HUB_PAPER,
-        HORNBILL_CH1_PAPER,
-        HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER,
-        HORNBILL_AILING_PAPER,
-        HORNBILL_ADVENTURE_PAPER,
-        HORNBILL_SILK_ROAD_PAPER,
-        HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER,
-        HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER,
-        HORNBILL_P5_PAPER
+        HORNBILL_HUB_PAPER
       ],
       notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
@@ -1465,18 +1443,7 @@ const SYLLABUS_PDF_DATA = {
       title: 'Class 11th • Commerce Stream CYQs',
       subtitle: 'Crucial Year-End Questions & Literature Summaries (JKBOSE Board Exam)',
       papers: [
-        HORNBILL_HUB_PAPER,
-        HORNBILL_CH1_PAPER,
-        HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER,
-        HORNBILL_AILING_PAPER,
-        HORNBILL_ADVENTURE_PAPER,
-        HORNBILL_SILK_ROAD_PAPER,
-        HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER,
-        HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER,
-        HORNBILL_P5_PAPER
+        HORNBILL_HUB_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
@@ -1484,18 +1451,7 @@ const SYLLABUS_PDF_DATA = {
       title: 'Class 11th • Arts & Humanities CYQs',
       subtitle: 'Crucial Year-End Questions & Literature Summaries (JKBOSE Board Exam)',
       papers: [
-        HORNBILL_HUB_PAPER,
-        HORNBILL_CH1_PAPER,
-        HORNBILL_CH2_PAPER,
-        HORNBILL_CH3_PAPER,
-        HORNBILL_AILING_PAPER,
-        HORNBILL_ADVENTURE_PAPER,
-        HORNBILL_SILK_ROAD_PAPER,
-        HORNBILL_P1_PAPER,
-        HORNBILL_P2_PAPER,
-        HORNBILL_P3_PAPER,
-        HORNBILL_P4_PAPER,
-        HORNBILL_P5_PAPER
+        HORNBILL_HUB_PAPER
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
