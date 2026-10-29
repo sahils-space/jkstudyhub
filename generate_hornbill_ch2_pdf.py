@@ -12,10 +12,6 @@ os.makedirs('cyqs', exist_ok=True)
 PDF_PATH = 'cyqs/class-11-english-hornbill-were-not-afraid-to-die-summary.pdf'
 
 class CYQNumberedCanvas(canvas.Canvas):
-    """
-    Saves page states and only draws the dynamic 'Page X of Y' string at the bottom,
-    leaving all background decorations and watermark in the true background.
-    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._saved_page_states = []
@@ -37,34 +33,27 @@ class CYQNumberedCanvas(canvas.Canvas):
 
 
 def draw_page_background(canvas_obj, doc):
-    """
-    Drawn BEFORE any flowable text is placed onto the page,
-    ensuring the watermark is placed underneath the text in the true background.
-    """
     w, h = A4
     page_num = canvas_obj._pageNumber
 
     # ----------------------------------------------------
-    # 1. True Background Watermark (Faint 5% Opacity, Centered)
+    # 1. True Background Watermark (Soft Faint Silver, Under Text)
     # ----------------------------------------------------
     canvas_obj.saveState()
-    canvas_obj.setFont('Helvetica-Bold', 44)
-    canvas_obj.setFillAlpha(0.05)  # Very faint so it never interferes with text
-    canvas_obj.setFillColor(colors.HexColor('#0f172a'))
+    canvas_obj.setFont('Helvetica-Bold', 48)
+    canvas_obj.setFillColor(colors.HexColor('#edf2f7'))  # Soft light silver gray
     canvas_obj.translate(w / 2.0, h / 2.0)
     canvas_obj.rotate(45)
-    canvas_obj.drawCentredString(0, 0, "JKSTUDYHUB.ONLINE")
+    canvas_obj.drawCentredString(0, 0, "JK STUDY HUB")
     canvas_obj.restoreState()
 
     # ----------------------------------------------------
     # 2. Header Block
     # ----------------------------------------------------
     if page_num == 1:
-        # Full Navy Header Block
         canvas_obj.setFillColor(colors.HexColor('#091e42'))
         canvas_obj.rect(0, h - 58, w, 58, fill=True, stroke=False)
 
-        # Left Branding Text
         canvas_obj.setFont('Helvetica-Bold', 16)
         canvas_obj.setFillColor(colors.white)
         canvas_obj.drawString(38, h - 28, "JK STUDY HUB")
@@ -73,12 +62,10 @@ def draw_page_background(canvas_obj, doc):
         canvas_obj.setFillColor(colors.HexColor('#93c5fd'))
         canvas_obj.drawString(38, h - 44, "JAMMU & KASHMIR BOARD EXAMINATION PORTAL  |  SESSION 2025-26")
 
-        # Right Portal URL
         canvas_obj.setFont('Helvetica-Bold', 11)
         canvas_obj.setFillColor(colors.HexColor('#38bdf8'))
         canvas_obj.drawRightString(w - 38, h - 30, "jkstudyhub.online")
 
-        # Secondary Banner Bar
         canvas_obj.setFillColor(colors.HexColor('#047857'))
         canvas_obj.rect(38, h - 90, w - 76, 26, fill=True, stroke=False)
 
@@ -90,7 +77,6 @@ def draw_page_background(canvas_obj, doc):
         canvas_obj.setFillColor(colors.HexColor('#a7f3d0'))
         canvas_obj.drawRightString(w - 48, h - 77, "NCERT / JKBOSE BOARD SYLLABUS")
     else:
-        # Compact Top Header for Subsequent Pages
         canvas_obj.setFillColor(colors.HexColor('#091e42'))
         canvas_obj.rect(0, h - 42, w, 42, fill=True, stroke=False)
 
@@ -102,7 +88,6 @@ def draw_page_background(canvas_obj, doc):
         canvas_obj.setFillColor(colors.HexColor('#38bdf8'))
         canvas_obj.drawRightString(w - 38, h - 26, "Ch 2: We're Not Afraid to Die... — Cook & East")
 
-        # Thin accent line below runner
         canvas_obj.setStrokeColor(colors.HexColor('#047857'))
         canvas_obj.setLineWidth(2)
         canvas_obj.line(0, h - 44, w, h - 44)
@@ -131,7 +116,6 @@ def build_pdf():
 
     styles = getSampleStyleSheet()
 
-    # Custom Paragraph Styles with large, crisp, legible typography
     ch_title_style = ParagraphStyle(
         'ChapterTitle',
         fontName='Helvetica-Bold',
@@ -178,7 +162,7 @@ def build_pdf():
         leading=16,
         textColor=colors.HexColor('#1e293b'),
         spaceAfter=8,
-        alignment=4  # Justified
+        alignment=4
     )
 
     bullet_style = ParagraphStyle(
@@ -212,19 +196,12 @@ def build_pdf():
 
     story = []
 
-    # -----------------------------------------------------------------
-    # Document Header Title Block
-    # -----------------------------------------------------------------
     story.append(Paragraph("We’re Not Afraid to Die… if We Can All Be Together", ch_title_style))
     story.append(Paragraph("Authors: Gordon Cook and Alan East &nbsp;|&nbsp; Genre: Maritime Travelogue & Survival Memoir", author_style))
     story.append(Paragraph("Prescribed Textbook: <b>Hornbill</b> (Class 11th Core English) &nbsp;•&nbsp; Board: <b>JKBOSE / CBSE</b>", meta_tag_style))
 
-    # Decorative HR Divider
     story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#047857'), spaceAfter=12, spaceBefore=0))
 
-    # -----------------------------------------------------------------
-    # Section 1: Overview & Introduction
-    # -----------------------------------------------------------------
     story.append(Paragraph("1. Chapter Overview & Introduction", h1_style))
     story.append(Paragraph(
         "<b><i>We’re Not Afraid to Die… if We Can All Be Together</i></b> is a gripping, true-life narrative of adventure, "
@@ -239,9 +216,6 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 2: The Dream & Preparation
-    # -----------------------------------------------------------------
     story.append(Paragraph("2. The Dream, Preparation & Voyage Commencement", h1_style))
     story.append(Paragraph(
         "In July 1976, the narrator (a 37-year-old businessman), accompanied by his wife <b>Mary</b>, their six-year-old son <b>Jonathan</b>, "
@@ -249,17 +223,11 @@ def build_pdf():
         "round-the-world circumnavigation achieved by the celebrated English explorer <b>Captain James Cook</b> exactly 200 years prior.",
         body_style
     ))
-    story.append(Paragraph(
-        "Key aspects of their rigorous 16-year preparation included:",
-        body_style
-    ))
+    story.append(Paragraph("Key aspects of their rigorous 16-year preparation included:", body_style))
     story.append(Paragraph("• <b>Extensive Maritime Training:</b> For sixteen years, the narrator and his wife devoted all their leisure hours to honing and mastering seafaring skills in treacherous British coastal waters.", bullet_style))
     story.append(Paragraph("• <b>The Wavewalker:</b> Their specially crafted vessel, named <i>Wavewalker</i>, was a 23-metre-long, 30-ton wooden-hulled beauty. It had been professionally built by expert shipwrights and rigorously tested for months in the roughest sea conditions.", bullet_style))
     story.append(Paragraph("• <b>Initial Leg & Crew Enlistment:</b> The first leg of their planned 105,000-kilometre, three-year voyage was pleasant, sailing smoothly down the western coast of Africa to Cape Town. Before heading into the treacherous southern Indian Ocean—famed as one of the world's roughest seas—they hired two seasoned crewmen: <b>Larry Vigil</b> (an American) and <b>Herb Seigler</b> (a Swiss sailor) to help tackle the turbulent waters.", bullet_style))
 
-    # -----------------------------------------------------------------
-    # Section 3: The Terrible Storm & The Giant Wave
-    # -----------------------------------------------------------------
     story.append(Paragraph("3. Encountering the Storm & The Monstrous Wave (January 2)", h1_style))
     story.append(Paragraph(
         "On the second day after departing Cape Town, ferocious gales began to buffet the vessel, continuing relentlessly for weeks. "
@@ -277,9 +245,6 @@ def build_pdf():
     story.append(Paragraph("• <b>The Impact & Overboard Trauma:</b> The colossal wave slammed into <i>Wavewalker</i> with volcanic fury. A torrent of green and white water smashed across the deck. The narrator's head struck the steering wheel violently, and he was hurled overboard into the churning sea. Accepting his imminent death, he lost consciousness briefly before popping back to the surface. His lifeline snapped taut, dragging him back toward the ship where he managed to grab the guardrails and somersault onto the deck.", bullet_style))
     story.append(Paragraph("• <b>Severe Injuries:</b> His left ribs cracked, his mouth filled with blood, and several teeth were smashed. Despite agonizing pain, he immediately seized the steering wheel to navigate through each succeeding wave.", bullet_style))
 
-    # -----------------------------------------------------------------
-    # Section 4: Severe Structural Damage & Pumping Crisis
-    # -----------------------------------------------------------------
     story.append(Paragraph("4. Structural Catastrophe & Desperate Survival Battle", h1_style))
     story.append(Paragraph(
         "Mary burst onto the deck screaming that the boat was sinking, as lower compartments flooded rapidly. "
@@ -287,19 +252,13 @@ def build_pdf():
         "Both children affirmed they were fine, though Suzanne had sustained a large bump above her eyes, which the father had no time to inspect.",
         body_style
     ))
-    story.append(Paragraph(
-        "A series of critical technical crises followed throughout the freezing night:",
-        body_style
-    ))
+    story.append(Paragraph("A series of critical technical crises followed throughout the freezing night:", body_style))
     story.append(Paragraph("• <b>Canvas Repairs:</b> Gathering a hammer, screws, and canvas sheets, the narrator crawled across the listing deck and stretched waterproof canvas over the gaping starboard openings, deflecting the majority of the surging seawater overboard.", bullet_style))
     story.append(Paragraph("• <b>Pump Failures:</b> Floating debris in the flooded cabins clogged the hand pumps, while the electric pump short-circuited. Furthermore, the two spare hand pumps had been torn away overboard along with the forestay sail, jibs, dinghies, and the main anchor.", bullet_style))
     story.append(Paragraph("• <b>The Miracle Electric Pump:</b> In a stroke of desperate luck, the narrator remembered a second electric pump stored beneath the chartroom floor. Connecting it to an exterior discharge pipe, it started pumping water out successfully.", bullet_style))
     story.append(Paragraph("• <b>Unanswered Mayday Calls:</b> Throughout the bitter cold night of January 2–3, they transmitted continuous Mayday distress signals on the radio, but received no response because they were isolated in the most remote corner of the Indian Ocean.", bullet_style))
     story.append(Paragraph("• <b>Suzanne's Stoic Silence:</b> By morning, Sue's head had swollen alarmingly, her eyes were blackened slits, and a deep gash marked her arm. When asked why she had concealed her painful injuries, the brave seven-year-old replied that she didn't want to worry her parents while they were battling to save everyone's lives.", bullet_style))
 
-    # -----------------------------------------------------------------
-    # Section 5: The Search for Ile Amsterdam
-    # -----------------------------------------------------------------
     story.append(Paragraph("5. Structural Ruin & The Search for Ile Amsterdam", h1_style))
     story.append(Paragraph(
         "By January 3, 36 hours of non-stop pumping had brought water levels under control. However, the narrator's inspection "
@@ -320,9 +279,6 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 6: Children's Heroism & Sue's Card
-    # -----------------------------------------------------------------
     story.append(Paragraph("6. The Children's Fearless Courage & Sue's Card", h1_style))
     story.append(Paragraph(
         "When the narrator went below to comfort his children on January 5, his six-year-old son Jonathan asked: "
@@ -348,9 +304,6 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 7: Discovery of Ile Amsterdam & Safe Arrival
-    # -----------------------------------------------------------------
     story.append(Paragraph("7. Precision Navigation, Discovery & Triumph", h1_style))
     story.append(Paragraph(
         "Calculating wind drift, magnetic variation, and ocean currents, the narrator instructed Larry at 2:00 PM to steer an exact heading of "
@@ -370,24 +323,17 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 8: Key Themes & Examination Takeaways Box
-    # -----------------------------------------------------------------
     story.append(Spacer(1, 6))
 
     exam_box_content = [
-        [
-            Paragraph("<b>KEY EXAMINATION TAKEAWAYS & CRITICAL ANALYSIS</b>", box_title_style)
-        ],
-        [
-            Paragraph(
-                "• <b>Central Theme:</b> Celebrates human fortitude, resilience in catastrophe, presence of mind, and the transformative strength derived from family love and unity.<br/>"
-                "• <b>The Power of Optimism:</b> The unwavering cheerfulness of crewmen Larry Vigil and Herb Seigler prevented mass panic; Mary's steady hand on the wheel saved the vessel during peak impact.<br/>"
-                "• <b>Courage of the Children:</b> Seven-year-old Suzanne hid a severe skull fracture and black eye to spare her parents anxiety; six-year-old Jonathan exhibited mature fearlessness, proving that hope can conquer the dread of death.<br/>"
-                "• <b>Captain's Leadership:</b> Highlights the narrator's technical knowledge (jury-rigging electric pumps, sea anchor, compass drift corrections) and relentless refusal to surrender.",
-                box_body_style
-            )
-        ]
+        [Paragraph("<b>KEY EXAMINATION TAKEAWAYS & CRITICAL ANALYSIS</b>", box_title_style)],
+        [Paragraph(
+            "• <b>Central Theme:</b> Celebrates human fortitude, resilience in catastrophe, presence of mind, and the transformative strength derived from family love and unity.<br/>"
+            "• <b>The Power of Optimism:</b> The unwavering cheerfulness of crewmen Larry Vigil and Herb Seigler prevented mass panic; Mary's steady hand on the wheel saved the vessel during peak impact.<br/>"
+            "• <b>Courage of the Children:</b> Seven-year-old Suzanne hid a severe skull fracture and black eye to spare her parents anxiety; six-year-old Jonathan exhibited mature fearlessness, proving that hope can conquer the dread of death.<br/>"
+            "• <b>Captain's Leadership:</b> Highlights the narrator's technical knowledge (jury-rigging electric pumps, sea anchor, compass drift corrections) and relentless refusal to surrender.",
+            box_body_style
+        )]
     ]
 
     exam_table = Table(exam_box_content, colWidths=[519])
@@ -402,7 +348,6 @@ def build_pdf():
 
     story.append(exam_table)
 
-    # Build document with draw_page_background callback
     doc.build(
         story,
         canvasmaker=CYQNumberedCanvas,

@@ -12,10 +12,6 @@ os.makedirs('cyqs', exist_ok=True)
 PDF_PATH = 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf'
 
 class CYQNumberedCanvas(canvas.Canvas):
-    """
-    Saves page states and only draws the dynamic 'Page X of Y' string at the bottom,
-    leaving all background decorations and watermark in the true background.
-    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._saved_page_states = []
@@ -37,23 +33,18 @@ class CYQNumberedCanvas(canvas.Canvas):
 
 
 def draw_page_background(canvas_obj, doc):
-    """
-    Drawn BEFORE any flowable text is placed onto the page,
-    ensuring the watermark is placed underneath the text in the true background.
-    """
     w, h = A4
     page_num = canvas_obj._pageNumber
 
     # ----------------------------------------------------
-    # 1. True Background Watermark (Faint 5% Opacity, Centered)
+    # 1. True Background Watermark (Soft Faint Silver, Under Text)
     # ----------------------------------------------------
     canvas_obj.saveState()
-    canvas_obj.setFont('Helvetica-Bold', 44)
-    canvas_obj.setFillAlpha(0.05)  # Very faint so it never interferes with text
-    canvas_obj.setFillColor(colors.HexColor('#0f172a'))
+    canvas_obj.setFont('Helvetica-Bold', 48)
+    canvas_obj.setFillColor(colors.HexColor('#edf2f7'))  # Soft light silver gray
     canvas_obj.translate(w / 2.0, h / 2.0)
     canvas_obj.rotate(45)
-    canvas_obj.drawCentredString(0, 0, "JKSTUDYHUB.ONLINE")
+    canvas_obj.drawCentredString(0, 0, "JK STUDY HUB")
     canvas_obj.restoreState()
 
     # ----------------------------------------------------
@@ -131,7 +122,6 @@ def build_pdf():
 
     styles = getSampleStyleSheet()
 
-    # Custom Paragraph Styles with large, crisp, legible typography
     ch_title_style = ParagraphStyle(
         'ChapterTitle',
         fontName='Helvetica-Bold',
@@ -212,19 +202,14 @@ def build_pdf():
 
     story = []
 
-    # -----------------------------------------------------------------
-    # Document Header Title Block
-    # -----------------------------------------------------------------
+    # Title Block
     story.append(Paragraph("The Portrait of a Lady", ch_title_style))
     story.append(Paragraph("Author: Khushwant Singh &nbsp;|&nbsp; Genre: Autobiographical Memoir", author_style))
     story.append(Paragraph("Prescribed Textbook: <b>Hornbill</b> (Class 11th Core English) &nbsp;•&nbsp; Board: <b>JKBOSE / CBSE</b>", meta_tag_style))
 
-    # Decorative HR Divider
     story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#047857'), spaceAfter=12, spaceBefore=0))
 
-    # -----------------------------------------------------------------
-    # Section 1: Overview & Introduction
-    # -----------------------------------------------------------------
+    # Section 1
     story.append(Paragraph("1. Chapter Overview & Introduction", h1_style))
     story.append(Paragraph(
         "<b><i>The Portrait of a Lady</i></b> is an affectionate, autobiographical tribute written by renowned author "
@@ -242,9 +227,7 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 2: Childhood in the Village
-    # -----------------------------------------------------------------
+    # Section 2
     story.append(Paragraph("2. Phase I: Childhood Days in the Village", h1_style))
     story.append(Paragraph(
         "During Khushwant Singh's early childhood, he lived alone with his grandmother in their ancestral village after his "
@@ -252,37 +235,27 @@ def build_pdf():
         "inseparable companions.",
         body_style
     ))
-    story.append(Paragraph(
-        "Her daily routine was deeply intertwined with his education and care:",
-        body_style
-    ))
+    story.append(Paragraph("Her daily routine was deeply intertwined with his education and care:", body_style))
     story.append(Paragraph("• <b>Morning Routine:</b> She woke him at dawn, bathed him, dressed him, and recited her morning prayers in a monotonous sing-song cadence. She hoped he would learn the prayers by heart; however, he simply loved listening to her sweet, melodious voice.", bullet_style))
     story.append(Paragraph("• <b>School Kit Preparation:</b> She lovingly cleaned and yellow-chalked his wooden slate (<i>takhti</i>), prepared a tiny earthen inkpot, tied a reed pen together, and packed a thick, stale chapatti spread with butter and sugar for breakfast.", bullet_style))
     story.append(Paragraph("• <b>Village Temple School:</b> She accompanied him on foot to the village school, which was attached to a local temple. While the village priest taught the alphabet and prayers to the children in the veranda, she sat peacefully inside the temple reading sacred scriptures.", bullet_style))
     story.append(Paragraph("• <b>Feeding Village Dogs:</b> On their walk back home, stray village dogs gathered at the temple door. The grandmother fed them pieces of stale chapattis, and the dogs growled and fought among themselves as they followed them home.", bullet_style))
 
-    # -----------------------------------------------------------------
-    # Section 3: Turning Point - City Life
-    # -----------------------------------------------------------------
+    # Section 3
     story.append(Paragraph("3. Phase II: Shift to the City — The Turning Point", h1_style))
     story.append(Paragraph(
         "When the author's parents settled comfortably in the city, they sent for both Khushwant and his grandmother. "
         "The author explicitly notes that this shift marked a major <b>'turning point'</b> in their cherished friendship.",
         body_style
     ))
-    story.append(Paragraph(
-        "Although they still shared a common bedroom, the daily bond began to fray due to the modern lifestyle:",
-        body_style
-    ))
+    story.append(Paragraph("Although they still shared a common bedroom, the daily bond began to fray due to the modern lifestyle:", body_style))
     story.append(Paragraph("• <b>Loss of School Companionship:</b> The author enrolled in an English-medium convent school and commuted daily by motor bus. His grandmother could no longer walk him to school.", bullet_style))
     story.append(Paragraph("• <b>Feeding Courtyard Sparrows:</b> Because there were no street dogs in the city lanes, she redirected her affection toward sparrows that visited the inner courtyard.", bullet_style))
     story.append(Paragraph("• <b>The Academic & Ideological Gulf:</b> When the author returned from school and shared his lessons—English vocabulary, Western science, Archimedes' Principle, and the Law of Gravity—she felt helpless and unhappy because she could not assist him with his studies.", bullet_style))
     story.append(Paragraph("• <b>Distress Over Lack of Religious Instruction:</b> She was deeply dismayed that the modern school provided no teaching about God, scriptures, or moral values.", bullet_style))
     story.append(Paragraph("• <b>The Disapproval of Music:</b> When the author announced that he was taking music lessons at school, she was deeply distressed. To her orthodox mindset, music was the monopoly of beggars and harlots, unsuitable for gentlemen. She rarely spoke to him after that, expressing her disapproval through dignified silence.", bullet_style))
 
-    # -----------------------------------------------------------------
-    # Section 4: University & Separation
-    # -----------------------------------------------------------------
+    # Section 4
     story.append(Paragraph("4. Phase III: University Days, Seclusion & Loneliness", h1_style))
     story.append(Paragraph(
         "When Khushwant Singh entered university, he was allocated an independent room of his own. This physical separation "
@@ -290,16 +263,11 @@ def build_pdf():
         "(<i>'she accepted her seclusion with resignation'</i>).",
         body_style
     ))
-    story.append(Paragraph(
-        "She structured her solitary days around two sacred activities:",
-        body_style
-    ))
+    story.append(Paragraph("She structured her solitary days around two sacred activities:", body_style))
     story.append(Paragraph("1. <b>Spinning-Wheel:</b> From morning till evening, she sat by her spinning-wheel spinning yarn and silently reciting her prayers, rarely leaving her seat to converse with anyone.", bullet_style))
     story.append(Paragraph("2. <b>The Happiest Half-Hour (Sparrow Feeding):</b> In the afternoon, she broke bread into tiny crumbs and scattered them in the veranda. Hundreds of sparrows flocked around her—perching on her feet, sitting on her lap, shoulders, and even resting on her head. She never shooed them away; instead, she smiled and softly talked to them. This peaceful ritual was without doubt the happiest half-hour of her entire day.", bullet_style))
 
-    # -----------------------------------------------------------------
-    # Section 5: Departure Abroad & Reunion
-    # -----------------------------------------------------------------
+    # Section 5
     story.append(Paragraph("5. Author's Departure Abroad & Return After 5 Years", h1_style))
     story.append(Paragraph(
         "When the author decided to proceed abroad for higher studies for five years, he anticipated that his grandmother "
@@ -316,9 +284,7 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 6: The Unusual Evening & Demise
-    # -----------------------------------------------------------------
+    # Section 6
     story.append(Paragraph("6. The Unusual Evening & The Peaceful Demise", h1_style))
     story.append(Paragraph(
         "On the evening of his arrival, a startling change occurred in her behavior—<b>the only time in her life she omitted her prayers</b>. "
@@ -335,9 +301,7 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 7: The Sparrows' Silent Mourning
-    # -----------------------------------------------------------------
+    # Section 7
     story.append(Paragraph("7. The Sparrows' Silent Mourning", h1_style))
     story.append(Paragraph(
         "When the family entered the grandmother's room to prepare her body for cremation, they witnessed an unforgettable, "
@@ -352,24 +316,17 @@ def build_pdf():
         body_style
     ))
 
-    # -----------------------------------------------------------------
-    # Section 8: Examination Takeaways Box
-    # -----------------------------------------------------------------
+    # Section 8
     story.append(Spacer(1, 8))
-    
     exam_box_content = [
-        [
-            Paragraph("<b>KEY EXAMINATION TAKEAWAYS & CRITICAL ANALYSIS</b>", box_title_style)
-        ],
-        [
-            Paragraph(
-                "• <b>Central Theme:</b> Explores the emotional bond between generations, the inevitable changes caused by urbanization and modern education, and the dignity of an aging matriarch who finds solace in faith.<br/>"
-                "• <b>Symbolism of Winter Landscape:</b> Represents the grandmother's spiritual purity, calmness, spotless white clothes, and peaceful detachment from worldly chaos.<br/>"
-                "• <b>Symbolism of the Sparrows:</b> Demonstrates true communion between human beings and nature; their silent mourning reflects genuine, non-verbal grief and unconditional animal empathy.<br/>"
-                "• <b>Character Sketch of Grandmother:</b> Pious, strong-willed, orthodox yet profoundly loving, disciplined, and possessing extraordinary inner strength and quiet resilience.",
-                box_body_style
-            )
-        ]
+        [Paragraph("<b>KEY EXAMINATION TAKEAWAYS & CRITICAL ANALYSIS</b>", box_title_style)],
+        [Paragraph(
+            "• <b>Central Theme:</b> Explores the emotional bond between generations, the inevitable changes caused by urbanization and modern education, and the dignity of an aging matriarch who finds solace in faith.<br/>"
+            "• <b>Symbolism of Winter Landscape:</b> Represents the grandmother's spiritual purity, calmness, spotless white clothes, and peaceful detachment from worldly chaos.<br/>"
+            "• <b>Symbolism of the Sparrows:</b> Demonstrates true communion between human beings and nature; their silent mourning reflects genuine, non-verbal grief and unconditional animal empathy.<br/>"
+            "• <b>Character Sketch of Grandmother:</b> Pious, strong-willed, orthodox yet profoundly loving, disciplined, and possessing extraordinary inner strength and quiet resilience.",
+            box_body_style
+        )]
     ]
 
     exam_table = Table(exam_box_content, colWidths=[519])
@@ -384,7 +341,6 @@ def build_pdf():
 
     story.append(exam_table)
 
-    # Build document with draw_page_background callback
     doc.build(
         story,
         canvasmaker=CYQNumberedCanvas,
