@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 11 Biology - High-Density Revision Notes (2-Up A4)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f1f5f9;
+      color: #000;
+      padding: 15px;
+      -webkit-font-smoothing: antialiased;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .no-print-bar {
+      max-width: 900px;
+      margin: 0 auto 16px auto;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .print-btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .print-btn:hover {
+      background: #1d4ed8;
+    }
+    .a4-sheet {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto 20px auto;
+      background: #fff;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      padding: 5mm;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6mm;
+      position: relative;
+      page-break-after: always;
+      break-after: page;
+      box-sizing: border-box;
+    }
+    .a4-sheet:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+    /* Vertical cut guide between the 2 copies */
+    .center-cut-guide {
+      position: absolute;
+      top: 5mm;
+      bottom: 5mm;
+      left: 50%;
+      border-left: 1px dashed #94a3b8;
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
+    .copy-column {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 6.5pt;
+      line-height: 1.25;
+      color: #000;
+    }
+    .sheet-tag {
+      font-size: 7.5pt;
+      font-weight: 900;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid #000;
+      padding-bottom: 2px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .topic-card {
+      border: 1px solid #000;
+      border-radius: 3px;
+      padding: 4px 5px;
+      background: #fff;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .topic-title {
+      font-size: 7pt;
+      font-weight: 900;
+      background: #000;
+      color: #fff;
+      padding: 1px 4px;
+      border-radius: 2px;
+      display: inline-block;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .sub-head {
+      font-weight: 800;
+      color: #000;
+      text-decoration: underline;
+      margin-top: 2px;
+    }
+    .pathway-flow {
+      font-family: monospace;
+      font-size: 6pt;
+      font-weight: 700;
+      background: #f8fafc;
+      border: 0.5px solid #000;
+      padding: 2px 4px;
+      border-radius: 2px;
+      margin: 2px 0;
+      line-height: 1.15;
+    }
+    ul, ol {
+      padding-left: 10px;
+      margin: 1px 0;
+    }
+    li {
+      margin-bottom: 1px;
+    }
+    strong {
+      font-weight: 800;
+    }
+
+    @media print {
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .a4-sheet {
+        margin: 0 !important;
+        padding: 4mm !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        height: auto !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 4mm 4mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls (Hidden on Print) -->
+  <div class="no-print-bar">
+    <div>
+      <strong>Class 11 Biology — Ultra-Compact Quick Revision Notes (2-Up Duplicate A4)</strong>
+      <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">
+        High-density, zero-whitespace layout with 2 identical side-by-side copies. Cut along center dashed line (✂).
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button type="button" class="print-btn" onclick="window.print()">
+        🖨️ Print / Save as PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       PAGE 1 OF 2
+       ========================================== -->
+  <div class="a4-sheet">
+    <div class="center-cut-guide"></div>
+
+    <!-- LEFT COPY (PAGE 1) -->
+    <div class="copy-column">
+      <div class="sheet-tag">
+        <span>Class 11 Biology — Quick Notes (Part 1)</span>
+        <span>COPY A</span>
+      </div>
+
+      <!-- 1. Nephron & Urine Formation -->
+      <div class="topic-card">
+        <span class="topic-title">1. Human Nephron &amp; Urine Formation</span>
+        <div><strong>Nephron Structure:</strong> Functional unit of kidney. Composed of:</div>
+        <div>1. <strong>Bowman's capsule:</strong> Cup-shaped sac enclosing glomerulus.</div>
+        <div>2. <strong>Glomerulus:</strong> Capillary tuft where high-pressure blood filtration occurs.</div>
+        <div>3. <strong>Renal tubule:</strong> PCT (Proximal Convoluted Tubule), Loop of Henle (descending &amp; ascending limbs), DCT (Distal Convoluted Tubule) &amp; Collecting Duct.</div>
+        <div class="sub-head">Mechanism of Urine Formation:</div>
+        <div>1. <strong>Glomerular Filtration:</strong> Blood filtered across glomerular capillary membrane into Bowman's space (filters water, glucose, salts, urea; retains blood cells &amp; proteins).</div>
+        <div>2. <strong>Selective Reabsorption:</strong> ~99% filtrate reabsorbed in PCT &amp; loop of Henle (glucose, amino acids actively; water, Na+, Cl- passively/actively).</div>
+        <div>3. <strong>Tubular Secretion:</strong> Active secretion of H+, K+, NH3, and creatinine from peritubular capillaries into tubule to maintain ionic &amp; pH balance.</div>
+        <div>4. <strong>Concentration:</strong> Loop of Henle &amp; vasa recta (counter-current system) and collecting duct conserve water under ADH control.</div>
+      </div>
+
+      <!-- 2. Neuron & Synaptic Transmission -->
+      <div class="topic-card">
+        <span class="topic-title">2. Neuron &amp; Synaptic Transmission</span>
+        <div><strong>Neuron:</strong> Structural &amp; functional unit of nervous system; excitable cell that conducts impulses.</div>
+        <div class="sub-head">Synaptic Transmission (Chemical Synapse):</div>
+        <div>1. <strong>Arrival of Impulse:</strong> Action potential reaches presynaptic knob/terminal.</div>
+        <div>2. <strong>Ca²⁺ Influx:</strong> Voltage-gated Ca²⁺ channels open; Ca²⁺ enters presynaptic bulb.</div>
+        <div>3. <strong>Neurotransmitter Release:</strong> Ca²⁺ triggers synaptic vesicles to fuse with presynaptic membrane; releases neurotransmitters (e.g., Acetylcholine) into synaptic cleft by exocytosis.</div>
+        <div>4. <strong>Receptor Binding:</strong> Neurotransmitters diffuse across cleft and bind specific chemo-receptors on postsynaptic membrane.</div>
+        <div>5. <strong>New Impulse:</strong> Ion channels open (Na+ influx), generating post-synaptic potential. If threshold is reached, a new action potential fires.</div>
+      </div>
+
+      <!-- 3. Calvin Cycle (C3) -->
+      <div class="topic-card">
+        <span class="topic-title">3. Calvin Cycle (C₃ Cycle)</span>
+        <div>Light-independent CO₂ reduction in chloroplast stroma. Discovered by Melvin Calvin.</div>
+        <div>1. <strong>Carboxylation:</strong> CO₂ combines with RuBP (5C) catalyzed by <strong>RuBisCO</strong> &rarr; unstable 6C intermediate splits into <strong>2 molecules of 3-PGA</strong> (3C).</div>
+        <div>2. <strong>Reduction:</strong> 3-PGA converted to G3P/PGAL using <strong>2 ATP + 2 NADPH</strong> per CO₂. Some G3P synthesizes glucose/carbohydrates.</div>
+        <div>3. <strong>Regeneration:</strong> Remaining G3P regenerates RuBP using <strong>1 ATP</strong>.</div>
+        <div><em>Net Input for 1 Glucose (6 turns):</em> 6 CO₂ + 18 ATP + 12 NADPH &rarr; 1 Glucose + 18 ADP + 12 NADP⁺.</div>
+      </div>
+
+      <!-- 4. Non-Cyclic Photophosphorylation -->
+      <div class="topic-card">
+        <span class="topic-title">4. Non-Cyclic Photophosphorylation (5 Marks)</span>
+        <div><strong>Definition:</strong> ATP formation from ADP + Pi using light energy where electron flow is unidirectional from H₂O to NADP⁺.</div>
+        <div>1. <strong>PS II (P680):</strong> Absorbs 680 nm light; electrons excited and expelled.</div>
+        <div>2. <strong>Photolysis of Water:</strong> 2H₂O &rarr; 4H⁺ + 4e⁻ + O₂ catalyzed by oxygen-evolving complex (Mn²⁺, Cl⁻) in PS II. Supplies replacement e⁻.</div>
+        <div>3. <strong>ETC &amp; ATP:</strong> Electrons pass through Pheophytin &rarr; Plastoquinone (PQ) &rarr; Cytochrome b₆f &rarr; Plastocyanin (PC). Energy drives ATP synthesis via proton gradient.</div>
+        <div>4. <strong>PS I (P700):</strong> Light excites P700; transfers e⁻ through A₀ &rarr; Fe-S &rarr; Ferredoxin (Fd).</div>
+        <div>5. <strong>NADPH Formation:</strong> Fd-NADP+ reductase transfers e⁻ to NADP⁺ + H⁺ &rarr; NADPH.</div>
+        <div><strong>Products:</strong> ATP, NADPH, and O₂.</div>
+      </div>
+
+      <!-- 5. Krebs Cycle -->
+      <div class="topic-card">
+        <span class="topic-title">5. Krebs Cycle (TCA / Citric Acid Cycle)</span>
+        <div><strong>Site:</strong> Mitochondrial matrix. Completely oxidizes Acetyl-CoA (2C).</div>
+        <div>1. <strong>Citrate Formation:</strong> Acetyl-CoA (2C) + Oxaloacetate (OAA, 4C) + H₂O &rarr; Citric Acid (6C) + CoA (enzyme: Citrate synthase).</div>
+        <div>2. <strong>Isocitrate to α-Ketoglutarate (5C):</strong> Oxidative decarboxylation produces 1 CO₂ + 1 NADH.</div>
+        <div>3. <strong>Succinyl-CoA (4C):</strong> α-Ketoglutarate undergoes oxidative decarboxylation &rarr; 1 CO₂ + 1 NADH.</div>
+        <div>4. <strong>Succinate:</strong> Succinyl-CoA &rarr; Succinate + 1 GTP (yields 1 ATP).</div>
+        <div>5. <strong>Fumarate &amp; Malate:</strong> Succinate &rarr; Fumarate (produces 1 FADH₂) &rarr; Malate (+H₂O).</div>
+        <div>6. <strong>OAA Regeneration:</strong> Malate &rarr; Oxaloacetate (produces 1 NADH).</div>
+        <div><strong>Net Gain per Acetyl-CoA:</strong> 3 NADH, 1 FADH₂, 1 ATP/GTP, 2 CO₂. (×2 per Glucose molecule).</div>
+      </div>
+
+      <!-- 6. Hatch & Slack (C4 Pathway) -->
+      <div class="topic-card">
+        <span class="topic-title">6. Hatch &amp; Slack Pathway (C₄ Cycle)</span>
+        <div>Alternative CO₂ fixation in tropical plants (Maize, Sugarcane) with <strong>Kranz anatomy</strong>.</div>
+        <div class="pathway-flow">
+          Mesophyll: CO₂ + PEP (3C) --[PEP carboxylase]--> OAA (4C)<br>
+          &rarr; Malate (4C) &rarr; transported to Bundle Sheath Cells<br>
+          Bundle Sheath: Malate &rarr; Decarboxylation &rarr; CO₂ (enters Calvin Cycle) + Pyruvate (3C)<br>
+          &rarr; Pyruvate transported back to Mesophyll to regenerate PEP.
+        </div>
+        <div><strong>Significance:</strong> Eliminates photorespiration, operates at high temps/light, high water-use efficiency.</div>
+      </div>
+
+      <!-- 7. Glycolysis -->
+      <div class="topic-card">
+        <span class="topic-title">7. Glycolysis (EMP Pathway) - 5 Marks</span>
+        <div><strong>Site:</strong> Cytoplasm. Universal breakdown of 1 Glucose (6C) &rarr; 2 Pyruvate (3C). Anaerobic.</div>
+        <div><strong>Why it occurs:</strong> Generates immediate cellular ATP, produces NADH, and provides pyruvate for aerobic respiration.</div>
+        <div class="pathway-flow">
+          Glucose (6C) --[ATP&rarr;ADP]--> Glucose-6-P &rarr; Fructose-6-P --[ATP&rarr;ADP]--> Fructose-1,6-bisP (6C)<br>
+          &rarr; Cleaves into: DHAP (3C) &harr; Glyceraldehyde-3-P (PGAL, 3C)<br>
+          &rarr; 2 PGAL --[+2NAD⁺ &rarr; 2NADH]--> 2 × 1,3-bisPGA<br>
+          &rarr; 2 × 3-PGA (+2 ATP) &rarr; 2 × 2-PGA &rarr; 2 × PEP &rarr; 2 × Pyruvate (+2 ATP).
+        </div>
+        <div><strong>Net Yield:</strong> 2 Pyruvate + 2 ATP (net) + 2 NADH.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COPY (PAGE 1 - DUPLICATE) -->
+    <div class="copy-column">
+      <div class="sheet-tag">
+        <span>Class 11 Biology — Quick Notes (Part 1)</span>
+        <span>COPY B</span>
+      </div>
+
+      <!-- 1. Nephron & Urine Formation -->
+      <div class="topic-card">
+        <span class="topic-title">1. Human Nephron &amp; Urine Formation</span>
+        <div><strong>Nephron Structure:</strong> Functional unit of kidney. Composed of:</div>
+        <div>1. <strong>Bowman's capsule:</strong> Cup-shaped sac enclosing glomerulus.</div>
+        <div>2. <strong>Glomerulus:</strong> Capillary tuft where high-pressure blood filtration occurs.</div>
+        <div>3. <strong>Renal tubule:</strong> PCT (Proximal Convoluted Tubule), Loop of Henle (descending &amp; ascending limbs), DCT (Distal Convoluted Tubule) &amp; Collecting Duct.</div>
+        <div class="sub-head">Mechanism of Urine Formation:</div>
+        <div>1. <strong>Glomerular Filtration:</strong> Blood filtered across glomerular capillary membrane into Bowman's space (filters water, glucose, salts, urea; retains blood cells &amp; proteins).</div>
+        <div>2. <strong>Selective Reabsorption:</strong> ~99% filtrate reabsorbed in PCT &amp; loop of Henle (glucose, amino acids actively; water, Na+, Cl- passively/actively).</div>
+        <div>3. <strong>Tubular Secretion:</strong> Active secretion of H+, K+, NH3, and creatinine from peritubular capillaries into tubule to maintain ionic &amp; pH balance.</div>
+        <div>4. <strong>Concentration:</strong> Loop of Henle &amp; vasa recta (counter-current system) and collecting duct conserve water under ADH control.</div>
+      </div>
+
+      <!-- 2. Neuron & Synaptic Transmission -->
+      <div class="topic-card">
+        <span class="topic-title">2. Neuron &amp; Synaptic Transmission</span>
+        <div><strong>Neuron:</strong> Structural &amp; functional unit of nervous system; excitable cell that conducts impulses.</div>
+        <div class="sub-head">Synaptic Transmission (Chemical Synapse):</div>
+        <div>1. <strong>Arrival of Impulse:</strong> Action potential reaches presynaptic knob/terminal.</div>
+        <div>2. <strong>Ca²⁺ Influx:</strong> Voltage-gated Ca²⁺ channels open; Ca²⁺ enters presynaptic bulb.</div>
+        <div>3. <strong>Neurotransmitter Release:</strong> Ca²⁺ triggers synaptic vesicles to fuse with presynaptic membrane; releases neurotransmitters (e.g., Acetylcholine) into synaptic cleft by exocytosis.</div>
+        <div>4. <strong>Receptor Binding:</strong> Neurotransmitters diffuse across cleft and bind specific chemo-receptors on postsynaptic membrane.</div>
+        <div>5. <strong>New Impulse:</strong> Ion channels open (Na+ influx), generating post-synaptic potential. If threshold is reached, a new action potential fires.</div>
+      </div>
+
+      <!-- 3. Calvin Cycle (C3) -->
+      <div class="topic-card">
+        <span class="topic-title">3. Calvin Cycle (C₃ Cycle)</span>
+        <div>Light-independent CO₂ reduction in chloroplast stroma. Discovered by Melvin Calvin.</div>
+        <div>1. <strong>Carboxylation:</strong> CO₂ combines with RuBP (5C) catalyzed by <strong>RuBisCO</strong> &rarr; unstable 6C intermediate splits into <strong>2 molecules of 3-PGA</strong> (3C).</div>
+        <div>2. <strong>Reduction:</strong> 3-PGA converted to G3P/PGAL using <strong>2 ATP + 2 NADPH</strong> per CO₂. Some G3P synthesizes glucose/carbohydrates.</div>
+        <div>3. <strong>Regeneration:</strong> Remaining G3P regenerates RuBP using <strong>1 ATP</strong>.</div>
+        <div><em>Net Input for 1 Glucose (6 turns):</em> 6 CO₂ + 18 ATP + 12 NADPH &rarr; 1 Glucose + 18 ADP + 12 NADP⁺.</div>
+      </div>
+
+      <!-- 4. Non-Cyclic Photophosphorylation -->
+      <div class="topic-card">
+        <span class="topic-title">4. Non-Cyclic Photophosphorylation (5 Marks)</span>
+        <div><strong>Definition:</strong> ATP formation from ADP + Pi using light energy where electron flow is unidirectional from H₂O to NADP⁺.</div>
+        <div>1. <strong>PS II (P680):</strong> Absorbs 680 nm light; electrons excited and expelled.</div>
+        <div>2. <strong>Photolysis of Water:</strong> 2H₂O &rarr; 4H⁺ + 4e⁻ + O₂ catalyzed by oxygen-evolving complex (Mn²⁺, Cl⁻) in PS II. Supplies replacement e⁻.</div>
+        <div>3. <strong>ETC &amp; ATP:</strong> Electrons pass through Pheophytin &rarr; Plastoquinone (PQ) &rarr; Cytochrome b₆f &rarr; Plastocyanin (PC). Energy drives ATP synthesis via proton gradient.</div>
+        <div>4. <strong>PS I (P700):</strong> Light excites P700; transfers e⁻ through A₀ &rarr; Fe-S &rarr; Ferredoxin (Fd).</div>
+        <div>5. <strong>NADPH Formation:</strong> Fd-NADP+ reductase transfers e⁻ to NADP⁺ + H⁺ &rarr; NADPH.</div>
+        <div><strong>Products:</strong> ATP, NADPH, and O₂.</div>
+      </div>
+
+      <!-- 5. Krebs Cycle -->
+      <div class="topic-card">
+        <span class="topic-title">5. Krebs Cycle (TCA / Citric Acid Cycle)</span>
+        <div><strong>Site:</strong> Mitochondrial matrix. Completely oxidizes Acetyl-CoA (2C).</div>
+        <div>1. <strong>Citrate Formation:</strong> Acetyl-CoA (2C) + Oxaloacetate (OAA, 4C) + H₂O &rarr; Citric Acid (6C) + CoA (enzyme: Citrate synthase).</div>
+        <div>2. <strong>Isocitrate to α-Ketoglutarate (5C):</strong> Oxidative decarboxylation produces 1 CO₂ + 1 NADH.</div>
+        <div>3. <strong>Succinyl-CoA (4C):</strong> α-Ketoglutarate undergoes oxidative decarboxylation &rarr; 1 CO₂ + 1 NADH.</div>
+        <div>4. <strong>Succinate:</strong> Succinyl-CoA &rarr; Succinate + 1 GTP (yields 1 ATP).</div>
+        <div>5. <strong>Fumarate &amp; Malate:</strong> Succinate &rarr; Fumarate (produces 1 FADH₂) &rarr; Malate (+H₂O).</div>
+        <div>6. <strong>OAA Regeneration:</strong> Malate &rarr; Oxaloacetate (produces 1 NADH).</div>
+        <div><strong>Net Gain per Acetyl-CoA:</strong> 3 NADH, 1 FADH₂, 1 ATP/GTP, 2 CO₂. (×2 per Glucose molecule).</div>
+      </div>
+
+      <!-- 6. Hatch & Slack (C4 Pathway) -->
+      <div class="topic-card">
+        <span class="topic-title">6. Hatch &amp; Slack Pathway (C₄ Cycle)</span>
+        <div>Alternative CO₂ fixation in tropical plants (Maize, Sugarcane) with <strong>Kranz anatomy</strong>.</div>
+        <div class="pathway-flow">
+          Mesophyll: CO₂ + PEP (3C) --[PEP carboxylase]--> OAA (4C)<br>
+          &rarr; Malate (4C) &rarr; transported to Bundle Sheath Cells<br>
+          Bundle Sheath: Malate &rarr; Decarboxylation &rarr; CO₂ (enters Calvin Cycle) + Pyruvate (3C)<br>
+          &rarr; Pyruvate transported back to Mesophyll to regenerate PEP.
+        </div>
+        <div><strong>Significance:</strong> Eliminates photorespiration, operates at high temps/light, high water-use efficiency.</div>
+      </div>
+
+      <!-- 7. Glycolysis -->
+      <div class="topic-card">
+        <span class="topic-title">7. Glycolysis (EMP Pathway) - 5 Marks</span>
+        <div><strong>Site:</strong> Cytoplasm. Universal breakdown of 1 Glucose (6C) &rarr; 2 Pyruvate (3C). Anaerobic.</div>
+        <div><strong>Why it occurs:</strong> Generates immediate cellular ATP, produces NADH, and provides pyruvate for aerobic respiration.</div>
+        <div class="pathway-flow">
+          Glucose (6C) --[ATP&rarr;ADP]--> Glucose-6-P &rarr; Fructose-6-P --[ATP&rarr;ADP]--> Fructose-1,6-bisP (6C)<br>
+          &rarr; Cleaves into: DHAP (3C) &harr; Glyceraldehyde-3-P (PGAL, 3C)<br>
+          &rarr; 2 PGAL --[+2NAD⁺ &rarr; 2NADH]--> 2 × 1,3-bisPGA<br>
+          &rarr; 2 × 3-PGA (+2 ATP) &rarr; 2 × 2-PGA &rarr; 2 × PEP &rarr; 2 × Pyruvate (+2 ATP).
+        </div>
+        <div><strong>Net Yield:</strong> 2 Pyruvate + 2 ATP (net) + 2 NADH.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       PAGE 2 OF 2
+       ========================================== -->
+  <div class="a4-sheet">
+    <div class="center-cut-guide"></div>
+
+    <!-- LEFT COPY (PAGE 2) -->
+    <div class="copy-column">
+      <div class="sheet-tag">
+        <span>Class 11 Biology — Quick Notes (Part 2)</span>
+        <span>COPY A</span>
+      </div>
+
+      <!-- 8. Anatomy of Stems -->
+      <div class="topic-card">
+        <span class="topic-title">8. Anatomy of Dicot vs Monocot Stem</span>
+        <div><strong>Dicot Stem (Sunflower):</strong> 1. Epidermis with multicellular hairs. 2. Hypodermis is collenchymatous. 3. Ground tissue differentiated into cortex, endodermis, pericycle &amp; pith. 4. Vascular bundles arranged in a ring, open (cambium present), wedge-shaped. 5. Medullary rays present. 6. Large central pith.</div>
+        <div><strong>Monocot Stem (Maize):</strong> 1. Epidermis with thick cuticle, trichomes absent. 2. Hypodermis is sclerenchymatous. 3. Ground tissue undifferentiated (no distinct cortex/pith). 4. Vascular bundles scattered, closed (no cambium), smaller towards periphery. 5. Sclerenchymatous bundle sheath present. 6. Protoxylem lacuna present.</div>
+      </div>
+
+      <!-- 9. Anatomy of Roots -->
+      <div class="topic-card">
+        <span class="topic-title">9. Anatomy of Dicot vs Monocot Root (5M)</span>
+        <div><strong>Dicot Root (Pea/Sunflower):</strong> 1. Epiblema with unicellular root hairs. 2. Cortex of thin parenchymal cells. 3. Endodermis with Casparian strips. 4. Pericycle gives rise to lateral roots &amp; vascular cambium. 5. Vascular bundles 2–6 (diarch to hexarch), alternate. 6. Pith small or absent. 7. Secondary growth present.</div>
+        <div><strong>Monocot Root (Maize/Wheat):</strong> 1. Epiblema with root hairs. 2. Broad parenchymatous cortex. 3. Endodermis with Casparian strips. 4. Pericycle gives rise to lateral roots only. 5. Polyarch (numerous xylem bundles &gt;6). 6. Pith large and well-developed. 7. Cambium absent (no secondary growth).</div>
+      </div>
+
+      <!-- 10. Differentiation, Dedifferentiation, Redifferentiation -->
+      <div class="topic-card">
+        <span class="topic-title">10. Cellular Development Phases</span>
+        <div><strong>Differentiation:</strong> Meristematic cells undergo maturation, lose division ability, and acquire specific structure &amp; function. (e.g., Formation of xylem tracheary elements, phloem sieve tubes).</div>
+        <div><strong>De-differentiation:</strong> Living mature permanent cells regain the capacity of cell division under specific conditions. (e.g., Formation of interfascicular cambium &amp; cork cambium/phellogen from parenchyma).</div>
+        <div><strong>Redifferentiation:</strong> Cells produced by dedifferentiation mature again, lose division ability, and specialize. (e.g., Formation of secondary xylem, secondary phloem, and cork/phellem).</div>
+      </div>
+
+      <!-- 11. Anatomy of Leaves -->
+      <div class="topic-card">
+        <span class="topic-title">11. Anatomy of Dicot vs Monocot Leaf</span>
+        <div><strong>Dicot Leaf (Dorsiventral - Sunflower):</strong> 1. Upper epidermis with cuticle; lower epidermis with more stomata (hypostomatic). 2. Mesophyll differentiated into upper Palisade (photosynthesis) and lower Spongy parenchyma (gas exchange). 3. Reticulate venation; vascular bundles varied in size. 4. Bulliform cells absent.</div>
+        <div><strong>Monocot Leaf (Isobilateral - Maize):</strong> 1. Similar upper and lower epidermis; stomata equal on both sides (amphistomatic). 2. Mesophyll undifferentiated (all uniform photosynthetic cells). 3. Parallel venation; vascular bundles uniform size. 4. <strong>Bulliform cells</strong> present in upper epidermis (regulate rolling/unrolling during drought).</div>
+      </div>
+
+      <!-- 12. Flower Structure & Solanaceae -->
+      <div class="topic-card">
+        <span class="topic-title">12. Flower Structure &amp; Solanaceae Family (5M)</span>
+        <div><strong>Flower:</strong> Reproductive shoot with 4 whorls: <strong>Calyx</strong> (sepals, protective), <strong>Corolla</strong> (petals, attracts pollinators), <strong>Androecium</strong> (male, stamens with anther/filament), <strong>Gynoecium</strong> (female, carpels with stigma/style/ovary).</div>
+        <div><strong>Solanaceae (Potato, Tomato, Brinjal, Datura):</strong> Inflorescence: Solitary/cymose. Flower: Bisexual, actinomorphic, pentamerous. Calyx: (5) persistent, valvate. Corolla: (5) gamopetalous, valvate. Androecium: 5, epipetalous. Gynoecium: Bicarpellary, syncarpous, superior ovary, bilocular, axile placentation with swollen placenta. Fruit: Berry/capsule. Seeds: Endospermic.</div>
+      </div>
+
+      <!-- 13. Life Cycles of Bryophytes & Pteridophytes -->
+      <div class="topic-card">
+        <span class="topic-title">13. Bryophyte &amp; Pteridophyte Life Cycles (5M)</span>
+        <div><strong>Bryophytes (Mosses, Liverworts):</strong> Alternation of generations. 1. <strong>Gametophyte:</strong> Dominant, haploid (n), green, free-living. 2. Sex organs: Antheridia (male) &amp; Archegonia (female). 3. Water required for biflagellate sperm motility &rarr; Zygote (2n). 4. <strong>Sporophyte:</strong> Diploid (2n), physically dependent on gametophyte; capsule produces haploid spores by meiosis.</div>
+        <div><strong>Pteridophytes (Ferns):</strong> 1. <strong>Sporophyte:</strong> Dominant, diploid (2n), independent with true root, stem, leaves. 2. Sporangia produce haploid spores (n) via meiosis. 3. Spores germinate into small, independent, photosynthetic, heart-shaped <strong>Prothallus</strong> (gametophyte, n). 4. Water needed for fertilization &rarr; Zygote &rarr; new sporophyte.</div>
+      </div>
+
+      <!-- 14. Competitive vs Non-competitive Inhibition -->
+      <div class="topic-card">
+        <span class="topic-title">14. Enzyme Inhibition: Competitive vs Non-Competitive</span>
+        <div><strong>Competitive Inhibition:</strong> Inhibitor closely resembles substrate in structure and competes for the active site of the enzyme. Vmax remains same, Km increases. <em>Reversible</em> by increasing substrate concentration. <strong>Example:</strong> Malonate competes with succinate for Succinate dehydrogenase.</div>
+        <div><strong>Non-Competitive Inhibition:</strong> Inhibitor binds to an allosteric site (other than active site), altering enzyme conformation. Vmax decreases, Km remains unchanged. <em>Cannot be reversed</em> by adding substrate. <strong>Example:</strong> Cyanide inhibits Cytochrome oxidase; Heavy metals (Hg²⁺, Pb²⁺, Ag⁺) inhibit enzymes.</div>
+      </div>
+
+      <!-- 15. Respiratory Volumes and Capacities -->
+      <div class="topic-card">
+        <span class="topic-title">15. Respiratory Volumes &amp; Capacities (5 Marks)</span>
+        <div><strong>1. Volumes:</strong></div>
+        <div>• <strong>TV (Tidal Volume):</strong> Normal tidal breathing volume = <strong>~500 mL</strong>.</div>
+        <div>• <strong>IRV (Inspiratory Reserve):</strong> Forcible extra inhalation = <strong>2500–3000 mL</strong>.</div>
+        <div>• <strong>ERV (Expiratory Reserve):</strong> Forcible extra exhalation = <strong>1000–1100 mL</strong>.</div>
+        <div>• <strong>RV (Residual Volume):</strong> Volume remaining in lungs after max exhalation = <strong>1100–1200 mL</strong>.</div>
+        <div><strong>2. Capacities:</strong></div>
+        <div>• <strong>IC (Inspiratory Capacity):</strong> TV + IRV (3000–3500 mL).</div>
+        <div>• <strong>EC (Expiratory Capacity):</strong> TV + ERV (1500–1600 mL).</div>
+        <div>• <strong>FRC (Functional Residual):</strong> ERV + RV (2100–2300 mL).</div>
+        <div>• <strong>VC (Vital Capacity):</strong> ERV + TV + IRV (3500–4500 mL).</div>
+        <div>• <strong>TLC (Total Lung Capacity):</strong> RV + ERV + TV + IRV = VC + RV (5000–6000 mL).</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COPY (PAGE 2 - DUPLICATE) -->
+    <div class="copy-column">
+      <div class="sheet-tag">
+        <span>Class 11 Biology — Quick Notes (Part 2)</span>
+        <span>COPY B</span>
+      </div>
+
+      <!-- 8. Anatomy of Stems -->
+      <div class="topic-card">
+        <span class="topic-title">8. Anatomy of Dicot vs Monocot Stem</span>
+        <div><strong>Dicot Stem (Sunflower):</strong> 1. Epidermis with multicellular hairs. 2. Hypodermis is collenchymatous. 3. Ground tissue differentiated into cortex, endodermis, pericycle &amp; pith. 4. Vascular bundles arranged in a ring, open (cambium present), wedge-shaped. 5. Medullary rays present. 6. Large central pith.</div>
+        <div><strong>Monocot Stem (Maize):</strong> 1. Epidermis with thick cuticle, trichomes absent. 2. Hypodermis is sclerenchymatous. 3. Ground tissue undifferentiated (no distinct cortex/pith). 4. Vascular bundles scattered, closed (no cambium), smaller towards periphery. 5. Sclerenchymatous bundle sheath present. 6. Protoxylem lacuna present.</div>
+      </div>
+
+      <!-- 9. Anatomy of Roots -->
+      <div class="topic-card">
+        <span class="topic-title">9. Anatomy of Dicot vs Monocot Root (5M)</span>
+        <div><strong>Dicot Root (Pea/Sunflower):</strong> 1. Epiblema with unicellular root hairs. 2. Cortex of thin parenchymal cells. 3. Endodermis with Casparian strips. 4. Pericycle gives rise to lateral roots &amp; vascular cambium. 5. Vascular bundles 2–6 (diarch to hexarch), alternate. 6. Pith small or absent. 7. Secondary growth present.</div>
+        <div><strong>Monocot Root (Maize/Wheat):</strong> 1. Epiblema with root hairs. 2. Broad parenchymatous cortex. 3. Endodermis with Casparian strips. 4. Pericycle gives rise to lateral roots only. 5. Polyarch (numerous xylem bundles &gt;6). 6. Pith large and well-developed. 7. Cambium absent (no secondary growth).</div>
+      </div>
+
+      <!-- 10. Differentiation, Dedifferentiation, Redifferentiation -->
+      <div class="topic-card">
+        <span class="topic-title">10. Cellular Development Phases</span>
+        <div><strong>Differentiation:</strong> Meristematic cells undergo maturation, lose division ability, and acquire specific structure &amp; function. (e.g., Formation of xylem tracheary elements, phloem sieve tubes).</div>
+        <div><strong>De-differentiation:</strong> Living mature permanent cells regain the capacity of cell division under specific conditions. (e.g., Formation of interfascicular cambium &amp; cork cambium/phellogen from parenchyma).</div>
+        <div><strong>Redifferentiation:</strong> Cells produced by dedifferentiation mature again, lose division ability, and specialize. (e.g., Formation of secondary xylem, secondary phloem, and cork/phellem).</div>
+      </div>
+
+      <!-- 11. Anatomy of Leaves -->
+      <div class="topic-card">
+        <span class="topic-title">11. Anatomy of Dicot vs Monocot Leaf</span>
+        <div><strong>Dicot Leaf (Dorsiventral - Sunflower):</strong> 1. Upper epidermis with cuticle; lower epidermis with more stomata (hypostomatic). 2. Mesophyll differentiated into upper Palisade (photosynthesis) and lower Spongy parenchyma (gas exchange). 3. Reticulate venation; vascular bundles varied in size. 4. Bulliform cells absent.</div>
+        <div><strong>Monocot Leaf (Isobilateral - Maize):</strong> 1. Similar upper and lower epidermis; stomata equal on both sides (amphistomatic). 2. Mesophyll undifferentiated (all uniform photosynthetic cells). 3. Parallel venation; vascular bundles uniform size. 4. <strong>Bulliform cells</strong> present in upper epidermis (regulate rolling/unrolling during drought).</div>
+      </div>
+
+      <!-- 12. Flower Structure & Solanaceae -->
+      <div class="topic-card">
+        <span class="topic-title">12. Flower Structure &amp; Solanaceae Family (5M)</span>
+        <div><strong>Flower:</strong> Reproductive shoot with 4 whorls: <strong>Calyx</strong> (sepals, protective), <strong>Corolla</strong> (petals, attracts pollinators), <strong>Androecium</strong> (male, stamens with anther/filament), <strong>Gynoecium</strong> (female, carpels with stigma/style/ovary).</div>
+        <div><strong>Solanaceae (Potato, Tomato, Brinjal, Datura):</strong> Inflorescence: Solitary/cymose. Flower: Bisexual, actinomorphic, pentamerous. Calyx: (5) persistent, valvate. Corolla: (5) gamopetalous, valvate. Androecium: 5, epipetalous. Gynoecium: Bicarpellary, syncarpous, superior ovary, bilocular, axile placentation with swollen placenta. Fruit: Berry/capsule. Seeds: Endospermic.</div>
+      </div>
+
+      <!-- 13. Life Cycles of Bryophytes & Pteridophytes -->
+      <div class="topic-card">
+        <span class="topic-title">13. Bryophyte &amp; Pteridophyte Life Cycles (5M)</span>
+        <div><strong>Bryophytes (Mosses, Liverworts):</strong> Alternation of generations. 1. <strong>Gametophyte:</strong> Dominant, haploid (n), green, free-living. 2. Sex organs: Antheridia (male) &amp; Archegonia (female). 3. Water required for biflagellate sperm motility &rarr; Zygote (2n). 4. <strong>Sporophyte:</strong> Diploid (2n), physically dependent on gametophyte; capsule produces haploid spores by meiosis.</div>
+        <div><strong>Pteridophytes (Ferns):</strong> 1. <strong>Sporophyte:</strong> Dominant, diploid (2n), independent with true root, stem, leaves. 2. Sporangia produce haploid spores (n) via meiosis. 3. Spores germinate into small, independent, photosynthetic, heart-shaped <strong>Prothallus</strong> (gametophyte, n). 4. Water needed for fertilization &rarr; Zygote &rarr; new sporophyte.</div>
+      </div>
+
+      <!-- 14. Competitive vs Non-competitive Inhibition -->
+      <div class="topic-card">
+        <span class="topic-title">14. Enzyme Inhibition: Competitive vs Non-Competitive</span>
+        <div><strong>Competitive Inhibition:</strong> Inhibitor closely resembles substrate in structure and competes for the active site of the enzyme. Vmax remains same, Km increases. <em>Reversible</em> by increasing substrate concentration. <strong>Example:</strong> Malonate competes with succinate for Succinate dehydrogenase.</div>
+        <div><strong>Non-Competitive Inhibition:</strong> Inhibitor binds to an allosteric site (other than active site), altering enzyme conformation. Vmax decreases, Km remains unchanged. <em>Cannot be reversed</em> by adding substrate. <strong>Example:</strong> Cyanide inhibits Cytochrome oxidase; Heavy metals (Hg²⁺, Pb²⁺, Ag⁺) inhibit enzymes.</div>
+      </div>
+
+      <!-- 15. Respiratory Volumes and Capacities -->
+      <div class="topic-card">
+        <span class="topic-title">15. Respiratory Volumes &amp; Capacities (5 Marks)</span>
+        <div><strong>1. Volumes:</strong></div>
+        <div>• <strong>TV (Tidal Volume):</strong> Normal tidal breathing volume = <strong>~500 mL</strong>.</div>
+        <div>• <strong>IRV (Inspiratory Reserve):</strong> Forcible extra inhalation = <strong>2500–3000 mL</strong>.</div>
+        <div>• <strong>ERV (Expiratory Reserve):</strong> Forcible extra exhalation = <strong>1000–1100 mL</strong>.</div>
+        <div>• <strong>RV (Residual Volume):</strong> Volume remaining in lungs after max exhalation = <strong>1100–1200 mL</strong>.</div>
+        <div><strong>2. Capacities:</strong></div>
+        <div>• <strong>IC (Inspiratory Capacity):</strong> TV + IRV (3000–3500 mL).</div>
+        <div>• <strong>EC (Expiratory Capacity):</strong> TV + ERV (1500–1600 mL).</div>
+        <div>• <strong>FRC (Functional Residual):</strong> ERV + RV (2100–2300 mL).</div>
+        <div>• <strong>VC (Vital Capacity):</strong> ERV + TV + IRV (3500–4500 mL).</div>
+        <div>• <strong>TLC (Total Lung Capacity):</strong> RV + ERV + TV + IRV = VC + RV (5000–6000 mL).</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

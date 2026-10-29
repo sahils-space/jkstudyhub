@@ -1039,7 +1039,7 @@ const SYLLABUS_PDF_DATA = {
     }));
 
     return `
-      <div class="modal-paper-item">
+      <div class="modal-paper-item" onclick="if (!event.target.closest('.item-actions') && !event.target.closest('.item-btn-star')) { window.open('${p.file}', '_blank'); handlePaperAccess('${safeData}', 'Viewed'); }" style="cursor: pointer;">
         <div class="item-info">
           <div class="item-icon" style="background: ${badgeBg}; color: ${badgeColor};">
             <i class="fa-solid ${p.icon}"></i>
@@ -1133,10 +1133,18 @@ const SYLLABUS_PDF_DATA = {
   const modalCyqSubtitle = document.getElementById('modalCyqSubtitle');
   const modalCyqList = document.getElementById('modalCyqList');
 
+  const HORNBILL_SUMMARY_PAPER = {
+    name: 'Hornbill: Complete Chapters Summary',
+    marks: 'Chapter 1: The Portrait of a Lady by Khushwant Singh (Full Detailed Summary)',
+    file: 'cyqs/class-11-english-hornbill-the-portrait-of-a-lady-summary.pdf',
+    icon: 'fa-book-open',
+    badge: 'Hornbill Summary'
+  };
+
   const CYQ_DATA = {
     '11-med': {
       title: 'Class 11th • Medical Science CYQs',
-      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam Question Bank)',
+      subtitle: 'Crucial Year-End Questions & Chapter Summaries (JKBOSE Board Exam)',
       papers: [
         {
           name: 'Class 11th Physics CYQs',
@@ -1165,13 +1173,14 @@ const SYLLABUS_PDF_DATA = {
           file: 'cyqs/class-11-zoology-important-questions.pdf',
           icon: 'fa-dna',
           badge: 'High Priority CYQ'
-        }
+        },
+        HORNBILL_SUMMARY_PAPER
       ],
-      notice: 'All core Medical Science (Physics, Chemistry, Botany, Zoology) CYQ question banks are now available.'
+      notice: 'All core Medical Science question banks and General English Hornbill chapter summaries are now live.'
     },
     '11-nonmed': {
       title: 'Class 11th • Non-Medical Science CYQs',
-      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam Question Bank)',
+      subtitle: 'Crucial Year-End Questions & Chapter Summaries (JKBOSE Board Exam)',
       papers: [
         {
           name: 'Class 11th Physics CYQs',
@@ -1186,21 +1195,26 @@ const SYLLABUS_PDF_DATA = {
           file: 'cyqs/class-11-chemistry-important-questions.pdf',
           icon: 'fa-flask',
           badge: 'High Priority CYQ'
-        }
+        },
+        HORNBILL_SUMMARY_PAPER
       ],
-      notice: 'Class 11th Mathematics CYQ question bank is currently being prepared and will be added here shortly.'
+      notice: 'Physics, Chemistry, and Hornbill Literature chapter summaries are active. Mathematics CYQ is currently in preparation.'
     },
     '11-comm': {
       title: 'Class 11th • Commerce Stream CYQs',
-      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam)',
-      papers: [],
-      notice: 'Class 11th Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
+      subtitle: 'Crucial Year-End Questions & Literature Summaries (JKBOSE Board Exam)',
+      papers: [
+        HORNBILL_SUMMARY_PAPER
+      ],
+      notice: 'General English Hornbill chapter summaries are active. Accountancy, Business Studies & Economics CYQs are currently being prepared for the upcoming session.'
     },
     '11-arts': {
       title: 'Class 11th • Arts & Humanities CYQs',
-      subtitle: 'Crucial Year-End Questions (JKBOSE Board Exam)',
-      papers: [],
-      notice: 'Class 11th Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
+      subtitle: 'Crucial Year-End Questions & Literature Summaries (JKBOSE Board Exam)',
+      papers: [
+        HORNBILL_SUMMARY_PAPER
+      ],
+      notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
     'c10-sci': {
       title: 'Class 10th • Science CYQs',
