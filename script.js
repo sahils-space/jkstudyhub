@@ -1259,6 +1259,16 @@ const SYLLABUS_PDF_DATA = {
 
   const HORNBILL_CHAPTERS = [
     {
+      id: 'writing-skills',
+      type: 'Writing Section (Core Exam)',
+      title: 'Class 11th Writing Section: All Formats & Samples',
+      author: 'JKBOSE & CBSE Section B Syllabus',
+      desc: 'Complete 9-page guide with official formats, marking schemes, and solved model samples: Notice, Advertisements, Posters, Letters, Job Application with Bio-Data / CV, Articles, Reports, Speeches, and Debates.',
+      file: 'cyqs/class-11-english-writing-skills-complete-formats-and-samples.pdf',
+      status: 'available',
+      badge: 'Master Guide (PDF)'
+    },
+    {
       id: 1,
       type: 'Prose',
       title: 'Chapter 1: The Portrait of a Lady',
@@ -1547,8 +1557,8 @@ const SYLLABUS_PDF_DATA = {
       <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
         <span style="font-size: 22px;">📚</span>
         <div style="font-size: 13px; color: #065f46; line-height: 1.45;">
-          <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature Revision Directory</strong><br/>
-          <strong>Chapters 1, 2, 3, The Ailing Planet, The Adventure, Silk Road</strong> and <strong>Poems 1–5 (All Core Poems)</strong> are ready and available in official CYQ PDF format below.
+          <strong style="color: #047857; font-size: 13.5px;">Hornbill Literature &amp; Writing Skills Directory</strong><br/>
+          <strong>Chapters 1–6, Poems 1–5</strong> and the <strong>Complete Section B Writing Skills Master Guide (Formats &amp; Samples)</strong> are ready and available in official CYQ PDF format below.
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
