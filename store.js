@@ -4830,6 +4830,7 @@ function initializeProductPageFromRoute() {
 }
 
 function syncStoreRouteFromLocation() {
+  if (typeof document === 'undefined' || !document.documentElement) return;
   const params = new URLSearchParams(window.location.search);
   const isCheckoutRoute = params.get('checkout') === '1';
   const isProductRoute = !isCheckoutRoute && params.has('product');

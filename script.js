@@ -487,8 +487,11 @@ function initMainApp() {
   // =========================================================
   const leafIcons = ['🍁', '🍂', '🍃', '🍁', '🍂'];
   function createFallingLeaf() {
+    if (typeof document !== 'undefined' && document.hidden) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const wrapper = document.getElementById('autumnWrapper');
     if (!wrapper) return;
+    if (wrapper.childElementCount >= 16) return;
     
     const leaf = document.createElement('div');
     const randomIcon = leafIcons[Math.floor(Math.random() * leafIcons.length)];
@@ -507,10 +510,12 @@ function initMainApp() {
     }, dur * 1000);
   }
 
-  // Start falling leaves immediately & run continuously
-  setInterval(createFallingLeaf, 650);
-  for (let i = 0; i < 6; i++) {
-    setTimeout(createFallingLeaf, i * 200);
+  // Start falling leaves only when autumnWrapper exists
+  if (document.getElementById('autumnWrapper')) {
+    setInterval(createFallingLeaf, 700);
+    for (let i = 0; i < 4; i++) {
+      setTimeout(createFallingLeaf, i * 250);
+    }
   }
   // =========================================================
   // MODEL PAPERS POPUP MODAL CONTROLLER
