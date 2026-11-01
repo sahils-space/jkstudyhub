@@ -19,7 +19,7 @@
       rating: 4.9,
       reviewsCount: 38,
       stock: 4,
-      image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-bookmark.jpg',
       description: 'Preserved real Kashmiri Autumn Chinar leaf fragments & dried rose petals suspended in crystal-clear, bubble-free UV-resistant epoxy resin. Finished with hand-brushed 24K gold foil flakes and a pure silk champagne tassel.',
       specs: ['Dimensions: 14cm x 2.8cm', 'Thickness: 3.5mm shatterproof', 'Tassel: Pure Silky Thread included', 'Finish: High-gloss diamond buffed']
     },
@@ -34,12 +34,27 @@
       rating: 5.0,
       reviewsCount: 64,
       stock: 7,
-      image: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-keychain.jpg',
       description: 'Custom alphabet initial of your choice, infused with real pressed baby breath flowers, lavender buds, and floating metallic gold leaf flakes. Comes with a heavy-duty gold lobster clasp and miniature matching resin charm.',
       specs: ['Choose any letter A–Z', 'Heavy-duty anti-tarnish gold hardware', 'Includes mini matching pearl charm', 'Cured for 48 hours for scratch defense']
     },
     {
       id: 'prod-3',
+      title: 'Royal Islamic Folding Resin Quran Stand (Rehal)',
+      category: 'islamic',
+      categoryLabel: 'Sacred Rehal & Quran Stands',
+      badge: 'Spiritual Luxury',
+      price: 1599,
+      mrp: 2799,
+      rating: 5.0,
+      reviewsCount: 47,
+      stock: 3,
+      image: 'images/resin/resin-quran-stand.jpg',
+      description: 'Handcrafted folding X-shape Islamic Quran Stand (Rehal) cast in pearl white and emerald green crystal resin, embellished with genuine 24K gold foil flakes and Arabic calligraphy. Detachable two-piece design folds flat for compact storage.',
+      specs: ['Detachable 2-piece folding X-shape rehal', 'Size: 12 x 8 inches per wing', 'Holds Holy Quran & heavy books firmly', 'Finished with non-yellowing diamond glaze']
+    },
+    {
+      id: 'prod-4',
       title: 'Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)',
       category: 'clocks',
       categoryLabel: 'Ocean & Geode Clocks',
@@ -49,12 +64,12 @@
       rating: 4.9,
       reviewsCount: 22,
       stock: 2,
-      image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-clock.jpg',
       description: 'A breathtaking 3-layered ocean pour inspired by the serene waters of Kashmir. Crafted with real crushed white quartz crystals, authentic beach sand, and multi-layered cellular ocean foam. Fitted with a high-torque silent quartz clock mechanism.',
       specs: ['Diameter: 12 inches (30 cm)', 'Base: Heavy moisture-resistant engineered wood', 'Movement: Sweep Silent Quartz (No ticking sound)', 'Gold teardrop clock hands']
     },
     {
-      id: 'prod-4',
+      id: 'prod-5',
       title: 'Royal Emerald Agate Resin Coasters (Set of 4)',
       category: 'coasters',
       categoryLabel: 'Luxury Coasters',
@@ -64,12 +79,12 @@
       rating: 4.8,
       reviewsCount: 41,
       stock: 5,
-      image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-coasters.jpg',
       description: 'Inspired by natural raw emerald geodes. Translucent jewel-toned green and pearlescent white resin swirls with genuine natural crackle texture. Each coaster rim is individually hand-gilded with metallic gold leaf paint.',
       specs: ['Set of 4 Coasters (approx 10cm each)', 'Heat resistant up to 90°C (ideal for hot tea/coffee)', 'Silicone anti-slip bumpers on bottom', 'Waterproof & wipe-clean']
     },
     {
-      id: 'prod-5',
+      id: 'prod-6',
       title: 'Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame',
       category: 'islamic',
       categoryLabel: 'Islamic Sacred Art',
@@ -79,12 +94,12 @@
       rating: 5.0,
       reviewsCount: 53,
       stock: 3,
-      image: 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-ayat-frame.jpg',
       description: 'Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror acrylic, seamlessly cast within a pearl white and gold marble resin slab. The perfect spiritual gift for housewarmings, weddings, or personal study desks.',
       specs: ['Size: 8 x 10 inches', 'Display: Comes with luxury clear acrylic table stand', '3D gold mirror reflection script', 'Fade-proof epoxy seal']
     },
     {
-      id: 'prod-6',
+      id: 'prod-7',
       title: 'Nikah & Wedding Flower Keepsake Crystal Cube',
       category: 'wedding',
       categoryLabel: 'Wedding Keepsakes',
@@ -94,12 +109,12 @@
       rating: 5.0,
       reviewsCount: 19,
       stock: 3,
-      image: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-wedding-cube.jpg',
       description: 'Preserve the real fresh roses, jasmine, and petals from your Nikah or wedding garland forever. Cast in an optical-grade solid crystal resin cube with couple names and wedding date engraved in gold.',
       specs: ['Dimensions: 10cm x 10cm x 10cm solid block', 'Custom Name & Date inclusion', 'Dry-flower preservation guidance provided', 'Luxe satin-lined keepsake gift box']
     },
     {
-      id: 'prod-7',
+      id: 'prod-8',
       title: 'Golden Ginkgo Leaf Vanity & Jewelry Trinket Tray',
       category: 'coasters',
       categoryLabel: 'Vanity Trays',
@@ -109,12 +124,12 @@
       rating: 4.8,
       reviewsCount: 30,
       stock: 6,
-      image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-tray.jpg',
       description: 'Organic leaf silhouette tray for rings, earrings, watches, and bedside trinkets. Hand-poured with semi-opaque milky white resin, deep amber accents, and gold leaf veins.',
       specs: ['Length: 18cm | Width: 11cm', 'Curved lip prevents jewelry from sliding', 'Food-safe certified resin topcoat', 'Glossy ceramic-like crystal weight']
     },
     {
-      id: 'prod-8',
+      id: 'prod-9',
       title: 'Crystal Geode Hexagonal Pen Stand & Desk Vessel',
       category: 'bookmarks',
       categoryLabel: 'Desk Artifacts',
@@ -124,7 +139,7 @@
       rating: 4.9,
       reviewsCount: 27,
       stock: 4,
-      image: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=800&q=80',
+      image: 'images/resin/resin-pen-stand.jpg',
       description: 'Solid hexagonal desk pen holder cast with clear crystal resin, suspended gold leaf foil, and a dark obsidian base. Heavyweight design ensures it stays sturdy on study desks.',
       specs: ['Height: 11cm | Width: 8cm', 'Holds 12–15 standard pens/brushes', 'Heavy weighted bottom', 'Scratch-resistant pads included']
     }

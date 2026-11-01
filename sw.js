@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v125';
+const CACHE_NAME = 'jk-study-hub-v126';
 const urlsToCache = [
   './',
   './index.html',
@@ -40,7 +40,16 @@ const urlsToCache = [
   './images/spiral-copies.webp',
   './images/study-table.webp',
   './images/offer-mascot-delivery.jpg',
-  './images/offer-mascot-savings.jpg'
+  './images/offer-mascot-savings.jpg',
+  './images/resin/resin-bookmark.jpg',
+  './images/resin/resin-keychain.jpg',
+  './images/resin/resin-quran-stand.jpg',
+  './images/resin/resin-clock.jpg',
+  './images/resin/resin-coasters.jpg',
+  './images/resin/resin-ayat-frame.jpg',
+  './images/resin/resin-wedding-cube.jpg',
+  './images/resin/resin-tray.jpg',
+  './images/resin/resin-pen-stand.jpg'
 ];
 
 self.addEventListener('install', event => {
