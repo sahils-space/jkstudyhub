@@ -32,7 +32,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=18">
+  <link rel="stylesheet" href="style.css?v=19">
   <link rel="stylesheet" href="premium-theme.css?v=1">
   <link rel="stylesheet" href="brand-theme.css?v=2">
 </head>
@@ -42,59 +42,47 @@
   <aside class="exam-countdown-topbar" id="examCountdownBar">
     <div class="exam-countdown-container">
       <div class="exam-countdown-headline">
-        <span class="exam-pulse-dot"></span>
-        <span class="exam-badge-tag"><i class="fa-solid fa-bell"></i> JKBOSE Annual Regular Exams</span>
+        <span class="exam-pulse-dot" style="background:#22c55e; box-shadow:0 0 10px #22c55e;"></span>
+        <span class="exam-badge-tag"><i class="fa-solid fa-graduation-cap"></i> JKBOSE Annual Regular Exams (Ongoing)</span>
       </div>
 
       <div class="exam-countdown-cards-row">
-        <!-- Class 10th (Exam from 19th) -->
-        <div class="exam-timer-pill" data-class="10" title="Class 10th Annual Regular Exam starts 19th">
+        <!-- Class 10th (Exam from 19th Oct) -->
+        <div class="exam-timer-pill" data-class="10" title="Class 10th Annual Regular Exam started 19th Oct - Currently Ongoing">
           <div class="pill-left">
             <span class="pill-class">10th</span>
-            <span class="pill-date">(19th)</span>
+            <span class="pill-date">(19th Oct)</span>
           </div>
           <div class="pill-time" id="timerClass10">
-            <span class="time-block"><span class="t-val" id="d10">--</span><span class="t-lbl">d</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="h10">--</span><span class="t-lbl">h</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="m10">--</span><span class="t-lbl">m</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="s10">--</span><span class="t-lbl">s</span></span>
+            <span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <span class="exam-status-dot"></span> Exam Ongoing 🎯
+            </span>
           </div>
         </div>
 
-        <!-- Class 12th (Exam from 21st) -->
-        <div class="exam-timer-pill" data-class="12" title="Class 12th Annual Regular Exam starts 21st">
+        <!-- Class 12th (Exam from 21st Oct) -->
+        <div class="exam-timer-pill" data-class="12" title="Class 12th Annual Regular Exam started 21st Oct - Currently Ongoing">
           <div class="pill-left">
             <span class="pill-class">12th</span>
-            <span class="pill-date">(21st)</span>
+            <span class="pill-date">(21st Oct)</span>
           </div>
           <div class="pill-time" id="timerClass12">
-            <span class="time-block"><span class="t-val" id="d12">--</span><span class="t-lbl">d</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="h12">--</span><span class="t-lbl">h</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="m12">--</span><span class="t-lbl">m</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="s12">--</span><span class="t-lbl">s</span></span>
+            <span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <span class="exam-status-dot"></span> Exam Ongoing 🎯
+            </span>
           </div>
         </div>
 
-        <!-- Class 11th (Exam from 29th) -->
-        <div class="exam-timer-pill" data-class="11" title="Class 11th Annual Regular Exam starts 29th">
+        <!-- Class 11th (Exam from 29th Oct) -->
+        <div class="exam-timer-pill" data-class="11" title="Class 11th Annual Regular Exam started 29th Oct - Currently Ongoing">
           <div class="pill-left">
             <span class="pill-class">11th</span>
-            <span class="pill-date">(29th)</span>
+            <span class="pill-date">(29th Oct)</span>
           </div>
           <div class="pill-time" id="timerClass11">
-            <span class="time-block"><span class="t-val" id="d11">--</span><span class="t-lbl">d</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="h11">--</span><span class="t-lbl">h</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="m11">--</span><span class="t-lbl">m</span></span>
-            <span class="time-sep">:</span>
-            <span class="time-block"><span class="t-val" id="s11">--</span><span class="t-lbl">s</span></span>
+            <span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <span class="exam-status-dot"></span> Exam Ongoing 🎯
+            </span>
           </div>
         </div>
       </div>
@@ -1108,52 +1096,65 @@
     }
   </script>
 
-  <!-- Dynamic Exam Countdown Script for Class 10th, 11th, 12th -->
+  <!-- Dynamic Exam Schedule & Ongoing Status Script for Class 10th, 11th, 12th -->
   <script>
     (function initExamCountdown() {
-      const now = new Date();
-
-      function getExamTargetDate(dayOfMonth) {
-        // Exam starts at 10:00 AM on the given day of current month
-        let target = new Date(now.getFullYear(), now.getMonth(), dayOfMonth, 10, 0, 0);
-        // If current time is past that date by more than 30 days, move to next month
-        if (now.getTime() > target.getTime() + (24 * 60 * 60 * 1000 * 30)) {
-          target = new Date(now.getFullYear(), now.getMonth() + 1, dayOfMonth, 10, 0, 0);
+      // Fixed JKBOSE Annual Regular 2026 Session Dates (Month 9 is October in JS 0-indexed Date)
+      const examSchedule = {
+        '10': {
+          start: new Date(2026, 9, 19, 10, 0, 0), // 19th Oct 2026
+          end: new Date(2026, 11, 5, 18, 0, 0),   // Dec 2026
+          label: '19th Oct'
+        },
+        '12': {
+          start: new Date(2026, 9, 21, 10, 0, 0), // 21st Oct 2026
+          end: new Date(2026, 11, 5, 18, 0, 0),   // Dec 2026
+          label: '21st Oct'
+        },
+        '11': {
+          start: new Date(2026, 9, 29, 10, 0, 0), // 29th Oct 2026
+          end: new Date(2026, 11, 5, 18, 0, 0),   // Dec 2026
+          label: '29th Oct'
         }
-        return target;
-      }
-
-      const examTargets = {
-        '10': getExamTargetDate(19),
-        '12': getExamTargetDate(21),
-        '11': getExamTargetDate(29)
       };
 
       function updateCountdown() {
-        const currentTime = new Date();
+        if (typeof document !== 'undefined' && document.hidden) return;
+        const now = new Date();
         ['10', '11', '12'].forEach(cls => {
-          const diff = examTargets[cls].getTime() - currentTime.getTime();
-          const dEl = document.getElementById('d' + cls);
-          const hEl = document.getElementById('h' + cls);
-          const mEl = document.getElementById('m' + cls);
-          const sEl = document.getElementById('s' + cls);
-          if (!dEl) return;
+          const item = examSchedule[cls];
+          const pillTime = document.getElementById('timerClass' + cls);
+          if (!pillTime) return;
 
-          if (diff <= 0 && diff > -(24 * 3600 * 1000 * 25)) {
-            const pillTime = document.getElementById('timerClass' + cls);
-            if (pillTime) {
-              pillTime.innerHTML = '<span style="color:#22c55e; font-weight:800; font-size:11.5px;">Exam Ongoing 🎯</span>';
-            }
+          if (now >= item.start && now <= item.end) {
+            pillTime.innerHTML = '<span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><span class="exam-status-dot"></span> Exam Ongoing 🎯</span>';
+          } else if (now > item.end) {
+            pillTime.innerHTML = '<span style="color:#94a3b8; font-weight:700; font-size:11.5px;">Exams Concluded ✨</span>';
           } else {
+            const diff = item.start.getTime() - now.getTime();
             const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
             const hours = Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24));
             const mins = Math.max(0, Math.floor((diff / 1000 / 60) % 60));
             const secs = Math.max(0, Math.floor((diff / 1000) % 60));
 
-            dEl.textContent = String(days).padStart(2, '0');
-            hEl.textContent = String(hours).padStart(2, '0');
-            mEl.textContent = String(mins).padStart(2, '0');
-            sEl.textContent = String(secs).padStart(2, '0');
+            const dEl = document.getElementById('d' + cls);
+            const hEl = document.getElementById('h' + cls);
+            const mEl = document.getElementById('m' + cls);
+            const sEl = document.getElementById('s' + cls);
+            if (dEl && hEl && mEl && sEl) {
+              dEl.textContent = String(days).padStart(2, '0');
+              hEl.textContent = String(hours).padStart(2, '0');
+              mEl.textContent = String(mins).padStart(2, '0');
+              sEl.textContent = String(secs).padStart(2, '0');
+            } else {
+              pillTime.innerHTML = '<span class="time-block"><span class="t-val">' + String(days).padStart(2, '0') + '</span><span class="t-lbl">d</span></span>' +
+                '<span class="time-sep">:</span>' +
+                '<span class="time-block"><span class="t-val">' + String(hours).padStart(2, '0') + '</span><span class="t-lbl">h</span></span>' +
+                '<span class="time-sep">:</span>' +
+                '<span class="time-block"><span class="t-val">' + String(mins).padStart(2, '0') + '</span><span class="t-lbl">m</span></span>' +
+                '<span class="time-sep">:</span>' +
+                '<span class="time-block"><span class="t-val">' + String(secs).padStart(2, '0') + '</span><span class="t-lbl">s</span></span>';
+            }
           }
         });
       }
