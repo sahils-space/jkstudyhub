@@ -19,7 +19,7 @@
       rating: 5.0,
       reviewsCount: 42,
       stock: 5,
-      image: 'images/resin/resin-bookmark.jpg',
+      image: 'images/resin/resin-bookmark.jpg?v=5.0',
       description: 'Sacred Bismillah calligraphy in reflective gold, encased in optical-grade crystal clear resin with shimmering 24K gold foil flakes at the top and base. Finished with a luxury champagne gold braided silk tassel.',
       specs: ['Dimensions: 14cm x 3cm', 'Thickness: 3.5mm shatterproof crystal', 'Calligraphy: Reflective gold Bismillah', 'Tassel: Pure Braided Silk Tassel included']
     },
@@ -34,7 +34,7 @@
       rating: 5.0,
       reviewsCount: 68,
       stock: 8,
-      image: 'images/resin/resin-keychain.jpg',
+      image: 'images/resin/resin-keychain.jpg?v=5.0',
       description: 'Handcrafted circular resin keychains in deep glossy obsidian black with floating 24K gold foil flakes and bold gold lettering (HOPE, LIFE, JOY, DREAM, or your custom name/initial). Fitted with heavy-duty anti-tarnish gold hardware.',
       specs: ['Diameter: 4.5cm circular charm', 'Available words: HOPE, LIFE, JOY, DREAM or Custom Name', 'Anti-tarnish reinforced steel keyring', 'Scratch-resistant glass finish']
     },
@@ -49,7 +49,7 @@
       rating: 5.0,
       reviewsCount: 56,
       stock: 3,
-      image: 'images/resin/resin-quran-stand.jpg',
+      image: 'images/resin/resin-quran-stand.jpg?v=5.0',
       description: 'Exquisite two-piece interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral accents, floating gold leaf, and sacred Arabic calligraphy ("Wa khalaqnakum azwaja"). Includes matching floral bookmark and gold silk tassel.',
       specs: ['Detachable 2-piece folding X-shape rehal', 'Dimensions: 12 x 8 inches per wing', 'Calligraphy: "Wa Khalaqnakum Azwaja" + Bismillah', 'Free matching floral bookmark with gold tassel']
     },
@@ -64,7 +64,7 @@
       rating: 4.9,
       reviewsCount: 22,
       stock: 2,
-      image: 'images/resin/resin-clock.jpg',
+      image: 'images/resin/resin-clock.jpg?v=5.0',
       description: 'A breathtaking 3-layered ocean pour inspired by the serene waters of Kashmir. Crafted with real crushed white quartz crystals, authentic beach sand, and multi-layered cellular ocean foam. Fitted with a high-torque silent sweep quartz clock mechanism.',
       specs: ['Diameter: 12 inches (30 cm)', 'Base: Heavy moisture-resistant engineered wood', 'Movement: Sweep Silent Quartz (No ticking sound)', 'Gold teardrop clock hands']
     },
@@ -79,7 +79,7 @@
       rating: 4.8,
       reviewsCount: 41,
       stock: 5,
-      image: 'images/resin/resin-coasters.jpg',
+      image: 'images/resin/resin-coasters.jpg?v=5.0',
       description: 'Inspired by natural raw emerald geodes. Translucent jewel-toned green and pearlescent white resin swirls with genuine natural crackle texture. Each coaster rim is individually hand-gilded with metallic gold leaf paint.',
       specs: ['Set of 4 Coasters (approx 10cm each)', 'Heat resistant up to 90°C (ideal for hot tea/coffee)', 'Silicone anti-slip bumpers on bottom', 'Waterproof & wipe-clean']
     },
@@ -94,7 +94,7 @@
       rating: 5.0,
       reviewsCount: 53,
       stock: 3,
-      image: 'images/resin/resin-ayat-frame.jpg',
+      image: 'images/resin/resin-ayat-frame.jpg?v=5.0',
       description: 'Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror acrylic, seamlessly cast within a pearl white and gold marble resin slab. The perfect spiritual gift for housewarmings, weddings, or personal study desks.',
       specs: ['Size: 8 x 10 inches', 'Display: Comes with luxury clear acrylic table stand', '3D gold mirror reflection script', 'Fade-proof epoxy seal']
     },
@@ -109,7 +109,7 @@
       rating: 5.0,
       reviewsCount: 19,
       stock: 3,
-      image: 'images/resin/resin-wedding-cube.jpg',
+      image: 'images/resin/resin-wedding-cube.jpg?v=5.0',
       description: 'Preserve the real fresh roses, jasmine, and petals from your Nikah or wedding garland forever. Cast in an optical-grade solid crystal resin cube with couple names and wedding date engraved in gold.',
       specs: ['Dimensions: 10cm x 10cm x 10cm solid block', 'Custom Name & Date inclusion', 'Dry-flower preservation guidance provided', 'Luxe satin-lined keepsake gift box']
     },
@@ -124,7 +124,7 @@
       rating: 4.8,
       reviewsCount: 30,
       stock: 6,
-      image: 'images/resin/resin-tray.jpg',
+      image: 'images/resin/resin-tray.jpg?v=5.0',
       description: 'Organic leaf silhouette tray for rings, earrings, watches, and bedside trinkets. Hand-poured with semi-opaque milky white resin, deep amber accents, and gold leaf veins.',
       specs: ['Length: 18cm | Width: 11cm', 'Curved lip prevents jewelry from sliding', 'Food-safe certified resin topcoat', 'Glossy ceramic-like crystal weight']
     },
@@ -139,7 +139,7 @@
       rating: 4.9,
       reviewsCount: 34,
       stock: 5,
-      image: 'images/resin/resin-pen-stand.jpg',
+      image: 'images/resin/resin-pen-stand.jpg?v=5.0',
       description: 'Heavyweight cylindrical & square desk vessels cast with crystal-clear resin, real embedded wildflower sprigs, floating bubbles, and ocean blue gradient bases. Perfect for holding study pens, makeup brushes, or desk scissors.',
       specs: ['Height: 10cm | Width: 7.5cm', 'Cast with real dried alpine wildflowers', 'Heavy non-toppling crystal base', 'Smooth rounded lip']
     }

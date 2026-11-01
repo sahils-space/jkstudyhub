@@ -9986,9 +9986,9 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "badge": "👑 Handcrafted Masterpiece",
     "desc": "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel.",
     "photos": [
-      "images/resin/resin-quran-stand.jpg"
+      "images/resin/resin-quran-stand.jpg?v=5.0"
     ],
-    "image": "images/resin/resin-quran-stand.jpg"
+    "image": "images/resin/resin-quran-stand.jpg?v=5.0"
   },
   {
     "id": "PRD-RESIN-BOOKMARK",
@@ -10000,9 +10000,9 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "badge": "⭐ Sacred Bestseller",
     "desc": "Crystal clear shatterproof resin bookmark featuring reflective gold Bismillah calligraphy, floating 24K gold foil flakes, and a luxury champagne gold silk tassel. Handmade in Kashmir.",
     "photos": [
-      "images/resin/resin-bookmark.jpg"
+      "images/resin/resin-bookmark.jpg?v=5.0"
     ],
-    "image": "images/resin/resin-bookmark.jpg"
+    "image": "images/resin/resin-bookmark.jpg?v=5.0"
   },
   {
     "id": "PRD-RESIN-KEYCHAIN",
@@ -10014,9 +10014,9 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "badge": "✨ Personalized Gift",
     "desc": "Deep glossy obsidian black resin circular charms with embedded real gold foil flakes and bold lettering (HOPE, LIFE, JOY, DREAM or custom initials). Heavy-duty anti-tarnish gold hardware.",
     "photos": [
-      "images/resin/resin-keychain.jpg"
+      "images/resin/resin-keychain.jpg?v=5.0"
     ],
-    "image": "images/resin/resin-keychain.jpg"
+    "image": "images/resin/resin-keychain.jpg?v=5.0"
   },
   {
     "id": "PRD-RESIN-PEN-STAND",
@@ -10028,9 +10028,9 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "badge": "🌿 Study Desk Decor",
     "desc": "Heavyweight crystal-clear desk vessel with real embedded dried wildflowers and ocean blue gradient base. Perfect for holding study pens, pencils, brushes, and desk tools.",
     "photos": [
-      "images/resin/resin-pen-stand.jpg"
+      "images/resin/resin-pen-stand.jpg?v=5.0"
     ],
-    "image": "images/resin/resin-pen-stand.jpg"
+    "image": "images/resin/resin-pen-stand.jpg?v=5.0"
   },
   {
     "id": "PRD-RESIN-CLOCK",
@@ -10042,9 +10042,9 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "badge": "🌊 Signature Kashmir Art",
     "desc": "Multi-layered 3D ocean wave resin pour with authentic beach sand, crushed quartz crystals, and real cellular wave foam. Silent sweep quartz movement with teardrop gold hands.",
     "photos": [
-      "images/resin/resin-clock.jpg"
+      "images/resin/resin-clock.jpg?v=5.0"
     ],
-    "image": "images/resin/resin-clock.jpg"
+    "image": "images/resin/resin-clock.jpg?v=5.0"
   },
   {
     "id": "PRD-RESIN-AYAT-FRAME",
@@ -10056,9 +10056,9 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "badge": "🌙 Spiritual Home Decor",
     "desc": "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand.",
     "photos": [
-      "images/resin/resin-ayat-frame.jpg"
+      "images/resin/resin-ayat-frame.jpg?v=5.0"
     ],
-    "image": "images/resin/resin-ayat-frame.jpg"
+    "image": "images/resin/resin-ayat-frame.jpg?v=5.0"
   },
   {
     "id": "PRD-1792043438782",
