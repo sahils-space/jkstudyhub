@@ -9538,11 +9538,13 @@ function getCardCategoryType(card) {
     if (explicitCat === 'academic' || explicitCat === 'pyq' || explicitCat === 'notes') return 'academic';
     if (explicitCat === 'digital' || explicitCat === 'forms') return 'digital';
     if (explicitCat === 'coming-soon') return 'coming-soon';
+    if (explicitCat === 'resin' || explicitCat === 'art') return 'resin';
     return explicitCat;
   }
   if (card.classList.contains('book-product-card')) return 'novels';
   const text = (card.textContent || '').toLowerCase();
   if (card.closest('#comingSoonGrid') || text.includes('coming soon') || text.includes('launching soon') || text.includes('pre-book')) return 'coming-soon';
+  if (text.includes('resin') || text.includes('rehal') || text.includes('quran stand') || text.includes('geode') || text.includes('ayat-ul-kursi') || text.includes('bookmark') || text.includes('keychain')) return 'resin';
   if (card.closest('#copiesGrid') || text.includes('copies (pack') || text.includes('exercise copies') || text.includes('college register') || text.includes('practical lab copy') || text.includes('hardcover register') || text.includes('four-line english') || text.includes('two-line urdu') || text.includes('math square grid')) return 'copies';
   if (card.closest('#schoolBooksGrid') || text.includes('complete book set') || text.includes('textbooks set') || text.includes('medical set') || text.includes('non-med set') || text.includes('commerce set') || text.includes('arts set') || text.includes('school book')) return 'school-books';
   if (text.includes('pyqs') || text.includes('instant notes') || text.includes('survival kit') || text.includes('solved papers')) return 'academic';
@@ -9552,7 +9554,14 @@ function getCardCategoryType(card) {
 }
 
 const SEARCH_SYNONYMS = {
-  'stand': ['desk pen stand', 'folding study table', 'holder', 'pen stand'],
+  'resin': ['resin', 'epoxy', 'quran stand', 'rehal', 'bookmark', 'keychain', 'clock', 'pen stand', 'ayat-ul-kursi', 'geode'],
+  'art': ['resin', 'quran stand', 'rehal', 'bookmark', 'keychain', 'clock', 'pen stand', 'ayat-ul-kursi'],
+  'quran': ['quran stand', 'rehal', 'ayat-ul-kursi', 'islamic', 'bismillah'],
+  'rehal': ['quran stand', 'rehal', 'folding quran stand'],
+  'bookmark': ['resin bookmark', 'bismillah calligraphy & 24k gold leaf resin bookmark', 'bookmark'],
+  'keychain': ['keychain', 'resin keychain', 'black & gold luxe word / initial resin keychain'],
+  'clock': ['wall clock', 'geode clock', 'dal lake ocean wave 3d geode wall clock'],
+  'stand': ['desk pen stand', 'folding study table', 'holder', 'pen stand', 'botanical crystal resin pen stand'],
   'penstand': ['desk pen stand'],
   'pen stand': ['desk pen stand'],
   'pen': ['desk pen stand', 'gel pen', 'ball pen', 'pen set', 'stationery', 'highlighter'],
@@ -9967,6 +9976,90 @@ window.addEventListener('hashchange', handleUrlCategoryHash);
 // =========================================================
 
 const DEFAULT_PUBLISHED_PRODUCTS = [
+  {
+    "id": "PRD-RESIN-QURAN-STAND",
+    "name": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
+    "title": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
+    "category": "resin",
+    "price": 1599,
+    "mrp": 2799,
+    "badge": "👑 Handcrafted Masterpiece",
+    "desc": "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel.",
+    "photos": [
+      "images/resin/resin-quran-stand.jpg"
+    ],
+    "image": "images/resin/resin-quran-stand.jpg"
+  },
+  {
+    "id": "PRD-RESIN-BOOKMARK",
+    "name": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
+    "title": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
+    "category": "resin",
+    "price": 349,
+    "mrp": 599,
+    "badge": "⭐ Sacred Bestseller",
+    "desc": "Crystal clear shatterproof resin bookmark featuring reflective gold Bismillah calligraphy, floating 24K gold foil flakes, and a luxury champagne gold silk tassel. Handmade in Kashmir.",
+    "photos": [
+      "images/resin/resin-bookmark.jpg"
+    ],
+    "image": "images/resin/resin-bookmark.jpg"
+  },
+  {
+    "id": "PRD-RESIN-KEYCHAIN",
+    "name": "Black & Gold Luxe Word / Initial Resin Keychain",
+    "title": "Black & Gold Luxe Word / Initial Resin Keychain",
+    "category": "resin",
+    "price": 249,
+    "mrp": 450,
+    "badge": "✨ Personalized Gift",
+    "desc": "Deep glossy obsidian black resin circular charms with embedded real gold foil flakes and bold lettering (HOPE, LIFE, JOY, DREAM or custom initials). Heavy-duty anti-tarnish gold hardware.",
+    "photos": [
+      "images/resin/resin-keychain.jpg"
+    ],
+    "image": "images/resin/resin-keychain.jpg"
+  },
+  {
+    "id": "PRD-RESIN-PEN-STAND",
+    "name": "Botanical Crystal Resin Pen Stand & Brush Holder",
+    "title": "Botanical Crystal Resin Pen Stand & Brush Holder",
+    "category": "resin",
+    "price": 499,
+    "mrp": 799,
+    "badge": "🌿 Study Desk Decor",
+    "desc": "Heavyweight crystal-clear desk vessel with real embedded dried wildflowers and ocean blue gradient base. Perfect for holding study pens, pencils, brushes, and desk tools.",
+    "photos": [
+      "images/resin/resin-pen-stand.jpg"
+    ],
+    "image": "images/resin/resin-pen-stand.jpg"
+  },
+  {
+    "id": "PRD-RESIN-CLOCK",
+    "name": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
+    "title": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
+    "category": "resin",
+    "price": 1899,
+    "mrp": 3200,
+    "badge": "🌊 Signature Kashmir Art",
+    "desc": "Multi-layered 3D ocean wave resin pour with authentic beach sand, crushed quartz crystals, and real cellular wave foam. Silent sweep quartz movement with teardrop gold hands.",
+    "photos": [
+      "images/resin/resin-clock.jpg"
+    ],
+    "image": "images/resin/resin-clock.jpg"
+  },
+  {
+    "id": "PRD-RESIN-AYAT-FRAME",
+    "name": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
+    "title": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
+    "category": "resin",
+    "price": 1299,
+    "mrp": 2199,
+    "badge": "🌙 Spiritual Home Decor",
+    "desc": "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand.",
+    "photos": [
+      "images/resin/resin-ayat-frame.jpg"
+    ],
+    "image": "images/resin/resin-ayat-frame.jpg"
+  },
   {
     "id": "PRD-1792043438782",
     "name": "Spectra paper A4",

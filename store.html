@@ -3916,6 +3916,14 @@
 
   <!-- 4. Featured Category Cards Row (Zapvi Style) -->
   <section class="zapvi-category-strip">
+    <a href="art.html" target="_blank" class="zapvi-cat-card" style="position:relative;">
+      <span style="position:absolute; top:-6px; right:8px; background:linear-gradient(135deg, #b45309, #f59e0b); color:#fff; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:10px; letter-spacing:0.5px; box-shadow:0 2px 6px rgba(180,83,9,0.35);">NEW</span>
+      <div class="zapvi-cat-img-wrap" style="background:#fffbeb; border:1.5px solid #fde68a;">
+        <img src="images/resin/resin-quran-stand.jpg" alt="Resin Art Atelier" class="zapvi-cat-img" style="object-fit:cover;">
+      </div>
+      <p class="zapvi-cat-title" style="color:#b45309; font-weight:800;">✨ Resin Boutique</p>
+    </a>
+
     <a href="javascript:void(0)" class="zapvi-cat-card" onclick="openStoreCategorySection('exam-kits', '')">
       <div class="zapvi-cat-img-wrap" style="background:#fff7ed; border:1.5px solid #fed7aa;">
         <span style="font-size:26px; line-height:1;">🎯</span>
@@ -3988,6 +3996,9 @@
       <div class="store-category-filter-strip">
         <button type="button" class="store-filter-btn active" data-category="all" onclick="setStoreCategoryFilter('all', this)">
           <i class="fa-solid fa-border-all"></i> All Items
+        </button>
+        <button type="button" class="store-filter-btn" data-category="resin" onclick="setStoreCategoryFilter('resin', this)" style="background:#fffbeb; color:#b45309; border-color:#fde68a; font-weight:700;">
+          <i class="fa-solid fa-wand-magic-sparkles" style="color:#f59e0b;"></i> Resin Art &amp; Gifts ✨
         </button>
         <button type="button" class="store-filter-btn" data-category="copies" onclick="setStoreCategoryFilter('copies', this)">
           <i class="fa-solid fa-book"></i> School Copies &amp; Registers
@@ -4087,6 +4098,24 @@
       <h3 style="font-size: 18px; color: #1e293b; font-weight: 800; margin: 0 0 6px;">No items match your search</h3>
       <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px;">Try checking for typos or searching by author name or category.</p>
       <button onclick="clearStoreSearch()" style="background: #2563eb; color: white; border: none; padding: 9px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">Show All Items</button>
+    </div>
+
+    <!-- Luxury Resin Boutique Showcase Banner -->
+    <div class="resin-boutique-banner-wrap" style="margin: 20px 0 28px; background: linear-gradient(135deg, #1c1917, #292524); border: 1.5px solid #d97706; border-radius: 16px; padding: 20px 24px; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+      <div style="display:flex; align-items:center; gap:18px; max-width:650px;">
+        <img src="images/resin/resin-quran-stand.jpg" alt="Aura Resin Art" style="width:72px; height:72px; border-radius:12px; object-fit:cover; border:2px solid #f59e0b; flex-shrink:0;">
+        <div>
+          <span style="display:inline-block; background:rgba(245,158,11,0.2); color:#fcd34d; font-size:11px; font-weight:800; letter-spacing:0.8px; padding:3px 10px; border-radius:20px; text-transform:uppercase; margin-bottom:6px;">✨ Aura Resin Atelier Launched</span>
+          <h3 style="font-size:18px; font-weight:800; margin:0 0 4px; color:#fff;">Handcrafted Resin Art, Quran Stands &amp; Keepsakes</h3>
+          <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">Explore our dedicated Shopify-style boutique with 3D customizer, Bismillah bookmarks, geode clocks &amp; personalized keychains.</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" onclick="setStoreCategoryFilter('resin', document.querySelector('.store-filter-btn[data-category=\'resin\']'))" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:10px 18px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer;">View In Store</button>
+        <a href="art.html" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #b45309, #f59e0b); color:#fff; text-decoration:none; padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; box-shadow:0 4px 15px rgba(245,158,11,0.35);">
+          <span>Visit Luxury Boutique</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
     </div>
 
     <!-- Newly Added Custom Products Section (Live from Owner Catalog) -->
@@ -7173,7 +7202,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=91.5"></script>
+  <script src="store.js?v=92.0"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
