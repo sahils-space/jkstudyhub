@@ -6,6 +6,18 @@
 (function() {
   'use strict';
 
+  // Force-purge any legacy cached navigation links to main store/study hub from DOM
+  function purgeLegacyNavLinks() {
+    try {
+      const legacy = document.querySelectorAll('.site-nav a[href*="index.html"], .site-nav a[href*="store.html"]');
+      legacy.forEach(a => {
+        const li = a.closest('li') || a;
+        li.remove();
+      });
+    } catch(e) {}
+  }
+  purgeLegacyNavLinks();
+
   // 1. PRODUCT CATALOG DATA
   const RESIN_PRODUCTS = [
     {
@@ -591,6 +603,7 @@
 
   // 12. INITIALIZATION
   document.addEventListener('DOMContentLoaded', () => {
+    purgeLegacyNavLinks();
     renderProducts();
     initSimulator();
     updateCartUI();
