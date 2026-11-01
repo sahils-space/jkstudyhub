@@ -170,6 +170,21 @@
     } catch(e) {}
   }
 
+  // Seller Panel Sync: Read custom price overrides from localStorage if updated
+  function getProductEffectivePrice(product) {
+    try {
+      const priceMap = JSON.parse(localStorage.getItem('jk_custom_prices') || '{}');
+      const mrpMap = JSON.parse(localStorage.getItem('jk_custom_mrps') || '{}');
+      const matchedKey = Object.keys(priceMap).find(k => k.toLowerCase() === product.title.toLowerCase());
+      const p = (matchedKey && Number(priceMap[matchedKey])) ? Number(priceMap[matchedKey]) : product.price;
+      const matchedMrpKey = Object.keys(mrpMap).find(k => k.toLowerCase() === product.title.toLowerCase());
+      const m = (matchedMrpKey && Number(mrpMap[matchedMrpKey])) ? Number(mrpMap[matchedMrpKey]) : product.mrp;
+      return { price: p, mrp: m };
+    } catch(e) {
+      return { price: product.price, mrp: product.mrp };
+    }
+  }
+
   // 3. RENDER PRODUCTS
   function renderProducts() {
     const grid = document.getElementById('productsGrid');
@@ -181,6 +196,7 @@
 
     grid.innerHTML = filtered.map(p => {
       const isWish = state.wishlist.includes(p.id);
+      const { price, mrp } = getProductEffectivePrice(p);
       return `
         <article class="product-card" data-id="${p.id}" data-category="${p.category}">
           ${p.badge ? `<span class="product-card-badge">${p.badge}</span>` : ''}
@@ -205,9 +221,9 @@
             </div>
 
             <div class="product-price-row">
-              <span class="product-price">₹${p.price.toLocaleString('en-IN')}</span>
-              <span class="product-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>
-              <span class="product-save-pill">Save ₹${(p.mrp - p.price).toLocaleString('en-IN')}</span>
+              <span class="product-price">₹${price.toLocaleString('en-IN')}</span>
+              <span class="product-mrp">₹${mrp.toLocaleString('en-IN')}</span>
+              <span class="product-save-pill">Save ₹${(mrp - price).toLocaleString('en-IN')}</span>
             </div>
 
             <div class="product-card-actions">
@@ -385,6 +401,7 @@
     const prod = RESIN_PRODUCTS.find(p => p.id === productId);
     if (!prod) return;
 
+    const { price } = getProductEffectivePrice(prod);
     const existing = state.cart.find(item => item.id === productId);
     if (existing) {
       existing.qty += 1;
@@ -392,7 +409,7 @@
       state.cart.push({
         id: prod.id,
         title: prod.title,
-        price: prod.price,
+        price: price,
         image: prod.image,
         qty: 1,
         customNote: customNote
@@ -427,6 +444,8 @@
     const content = document.getElementById('quickViewContent');
     if (!modal || !content) return;
 
+    const { price, mrp } = getProductEffectivePrice(prod);
+
     content.innerHTML = `
       <div style="display:flex; flex-direction:column; gap:12px;">
         <img src="${prod.image}" alt="${prod.title}" class="modal-gallery-img">
@@ -445,9 +464,9 @@
         </div>
 
         <div class="product-price-row" style="margin-bottom:18px;">
-          <span style="font-size:24px; font-weight:800; color:var(--bg-dark);">₹${prod.price.toLocaleString('en-IN')}</span>
-          <span class="product-mrp" style="font-size:16px;">₹${prod.mrp.toLocaleString('en-IN')}</span>
-          <span class="product-save-pill">Save ₹${(prod.mrp - prod.price).toLocaleString('en-IN')}</span>
+          <span style="font-size:24px; font-weight:800; color:var(--bg-dark);">₹${price.toLocaleString('en-IN')}</span>
+          <span class="product-mrp" style="font-size:16px;">₹${mrp.toLocaleString('en-IN')}</span>
+          <span class="product-save-pill">Save ₹${(mrp - price).toLocaleString('en-IN')}</span>
         </div>
 
         <p style="font-size:14px; color:var(--text-muted); line-height:1.6; margin-bottom:20px;">
