@@ -10,62 +10,62 @@
   const RESIN_PRODUCTS = [
     {
       id: 'prod-1',
-      title: 'Kashmir Chinar & Wildflower Resin Bookmark',
+      title: 'Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark',
       category: 'bookmarks',
-      categoryLabel: 'Botanical Bookmarks',
+      categoryLabel: 'Botanical & Sacred Bookmarks',
       badge: 'Bestseller',
       price: 349,
       mrp: 599,
-      rating: 4.9,
-      reviewsCount: 38,
-      stock: 4,
+      rating: 5.0,
+      reviewsCount: 42,
+      stock: 5,
       image: 'images/resin/resin-bookmark.jpg',
-      description: 'Preserved real Kashmiri Autumn Chinar leaf fragments & dried rose petals suspended in crystal-clear, bubble-free UV-resistant epoxy resin. Finished with hand-brushed 24K gold foil flakes and a pure silk champagne tassel.',
-      specs: ['Dimensions: 14cm x 2.8cm', 'Thickness: 3.5mm shatterproof', 'Tassel: Pure Silky Thread included', 'Finish: High-gloss diamond buffed']
+      description: 'Sacred Bismillah calligraphy in reflective gold, encased in optical-grade crystal clear resin with shimmering 24K gold foil flakes at the top and base. Finished with a luxury champagne gold braided silk tassel.',
+      specs: ['Dimensions: 14cm x 3cm', 'Thickness: 3.5mm shatterproof crystal', 'Calligraphy: Reflective gold Bismillah', 'Tassel: Pure Braided Silk Tassel included']
     },
     {
       id: 'prod-2',
-      title: 'Personalized Botanical Initial Resin Keychain',
+      title: 'Black & Gold Luxe Word / Initial Resin Keychain',
       category: 'keychains',
       categoryLabel: 'Custom Keychains',
       badge: 'Personalized',
       price: 249,
       mrp: 450,
       rating: 5.0,
-      reviewsCount: 64,
-      stock: 7,
+      reviewsCount: 68,
+      stock: 8,
       image: 'images/resin/resin-keychain.jpg',
-      description: 'Custom alphabet initial of your choice, infused with real pressed baby breath flowers, lavender buds, and floating metallic gold leaf flakes. Comes with a heavy-duty gold lobster clasp and miniature matching resin charm.',
-      specs: ['Choose any letter A–Z', 'Heavy-duty anti-tarnish gold hardware', 'Includes mini matching pearl charm', 'Cured for 48 hours for scratch defense']
+      description: 'Handcrafted circular resin keychains in deep glossy obsidian black with floating 24K gold foil flakes and bold gold lettering (HOPE, LIFE, JOY, DREAM, or your custom name/initial). Fitted with heavy-duty anti-tarnish gold hardware.',
+      specs: ['Diameter: 4.5cm circular charm', 'Available words: HOPE, LIFE, JOY, DREAM or Custom Name', 'Anti-tarnish reinforced steel keyring', 'Scratch-resistant glass finish']
     },
     {
       id: 'prod-3',
-      title: 'Royal Islamic Folding Resin Quran Stand (Rehal)',
+      title: 'Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)',
       category: 'islamic',
       categoryLabel: 'Sacred Rehal & Quran Stands',
-      badge: 'Spiritual Luxury',
+      badge: 'Masterpiece',
       price: 1599,
       mrp: 2799,
       rating: 5.0,
-      reviewsCount: 47,
+      reviewsCount: 56,
       stock: 3,
       image: 'images/resin/resin-quran-stand.jpg',
-      description: 'Handcrafted folding X-shape Islamic Quran Stand (Rehal) cast in pearl white and emerald green crystal resin, embellished with genuine 24K gold foil flakes and Arabic calligraphy. Detachable two-piece design folds flat for compact storage.',
-      specs: ['Detachable 2-piece folding X-shape rehal', 'Size: 12 x 8 inches per wing', 'Holds Holy Quran & heavy books firmly', 'Finished with non-yellowing diamond glaze']
+      description: 'Exquisite two-piece interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral accents, floating gold leaf, and sacred Arabic calligraphy ("Wa khalaqnakum azwaja"). Includes matching floral bookmark and gold silk tassel.',
+      specs: ['Detachable 2-piece folding X-shape rehal', 'Dimensions: 12 x 8 inches per wing', 'Calligraphy: "Wa Khalaqnakum Azwaja" + Bismillah', 'Free matching floral bookmark with gold tassel']
     },
     {
       id: 'prod-4',
       title: 'Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)',
       category: 'clocks',
       categoryLabel: 'Ocean & Geode Clocks',
-      badge: 'Masterpiece',
+      badge: 'Signature',
       price: 1899,
       mrp: 3200,
       rating: 4.9,
       reviewsCount: 22,
       stock: 2,
       image: 'images/resin/resin-clock.jpg',
-      description: 'A breathtaking 3-layered ocean pour inspired by the serene waters of Kashmir. Crafted with real crushed white quartz crystals, authentic beach sand, and multi-layered cellular ocean foam. Fitted with a high-torque silent quartz clock mechanism.',
+      description: 'A breathtaking 3-layered ocean pour inspired by the serene waters of Kashmir. Crafted with real crushed white quartz crystals, authentic beach sand, and multi-layered cellular ocean foam. Fitted with a high-torque silent sweep quartz clock mechanism.',
       specs: ['Diameter: 12 inches (30 cm)', 'Base: Heavy moisture-resistant engineered wood', 'Movement: Sweep Silent Quartz (No ticking sound)', 'Gold teardrop clock hands']
     },
     {
@@ -130,18 +130,18 @@
     },
     {
       id: 'prod-9',
-      title: 'Crystal Geode Hexagonal Pen Stand & Desk Vessel',
+      title: 'Botanical Crystal Resin Pen Stand & Brush Holder',
       category: 'bookmarks',
       categoryLabel: 'Desk Artifacts',
       badge: 'Study Aesthetic',
       price: 499,
       mrp: 799,
       rating: 4.9,
-      reviewsCount: 27,
-      stock: 4,
+      reviewsCount: 34,
+      stock: 5,
       image: 'images/resin/resin-pen-stand.jpg',
-      description: 'Solid hexagonal desk pen holder cast with clear crystal resin, suspended gold leaf foil, and a dark obsidian base. Heavyweight design ensures it stays sturdy on study desks.',
-      specs: ['Height: 11cm | Width: 8cm', 'Holds 12–15 standard pens/brushes', 'Heavy weighted bottom', 'Scratch-resistant pads included']
+      description: 'Heavyweight cylindrical & square desk vessels cast with crystal-clear resin, real embedded wildflower sprigs, floating bubbles, and ocean blue gradient bases. Perfect for holding study pens, makeup brushes, or desk scissors.',
+      specs: ['Height: 10cm | Width: 7.5cm', 'Cast with real dried alpine wildflowers', 'Heavy non-toppling crystal base', 'Smooth rounded lip']
     }
   ];
 
