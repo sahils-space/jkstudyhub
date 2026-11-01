@@ -3789,6 +3789,146 @@
 </head>
 <body>
 
+  <!-- Top Resin Art Boutique Pop-up Banner -->
+  <style>
+    .art-top-popup-bar {
+      background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #1c1917 100%);
+      border-bottom: 1.5px solid #d97706;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      position: relative;
+      z-index: 9999;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      animation: artPopupSlide 0.35s ease-out;
+    }
+    @keyframes artPopupSlide {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .art-top-popup-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 7px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .art-top-popup-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .art-top-popup-pill {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      color: #ffffff;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .art-top-popup-text {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #f4f4f5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .art-top-popup-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .art-top-popup-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff !important;
+      text-decoration: none !important;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 13px;
+      border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(217,119,6,0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+    .art-top-popup-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(217,119,6,0.5);
+    }
+    .art-top-popup-close {
+      background: none;
+      border: none;
+      color: #a1a1aa;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.15s ease;
+    }
+    .art-top-popup-close:hover {
+      color: #ffffff;
+    }
+    @media (max-width: 600px) {
+      .art-top-popup-inner {
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      .art-top-popup-text {
+        font-size: 11px;
+      }
+      .art-top-popup-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+    }
+  </style>
+
+  <div id="artTopPopup" class="art-top-popup-bar" role="alert">
+    <div class="art-top-popup-inner">
+      <div class="art-top-popup-left">
+        <span class="art-top-popup-pill"><i class="fa-solid fa-wand-magic-sparkles"></i> NEW</span>
+        <span class="art-top-popup-text">Handcrafted Resin Art, Quran Stands &amp; Keepsakes</span>
+      </div>
+      <div class="art-top-popup-right">
+        <a href="art.html" class="art-top-popup-btn">
+          <span>View In Store</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <button type="button" class="art-top-popup-close" onclick="dismissArtTopPopup()" title="Close">&times;</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function dismissArtTopPopup() {
+      const el = document.getElementById('artTopPopup');
+      if (el) {
+        el.style.display = 'none';
+        try { sessionStorage.setItem('dismiss_art_top_popup', '1'); } catch(e) {}
+      }
+    }
+    (function checkArtTopPopup() {
+      try {
+        if (sessionStorage.getItem('dismiss_art_top_popup') === '1') {
+          const el = document.getElementById('artTopPopup');
+          if (el) el.style.display = 'none';
+        }
+      } catch(e) {}
+    })();
+  </script>
+
   <!-- 1. Zapvi Top Announcement Bar (Deep Sapphire & Amber Accent) -->
   <div class="zapvi-top-bar">
     <i class="fa-solid fa-sparkles" style="color: #fbbf24; font-size: 11px;"></i>
@@ -3997,9 +4137,6 @@
         <button type="button" class="store-filter-btn active" data-category="all" onclick="setStoreCategoryFilter('all', this)">
           <i class="fa-solid fa-border-all"></i> All Items
         </button>
-        <button type="button" class="store-filter-btn" data-category="resin" onclick="setStoreCategoryFilter('resin', this)" style="background:#fffbeb; color:#b45309; border-color:#fde68a; font-weight:700;">
-          <i class="fa-solid fa-wand-magic-sparkles" style="color:#f59e0b;"></i> Resin Art &amp; Gifts ✨
-        </button>
         <button type="button" class="store-filter-btn" data-category="copies" onclick="setStoreCategoryFilter('copies', this)">
           <i class="fa-solid fa-book"></i> School Copies &amp; Registers
         </button>
@@ -4098,24 +4235,6 @@
       <h3 style="font-size: 18px; color: #1e293b; font-weight: 800; margin: 0 0 6px;">No items match your search</h3>
       <p style="font-size: 13.5px; color: #64748b; margin: 0 0 16px;">Try checking for typos or searching by author name or category.</p>
       <button onclick="clearStoreSearch()" style="background: #2563eb; color: white; border: none; padding: 9px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">Show All Items</button>
-    </div>
-
-    <!-- Luxury Resin Boutique Showcase Banner -->
-    <div class="resin-boutique-banner-wrap" style="margin: 20px 0 28px; background: linear-gradient(135deg, #1c1917, #292524); border: 1.5px solid #d97706; border-radius: 16px; padding: 20px 24px; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-      <div style="display:flex; align-items:center; gap:18px; max-width:650px;">
-        <img src="images/resin/resin-quran-stand.jpg?v=5.0" alt="Aura Resin Art" style="width:72px; height:72px; border-radius:12px; object-fit:cover; border:2px solid #f59e0b; flex-shrink:0;">
-        <div>
-          <span style="display:inline-block; background:rgba(245,158,11,0.2); color:#fcd34d; font-size:11px; font-weight:800; letter-spacing:0.8px; padding:3px 10px; border-radius:20px; text-transform:uppercase; margin-bottom:6px;">✨ Aura Resin Atelier Launched</span>
-          <h3 style="font-size:18px; font-weight:800; margin:0 0 4px; color:#fff;">Handcrafted Resin Art, Quran Stands &amp; Keepsakes</h3>
-          <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">Explore our dedicated Shopify-style boutique with 3D customizer, Bismillah bookmarks, geode clocks &amp; personalized keychains.</p>
-        </div>
-      </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button type="button" onclick="setStoreCategoryFilter('resin', document.querySelector('.store-filter-btn[data-category=\'resin\']'))" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:10px 18px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer;">View In Store</button>
-        <a href="art.html" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #b45309, #f59e0b); color:#fff; text-decoration:none; padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; box-shadow:0 4px 15px rgba(245,158,11,0.35);">
-          <span>Visit Luxury Boutique</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-      </div>
     </div>
 
     <!-- Newly Added Custom Products Section (Live from Owner Catalog) -->

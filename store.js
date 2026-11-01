@@ -9977,90 +9977,6 @@ window.addEventListener('hashchange', handleUrlCategoryHash);
 
 const DEFAULT_PUBLISHED_PRODUCTS = [
   {
-    "id": "PRD-RESIN-QURAN-STAND",
-    "name": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
-    "title": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
-    "category": "resin",
-    "price": 1599,
-    "mrp": 2799,
-    "badge": "👑 Handcrafted Masterpiece",
-    "desc": "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel.",
-    "photos": [
-      "images/resin/resin-quran-stand.jpg?v=5.0"
-    ],
-    "image": "images/resin/resin-quran-stand.jpg?v=5.0"
-  },
-  {
-    "id": "PRD-RESIN-BOOKMARK",
-    "name": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
-    "title": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
-    "category": "resin",
-    "price": 349,
-    "mrp": 599,
-    "badge": "⭐ Sacred Bestseller",
-    "desc": "Crystal clear shatterproof resin bookmark featuring reflective gold Bismillah calligraphy, floating 24K gold foil flakes, and a luxury champagne gold silk tassel. Handmade in Kashmir.",
-    "photos": [
-      "images/resin/resin-bookmark.jpg?v=5.0"
-    ],
-    "image": "images/resin/resin-bookmark.jpg?v=5.0"
-  },
-  {
-    "id": "PRD-RESIN-KEYCHAIN",
-    "name": "Black & Gold Luxe Word / Initial Resin Keychain",
-    "title": "Black & Gold Luxe Word / Initial Resin Keychain",
-    "category": "resin",
-    "price": 249,
-    "mrp": 450,
-    "badge": "✨ Personalized Gift",
-    "desc": "Deep glossy obsidian black resin circular charms with embedded real gold foil flakes and bold lettering (HOPE, LIFE, JOY, DREAM or custom initials). Heavy-duty anti-tarnish gold hardware.",
-    "photos": [
-      "images/resin/resin-keychain.jpg?v=5.0"
-    ],
-    "image": "images/resin/resin-keychain.jpg?v=5.0"
-  },
-  {
-    "id": "PRD-RESIN-PEN-STAND",
-    "name": "Botanical Crystal Resin Pen Stand & Brush Holder",
-    "title": "Botanical Crystal Resin Pen Stand & Brush Holder",
-    "category": "resin",
-    "price": 499,
-    "mrp": 799,
-    "badge": "🌿 Study Desk Decor",
-    "desc": "Heavyweight crystal-clear desk vessel with real embedded dried wildflowers and ocean blue gradient base. Perfect for holding study pens, pencils, brushes, and desk tools.",
-    "photos": [
-      "images/resin/resin-pen-stand.jpg?v=5.0"
-    ],
-    "image": "images/resin/resin-pen-stand.jpg?v=5.0"
-  },
-  {
-    "id": "PRD-RESIN-CLOCK",
-    "name": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
-    "title": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
-    "category": "resin",
-    "price": 1899,
-    "mrp": 3200,
-    "badge": "🌊 Signature Kashmir Art",
-    "desc": "Multi-layered 3D ocean wave resin pour with authentic beach sand, crushed quartz crystals, and real cellular wave foam. Silent sweep quartz movement with teardrop gold hands.",
-    "photos": [
-      "images/resin/resin-clock.jpg?v=5.0"
-    ],
-    "image": "images/resin/resin-clock.jpg?v=5.0"
-  },
-  {
-    "id": "PRD-RESIN-AYAT-FRAME",
-    "name": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
-    "title": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
-    "category": "resin",
-    "price": 1299,
-    "mrp": 2199,
-    "badge": "🌙 Spiritual Home Decor",
-    "desc": "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand.",
-    "photos": [
-      "images/resin/resin-ayat-frame.jpg?v=5.0"
-    ],
-    "image": "images/resin/resin-ayat-frame.jpg?v=5.0"
-  },
-  {
     "id": "PRD-1792043438782",
     "name": "Spectra paper A4",
     "title": "Spectra paper A4",
@@ -10207,7 +10123,8 @@ try {
       }
     } catch(e) {}
   }
-  CUSTOM_PRODUCTS = initialProducts;
+  // Exclude boutique resin art items from the regular study store
+  CUSTOM_PRODUCTS = initialProducts.filter(p => p.category !== 'resin' && !String(p.id).startsWith('PRD-RESIN-'));
   registerAllCustomProducts(CUSTOM_PRODUCTS);
 } catch (e) {
   console.warn("Could not parse cached custom products:", e);
@@ -10220,6 +10137,7 @@ function registerAllCustomProducts(products) {
 
 function registerCustomProductInCatalogs(p) {
   if (!p || (!p.name && !p.title)) return;
+  if (p.category === 'resin' || String(p.id).startsWith('PRD-RESIN-')) return;
   const prodName = p.name || p.title;
   p.name = prodName;
   p.title = prodName;
