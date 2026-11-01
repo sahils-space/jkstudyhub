@@ -314,6 +314,11 @@
     const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     if (countBadge) countBadge.textContent = totalQty;
+    const mobileBottomBadge = document.getElementById('artMobileBottomCartBadge');
+    if (mobileBottomBadge) {
+      mobileBottomBadge.textContent = totalQty;
+      mobileBottomBadge.style.display = totalQty > 0 ? 'flex' : 'none';
+    }
     if (subtotalEl) subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
 
     // Free delivery meter threshold = ₹999

@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- Custom Boutique Stylesheet -->
-  <link rel="stylesheet" href="art.css?v=5.0">
+  <link rel="stylesheet" href="art.css?v=6.0">
 </head>
 <body>
 
@@ -647,6 +647,31 @@
     </div>
   </div>
 
+  <!-- 9.5 BACK TO JK STUDY HUB HOME BANNER -->
+  <section class="art-back-home-banner">
+    <div class="container text-center">
+      <div class="back-home-card">
+        <div class="back-home-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="back-home-content">
+          <h3>Looking for Study Materials, Notes &amp; Books?</h3>
+          <p>Explore Class 10th &amp; 11th JKBOSE solved papers, instant guides, and student bookstore supplies.</p>
+        </div>
+        <div class="back-home-actions">
+          <a href="index.html" class="btn-return-home">
+            <i class="fa-solid fa-house"></i>
+            <span>Return to JK Study Hub Home</span>
+          </a>
+          <a href="store.html" class="btn-return-store">
+            <i class="fa-solid fa-store"></i>
+            <span>Visit Book Store</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 10. LUXURY FOOTER -->
   <footer class="site-footer">
     <div class="container footer-grid">
@@ -697,7 +722,32 @@
     </div>
   </footer>
 
+  <!-- 11. MOBILE BOTTOM STICKY NAVIGATION (Native App Experience) -->
+  <nav class="art-mobile-bottom-bar" aria-label="Mobile Navigation">
+    <a href="index.html" class="art-bottom-tab" title="Back to JK Study Hub Home">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="store.html" class="art-bottom-tab" title="JK Study Hub Bookstore">
+      <i class="fa-solid fa-store"></i>
+      <span>Store</span>
+    </a>
+    <a href="#collections" class="art-bottom-tab active" title="Browse Resin Pieces">
+      <i class="fa-solid fa-gem"></i>
+      <span>Gallery</span>
+    </a>
+    <button type="button" class="art-bottom-tab" onclick="window.auraAtelier ? window.auraAtelier.toggleCartDrawer(true) : null" title="View Cart">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span>Bag</span>
+      <span id="artMobileBottomCartBadge" class="art-bottom-badge" style="display:none;">0</span>
+    </button>
+    <a href="https://wa.me/919622605714?text=Hello%20Aura%20Resin%20Atelier!%20I%20am%20interested%20in%20handcrafted%20resin%20art." target="_blank" rel="noopener" class="art-bottom-tab art-bottom-whatsapp" title="WhatsApp Order">
+      <i class="fa-brands fa-whatsapp"></i>
+      <span>Order</span>
+    </a>
+  </nav>
+
   <!-- Controller Script -->
-  <script src="art.js?v=5.0"></script>
+  <script src="art.js?v=6.0"></script>
 </body>
 </html>
