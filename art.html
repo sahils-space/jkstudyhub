@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Resin Atelier | Handcrafted Botanical & Geode Resin Art Kashmir</title>
+  <meta name="description" content="Shop luxury handcrafted botanical resin bookmarks, custom initial keychains, 3D ocean wave clocks, agate coasters, and wedding flower preservation in Kashmir.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  
+  <!-- Google Fonts: Cormorant Garamond (Luxury Serif) & Plus Jakarta Sans (Modern UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Boutique Stylesheet -->
+  <link rel="stylesheet" href="art.css?v=1.0">
+</head>
+<body>
+
+  <!-- 1. TOP ANNOUNCEMENT BAR (SHOPIFY PRESTIGE STYLE) -->
+  <aside class="announcement-bar">
+    <div class="announcement-bar-content">
+      <span class="announcement-tag"><i class="fa-solid fa-sparkles"></i> Pure Artisanship</span>
+      <span>Handcrafted with Kashmiri Botanicals &amp; Crystal Resin • Free Delivery Across J&amp;K on Orders Over ₹999 • Bespoke Nikah &amp; Wedding Flower Preservation Open</span>
+    </div>
+  </aside>
+
+  <!-- 2. STICKY LUXURY BOUTIQUE HEADER -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-container">
+      <!-- Mobile Menu Toggle -->
+      <button type="button" class="mobile-menu-toggle" aria-label="Toggle navigation" onclick="document.getElementById('navMenu').classList.toggle('active')">
+        <i class="fa-solid fa-bars-staggered"></i>
+      </button>
+
+      <!-- Nav Links -->
+      <nav class="site-nav" id="navMenu">
+        <ul class="nav-links">
+          <li><a href="#collections" class="nav-link active">Collections</a></li>
+          <li><a href="#simulator" class="nav-link">3D Customizer</a></li>
+          <li><a href="#our-craft" class="nav-link">Our Craft</a></li>
+          <li><a href="#bespoke" class="nav-link">Bespoke Orders</a></li>
+        </ul>
+      </nav>
+
+      <!-- Brand Logo -->
+      <div class="brand-logo-wrap">
+        <a href="art.html" class="brand-logo">
+          <span>AURA</span>
+          <span class="brand-logo-sub">Resin Atelier • Kashmir</span>
+        </a>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button type="button" class="header-action-btn" title="View Wishlist" onclick="alert('Your Wishlist contains ' + (window.auraAtelier ? 'saved pieces' : '0 items') + '. Browse collections below to save favorites!')">
+          <i class="fa-regular fa-heart"></i>
+          <span class="header-badge-count" id="wishlistCountBadge">0</span>
+        </button>
+
+        <button type="button" class="header-action-btn" title="Shopping Bag" onclick="window.auraAtelier.toggleCartDrawer(true)">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="header-badge-count" id="cartCountBadge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. EDITORIAL HERO SHOWCASE SECTION -->
+  <section class="hero-editorial">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="hero-subheading">
+          <i class="fa-solid fa-gem"></i> Hand-Poured in the Valley of Kashmir
+        </span>
+        <h1 class="hero-title">
+          Where Liquid Crystal Meets <em>Kashmiri Blooms</em>
+        </h1>
+        <p class="hero-lead">
+          Preserving fresh Chinar leaves, wild alpine roses, and 24K gold foil in optical-grade, shatterproof crystal resin. Functional home artifacts and heartfelt keepsakes made by hand.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#collections" class="btn-luxury-primary">
+            <span>Explore Collections</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="#simulator" class="btn-luxury-outline">
+            <i class="fa-solid fa-cube"></i> Try 3D Simulator
+          </a>
+        </div>
+
+        <div class="hero-trust-badges">
+          <div class="trust-badge-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>48-Hour Slow Cure</span>
+          </div>
+          <div class="trust-badge-item">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Zero-Yellow UV Shield</span>
+          </div>
+          <div class="trust-badge-item">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>24K Gold Leaf Details</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Interactive Hero Card -->
+      <div class="hero-visual-wrap">
+        <div class="hero-3d-card" id="hero3dCard">
+          <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1000&q=80" alt="Handcrafted Geode Resin Artifact" loading="eager">
+          <div class="hero-floating-tag">
+            <div class="hero-floating-info">
+              <h4>Dal Lake Emerald Geode</h4>
+              <p>Hand-Gilded Gold Rim • Heat Resistant</p>
+            </div>
+            <div class="hero-floating-price">₹699</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 3D INTERACTIVE CUSTOM RESIN SIMULATOR -->
+  <section class="resin-simulator-section" id="simulator">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-eyebrow">Interactive Studio</span>
+        <h2 class="section-title">Design Your Custom Resin Initial</h2>
+        <p class="section-desc">
+          Test color tones, floating metallic leaf, and your initial in our real-time 3D simulator before placing your order.
+        </p>
+      </div>
+
+      <div class="simulator-box">
+        <!-- Interactive 3D Canvas -->
+        <div class="sim-preview-stage">
+          <div class="sim-resin-canvas" id="simResinCanvas" style="background: radial-gradient(circle at 30% 30%, #1e3a8a, #0f172a);">
+            <div class="sim-foil-layer" style="background-image: radial-gradient(#dfba7f 10%, transparent 20%);"></div>
+            <span class="sim-initial-display" id="simInitialDisplay">S</span>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="sim-controls-panel">
+          <h3>Personalize Every Detail</h3>
+          <p>Handmade to order with authentic floral botanicals and your choice of metallic foil.</p>
+
+          <div class="control-group">
+            <label class="control-label">1. Choose Resin Hue</label>
+            <div class="swatch-row">
+              <button type="button" class="swatch-btn color-swatch active" data-bg="radial-gradient(circle at 30% 30%, #1e3a8a, #0f172a)" style="background: #1e3a8a;" title="Ocean Deep Blue"></button>
+              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #064e3b, #022c22)" style="background: #064e3b;" title="Emerald Valley"></button>
+              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #be185d, #831843)" style="background: #be185d;" title="Rose Petal Pink"></button>
+              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #18181b, #09090b)" style="background: #18181b;" title="Midnight Obsidian"></button>
+              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #fef3c7, #fde68a)" style="background: #fef3c7;" title="Champagne Cream"></button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="simTextInput">2. Enter Letter / Initial</label>
+            <input type="text" id="simTextInput" class="sim-text-input" value="S" maxlength="2" placeholder="Letter">
+          </div>
+
+          <button type="button" class="btn-luxury-primary sim-order-btn" onclick="window.auraAtelier.orderSimulatorCustomPiece()">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Order This Custom Piece on WhatsApp</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. SHOPPING COLLECTIONS & PRODUCT CATALOG -->
+  <section class="collections-section" id="collections">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-eyebrow">Signature Creations</span>
+        <h2 class="section-title">The Atelier Collection</h2>
+        <p class="section-desc">Each piece is individually cast, slowly cured for 48 hours, and hand-finished with diamond buffing.</p>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="category-filter-bar">
+        <button type="button" class="filter-pill active" data-filter="all">All Pieces</button>
+        <button type="button" class="filter-pill" data-filter="bookmarks">Botanical Bookmarks</button>
+        <button type="button" class="filter-pill" data-filter="keychains">Custom Keychains</button>
+        <button type="button" class="filter-pill" data-filter="clocks">Ocean &amp; Geode Clocks</button>
+        <button type="button" class="filter-pill" data-filter="coasters">Coasters &amp; Trays</button>
+        <button type="button" class="filter-pill" data-filter="islamic">Islamic Sacred Art</button>
+        <button type="button" class="filter-pill" data-filter="wedding">Wedding Keepsakes</button>
+      </div>
+
+      <!-- Dynamic Products Grid -->
+      <div class="product-grid" id="productsGrid">
+        <!-- Rendered by art.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. THE ARTISANAL STORY (HOW IT'S CRAFTED) -->
+  <section class="craft-story-section" id="our-craft">
+    <div class="container">
+      <div class="section-head" style="color: white;">
+        <span class="section-eyebrow" style="color: var(--accent-gold-light);">Slow Handcraft</span>
+        <h2 class="section-title" style="color: white;">The 4-Step Resin Alchemy</h2>
+        <p class="section-desc" style="color: #b0a79d;">Why hand-poured epoxy resin requires patience, chemistry, and artistic precision.</p>
+      </div>
+
+      <div class="craft-story-grid">
+        <div class="craft-step-card">
+          <span class="step-num">01</span>
+          <h3 class="step-title">Botanical Curation</h3>
+          <p class="step-desc">Real Kashmiri Chinar leaves and garden roses are harvested, pressed in wooden presses, and moisture-extracted for 3 weeks to prevent discoloration.</p>
+        </div>
+
+        <div class="craft-step-card">
+          <span class="step-num">02</span>
+          <h3 class="step-title">Vacuum Casting</h3>
+          <p class="step-desc">Optical-grade, non-toxic epoxy resin is hand-mixed with metallic micas and degassed to eliminate micro-bubbles before pouring into molds.</p>
+        </div>
+
+        <div class="craft-step-card">
+          <span class="step-num">03</span>
+          <h3 class="step-title">48-Hour Slow Cure</h3>
+          <p class="step-desc">Unlike commercial plastic, true artisan resin cures slowly in a dust-free chamber, creating a glass-like weight and superior heat tolerance.</p>
+        </div>
+
+        <div class="craft-step-card">
+          <span class="step-num">04</span>
+          <h3 class="step-title">Diamond Polish</h3>
+          <p class="step-desc">Every piece is sanded up to 3000-grit, hand-beveled with gold leaf, and packed in eco-luxe gift wrapping with a custom wax seal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. BESPOKE CUSTOM ORDERS (WEDDING FLOWERS, MEMORIALS) -->
+  <section class="bespoke-section" id="bespoke">
+    <div class="container">
+      <div class="bespoke-card">
+        <div class="bespoke-info">
+          <span class="section-eyebrow">Bespoke Commissions</span>
+          <h3>Preserve Your Most Precious Moments</h3>
+          <p>
+            Whether preserving fresh roses from your wedding, casting a customized bridal keepsake, or designing a statement geode wall clock for your new home, our atelier works with you directly.
+          </p>
+
+          <ul class="bespoke-perks">
+            <li><i class="fa-solid fa-circle-check"></i> <span>Direct consultations via WhatsApp with the artist</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> <span>Free flower drying &amp; preservation guidance</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> <span>Personalized calligraphy &amp; date engravings</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> <span>Hand-delivered safely across Kashmir &amp; India</span></li>
+          </ul>
+        </div>
+
+        <form class="bespoke-form" onsubmit="window.auraAtelier.handleBespokeInquiry(event)">
+          <div class="form-field">
+            <label for="bespokeName">Your Name</label>
+            <input type="text" id="bespokeName" placeholder="e.g. Insha Mir" required>
+          </div>
+
+          <div class="form-field">
+            <label for="bespokeType">Project Type</label>
+            <select id="bespokeType">
+              <option value="Wedding / Nikah Flower Preservation">Wedding / Nikah Flower Preservation</option>
+              <option value="Custom Geode Wall Clock (12-18 inch)">Custom Geode Wall Clock (12-18 inch)</option>
+              <option value="Bulk Corporate / Event Favors">Bulk Corporate / Event Favors</option>
+              <option value="Ayat-ul-Kursi Custom Frame">Ayat-ul-Kursi Custom Frame</option>
+              <option value="Custom Initial Keychains / Bookmarks">Custom Initial Keychains / Bookmarks</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="bespokeDeadline">Required Date</label>
+            <input type="date" id="bespokeDeadline">
+          </div>
+
+          <div class="form-field">
+            <label for="bespokeDetails">Vision &amp; Details</label>
+            <textarea id="bespokeDetails" rows="3" placeholder="Describe the colors, size, or special items you want cast into resin..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-luxury-primary" style="justify-content: center; width: 100%;">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Send Bespoke Request to WhatsApp</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. SHOPIFY AJAX SLIDE-OUT CART DRAWER -->
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay">
+    <div class="cart-drawer" id="cartDrawer">
+      <div class="cart-drawer-header">
+        <h3 class="cart-drawer-title">Shopping Bag</h3>
+        <button type="button" class="cart-drawer-close" onclick="window.auraAtelier.toggleCartDrawer(false)" aria-label="Close cart">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Free Kashmir Delivery Progress Meter -->
+      <div class="shipping-meter-wrap">
+        <p class="shipping-meter-text" id="shippingMeterText">
+          Add <strong>₹999</strong> more for <strong>Free Kashmir Delivery</strong>
+        </p>
+        <div class="shipping-meter-bar">
+          <div class="shipping-meter-fill" id="shippingMeterFill"></div>
+        </div>
+      </div>
+
+      <div class="cart-drawer-items" id="cartDrawerItems">
+        <!-- Rendered dynamically by art.js -->
+      </div>
+
+      <div class="cart-drawer-footer">
+        <div class="cart-subtotal-row">
+          <span>Subtotal</span>
+          <strong id="cartSubtotalAmount">₹0</strong>
+        </div>
+
+        <div class="cart-checkout-actions">
+          <button type="button" class="btn-checkout-wa" onclick="window.auraAtelier.checkoutCartWhatsApp()">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Proceed to 1-Click WhatsApp Checkout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. PRODUCT QUICK VIEW MODAL -->
+  <div class="modal-backdrop" id="quickViewModal">
+    <div class="product-quick-modal">
+      <button type="button" class="modal-close" onclick="window.auraAtelier.closeQuickView()" aria-label="Close modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="quickViewContent" style="display: contents;">
+        <!-- Populated dynamically by art.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. LUXURY FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h3 class="footer-brand-title">AURA RESIN ATELIER</h3>
+        <p class="footer-brand-p">
+          Crafting eternal botanical art and crystal home heirlooms in Srinagar, Kashmir. Each piece is unique, slow-cured, and made with devotion.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Atelier Collections</h4>
+        <ul>
+          <li><a href="#collections">Botanical Bookmarks</a></li>
+          <li><a href="#collections">Initial Monogram Keychains</a></li>
+          <li><a href="#collections">Ocean Wave Geode Clocks</a></li>
+          <li><a href="#collections">Ayat-ul-Kursi Mirrored Frames</a></li>
+          <li><a href="#collections">Wedding Floral Keepsakes</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Client Care</h4>
+        <ul>
+          <li><a href="#bespoke">Bespoke Commissions</a></li>
+          <li><a href="#our-craft">Resin Care Guide</a></li>
+          <li><a href="https://wa.me/919622605714" target="_blank" rel="noopener">WhatsApp Concierge</a></li>
+          <li><a href="index.html" style="color: var(--accent-gold-light); font-weight: 600;"><i class="fa-solid fa-graduation-cap"></i> Visit JK Study Hub</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Kashmir Workshop</h4>
+        <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 14px;">
+          Baramulla &amp; Srinagar, Jammu &amp; Kashmir<br>
+          Direct Inquiries: <a href="tel:+919622605714" style="color: #faf8f5;">+91 9622605714</a>
+        </p>
+        <div style="display: flex; gap: 12px; font-size: 18px;">
+          <a href="https://wa.me/919622605714" target="_blank" rel="noopener" style="color: #22c55e;"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" style="color: #e1306c;"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom-bar">
+      <p>&copy; 2026 Aura Resin Atelier. All Rights Reserved. Handcrafted in Kashmir.</p>
+      <p><i class="fa-solid fa-gem" style="color: var(--accent-gold);"></i> Hand-Poured • Non-Yellowing • Bubble-Free Crystal Resin</p>
+    </div>
+  </footer>
+
+  <!-- Controller Script -->
+  <script src="art.js?v=1.0"></script>
+</body>
+</html>
