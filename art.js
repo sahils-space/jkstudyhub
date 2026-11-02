@@ -1089,12 +1089,53 @@ ${itemsFormatted}─────────────────────
     persistState();
   }
 
+  // 11.5 REAL-TIME FIRESTORE CLOUD PRICE SYNC (FROM SELLER PANEL)
+  function initCloudPriceSync() {
+    if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) {
+      return;
+    }
+    try {
+      const db = firebase.firestore();
+      db.collection('price_overrides').onSnapshot(snapshot => {
+        if (!snapshot || snapshot.empty) return;
+        let priceMap = {};
+        let mrpMap = {};
+        try {
+          priceMap = JSON.parse(localStorage.getItem('jk_custom_prices') || '{}');
+          mrpMap = JSON.parse(localStorage.getItem('jk_custom_mrps') || '{}');
+        } catch(e) {}
+
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          if (item && item.name) {
+            if (item.price !== undefined && item.price !== null) {
+              priceMap[item.name] = Number(item.price);
+            }
+            if (item.mrp !== undefined && item.mrp !== null) {
+              mrpMap[item.name] = Number(item.mrp);
+            }
+          }
+        });
+
+        localStorage.setItem('jk_custom_prices', JSON.stringify(priceMap));
+        localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpMap));
+        renderProducts();
+        updateCartUI();
+      }, err => {
+        console.warn("Firestore price sync notice:", err);
+      });
+    } catch(e) {
+      console.warn("Could not start Firestore price sync:", e);
+    }
+  }
+
   // 12. INITIALIZATION
   document.addEventListener('DOMContentLoaded', () => {
     purgeLegacyNavLinks();
     renderProducts();
     initSimulator();
     updateCartUI();
+    initCloudPriceSync();
 
     const wishBadge = document.getElementById('wishlistCountBadge');
     if (wishBadge) wishBadge.textContent = state.wishlist.length;
