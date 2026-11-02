@@ -293,41 +293,120 @@
     });
   }
 
-  // 5. 3D RESIN CUSTOM SIMULATOR LOGIC
+  // 5. 3D RESIN PHOTO & NAME KEEPSAKE STUDIO
   function initSimulator() {
     const canvas = document.getElementById('simResinCanvas');
-    const initialDisplay = document.getElementById('simInitialDisplay');
     const input = document.getElementById('simTextInput');
-    if (!canvas || !initialDisplay || !input) return;
+    if (!canvas) return;
 
-    input.addEventListener('input', e => {
-      const val = (e.target.value || 'S').trim().charAt(0).toUpperCase();
-      state.customInitial = val || 'S';
-      initialDisplay.textContent = state.customInitial;
-    });
-
-    // Swatches
-    const colorSwatches = document.querySelectorAll('.color-swatch');
-    colorSwatches.forEach(swatch => {
-      swatch.addEventListener('click', () => {
-        colorSwatches.forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
-        state.customColor = swatch.getAttribute('data-bg');
-        canvas.style.background = state.customColor;
+    if (input) {
+      input.addEventListener('input', e => {
+        updateCustomNameText(e.target.value);
       });
-    });
+    }
 
     // 3D tilt tracking for simulator canvas
     canvas.addEventListener('mousemove', e => {
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
-      canvas.style.transform = `rotateY(${x * 0.15}deg) rotateX(${-y * 0.15}deg)`;
+      canvas.style.transform = `rotateY(${x * 0.12}deg) rotateX(${-y * 0.12}deg)`;
     });
 
     canvas.addEventListener('mouseleave', () => {
-      canvas.style.transform = 'rotateY(-8deg) rotateX(8deg)';
+      canvas.style.transform = 'rotateY(-6deg) rotateX(6deg)';
     });
+  }
+
+  function setCustomCraftShape(shape) {
+    state.customCraftShape = shape;
+    const btnHeart = document.getElementById('shapeBtnHeart');
+    const btnKeychain = document.getElementById('shapeBtnKeychain');
+    const canvas = document.getElementById('simResinCanvas');
+    const hardware = document.getElementById('simKeychainHardware');
+    const stand = document.getElementById('simHeartStand');
+    const sizeTag = document.getElementById('simSizeTag');
+    const priceDisplay = document.getElementById('simPriceDisplay');
+    const mrpDisplay = document.getElementById('simMrpDisplay');
+    const savePill = document.getElementById('simSavePill');
+
+    if (shape === 'heart') {
+      if (btnHeart) btnHeart.classList.add('active');
+      if (btnKeychain) btnKeychain.classList.remove('active');
+      if (canvas) {
+        canvas.className = 'sim-resin-canvas sim-shape-heart';
+      }
+      if (hardware) hardware.style.display = 'none';
+      if (stand) stand.style.display = 'flex';
+      if (sizeTag) sizeTag.textContent = '4"–6" Luxury Heart Block';
+      if (priceDisplay) priceDisplay.textContent = '₹899';
+      if (mrpDisplay) mrpDisplay.textContent = '₹1,499';
+      if (savePill) savePill.textContent = 'Save 40%';
+    } else {
+      if (btnHeart) btnHeart.classList.remove('active');
+      if (btnKeychain) btnKeychain.classList.add('active');
+      if (canvas) {
+        canvas.className = 'sim-resin-canvas sim-shape-keychain';
+      }
+      if (hardware) hardware.style.display = 'flex';
+      if (stand) stand.style.display = 'none';
+      if (sizeTag) sizeTag.textContent = 'Round 4.5cm Bezel Keychain';
+      if (priceDisplay) priceDisplay.textContent = '₹299';
+      if (mrpDisplay) mrpDisplay.textContent = '₹599';
+      if (savePill) savePill.textContent = 'Save 50%';
+    }
+  }
+
+  function handleCustomPhotoUpload(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      state.customPhotoData = e.target.result;
+      const photoEl = document.getElementById('simPhotoLayer');
+      if (photoEl) {
+        photoEl.style.backgroundImage = `url('${e.target.result}')`;
+      }
+      const label = document.getElementById('uploaderLabelText');
+      if (label) {
+        label.innerHTML = `<strong>Photo Attached:</strong> ${file.name.slice(0, 18)}... <span style="color:#16a34a; font-weight:700;">✔ Ready</span>`;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateCustomNameText(val) {
+    state.customName = (val || '').trim();
+    const nameEl = document.getElementById('simNameDisplay');
+    if (nameEl) {
+      nameEl.textContent = val.trim() || 'Sahil & Iqra';
+    }
+  }
+
+  function setResinTrim(trim, btnEl) {
+    state.customTrim = trim;
+    if (btnEl) {
+      const swatches = document.querySelectorAll('.color-swatch');
+      swatches.forEach(s => s.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+    const foilLayer = document.getElementById('simFoilLayer');
+    if (!foilLayer) return;
+
+    if (trim === 'gold') {
+      foilLayer.style.backgroundImage = 'radial-gradient(#fde047 12%, transparent 22%), radial-gradient(#d97706 8%, transparent 18%)';
+      foilLayer.style.opacity = '0.65';
+    } else if (trim === 'rose') {
+      foilLayer.style.backgroundImage = 'radial-gradient(#f43f5e 14%, transparent 25%), radial-gradient(#fde047 8%, transparent 18%)';
+      foilLayer.style.opacity = '0.7';
+    } else if (trim === 'ocean') {
+      foilLayer.style.backgroundImage = 'radial-gradient(#38bdf8 15%, transparent 25%), radial-gradient(#ffffff 10%, transparent 20%)';
+      foilLayer.style.opacity = '0.6';
+    } else if (trim === 'obsidian') {
+      foilLayer.style.backgroundImage = 'radial-gradient(#18181b 20%, transparent 35%), radial-gradient(#fde047 10%, transparent 20%)';
+      foilLayer.style.opacity = '0.75';
+    }
   }
 
   // 6. CART DRAWER OPERATIONS
@@ -494,12 +573,17 @@
           <input type="text" id="quickCustomInput" placeholder="e.g. Letter 'A', or Name 'Zoya & Faizan'" style="width:100%; padding:10px 14px; border:1.5px solid var(--border-subtle); border-radius:8px; font-size:13px; outline:none;">
         </div>
 
-        <div style="display:flex; gap:10px; margin-top:auto;">
-          <button type="button" class="btn-luxury-primary" style="flex-grow:1; justify-content:center;" onclick="window.auraAtelier.addFromModal('${prod.id}')">
-            <i class="fa-solid fa-bag-shopping"></i> Add to Cart
-          </button>
-          <button type="button" class="btn-card-wa" style="padding:14px 18px; font-size:18px;" onclick="window.auraAtelier.orderViaWhatsApp('${prod.id}')">
-            <i class="fa-brands fa-whatsapp"></i>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:auto;">
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-luxury-primary" style="flex-grow:1; justify-content:center;" onclick="window.auraAtelier.addFromModal('${prod.id}')">
+              <i class="fa-solid fa-bag-shopping"></i> Add to Bag
+            </button>
+            <button type="button" class="btn-card-wa" style="padding:14px 18px; font-size:18px;" onclick="window.auraAtelier.orderViaWhatsApp('${prod.id}')" title="Quick WhatsApp Order">
+              <i class="fa-brands fa-whatsapp"></i>
+            </button>
+          </div>
+          <button type="button" class="btn-checkout-prepaid-rzp" style="padding:12px; font-size:13px;" onclick="window.auraAtelier.buyNowOnline('${prod.id}')">
+            <i class="fa-solid fa-lock"></i> Buy Now (Prepaid Razorpay)
           </button>
         </div>
       </div>
@@ -520,56 +604,413 @@
     closeQuickView();
   }
 
-  // 8. 1-CLICK WHATSAPP CHECKOUT & ORDER DISPATCH
+  function buyNowOnline(productId) {
+    const prod = RESIN_PRODUCTS.find(p => p.id === productId);
+    if (!prod) return;
+    const input = document.getElementById('quickCustomInput');
+    const note = input ? input.value.trim() : '';
+    const { price, mrp } = getProductEffectivePrice(prod);
+    const item = {
+      id: prod.id,
+      title: prod.title,
+      price: price,
+      mrp: mrp,
+      image: prod.image,
+      qty: 1,
+      customNote: note ? `Customization: ${note}` : ''
+    };
+    closeQuickView();
+    openCheckoutModal([item]);
+  }
+
+  // 8. ATTRACTIVE WHATSAPP ORDER DISPATCH (RICH EMOJIS & DIRECT IMAGE PREVIEWS)
+  const DOMAIN_URL = 'https://art.jkstudyhub.online';
+  const RAZORPAY_KEY = 'rzp_live_TjJ6bv39yo6Gds';
+
   function orderViaWhatsApp(productId) {
     const prod = RESIN_PRODUCTS.find(p => p.id === productId);
     if (!prod) return;
 
-    const msg = `✨ *Hello Aura Resin Atelier!* \n\n` +
-                `I would like to order this handcrafted resin piece:\n\n` +
-                `📌 *Item:* ${prod.title}\n` +
-                `💎 *Collection:* ${prod.categoryLabel}\n` +
-                `💰 *Price:* ₹${prod.price.toLocaleString('en-IN')} (MRP: ₹${prod.mrp.toLocaleString('en-IN')})\n\n` +
-                `Please let me know customization options, lead time, and Kashmir delivery details!`;
+    const imgUrl = prod.image.startsWith('http') ? prod.image : `${DOMAIN_URL}/${prod.image.replace(/^\.\//, '')}`;
+    const mrp = prod.mrp || Math.round(prod.price * 1.5);
+
+    const msg = 
+`✨💎 *AURA RESIN ATELIER — BESPOKE ART ORDER* 💎✨
+════════════════════════════════
+🛍️ *ORDER DETAILS (100% PREPAID)*
+════════════════════════════════
+🏷️ *Item:* ${prod.title}
+💎 *Collection:* ${prod.categoryLabel}
+💰 *Prepaid Price:* ₹${prod.price.toLocaleString('en-IN')} (MRP: ₹${mrp.toLocaleString('en-IN')})
+🔢 *Quantity:* 1 Piece
+🛡️ *Payment Status:* 100% Prepaid (UPI / Razorpay)
+
+🖼️ *Item Showcase Image:*
+${imgUrl}
+
+════════════════════════════════
+✨ *Handcrafted with 48h Diamond-Buff Resin*
+📍 *Free Kashmir Delivery on ₹999+*
+════════════════════════════════
+🙏 *Hello!* I want to place this prepaid order. Please confirm availability and share the UPI QR / Payment Link so I can pay!`;
 
     window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   function checkoutCartWhatsApp() {
-    if (state.cart.length === 0) return;
+    if (state.cart.length === 0) {
+      alert("Your shopping bag is empty! Please add a piece or design a keepsake.");
+      return;
+    }
 
-    let itemsList = '';
-    let total = 0;
+    let itemsFormatted = '';
+    let subtotal = 0;
     state.cart.forEach((item, idx) => {
-      itemsList += `${idx + 1}. ${item.title} (Qty: ${item.qty}) - ₹${(item.price * item.qty).toLocaleString('en-IN')}\n`;
-      if (item.customNote) itemsList += `   └ ${item.customNote}\n`;
-      total += item.price * item.qty;
+      const imgUrl = item.image.startsWith('http') ? item.image : `${DOMAIN_URL}/${item.image.replace(/^\.\//, '')}`;
+      itemsFormatted += 
+`🔸 *${idx + 1}. ${item.title}*
+   • Qty: ${item.qty} × ₹${item.price.toLocaleString('en-IN')} = ₹${(item.price * item.qty).toLocaleString('en-IN')}
+` + (item.customNote ? `   • Customization: ${item.customNote}\n` : '') +
+`   • Photo Preview: ${imgUrl}\n\n`;
+      subtotal += item.price * item.qty;
     });
 
-    const msg = `✨ *Aura Resin Atelier - New Order Request* \n\n` +
-                `Hello! I want to confirm my resin order:\n\n` +
-                itemsList + `\n` +
-                `🧾 *Total Amount:* ₹${total.toLocaleString('en-IN')}\n` +
-                `📍 *Delivery Location:* Kashmir / J&K\n\n` +
-                `Please share payment details (UPI/COD) and dispatch schedule!`;
+    const delivery = subtotal >= 999 ? 0 : 60;
+    const grandTotal = subtotal + delivery;
+
+    const msg = 
+`✨💎 *AURA RESIN ATELIER — PREPAID ORDER BAG* 💎✨
+════════════════════════════════
+🛍️ *YOUR SELECTED PIECES (100% PREPAID):*
+════════════════════════════════
+${itemsFormatted}────────────────────────────────
+🧾 *Items Subtotal:* ₹${subtotal.toLocaleString('en-IN')}
+🚚 *Delivery:* ${delivery === 0 ? 'FREE (Kashmir Promo)' : '₹60'}
+💰 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')} *(PREPAID ONLY)*
+════════════════════════════════
+🙏 *Hello!* I am ready to confirm my handcrafted resin order. Please send the payment QR code / UPI ID to complete my payment!`;
 
     window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
-  // 9. ORDER SIMULATOR PIECE VIA WHATSAPP
-  function orderSimulatorCustomPiece() {
-    const letter = state.customInitial;
-    const msg = `✨ *Hello Aura Resin Atelier!* \n\n` +
-                `I designed a custom botanical initial piece on your 3D simulator:\n\n` +
-                `🔤 *Initial / Letter:* "${letter}"\n` +
-                `🎨 *Base Tone:* Custom Selected\n` +
-                `✨ *Foil Accent:* 24K Gold Leaf\n\n` +
-                `Could you please craft this for me? Let me know the price and delivery timeline.`;
+  // 9. ORDER CUSTOM PHOTO & NAME STUDIO PIECE VIA WHATSAPP
+  function orderSimulatorPieceWhatsApp() {
+    const isHeart = state.customCraftShape === 'heart';
+    const craftName = isHeart ? '4"–6" Resin Keepsake Heart' : 'Round Photo Resin Keychain';
+    const price = isHeart ? 899 : 299;
+    const mrp = isHeart ? 1499 : 599;
+    const trimNames = {
+      gold: '24K Gold Foil Flakes & Crystal Clear',
+      rose: 'Kashmiri Red Rose Petals + Gold Leaf',
+      ocean: 'Ocean Wave Coastal Cyan & Sand',
+      obsidian: 'Midnight Obsidian Black + Gold Leaf'
+    };
+    const trimLabel = trimNames[state.customTrim] || '24K Gold Foil Flakes';
+
+    const msg = 
+`✨💎 *AURA RESIN ATELIER — BESPOKE PHOTO KEEPSAKE* 💎✨
+════════════════════════════════
+🛍️ *CUSTOM ORDER (100% PREPAID)*
+════════════════════════════════
+🏷️ *Craft Selected:* ${craftName}
+💰 *Prepaid Price:* ₹${price.toLocaleString('en-IN')} (MRP: ₹${mrp.toLocaleString('en-IN')})
+🎨 *Resin Style:* ${trimLabel}
+✍️ *Custom Name / Inscription:* "${state.customName}"
+📸 *Photo Attachment:* I will attach my photo right here in this chat!
+
+════════════════════════════════
+🛡️ *Payment Status:* 100% Prepaid (UPI / Razorpay)
+📍 *Delivery:* Handcrafted & Shipped across Kashmir & India
+════════════════════════════════
+🙏 *Hello Atelier!* I just designed this custom keepsake. I am attaching my photo now. Please share your payment UPI ID so I can complete the prepaid order!`;
 
     window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
-  // 10. BESPOKE INQUIRY FORM DISPATCH
+  // 10. PREPAID ONLINE CHECKOUT VIA RAZORPAY
+  function buySimulatorPieceOnline() {
+    const isHeart = state.customCraftShape === 'heart';
+    const customItem = {
+      id: 'custom-' + Date.now(),
+      title: isHeart ? 'Custom 4-6" Resin Keepsake Heart (Photo & Name)' : 'Custom Round Photo Resin Keychain (Name)',
+      price: isHeart ? 899 : 299,
+      mrp: isHeart ? 1499 : 599,
+      qty: 1,
+      image: state.customPhotoData || 'images/resin/resin-wedding-cube.jpg',
+      categoryLabel: 'Custom Photo Keepsake',
+      customNote: `Name: "${state.customName}" | Style: ${state.customTrim} | Shape: ${state.customCraftShape}`,
+      isCustom: true
+    };
+    openCheckoutModal([customItem]);
+  }
+
+  function openCheckoutModal(customItems) {
+    const items = customItems || state.cart;
+    if (!items || items.length === 0) {
+      alert("Your bag is empty! Please choose a product or design a keepsake.");
+      return;
+    }
+    state.checkoutItems = items;
+
+    const summaryBox = document.getElementById('checkoutSummaryBox');
+    const subtotalEl = document.getElementById('checkoutItemsTotal');
+    const deliveryEl = document.getElementById('checkoutDeliveryFee');
+    const finalTotalEl = document.getElementById('checkoutFinalTotal');
+    const payBtnText = document.getElementById('btnPayRazorpayText');
+
+    let subtotal = 0;
+    let html = '';
+    items.forEach(item => {
+      const lineTotal = item.price * item.qty;
+      subtotal += lineTotal;
+      html += `
+        <div class="checkout-summary-item">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${item.image}" alt="" style="width:40px; height:40px; border-radius:8px; object-fit:cover; border:1px solid #e2e8f0;">
+            <div>
+              <strong style="color:#1e293b; font-size:13px; display:block;">${item.title}</strong>
+              <small style="color:#64748b;">Qty: ${item.qty} &bull; ₹${item.price.toLocaleString('en-IN')}${item.customNote ? ` &bull; ${item.customNote}` : ''}</small>
+            </div>
+          </div>
+          <strong style="color:#b45309; font-size:13.5px;">₹${lineTotal.toLocaleString('en-IN')}</strong>
+        </div>
+      `;
+    });
+
+    const delivery = subtotal >= 999 ? 0 : 60;
+    const grandTotal = subtotal + delivery;
+
+    if (summaryBox) summaryBox.innerHTML = html;
+    if (subtotalEl) subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
+    if (deliveryEl) deliveryEl.textContent = delivery === 0 ? 'FREE (Kashmir Promo)' : '₹60';
+    if (finalTotalEl) finalTotalEl.textContent = '₹' + grandTotal.toLocaleString('en-IN');
+    if (payBtnText) payBtnText.textContent = `Pay Online via Razorpay • ₹${grandTotal.toLocaleString('en-IN')}`;
+
+    const modal = document.getElementById('artCheckoutModal');
+    if (modal) modal.style.display = 'flex';
+    toggleCartDrawer(false);
+  }
+
+  function closeCheckoutModal() {
+    const modal = document.getElementById('artCheckoutModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function submitPrepaidOrder(event) {
+    if (event && event.preventDefault) event.preventDefault();
+
+    const name = document.getElementById('checkoutName')?.value.trim();
+    const phone = document.getElementById('checkoutPhone')?.value.trim();
+    const address = document.getElementById('checkoutAddress')?.value.trim();
+    const district = document.getElementById('checkoutDistrict')?.value.trim();
+    const pincode = document.getElementById('checkoutPincode')?.value.trim();
+
+    if (!name || !phone || !address || !district || !pincode) {
+      alert("Please complete all shipping address fields.");
+      return;
+    }
+
+    if (typeof Razorpay === 'undefined') {
+      alert("Razorpay Payment Gateway is still loading. Please check internet connection or choose WhatsApp checkout.");
+      return;
+    }
+
+    const items = state.checkoutItems.length > 0 ? state.checkoutItems : state.cart;
+    const subtotal = items.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    const delivery = subtotal >= 999 ? 0 : 60;
+    const grandTotal = subtotal + delivery;
+
+    const payBtn = document.getElementById('btnPayRazorpay');
+    if (payBtn) {
+      payBtn.disabled = true;
+      payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting to Secure Razorpay...';
+    }
+
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: Math.round(grandTotal * 100),
+      currency: "INR",
+      name: "Aura Resin Atelier",
+      description: `Prepaid Bespoke Resin Order (${items.length} items)`,
+      image: `${DOMAIN_URL}/images/resin/resin-quran-stand.jpg`,
+      handler: function(response) {
+        onRazorpayPaymentSuccess(response, {
+          items,
+          name,
+          phone,
+          address,
+          district,
+          pincode,
+          subtotal,
+          delivery,
+          grandTotal
+        });
+      },
+      prefill: {
+        name: name,
+        contact: phone
+      },
+      theme: {
+        color: "#d97706"
+      },
+      modal: {
+        ondismiss: function() {
+          if (payBtn) {
+            payBtn.disabled = false;
+            payBtn.innerHTML = `<i class="fa-solid fa-lock"></i> <span id="btnPayRazorpayText">Pay Online via Razorpay • ₹${grandTotal.toLocaleString('en-IN')}</span>`;
+          }
+        }
+      }
+    };
+
+    try {
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function(resp) {
+        alert("Payment Unsuccessful: " + ((resp && resp.error && resp.error.description) ? resp.error.description : "Transaction could not be completed."));
+        if (payBtn) {
+          payBtn.disabled = false;
+          payBtn.innerHTML = `<i class="fa-solid fa-lock"></i> <span id="btnPayRazorpayText">Pay Online via Razorpay • ₹${grandTotal.toLocaleString('en-IN')}</span>`;
+        }
+      });
+      rzp.open();
+    } catch(err) {
+      console.error("Razorpay error:", err);
+      alert("Could not initialize Razorpay: " + (err.message || "Please check internet"));
+      if (payBtn) {
+        payBtn.disabled = false;
+        payBtn.innerHTML = `<i class="fa-solid fa-lock"></i> <span id="btnPayRazorpayText">Pay Online via Razorpay • ₹${grandTotal.toLocaleString('en-IN')}</span>`;
+      }
+    }
+  }
+
+  function checkoutWithWhatsAppPrepaid() {
+    const name = document.getElementById('checkoutName')?.value.trim() || 'Valued Client';
+    const phone = document.getElementById('checkoutPhone')?.value.trim() || '';
+    const address = document.getElementById('checkoutAddress')?.value.trim() || 'Kashmir';
+    const district = document.getElementById('checkoutDistrict')?.value.trim() || '';
+    const pincode = document.getElementById('checkoutPincode')?.value.trim() || '';
+
+    const items = state.checkoutItems.length > 0 ? state.checkoutItems : state.cart;
+    if (items.length === 0) return;
+
+    let itemsFormatted = '';
+    let subtotal = 0;
+    items.forEach((item, idx) => {
+      const imgUrl = item.image.startsWith('http') ? item.image : `${DOMAIN_URL}/${item.image.replace(/^\.\//, '')}`;
+      itemsFormatted += 
+`🔸 *${idx + 1}. ${item.title}*
+   • Qty: ${item.qty} × ₹${item.price.toLocaleString('en-IN')} = ₹${(item.price * item.qty).toLocaleString('en-IN')}
+` + (item.customNote ? `   • Customization: ${item.customNote}\n` : '') +
+`   • Photo Preview: ${imgUrl}\n\n`;
+      subtotal += item.price * item.qty;
+    });
+
+    const delivery = subtotal >= 999 ? 0 : 60;
+    const grandTotal = subtotal + delivery;
+
+    const msg = 
+`✨💎 *AURA RESIN ATELIER — PREPAID ORDER VIA WHATSAPP* 💎✨
+════════════════════════════════
+🛍️ *ORDER PIECES (100% PREPAID):*
+════════════════════════════════
+${itemsFormatted}────────────────────────────────
+🧾 *Items Subtotal:* ₹${subtotal.toLocaleString('en-IN')}
+🚚 *Delivery:* ${delivery === 0 ? 'FREE (Kashmir Promo)' : '₹60'}
+💰 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')} *(PREPAID ONLY)*
+════════════════════════════════
+👤 *Customer Name:* ${name}
+📱 *Phone:* ${phone}
+📍 *Shipping Address:* ${address}, ${district} - ${pincode}
+════════════════════════════════
+🙏 *Hello!* I have filled out my delivery details for this bespoke resin order. Please send your official payment QR code / UPI ID to confirm this prepaid order!`;
+
+    window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  function onRazorpayPaymentSuccess(response, orderData) {
+    const orderId = 'AURA-ORD-' + Math.floor(100000 + Math.random() * 900000);
+    const txnId = response.razorpay_payment_id || 'TXN-' + Date.now();
+
+    const orderRecord = {
+      id: orderId,
+      orderId: orderId,
+      date: new Date().toISOString(),
+      items: orderData.items,
+      productTitle: orderData.items.map(i => `${i.title} (x${i.qty})`).join(', '),
+      customerName: orderData.name,
+      phone: orderData.phone,
+      address: `${orderData.address}, ${orderData.district} - ${orderData.pincode}`,
+      total: orderData.grandTotal,
+      paid: true,
+      paymentMethod: 'Razorpay Online Prepaid',
+      transactionId: txnId,
+      status: 'Confirmed (Paid Online)',
+      category: 'resin'
+    };
+
+    // Save to local resin orders
+    try {
+      const existingResin = JSON.parse(localStorage.getItem('aura_resin_orders') || '[]');
+      existingResin.unshift(orderRecord);
+      localStorage.setItem('aura_resin_orders', JSON.stringify(existingResin));
+    } catch(e) {}
+
+    // Sync to jk_orders for seller panel visibility
+    try {
+      const existingJk = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+      existingJk.unshift(orderRecord);
+      localStorage.setItem('jk_orders', JSON.stringify(existingJk));
+    } catch(e) {}
+
+    // Clear cart if ordered from cart
+    if (state.checkoutItems === state.cart) {
+      state.cart = [];
+      persistState();
+      updateCartUI();
+    }
+    state.checkoutItems = [];
+
+    closeCheckoutModal();
+
+    // Render Success Screen
+    const receiptEl = document.getElementById('orderReceiptSummary');
+    if (receiptEl) {
+      receiptEl.innerHTML = `
+        <div class="receipt-row"><span>Order ID:</span><strong>${orderId}</strong></div>
+        <div class="receipt-row"><span>Razorpay Payment ID:</span><span style="font-family:monospace; color:#059669; font-weight:700;">${txnId}</span></div>
+        <div class="receipt-row"><span>Customer:</span><span>${orderData.name} (${orderData.phone})</span></div>
+        <div class="receipt-row"><span>Delivery To:</span><span>${orderData.district} - ${orderData.pincode}</span></div>
+        <div class="receipt-row" style="font-weight:800; color:#b45309;"><span>Total Paid (Prepaid):</span><span>₹${orderData.grandTotal.toLocaleString('en-IN')}</span></div>
+      `;
+    }
+
+    const btnWa = document.getElementById('btnSendWaReceipt');
+    if (btnWa) {
+      btnWa.onclick = function() {
+        const waMsg = 
+`✨💎 *AURA RESIN ATELIER — PAYMENT CONFIRMED* 💎✨
+════════════════════════════════
+🧾 *Order ID:* ${orderId}
+💳 *Razorpay Txn ID:* ${txnId}
+💰 *Total Paid:* ₹${orderData.grandTotal.toLocaleString('en-IN')} (Prepaid)
+👤 *Customer:* ${orderData.name} (${orderData.phone})
+📍 *Shipping To:* ${orderData.address}, ${orderData.district} - ${orderData.pincode}
+════════════════════════════════
+🙏 My payment was successful on Razorpay! Please confirm receipt and begin crafting my piece.`;
+        window.open(`https://wa.me/919622605714?text=${encodeURIComponent(waMsg)}`, '_blank');
+      };
+    }
+
+    const successModal = document.getElementById('artOrderSuccessModal');
+    if (successModal) successModal.style.display = 'flex';
+  }
+
+  function closeSuccessModal() {
+    const successModal = document.getElementById('artOrderSuccessModal');
+    if (successModal) successModal.style.display = 'none';
+  }
+
+  // 11. BESPOKE INQUIRY FORM DISPATCH
   function handleBespokeInquiry(e) {
     if (e && e.preventDefault) e.preventDefault();
 
@@ -648,11 +1089,24 @@
     openQuickView,
     closeQuickView,
     addFromModal,
+    buyNowOnline,
     orderViaWhatsApp,
     checkoutCartWhatsApp,
-    orderSimulatorCustomPiece,
     handleBespokeInquiry,
-    toggleWishlist
+    toggleWishlist,
+    // Custom Photo & Name Studio
+    setCustomCraftShape,
+    handleCustomPhotoUpload,
+    updateCustomNameText,
+    setResinTrim,
+    buySimulatorPieceOnline,
+    orderSimulatorPieceWhatsApp,
+    // Prepaid Razorpay Checkout
+    openCheckoutModal,
+    closeCheckoutModal,
+    submitPrepaidOrder,
+    checkoutWithWhatsAppPrepaid,
+    closeSuccessModal
   };
 
 })();

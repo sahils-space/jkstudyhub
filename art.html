@@ -22,9 +22,24 @@
   <meta http-equiv="Expires" content="0">
   
   <!-- Custom Boutique Stylesheet -->
-  <link rel="stylesheet" href="art.css?v=8.0">
+  <link rel="stylesheet" href="art.css?v=9.0">
+  
+  <!-- Razorpay Payment Gateway Checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
+
+  <!-- Hidden SVG Clip-Paths for Responsive 3D Shapes -->
+  <svg width="0" height="0" style="position:absolute; pointer-events:none;">
+    <defs>
+      <clipPath id="heartClip" clipPathUnits="objectBoundingBox">
+        <path d="M 0.5, 0.25 C 0.5, 0.25 0.35, 0.05 0.18, 0.05 C 0.05, 0.05 0, 0.18 0, 0.34 C 0, 0.58 0.32, 0.78 0.5, 0.95 C 0.68, 0.78 1, 0.58 1, 0.34 C 1, 0.18 0.95, 0.05 0.82, 0.05 C 0.65, 0.05 0.5, 0.25 0.5, 0.25 Z"></path>
+      </clipPath>
+      <clipPath id="roundClip" clipPathUnits="objectBoundingBox">
+        <circle cx="0.5" cy="0.5" r="0.48"></circle>
+      </clipPath>
+    </defs>
+  </svg>
 
   <!-- 1. TOP ANNOUNCEMENT BAR (SHOPIFY PRESTIGE STYLE) -->
   <aside class="announcement-bar">
@@ -131,51 +146,154 @@
     </div>
   </section>
 
-  <!-- 4. 3D INTERACTIVE CUSTOM RESIN SIMULATOR -->
+  <!-- 4. 3D INTERACTIVE CUSTOM RESIN PHOTO & NAME STUDIO -->
   <section class="resin-simulator-section" id="simulator">
     <div class="container">
       <div class="section-head">
-        <span class="section-eyebrow">Interactive Studio</span>
-        <h2 class="section-title">Design Your Custom Resin Initial</h2>
+        <span class="section-eyebrow">Interactive Atelier Studio</span>
+        <h2 class="section-title">Design Your Custom Photo &amp; Name Keepsake</h2>
         <p class="section-desc">
-          Test color tones, floating metallic leaf, and your initial in our real-time 3D simulator before placing your order.
+          Upload your photo and add custom names to preview our <strong>4–6" Resin Keepsake Heart</strong> or <strong>Round Photo Keychain</strong> live with 24K gold foil flakes before placing your prepaid order.
         </p>
       </div>
 
       <div class="simulator-box">
-        <!-- Interactive 3D Canvas -->
-        <div class="sim-preview-stage">
-          <div class="sim-resin-canvas" id="simResinCanvas" style="background: radial-gradient(circle at 30% 30%, #1e3a8a, #0f172a);">
-            <div class="sim-foil-layer" style="background-image: radial-gradient(#dfba7f 10%, transparent 20%);"></div>
-            <span class="sim-initial-display" id="simInitialDisplay">S</span>
+        <!-- Interactive 3D Preview Stage -->
+        <div class="sim-preview-stage" id="simPreviewStage">
+          
+          <!-- Round Keychain Hardware (Visible when round keychain is active) -->
+          <div class="sim-keychain-hardware" id="simKeychainHardware" style="display: none;">
+            <div class="keychain-split-ring"></div>
+            <div class="keychain-chain">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="keychain-screw-eye"></div>
+          </div>
+
+          <!-- Resin Cast Vessel (Heart or Round Shape) -->
+          <div class="sim-resin-canvas sim-shape-heart" id="simResinCanvas">
+            <!-- Uploaded / Default Photo -->
+            <div class="sim-photo-layer" id="simPhotoLayer" style="background-image: url('images/resin/resin-wedding-cube.jpg');"></div>
+            
+            <!-- Metallic Foil & Flakes Layer -->
+            <div class="sim-foil-layer" id="simFoilLayer"></div>
+            
+            <!-- Shimmer Glass Reflection Overlay -->
+            <div class="sim-resin-glare"></div>
+
+            <!-- Custom Name / Calligraphy Text -->
+            <div class="sim-custom-text-wrap">
+              <span class="sim-name-display" id="simNameDisplay">Sahil &amp; Iqra</span>
+              <span class="sim-subtext-display" id="simSubtextDisplay">✦ Forever in Resin ✦</span>
+            </div>
+
+            <!-- Size / Crafting Badge -->
+            <span class="sim-size-tag" id="simSizeTag">4"–6" Luxury Heart Block</span>
+          </div>
+
+          <!-- Clear Display Stand Graphic for Heart -->
+          <div class="sim-heart-stand" id="simHeartStand">
+            <div class="stand-prong left"></div>
+            <div class="stand-base"></div>
+            <div class="stand-prong right"></div>
+          </div>
+
+          <div class="sim-stage-footer-hint">
+            <i class="fa-solid fa-arrows-up-down-left-right"></i>
+            <span>Interactive 3D Resin Tilt Preview &bull; 100% Handcrafted</span>
           </div>
         </div>
 
-        <!-- Controls -->
+        <!-- Controls Panel -->
         <div class="sim-controls-panel">
-          <h3>Personalize Every Detail</h3>
-          <p>Handmade to order with authentic floral botanicals and your choice of metallic foil.</p>
+          <div class="sim-panel-header">
+            <h3>Personalize Every Detail</h3>
+            <span class="sim-prepaid-flag"><i class="fa-solid fa-shield-halved"></i> 100% Prepaid Only</span>
+          </div>
+          <p>Handmade to order with optical crystal resin, authentic floral accents, and diamond edge buffing.</p>
 
+          <!-- Step 1: Choose Craft Shape -->
           <div class="control-group">
-            <label class="control-label">1. Choose Resin Hue</label>
-            <div class="swatch-row">
-              <button type="button" class="swatch-btn color-swatch active" data-bg="radial-gradient(circle at 30% 30%, #1e3a8a, #0f172a)" style="background: #1e3a8a;" title="Ocean Deep Blue"></button>
-              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #064e3b, #022c22)" style="background: #064e3b;" title="Emerald Valley"></button>
-              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #be185d, #831843)" style="background: #be185d;" title="Rose Petal Pink"></button>
-              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #18181b, #09090b)" style="background: #18181b;" title="Midnight Obsidian"></button>
-              <button type="button" class="swatch-btn color-swatch" data-bg="radial-gradient(circle at 30% 30%, #fef3c7, #fde68a)" style="background: #fef3c7;" title="Champagne Cream"></button>
+            <label class="control-label">1. Select Keepsake Craft</label>
+            <div class="sim-shape-toggle-grid">
+              <button type="button" class="sim-shape-btn active" id="shapeBtnHeart" onclick="window.auraAtelier.setCustomCraftShape('heart')">
+                <i class="fa-solid fa-heart" style="color: #ec4899; font-size: 20px;"></i>
+                <div class="shape-btn-info">
+                  <strong>4"–6" Keepsake Heart</strong>
+                  <span>₹899 <del>₹1,499</del></span>
+                </div>
+              </button>
+
+              <button type="button" class="sim-shape-btn" id="shapeBtnKeychain" onclick="window.auraAtelier.setCustomCraftShape('keychain')">
+                <i class="fa-solid fa-circle-notch" style="color: #f59e0b; font-size: 20px;"></i>
+                <div class="shape-btn-info">
+                  <strong>Round Photo Keychain</strong>
+                  <span>₹299 <del>₹599</del></span>
+                </div>
+              </button>
             </div>
           </div>
 
+          <!-- Step 2: Upload Photo -->
           <div class="control-group">
-            <label class="control-label" for="simTextInput">2. Enter Letter / Initial</label>
-            <input type="text" id="simTextInput" class="sim-text-input" value="S" maxlength="2" placeholder="Letter">
+            <label class="control-label">2. Upload Your Photo</label>
+            <div class="sim-photo-uploader" onclick="document.getElementById('simPhotoInput').click()">
+              <input type="file" id="simPhotoInput" accept="image/*" style="display:none;" onchange="window.auraAtelier.handleCustomPhotoUpload(event)">
+              <div class="uploader-content">
+                <i class="fa-solid fa-cloud-arrow-up uploader-icon"></i>
+                <div class="uploader-text">
+                  <span id="uploaderLabelText"><strong>Click to upload your photo</strong> or snap from camera</span>
+                  <small>JPG, PNG, HEIC up to 15MB &bull; Fitted cleanly inside resin</small>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <button type="button" class="btn-luxury-primary sim-order-btn" onclick="window.auraAtelier.orderSimulatorCustomPiece()">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>Order This Custom Piece on WhatsApp</span>
-          </button>
+          <!-- Step 3: Enter Custom Names / Message -->
+          <div class="control-group">
+            <label class="control-label" for="simTextInput">3. Custom Name or Calligraphy</label>
+            <div class="sim-text-field-wrap">
+              <input type="text" id="simTextInput" class="sim-text-input" value="Sahil &amp; Iqra" maxlength="32" placeholder="e.g. Sahil &amp; Iqra / Insha / Bismillah" oninput="window.auraAtelier.updateCustomNameText(this.value)">
+              <i class="fa-solid fa-pen-nib input-icon"></i>
+            </div>
+          </div>
+
+          <!-- Step 4: Floating Foil & Botanical Trim -->
+          <div class="control-group">
+            <label class="control-label">4. Floating Foil &amp; Floral Accent</label>
+            <div class="swatch-row">
+              <button type="button" class="swatch-btn color-swatch active" onclick="window.auraAtelier.setResinTrim('gold', this)" style="background: linear-gradient(135deg, #dfba7f, #b45309);" title="24K Gold Foil Flakes"></button>
+              <button type="button" class="swatch-btn color-swatch" onclick="window.auraAtelier.setResinTrim('rose', this)" style="background: linear-gradient(135deg, #be185d, #831843);" title="Kashmiri Red Rose Petals + Gold"></button>
+              <button type="button" class="swatch-btn color-swatch" onclick="window.auraAtelier.setResinTrim('ocean', this)" style="background: linear-gradient(135deg, #0284c7, #0f172a);" title="Ocean Wave Coastal Cyan"></button>
+              <button type="button" class="swatch-btn color-swatch" onclick="window.auraAtelier.setResinTrim('obsidian', this)" style="background: linear-gradient(135deg, #18181b, #000000);" title="Midnight Obsidian + Gold Leaf"></button>
+            </div>
+          </div>
+
+          <!-- Price & Dual Checkout Actions -->
+          <div class="sim-checkout-box">
+            <div class="sim-price-summary">
+              <span class="sim-price-label">Prepaid Price:</span>
+              <strong class="sim-price-val" id="simPriceDisplay">₹899</strong>
+              <span class="sim-mrp-val" id="simMrpDisplay">₹1,499</span>
+              <span class="sim-save-pill" id="simSavePill">Save 40%</span>
+            </div>
+
+            <div class="sim-action-buttons">
+              <button type="button" class="btn-sim-pay-rzp" onclick="window.auraAtelier.buySimulatorPieceOnline()">
+                <i class="fa-solid fa-lock"></i>
+                <span>Pay Online • Razorpay (UPI / Cards)</span>
+              </button>
+
+              <button type="button" class="btn-sim-order-wa" onclick="window.auraAtelier.orderSimulatorPieceWhatsApp()">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>Order on WhatsApp with Photo</span>
+              </button>
+            </div>
+            <p class="sim-prepaid-note">
+              <i class="fa-solid fa-circle-info"></i> All custom photo resin items are 100% prepaid. Crafting starts immediately upon payment.
+            </p>
+          </div>
+
         </div>
       </div>
     </div>
@@ -628,10 +746,17 @@
         </div>
 
         <div class="cart-checkout-actions">
+          <button type="button" class="btn-checkout-prepaid-rzp" onclick="window.auraAtelier.openCheckoutModal()">
+            <i class="fa-solid fa-lock"></i>
+            <span>Proceed to Pay Online (Prepaid)</span>
+          </button>
           <button type="button" class="btn-checkout-wa" onclick="window.auraAtelier.checkoutCartWhatsApp()">
             <i class="fa-brands fa-whatsapp"></i>
-            <span>Proceed to 1-Click WhatsApp Checkout</span>
+            <span>Order via WhatsApp (Prepaid)</span>
           </button>
+          <div class="cart-prepaid-notice">
+            <i class="fa-solid fa-shield-halved"></i> 100% Prepaid Only &bull; Razorpay Secure UPI &amp; Cards
+          </div>
         </div>
       </div>
     </div>
@@ -645,6 +770,118 @@
       </button>
       <div id="quickViewContent" style="display: contents;">
         <!-- Populated dynamically by art.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 9.2 PREPAID RAZORPAY CHECKOUT MODAL -->
+  <div class="modal-backdrop" id="artCheckoutModal" style="display:none;">
+    <div class="art-checkout-card">
+      <button type="button" class="modal-close" onclick="window.auraAtelier.closeCheckoutModal()" aria-label="Close checkout">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="art-checkout-header">
+        <span class="art-prepaid-chip"><i class="fa-solid fa-shield-halved"></i> 100% PREPAID ONLY &bull; NO COD</span>
+        <h3>Bespoke Order Checkout</h3>
+        <p>Each resin piece requires 24–48 hours of slow crystal epoxy curing and hand diamond buffing. All resin orders are strictly prepaid.</p>
+      </div>
+
+      <!-- Selected Items Summary -->
+      <div class="checkout-summary-box" id="checkoutSummaryBox">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Customer & Shipping Form -->
+      <form id="artCheckoutForm" onsubmit="window.auraAtelier.submitPrepaidOrder(event)">
+        <div class="checkout-input-row">
+          <div class="checkout-field">
+            <label for="checkoutName">Full Name *</label>
+            <input type="text" id="checkoutName" placeholder="e.g. Sahil / Insha Mir" required>
+          </div>
+          <div class="checkout-field">
+            <label for="checkoutPhone">WhatsApp / Mobile Number *</label>
+            <input type="tel" id="checkoutPhone" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+          </div>
+        </div>
+
+        <div class="checkout-field">
+          <label for="checkoutAddress">Full Shipping Address (Street / Mohalla / Village / Landmark) *</label>
+          <textarea id="checkoutAddress" rows="2" placeholder="e.g. Near Jamia Masjid, Khawaja Sahib, Baramulla" required></textarea>
+        </div>
+
+        <div class="checkout-input-row">
+          <div class="checkout-field">
+            <label for="checkoutDistrict">District / Town *</label>
+            <input type="text" id="checkoutDistrict" placeholder="e.g. Baramulla / Srinagar / Anantnag" required>
+          </div>
+          <div class="checkout-field">
+            <label for="checkoutPincode">Pincode *</label>
+            <input type="text" id="checkoutPincode" placeholder="e.g. 193101" required pattern="[0-9]{6}">
+          </div>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="checkout-pricing-breakdown">
+          <div class="price-line">
+            <span>Items Subtotal</span>
+            <span id="checkoutItemsTotal">₹0</span>
+          </div>
+          <div class="price-line">
+            <span>Delivery Charges (J&amp;K)</span>
+            <span id="checkoutDeliveryFee" style="color: #16a34a; font-weight:700;">FREE</span>
+          </div>
+          <div class="price-line total-line">
+            <span>Total Payable (Prepaid)</span>
+            <span id="checkoutFinalTotal">₹0</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="checkout-buttons-group">
+          <button type="submit" id="btnPayRazorpay" class="btn-razorpay-pay">
+            <i class="fa-solid fa-lock"></i>
+            <span id="btnPayRazorpayText">Pay Online via Razorpay (UPI, Cards)</span>
+          </button>
+
+          <button type="button" class="btn-checkout-wa-alt" onclick="window.auraAtelier.checkoutWithWhatsAppPrepaid()">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Order via WhatsApp (Prepaid QR/Link)</span>
+          </button>
+        </div>
+
+        <div class="checkout-trust-guarantee">
+          <i class="fa-solid fa-certificate"></i>
+          <span>Secured with Razorpay 256-Bit SSL &bull; Handcrafted in Baramulla &amp; Srinagar</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9.3 ORDER SUCCESS CONFIRMATION MODAL -->
+  <div class="modal-backdrop" id="artOrderSuccessModal" style="display:none;">
+    <div class="art-success-card">
+      <div class="success-icon-wrap">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <span class="art-prepaid-chip" style="background:#dcfce7; color:#15803d; border-color:#86efac;">
+        <i class="fa-solid fa-shield-check"></i> PAYMENT CONFIRMED &bull; PREPAID ORDER
+      </span>
+      <h3>Your Bespoke Piece is in the Studio!</h3>
+      <p>Thank you for choosing Aura Resin Atelier. Our artist has received your order and started the resin curing process.</p>
+
+      <div class="order-receipt-summary" id="orderReceiptSummary">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="success-actions-group">
+        <button type="button" class="btn-success-wa" id="btnSendWaReceipt">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span>Send Order Receipt to WhatsApp Atelier</span>
+        </button>
+        <button type="button" class="btn-success-continue" onclick="window.auraAtelier.closeSuccessModal()">
+          Continue Browsing Atelier
+        </button>
       </div>
     </div>
   </div>
