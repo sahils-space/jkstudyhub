@@ -299,7 +299,12 @@
   function initSimulator() {
     const canvas = document.getElementById('simResinCanvas');
     const input = document.getElementById('simTextInput');
+    const photoEl = document.getElementById('simPhotoLayer');
     if (!canvas) return;
+
+    if (photoEl && !state.customPhotoData) {
+      photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.jpg')";
+    }
 
     if (input) {
       input.addEventListener('input', e => {
@@ -331,6 +336,7 @@
     const priceDisplay = document.getElementById('simPriceDisplay');
     const mrpDisplay = document.getElementById('simMrpDisplay');
     const savePill = document.getElementById('simSavePill');
+    const photoEl = document.getElementById('simPhotoLayer');
 
     if (shape === 'heart') {
       if (btnHeart) btnHeart.classList.add('active');
@@ -340,10 +346,14 @@
       }
       if (hardware) hardware.style.display = 'none';
       if (stand) stand.style.display = 'flex';
-      if (sizeTag) sizeTag.textContent = '4"–6" Luxury Heart Block';
+      if (sizeTag) sizeTag.textContent = '💖 Heart Keepsake / Keychain';
       if (priceDisplay) priceDisplay.textContent = '₹899';
       if (mrpDisplay) mrpDisplay.textContent = '₹1,499';
       if (savePill) savePill.textContent = 'Save 40%';
+      // Update demo photo if no custom photo uploaded
+      if (photoEl && !state.customPhotoData) {
+        photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.jpg')";
+      }
     } else {
       if (btnHeart) btnHeart.classList.remove('active');
       if (btnKeychain) btnKeychain.classList.add('active');
@@ -352,10 +362,14 @@
       }
       if (hardware) hardware.style.display = 'flex';
       if (stand) stand.style.display = 'none';
-      if (sizeTag) sizeTag.textContent = 'Round 4.5cm Bezel Keychain';
+      if (sizeTag) sizeTag.textContent = '⭕ Round Geode & Gold Keychain';
       if (priceDisplay) priceDisplay.textContent = '₹299';
       if (mrpDisplay) mrpDisplay.textContent = '₹599';
       if (savePill) savePill.textContent = 'Save 50%';
+      // Update demo photo if no custom photo uploaded
+      if (photoEl && !state.customPhotoData) {
+        photoEl.style.backgroundImage = "url('images/resin/demo-round-keychain.jpg')";
+      }
     }
   }
 
@@ -625,9 +639,26 @@
     openCheckoutModal([item]);
   }
 
-  // 8. ATTRACTIVE WHATSAPP ORDER DISPATCH (RICH EMOJIS & DIRECT IMAGE PREVIEWS)
+  // 8. ATTRACTIVE WHATSAPP ORDER DISPATCH (RICH EMOJIS, QR CODE REQUEST & DIRECT IMAGE PREVIEWS)
   const DOMAIN_URL = 'https://art.jkstudyhub.online';
   const RAZORPAY_KEY = 'rzp_live_TjJ6bv39yo6Gds';
+
+  function openWhatsApp(text) {
+    const phone = '919622605714';
+    const cleanText = (text || '').trim();
+    const encoded = encodeURIComponent(cleanText);
+    const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encoded}`;
+    
+    // Attempt window.open first; fallback to direct navigation if popup blocker interferes on mobile
+    try {
+      const win = window.open(url, '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = url;
+      }
+    } catch(e) {
+      window.location.href = url;
+    }
+  }
 
   function orderViaWhatsApp(productId) {
     const prod = RESIN_PRODUCTS.find(p => p.id === productId);
@@ -639,24 +670,23 @@
     const msg = 
 `✨💎 *AURA RESIN ATELIER — BESPOKE ART ORDER* 💎✨
 ════════════════════════════════
-🛍️ *ORDER DETAILS (100% PREPAID)*
+🛍️ *ITEM DETAILS:*
 ════════════════════════════════
-🏷️ *Item:* ${prod.title}
+🏷️ *Product:* ${prod.title}
 💎 *Collection:* ${prod.categoryLabel}
 💰 *Prepaid Price:* ₹${prod.price.toLocaleString('en-IN')} (MRP: ₹${mrp.toLocaleString('en-IN')})
 🔢 *Quantity:* 1 Piece
-🛡️ *Payment Status:* 100% Prepaid (UPI / Razorpay)
 
-🖼️ *Item Showcase Image:*
+🖼️ *Product Image Preview:*
 ${imgUrl}
 
 ════════════════════════════════
-✨ *Handcrafted with 48h Diamond-Buff Resin*
+💳 *Payment Mode:* 100% Prepaid via UPI QR Code
 📍 *Free Kashmir Delivery on ₹999+*
 ════════════════════════════════
-🙏 *Hello!* I want to place this prepaid order. Please confirm availability and share the UPI QR / Payment Link so I can pay!`;
+🙏 *Hello!* I want to place a prepaid order for this handcrafted piece. Please send your *UPI QR Code / Payment details* so I can pay and confirm!`;
 
-    window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
+    openWhatsApp(msg);
   }
 
   function checkoutCartWhatsApp() {
@@ -681,24 +711,26 @@ ${imgUrl}
     const grandTotal = subtotal + delivery;
 
     const msg = 
-`✨💎 *AURA RESIN ATELIER — PREPAID ORDER BAG* 💎✨
+`✨💎 *AURA RESIN ATELIER — SHOPPING BAG ORDER* 💎✨
 ════════════════════════════════
-🛍️ *YOUR SELECTED PIECES (100% PREPAID):*
+🛍️ *SELECTED ITEMS:*
 ════════════════════════════════
 ${itemsFormatted}────────────────────────────────
 🧾 *Items Subtotal:* ₹${subtotal.toLocaleString('en-IN')}
 🚚 *Delivery:* ${delivery === 0 ? 'FREE (Kashmir Promo)' : '₹60'}
-💰 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')} *(PREPAID ONLY)*
+💰 *Grand Total Payable:* ₹${grandTotal.toLocaleString('en-IN')} *(100% PREPAID)*
 ════════════════════════════════
-🙏 *Hello!* I am ready to confirm my handcrafted resin order. Please send the payment QR code / UPI ID to complete my payment!`;
+💳 *Payment Mode:* 100% Prepaid via UPI QR Code
+════════════════════════════════
+🙏 *Hello!* I am ready to confirm my handcrafted resin order. Please send your *UPI QR Code* on this chat so I can pay and confirm my order!`;
 
-    window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
+    openWhatsApp(msg);
   }
 
   // 9. ORDER CUSTOM PHOTO & NAME STUDIO PIECE VIA WHATSAPP
   function orderSimulatorPieceWhatsApp() {
     const isHeart = state.customCraftShape === 'heart';
-    const craftName = isHeart ? '4"–6" Resin Keepsake Heart' : 'Round Photo Resin Keychain';
+    const craftName = isHeart ? '💖 Heart Photo Keepsake / Keychain' : '⭕ Round Geode & Gold Keychain';
     const price = isHeart ? 899 : 299;
     const mrp = isHeart ? 1499 : 599;
     const trimNames = {
@@ -708,36 +740,49 @@ ${itemsFormatted}─────────────────────
       obsidian: 'Midnight Obsidian Black + Gold Leaf'
     };
     const trimLabel = trimNames[state.customTrim] || '24K Gold Foil Flakes';
+    const demoImg = isHeart ? 'images/resin/demo-heart-keychain.jpg' : 'images/resin/demo-round-keychain.jpg';
+    const showcaseUrl = `${DOMAIN_URL}/${demoImg}`;
 
     const msg = 
-`✨💎 *AURA RESIN ATELIER — BESPOKE PHOTO KEEPSAKE* 💎✨
+`✨💎 *AURA RESIN ATELIER — BESPOKE KEEPSAKE ORDER* 💎✨
 ════════════════════════════════
-🛍️ *CUSTOM ORDER (100% PREPAID)*
+🛍️ *CUSTOM CRAFT DETAILS:*
 ════════════════════════════════
 🏷️ *Craft Selected:* ${craftName}
 💰 *Prepaid Price:* ₹${price.toLocaleString('en-IN')} (MRP: ₹${mrp.toLocaleString('en-IN')})
 🎨 *Resin Style:* ${trimLabel}
-✍️ *Custom Name / Inscription:* "${state.customName}"
-📸 *Photo Attachment:* I will attach my photo right here in this chat!
+✍️ *Custom Name / Inscription:* "${state.customName || 'Rahul & Riya'}"
+📸 *Photo Attachment:* ${state.customPhotoData ? 'I will send my custom photo in this chat!' : 'Please craft matching the reference demo!'}
+
+🖼️ *Design Reference Preview:*
+${showcaseUrl}
 
 ════════════════════════════════
-🛡️ *Payment Status:* 100% Prepaid (UPI / Razorpay)
+💳 *Payment Mode:* 100% Prepaid via UPI QR Code
 📍 *Delivery:* Handcrafted & Shipped across Kashmir & India
 ════════════════════════════════
-🙏 *Hello Atelier!* I just designed this custom keepsake. I am attaching my photo now. Please share your payment UPI ID so I can complete the prepaid order!`;
+🙏 *Hello Atelier!* I want to place this custom prepaid order. Please send me your *UPI QR Code* on this chat so I can pay and confirm!`;
 
-    window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
+    openWhatsApp(msg);
   }
 
   // 10. PREPAID ONLINE CHECKOUT VIA RAZORPAY
   function buySimulatorPieceOnline() {
     const isHeart = state.customCraftShape === 'heart';
+    const defaultImg = isHeart ? 'images/resin/demo-heart-keychain.jpg' : 'images/resin/demo-round-keychain.jpg';
     const customItem = {
       id: 'custom-' + Date.now(),
-      title: isHeart ? 'Custom 4-6" Resin Keepsake Heart (Photo & Name)' : 'Custom Round Photo Resin Keychain (Name)',
+      title: isHeart ? 'Custom 💖 Heart Keepsake / Keychain (Photo & Name)' : 'Custom ⭕ Round Geode & Gold Keychain (Name)',
       price: isHeart ? 899 : 299,
       mrp: isHeart ? 1499 : 599,
       qty: 1,
+      image: state.customPhotoData || defaultImg,
+      categoryLabel: 'Custom Photo Keepsake',
+      customNote: `Name: "${state.customName || 'Rahul & Riya'}" | Style: ${state.customTrim} | Shape: ${state.customCraftShape}`,
+      isCustom: true
+    };
+    openCheckoutModal([customItem]);
+  }
       image: state.customPhotoData || 'images/resin/resin-wedding-cube.jpg',
       categoryLabel: 'Custom Photo Keepsake',
       customNote: `Name: "${state.customName}" | Style: ${state.customTrim} | Shape: ${state.customCraftShape}`,
@@ -926,7 +971,7 @@ ${itemsFormatted}─────────────────────
 ════════════════════════════════
 🙏 *Hello!* I have filled out my delivery details for this bespoke resin order. Please send your official payment QR code / UPI ID to confirm this prepaid order!`;
 
-    window.open(`https://wa.me/919622605714?text=${encodeURIComponent(msg)}`, '_blank');
+    openWhatsApp(msg);
   }
 
   function onRazorpayPaymentSuccess(response, orderData) {
@@ -999,7 +1044,7 @@ ${itemsFormatted}─────────────────────
 📍 *Shipping To:* ${orderData.address}, ${orderData.district} - ${orderData.pincode}
 ════════════════════════════════
 🙏 My payment was successful on Razorpay! Please confirm receipt and begin crafting my piece.`;
-        window.open(`https://wa.me/919622605714?text=${encodeURIComponent(waMsg)}`, '_blank');
+        openWhatsApp(waMsg);
       };
     }
 
