@@ -783,13 +783,6 @@ ${showcaseUrl}
     };
     openCheckoutModal([customItem]);
   }
-      image: state.customPhotoData || 'images/resin/resin-wedding-cube.jpg',
-      categoryLabel: 'Custom Photo Keepsake',
-      customNote: `Name: "${state.customName}" | Style: ${state.customTrim} | Shape: ${state.customCraftShape}`,
-      isCustom: true
-    };
-    openCheckoutModal([customItem]);
-  }
 
   function openCheckoutModal(customItems) {
     const items = customItems || state.cart;
