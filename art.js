@@ -162,9 +162,11 @@
     cart: [],
     wishlist: [],
     activeCategory: 'all',
-    customInitial: 'S',
-    customColor: 'radial-gradient(circle at 30% 30%, #1e3a8a, #0f172a)',
-    customFoil: 'gold'
+    customCraftShape: 'heart',
+    customPhotoData: null,
+    customName: 'Rahul & Riya',
+    customTrim: 'gold',
+    checkoutItems: []
   };
 
   // Load persisted cart & wishlist
@@ -380,7 +382,7 @@
     state.customName = (val || '').trim();
     const nameEl = document.getElementById('simNameDisplay');
     if (nameEl) {
-      nameEl.textContent = val.trim() || 'Sahil & Iqra';
+      nameEl.textContent = val.trim() || 'Rahul & Riya';
     }
   }
 
