@@ -10823,6 +10823,28 @@ function initRealtimeCatalogSync() {
       }, err => {
         console.warn("Firestore real-time price overrides notice:", err);
       });
+
+      // 3. Listen for live stock & inventory overrides from Seller Hub
+      db.collection('stock_overrides').onSnapshot(snapshot => {
+        if (!snapshot || snapshot.empty) return;
+        const stockMap = {};
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          if (item && item.name) {
+            stockMap[item.name] = {
+              status: item.status,
+              qty: item.qty,
+              updatedAt: item.updatedAt
+            };
+          }
+        });
+        if (Object.keys(stockMap).length > 0) {
+          localStorage.setItem('jk_stock_overrides', JSON.stringify(stockMap));
+          applyStockOverridesToStorefront();
+        }
+      }, err => {
+        console.warn("Firestore real-time stock overrides notice:", err);
+      });
       window._jkRealtimeCatalogSyncStarted = true;
     } catch (e) {
       console.warn("Firestore real-time catalog setup error:", e);

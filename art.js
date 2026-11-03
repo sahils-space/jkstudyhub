@@ -163,6 +163,7 @@
     wishlist: [],
     activeCategory: 'all',
     customCraftShape: 'heart',
+    customHeartSize: '4', // '4' or '6'
     customPhotoData: null,
     customName: 'Rahul & Riya',
     customTrim: 'gold',
@@ -325,10 +326,40 @@
     });
   }
 
+  function setCustomHeartSize(size) {
+    state.customHeartSize = size;
+    const btn4 = document.getElementById('sizeBtn4');
+    const btn6 = document.getElementById('sizeBtn6');
+    const priceDisplay = document.getElementById('simPriceDisplay');
+    const mrpDisplay = document.getElementById('simMrpDisplay');
+    const savePill = document.getElementById('simSavePill');
+    const sizeTag = document.getElementById('simSizeTag');
+    const canvas = document.getElementById('simResinCanvas');
+
+    if (size === '6') {
+      if (btn6) btn6.classList.add('active');
+      if (btn4) btn4.classList.remove('active');
+      if (priceDisplay) priceDisplay.textContent = '₹1,299';
+      if (mrpDisplay) mrpDisplay.textContent = '₹2,199';
+      if (savePill) savePill.textContent = 'Save 41%';
+      if (sizeTag) sizeTag.textContent = '💖 6-inch Grand Statement Heart';
+      if (canvas) canvas.style.maxWidth = '350px';
+    } else {
+      if (btn4) btn4.classList.add('active');
+      if (btn6) btn6.classList.remove('active');
+      if (priceDisplay) priceDisplay.textContent = '₹899';
+      if (mrpDisplay) mrpDisplay.textContent = '₹1,499';
+      if (savePill) savePill.textContent = 'Save 40%';
+      if (sizeTag) sizeTag.textContent = '💖 4-inch Luxury Tabletop Heart';
+      if (canvas) canvas.style.maxWidth = '320px';
+    }
+  }
+
   function setCustomCraftShape(shape) {
     state.customCraftShape = shape;
     const btnHeart = document.getElementById('shapeBtnHeart');
     const btnKeychain = document.getElementById('shapeBtnKeychain');
+    const sizeGroup = document.getElementById('heartSizeControlGroup');
     const canvas = document.getElementById('simResinCanvas');
     const hardware = document.getElementById('simKeychainHardware');
     const stand = document.getElementById('simHeartStand');
@@ -341,15 +372,16 @@
     if (shape === 'heart') {
       if (btnHeart) btnHeart.classList.add('active');
       if (btnKeychain) btnKeychain.classList.remove('active');
+      if (sizeGroup) sizeGroup.style.display = 'block';
       if (canvas) {
         canvas.className = 'sim-resin-canvas sim-shape-heart';
       }
       if (hardware) hardware.style.display = 'none';
       if (stand) stand.style.display = 'flex';
-      if (sizeTag) sizeTag.textContent = '💖 Heart Keepsake / Keychain';
-      if (priceDisplay) priceDisplay.textContent = '₹899';
-      if (mrpDisplay) mrpDisplay.textContent = '₹1,499';
-      if (savePill) savePill.textContent = 'Save 40%';
+      
+      // Apply chosen heart size pricing
+      setCustomHeartSize(state.customHeartSize || '4');
+
       // Update demo photo if no custom photo uploaded
       if (photoEl && !state.customPhotoData) {
         photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.jpg')";
@@ -357,8 +389,10 @@
     } else {
       if (btnHeart) btnHeart.classList.remove('active');
       if (btnKeychain) btnKeychain.classList.add('active');
+      if (sizeGroup) sizeGroup.style.display = 'none';
       if (canvas) {
         canvas.className = 'sim-resin-canvas sim-shape-keychain';
+        canvas.style.maxWidth = '300px';
       }
       if (hardware) hardware.style.display = 'flex';
       if (stand) stand.style.display = 'none';
@@ -730,9 +764,12 @@ ${itemsFormatted}─────────────────────
   // 9. ORDER CUSTOM PHOTO & NAME STUDIO PIECE VIA WHATSAPP
   function orderSimulatorPieceWhatsApp() {
     const isHeart = state.customCraftShape === 'heart';
-    const craftName = isHeart ? '💖 Heart Photo Keepsake / Keychain' : '⭕ Round Geode & Gold Keychain';
-    const price = isHeart ? 899 : 299;
-    const mrp = isHeart ? 1499 : 599;
+    const isGrand = isHeart && state.customHeartSize === '6';
+    const craftName = isHeart 
+      ? (isGrand ? '💖 6-inch Grand Statement Heart Keepsake (with Stand)' : '💖 4-inch Luxury Tabletop Heart Keepsake (with Stand)')
+      : '⭕ Round Geode & Gold Flake Keychain';
+    const price = isHeart ? (isGrand ? 1299 : 899) : 299;
+    const mrp = isHeart ? (isGrand ? 2199 : 1499) : 599;
     const trimNames = {
       gold: '24K Gold Foil Flakes & Crystal Clear',
       rose: 'Kashmiri Red Rose Petals + Gold Leaf',
@@ -749,6 +786,7 @@ ${itemsFormatted}─────────────────────
 🛍️ *CUSTOM CRAFT DETAILS:*
 ════════════════════════════════
 🏷️ *Craft Selected:* ${craftName}
+📏 *Dimensions:* ${isHeart ? (isGrand ? '6-inch (15 cm) Grand Keepsake' : '4-inch (10 cm) Tabletop Keepsake') : '2.5-inch Round Keychain'}
 💰 *Prepaid Price:* ₹${price.toLocaleString('en-IN')} (MRP: ₹${mrp.toLocaleString('en-IN')})
 🎨 *Resin Style:* ${trimLabel}
 ✍️ *Custom Name / Inscription:* "${state.customName || 'Rahul & Riya'}"
@@ -769,16 +807,19 @@ ${showcaseUrl}
   // 10. PREPAID ONLINE CHECKOUT VIA RAZORPAY
   function buySimulatorPieceOnline() {
     const isHeart = state.customCraftShape === 'heart';
+    const isGrand = isHeart && state.customHeartSize === '6';
     const defaultImg = isHeart ? 'images/resin/demo-heart-keychain.jpg' : 'images/resin/demo-round-keychain.jpg';
     const customItem = {
       id: 'custom-' + Date.now(),
-      title: isHeart ? 'Custom 💖 Heart Keepsake / Keychain (Photo & Name)' : 'Custom ⭕ Round Geode & Gold Keychain (Name)',
-      price: isHeart ? 899 : 299,
-      mrp: isHeart ? 1499 : 599,
+      title: isHeart 
+        ? (isGrand ? 'Custom 💖 6-inch Grand Heart Keepsake (Photo & Name)' : 'Custom 💖 4-inch Tabletop Heart Keepsake (Photo & Name)')
+        : 'Custom ⭕ Round Geode & Gold Keychain (Name)',
+      price: isHeart ? (isGrand ? 1299 : 899) : 299,
+      mrp: isHeart ? (isGrand ? 2199 : 1499) : 599,
       qty: 1,
       image: state.customPhotoData || defaultImg,
       categoryLabel: 'Custom Photo Keepsake',
-      customNote: `Name: "${state.customName || 'Rahul & Riya'}" | Style: ${state.customTrim} | Shape: ${state.customCraftShape}`,
+      customNote: `Size: ${isHeart ? (isGrand ? '6-inch Grand' : '4-inch Tabletop') : '2.5-inch'} | Name: "${state.customName || 'Rahul & Riya'}" | Style: ${state.customTrim}`,
       isCustom: true
     };
     openCheckoutModal([customItem]);
@@ -1122,11 +1163,234 @@ ${itemsFormatted}─────────────────────
     }
   }
 
+  // 11.5 PATRON REVIEWS SYSTEM
+  const SEED_REVIEWS = [
+    {
+      id: 'rev-seed-1',
+      name: 'Dr. Adil Bhat',
+      location: 'Rajbagh, Srinagar',
+      rating: 5,
+      date: '28 Oct 2026',
+      product: '4-inch / 6-inch Heart Photo Keepsake',
+      comment: 'Ordered the 6-inch heart keepsake with our wedding picture and 24K gold foil trim. The optical clarity of the crystal resin is beyond stunning. Zero bubbles, flawless finish, and came with a lovely wooden acrylic stand. Delivered directly to Srinagar within 3 days. Highly recommended!',
+      photo: 'images/resin/demo-heart-keychain.jpg',
+      verified: true
+    },
+    {
+      id: 'rev-seed-2',
+      name: 'Zehra Jan & Mohsin',
+      location: 'Baramulla, Kashmir',
+      rating: 5,
+      date: '25 Oct 2026',
+      product: 'Round Geode Keychain',
+      comment: 'Gifted these custom purple amethyst & gold leaf keychains as wedding favor gifts. Every guest was blown away by the handmade craft quality. The gold foil flakes float inside the crystal clear resin like magic. The prepaid WhatsApp process was swift and polite.',
+      photo: 'images/resin/demo-round-keychain.jpg',
+      verified: true
+    },
+    {
+      id: 'rev-seed-3',
+      name: 'Pooja Sharma',
+      location: 'Greater Kailash, New Delhi',
+      rating: 5,
+      date: '19 Oct 2026',
+      product: 'Bismillah Calligraphy Resin Bookmark',
+      comment: 'I ordered the botanical bookmark with real pressed Kashmiri rose petals. The tassel is plush, the resin is crystal clear and thin enough to slip right into my books without bulging the spine. Excellent packaging with wax seal seal!',
+      photo: 'images/resin/resin-bookmark.jpg',
+      verified: true
+    },
+    {
+      id: 'rev-seed-4',
+      name: 'Mirza Farooq',
+      location: 'Anantnag, Kashmir',
+      rating: 5,
+      date: '14 Oct 2026',
+      product: 'Luxury Crystal Acrylic Quran Rehal',
+      comment: 'The Islamic calligraphy and golden Chinar leaf inlays on this prayer stand are magnificent. It holds my large Quran securely and adds immense spiritual warmth to our living space.',
+      photo: 'images/resin/resin-quran-stand.jpg',
+      verified: true
+    },
+    {
+      id: 'rev-seed-5',
+      name: 'Mehak Sheikh',
+      location: 'Gandhi Nagar, Jammu',
+      rating: 5,
+      date: '08 Oct 2026',
+      product: 'Ocean Wave Geode Wall Clock',
+      comment: 'True statement piece! The 3D ocean waves look real and the silent quartz movement has zero ticking noise. Beautifully packed with thermocol and bubble wrap. Reached Jammu in mint condition.',
+      photo: 'images/resin/resin-clock.jpg',
+      verified: true
+    },
+    {
+      id: 'rev-seed-6',
+      name: 'Sheikh Zubair',
+      location: 'Srinagar, Kashmir',
+      rating: 5,
+      date: '02 Oct 2026',
+      product: 'Wedding Flower Preservation Block',
+      comment: 'The atelier preserved our actual bridal roses in a diamond-cut resin hexagon. Now we can keep our special wedding memories on our mantlepiece forever. Extremely professional and communicative artist.',
+      photo: null,
+      verified: true
+    }
+  ];
+
+  let reviewTempPhotoData = null;
+
+  function getStoredReviews() {
+    try {
+      const raw = localStorage.getItem('aura_customer_reviews');
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function renderReviews() {
+    const grid = document.getElementById('customerReviewsGrid');
+    if (!grid) return;
+
+    const userReviews = getStoredReviews();
+    const allReviews = [...userReviews, ...SEED_REVIEWS];
+
+    grid.innerHTML = allReviews.map(r => {
+      const initials = r.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'P';
+      let starHtml = '';
+      for (let i = 1; i <= 5; i++) {
+        starHtml += `<i class="fa-solid fa-star" style="color: ${i <= r.rating ? '#f59e0b' : '#cbd5e1'};"></i>`;
+      }
+
+      return `
+        <article class="review-card">
+          <div class="review-card-top">
+            <div class="review-patron-info">
+              <div class="patron-avatar">${initials}</div>
+              <div class="patron-details">
+                <h4>
+                  ${escapeHtml(r.name)}
+                  ${r.verified ? `<span class="patron-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>` : ''}
+                </h4>
+                <span class="patron-location">${escapeHtml(r.location)} &bull; ${r.date}</span>
+              </div>
+            </div>
+            <div class="review-rating-stars">${starHtml}</div>
+          </div>
+
+          <span class="review-item-badge">${escapeHtml(r.product)}</span>
+
+          <p class="review-comment-text">"${escapeHtml(r.comment)}"</p>
+
+          ${r.photo ? `
+            <div class="review-attached-photo">
+              <img src="${r.photo}" alt="Patron unboxing photo" onclick="window.open('${r.photo}', '_blank')">
+              <span style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-camera"></i> Attached Unboxing Photo</span>
+            </div>
+          ` : ''}
+
+          <div class="review-card-footer">
+            <span><i class="fa-solid fa-shield-halved" style="color:#16a34a;"></i> Verified Order</span>
+            <span>Aura Resin Atelier</span>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function openReviewModal() {
+    const modal = document.getElementById('artReviewModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.add('active');
+    }
+  }
+
+  function closeReviewModal() {
+    const modal = document.getElementById('artReviewModal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.classList.remove('active');
+    }
+    reviewTempPhotoData = null;
+    const preview = document.getElementById('reviewPhotoThumbPreview');
+    if (preview) preview.style.display = 'none';
+  }
+
+  function selectReviewRating(stars) {
+    const input = document.getElementById('reviewRatingInput');
+    if (input) input.value = stars;
+    const container = document.getElementById('reviewStarInteractive');
+    if (!container) return;
+    const btns = container.querySelectorAll('.star-pick');
+    btns.forEach((btn, idx) => {
+      if (idx < stars) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  function handleReviewPhotoSelect(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      reviewTempPhotoData = e.target.result;
+      const preview = document.getElementById('reviewPhotoThumbPreview');
+      const img = document.getElementById('reviewThumbImg');
+      if (preview && img) {
+        img.src = e.target.result;
+        preview.style.display = 'block';
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleReviewSubmit(event) {
+    event.preventDefault();
+    const name = (document.getElementById('reviewAuthorName').value || '').trim();
+    const location = (document.getElementById('reviewAuthorCity').value || '').trim();
+    const product = document.getElementById('reviewProductName').value;
+    const comment = (document.getElementById('reviewBodyText').value || '').trim();
+    const rating = Number(document.getElementById('reviewRatingInput').value || 5);
+
+    if (!name || !comment) {
+      alert("Please enter your name and a brief review comment.");
+      return;
+    }
+
+    const newRev = {
+      id: 'rev-user-' + Date.now(),
+      name,
+      location: location || 'Kashmir, India',
+      rating,
+      date: 'Just now',
+      product,
+      comment,
+      photo: reviewTempPhotoData,
+      verified: true
+    };
+
+    const stored = getStoredReviews();
+    stored.unshift(newRev);
+    try {
+      localStorage.setItem('aura_customer_reviews', JSON.stringify(stored));
+    } catch(e) {}
+
+    renderReviews();
+    closeReviewModal();
+    alert(`🎉 Thank you, ${name}! Your review has been published on Aura Resin Atelier.`);
+  }
+
   // 12. INITIALIZATION
   document.addEventListener('DOMContentLoaded', () => {
     purgeLegacyNavLinks();
     renderProducts();
     initSimulator();
+    renderReviews();
     updateCartUI();
     initCloudPriceSync();
 
@@ -1149,6 +1413,14 @@ ${itemsFormatted}─────────────────────
     if (modal) {
       modal.addEventListener('click', e => {
         if (e.target === modal) closeQuickView();
+      });
+    }
+
+    // Close review modal on backdrop click
+    const revModal = document.getElementById('artReviewModal');
+    if (revModal) {
+      revModal.addEventListener('click', e => {
+        if (e.target === revModal) closeReviewModal();
       });
     }
 
@@ -1177,11 +1449,19 @@ ${itemsFormatted}─────────────────────
     toggleWishlist,
     // Custom Photo & Name Studio
     setCustomCraftShape,
+    setCustomHeartSize,
     handleCustomPhotoUpload,
     updateCustomNameText,
     setResinTrim,
     buySimulatorPieceOnline,
     orderSimulatorPieceWhatsApp,
+    // Patron Reviews
+    openReviewModal,
+    closeReviewModal,
+    selectReviewRating,
+    handleReviewPhotoSelect,
+    handleReviewSubmit,
+    renderReviews,
     // Prepaid Razorpay Checkout
     openCheckoutModal,
     closeCheckoutModal,

@@ -4552,6 +4552,19 @@ function saveSellerProductStock(productName, index) {
   };
   localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
 
+  // Sync to Firestore stock_overrides
+  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      firebase.firestore().collection('stock_overrides').doc(safeDocId).set({
+        name: productName,
+        status: status,
+        qty: qty,
+        updatedAt: Date.now()
+      }, { merge: true }).catch(e => console.warn("Firestore stock push notice:", e));
+    } catch(e) {}
+  }
+
   const msgEl = document.getElementById('inventoryFeedbackMessage');
   if (msgEl) {
     msgEl.style.display = 'block';
@@ -4575,6 +4588,20 @@ function quickSetStockStatus(productName, status, qty) {
     updatedAt: Date.now()
   };
   localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
+
+  // Sync to Firestore stock_overrides
+  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      firebase.firestore().collection('stock_overrides').doc(safeDocId).set({
+        name: productName,
+        status: status,
+        qty: qty,
+        updatedAt: Date.now()
+      }, { merge: true }).catch(e => console.warn("Firestore stock push notice:", e));
+    } catch(e) {}
+  }
+
   if (typeof showToast === 'function') {
     showToast(`✅ "${productName}" is now ${status === 'out_of_stock' ? 'Out of Stock' : 'In Stock (' + qty + ')'}!`);
   }

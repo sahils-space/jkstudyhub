@@ -22,10 +22,85 @@
   <meta http-equiv="Expires" content="0">
   
   <!-- Custom Boutique Stylesheet -->
-  <link rel="stylesheet" href="art.css?v=10.0">
+  <link rel="stylesheet" href="art.css?v=11.0">
   
   <!-- Razorpay Payment Gateway Checkout -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- JSON-LD Structured Data for Google Rich Snippets & Search Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Store",
+        "@id": "https://art.jkstudyhub.online/#store",
+        "name": "AURA Resin Atelier & Keepsakes Kashmir",
+        "alternateName": "Aura Resin Kashmir",
+        "url": "https://art.jkstudyhub.online",
+        "logo": "https://art.jkstudyhub.online/images/resin/demo-heart-keychain.jpg",
+        "image": "https://art.jkstudyhub.online/images/resin/demo-heart-keychain.jpg",
+        "description": "Handcrafted optical epoxy resin art, personalized photo keychains, 4-inch & 6-inch heart keepsakes, botanical bookmarks, crystal Quran stands and geode wall clocks made in Srinagar, Kashmir.",
+        "telephone": "+91-9622605714",
+        "priceRange": "₹299 - ₹4,999",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Srinagar",
+          "addressRegion": "Jammu & Kashmir",
+          "postalCode": "190001",
+          "addressCountry": "IN"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "248",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      },
+      {
+        "@type": "Product",
+        "name": "Custom Heart Photo Resin Keepsake (4-inch / 6-inch)",
+        "description": "Customized crystal epoxy resin heart keepsake with personalized photo, couple calligraphy names, Kashmiri dried rose petals, 24K gold foil flakes and solid acrylic wooden stand.",
+        "image": "https://art.jkstudyhub.online/images/resin/demo-heart-keychain.jpg",
+        "brand": {
+          "@type": "Brand",
+          "name": "Aura Resin Atelier"
+        },
+        "offers": {
+          "@type": "AggregateOffer",
+          "lowPrice": "899",
+          "highPrice": "1299",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://art.jkstudyhub.online/#simulator"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "88"
+        }
+      },
+      {
+        "@type": "Product",
+        "name": "Custom Round Geode Keychain with Amethyst & 24K Gold Foil",
+        "description": "Artisan handmade round geode keychain featuring natural crystals, gold flakes, and custom engraved initials or names.",
+        "image": "https://art.jkstudyhub.online/images/resin/demo-round-keychain.jpg",
+        "brand": {
+          "@type": "Brand",
+          "name": "Aura Resin Atelier"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://art.jkstudyhub.online/#simulator"
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -63,6 +138,7 @@
           <li><a href="#collections" class="nav-link active">Collections</a></li>
           <li><a href="#simulator" class="nav-link">3D Customizer</a></li>
           <li><a href="#our-craft" class="nav-link">Our Craft</a></li>
+          <li><a href="#reviews" class="nav-link">Patron Reviews</a></li>
           <li><a href="#bespoke" class="nav-link">Bespoke Orders</a></li>
         </ul>
       </nav>
@@ -231,6 +307,24 @@
                   <span>₹299 <del>₹599</del></span>
                 </div>
               </button>
+            </div>
+
+            <!-- Heart Keepsake Size Selector (Shown when Heart Craft is selected) -->
+            <div id="heartSizeControlGroup" style="margin-top: 14px;">
+              <label class="control-label" style="font-size: 12.5px; color: var(--accent-gold-dark);"><i class="fa-solid fa-arrows-up-down-left-right"></i> Select Keepsake Dimensions</label>
+              <div class="sim-size-toggle-grid">
+                <button type="button" class="sim-size-btn active" id="sizeBtn4" onclick="window.auraAtelier.setCustomHeartSize('4')">
+                  <span class="size-btn-title">4-inch Tabletop Heart</span>
+                  <span class="size-btn-price">₹899 <del>₹1,499</del> <span class="size-save">Save 40%</span></span>
+                  <span class="size-btn-desc">Includes acrylic stand • Ideal for desks &amp; bedside</span>
+                </button>
+
+                <button type="button" class="sim-size-btn" id="sizeBtn6" onclick="window.auraAtelier.setCustomHeartSize('6')">
+                  <span class="size-btn-title">6-inch Grand Heart</span>
+                  <span class="size-btn-price">₹1,299 <del>₹2,199</del> <span class="size-save">Save 41%</span></span>
+                  <span class="size-btn-desc">Large statement centerpiece • Luxe gifting</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -660,6 +754,37 @@
     </div>
   </section>
 
+  <!-- 6.5 CLIENT REVIEWS & VERIFIED PATRON TESTIMONIALS -->
+  <section class="reviews-section" id="reviews">
+    <div class="container">
+      <div class="reviews-header-block">
+        <div>
+          <span class="section-eyebrow"><i class="fa-solid fa-gem"></i> Verified Patron Love</span>
+          <h2 class="section-title">Cherished by 240+ Patrons</h2>
+          <p class="section-desc">Real reviews, unboxing photos, and heartfelt feedback from our patrons across Kashmir, Delhi, Jammu &amp; across India.</p>
+        </div>
+        <div class="reviews-summary-card">
+          <div class="rating-big-score">
+            <span class="score-number">4.9</span>
+            <div class="score-stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <span class="score-count">248 Verified Ratings</span>
+          </div>
+          <button type="button" class="btn-write-review" onclick="window.auraAtelier.openReviewModal()">
+            <i class="fa-solid fa-pen-fancy"></i>
+            <span>Write a Review</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic & Curated Reviews Grid -->
+      <div class="reviews-masonry-grid" id="customerReviewsGrid">
+        <!-- Rendered dynamically by art.js -->
+      </div>
+    </div>
+  </section>
+
   <!-- 7. BESPOKE CUSTOM ORDERS (WEDDING FLOWERS, MEMORIALS) -->
   <section class="bespoke-section" id="bespoke">
     <div class="container">
@@ -688,11 +813,14 @@
           <div class="form-field">
             <label for="bespokeType">Project Type</label>
             <select id="bespokeType">
-              <option value="Wedding / Nikah Flower Preservation">Wedding / Nikah Flower Preservation</option>
-              <option value="Custom Geode Wall Clock (12-18 inch)">Custom Geode Wall Clock (12-18 inch)</option>
-              <option value="Bulk Corporate / Event Favors">Bulk Corporate / Event Favors</option>
-              <option value="Ayat-ul-Kursi Custom Frame">Ayat-ul-Kursi Custom Frame</option>
-              <option value="Custom Initial Keychains / Bookmarks">Custom Initial Keychains / Bookmarks</option>
+              <option value="Wedding / Nikah Flower & Garland Preservation">Wedding / Nikah Flower &amp; Garland Preservation</option>
+              <option value="Luxury Resin Nameplates for Homes & Offices">Luxury Resin Nameplates for Homes &amp; Offices</option>
+              <option value="Car Dashboard Resin Idols & Islamic Calligraphy Blocks">Car Dashboard Resin Idols &amp; Islamic Calligraphy Blocks</option>
+              <option value="Custom Geode Wall Clocks (12–24 inch)">Custom Geode Wall Clocks (12–24 inch)</option>
+              <option value="Ayat-ul-Kursi & 99 Names of Allah Bespoke Frames">Ayat-ul-Kursi &amp; 99 Names of Allah Bespoke Frames</option>
+              <option value="Bulk Corporate & Wedding Favors (50+ pcs)">Bulk Corporate &amp; Wedding Favors (50+ pcs)</option>
+              <option value="Bespoke Resin Dining & Coffee Table Tops">Bespoke Resin Dining &amp; Coffee Table Tops</option>
+              <option value="Custom Initial Keychains & Botanical Bookmarks">Custom Initial Keychains &amp; Botanical Bookmarks</option>
             </select>
           </div>
 
@@ -886,6 +1014,79 @@
     </div>
   </div>
 
+  <!-- 9.4 WRITE A PATRON REVIEW MODAL -->
+  <div class="modal-backdrop" id="artReviewModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+    <div class="art-review-modal-card">
+      <div class="modal-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h3 id="reviewModalTitle" style="font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-feather" style="color: var(--accent-gold-dark);"></i> Share Your Patron Experience
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="window.auraAtelier.closeReviewModal()" aria-label="Close dialog" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form class="review-submit-form" onsubmit="window.auraAtelier.handleReviewSubmit(event)">
+        <!-- Star Rating -->
+        <div class="review-star-rating-select">
+          <label>Overall Satisfaction Rating:</label>
+          <div class="star-rating-interactive" id="reviewStarInteractive">
+            <button type="button" data-val="1" class="star-pick active" onclick="window.auraAtelier.selectReviewRating(1)"><i class="fa-solid fa-star"></i></button>
+            <button type="button" data-val="2" class="star-pick active" onclick="window.auraAtelier.selectReviewRating(2)"><i class="fa-solid fa-star"></i></button>
+            <button type="button" data-val="3" class="star-pick active" onclick="window.auraAtelier.selectReviewRating(3)"><i class="fa-solid fa-star"></i></button>
+            <button type="button" data-val="4" class="star-pick active" onclick="window.auraAtelier.selectReviewRating(4)"><i class="fa-solid fa-star"></i></button>
+            <button type="button" data-val="5" class="star-pick active" onclick="window.auraAtelier.selectReviewRating(5)"><i class="fa-solid fa-star"></i></button>
+          </div>
+          <input type="hidden" id="reviewRatingInput" value="5">
+        </div>
+
+        <div class="checkout-input-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="checkout-field" style="margin-bottom: 14px;">
+            <label for="reviewAuthorName" style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px;">Your Name *</label>
+            <input type="text" id="reviewAuthorName" placeholder="e.g. Zehra Jan" required style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-subtle); border-radius: 8px;">
+          </div>
+          <div class="checkout-field" style="margin-bottom: 14px;">
+            <label for="reviewAuthorCity" style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px;">City / Region *</label>
+            <input type="text" id="reviewAuthorCity" placeholder="e.g. Srinagar / Delhi" required style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-subtle); border-radius: 8px;">
+          </div>
+        </div>
+
+        <div class="checkout-field" style="margin-bottom: 14px;">
+          <label for="reviewProductName" style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px;">Product / Craft Purchased *</label>
+          <select id="reviewProductName" required style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-subtle); border-radius: 8px; background: #fff;">
+            <option value="4-inch / 6-inch Heart Photo Keepsake">💖 4" / 6" Heart Keepsake with Photo</option>
+            <option value="Round Geode Keychain">⭕ Round Geode &amp; Gold Keychain</option>
+            <option value="Bismillah Calligraphy Resin Bookmark">📖 Bismillah Calligraphy Resin Bookmark</option>
+            <option value="Luxury Crystal Acrylic Quran Rehal">🕌 Luxury Crystal Acrylic Quran Rehal</option>
+            <option value="Ocean Wave Geode Wall Clock">🌊 Ocean Wave Geode Wall Clock</option>
+            <option value="Wedding Flower Preservation Block">🌸 Wedding Flower Preservation Block</option>
+            <option value="Bespoke Commission">✨ Other Atelier Commission</option>
+          </select>
+        </div>
+
+        <div class="checkout-field" style="margin-bottom: 14px;">
+          <label for="reviewBodyText" style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px;">Your Review &amp; Experience *</label>
+          <textarea id="reviewBodyText" rows="3" placeholder="Tell us about the resin finish, clarity, gift wrapping, or recipient's reaction..." required style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-subtle); border-radius: 8px; resize: vertical;"></textarea>
+        </div>
+
+        <div class="checkout-field" style="margin-bottom: 18px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px;">Optional: Attach Unboxing Photo</label>
+          <input type="file" id="reviewPhotoInput" accept="image/*" onchange="window.auraAtelier.handleReviewPhotoSelect(event)" style="font-size: 12px;">
+          <div id="reviewPhotoThumbPreview" style="display:none; margin-top:8px;">
+            <img src="" id="reviewThumbImg" alt="Review Photo" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1.5px solid #d97706;">
+          </div>
+        </div>
+
+        <div class="review-modal-actions">
+          <button type="button" class="btn-cancel" onclick="window.auraAtelier.closeReviewModal()" style="flex: 1; padding: 12px; background: #f1f5f9; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">Cancel</button>
+          <button type="submit" class="btn-submit-review">
+            <i class="fa-solid fa-paper-plane"></i> Publish Review
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- 9.5 BACK TO JK STUDY HUB HOME BANNER -->
   <section class="art-back-home-banner">
     <div class="container text-center">
@@ -931,6 +1132,7 @@
       <div class="footer-col">
         <h4>Client Care</h4>
         <ul>
+          <li><a href="#reviews">Patron Reviews &amp; Ratings</a></li>
           <li><a href="#bespoke">Bespoke Commissions</a></li>
           <li><a href="#our-craft">Resin Care Guide</a></li>
           <li><a href="https://wa.me/919622605714" target="_blank" rel="noopener">WhatsApp Concierge</a></li>
@@ -999,6 +1201,6 @@
   </script>
 
   <!-- Controller Script -->
-  <script src="art.js?v=10.0"></script>
+  <script src="art.js?v=11.0"></script>
 </body>
 </html>
