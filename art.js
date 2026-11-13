@@ -28,8 +28,6 @@
       badge: 'Bestseller',
       price: 349,
       mrp: 599,
-      rating: 5.0,
-      reviewsCount: 42,
       stock: 5,
       image: 'images/resin/resin-bookmark.jpg?v=5.0',
       description: 'Sacred Bismillah calligraphy in reflective gold, encased in optical-grade crystal clear resin with shimmering 24K gold foil flakes at the top and base. Finished with a luxury champagne gold braided silk tassel.',
@@ -43,8 +41,6 @@
       badge: 'Personalized',
       price: 249,
       mrp: 450,
-      rating: 5.0,
-      reviewsCount: 68,
       stock: 8,
       image: 'images/resin/resin-keychain.jpg?v=5.0',
       description: 'Handcrafted circular resin keychains in deep glossy obsidian black with floating 24K gold foil flakes and bold gold lettering (HOPE, LIFE, JOY, DREAM, or your custom name/initial). Fitted with heavy-duty anti-tarnish gold hardware.',
@@ -58,8 +54,6 @@
       badge: 'Masterpiece',
       price: 1599,
       mrp: 2799,
-      rating: 5.0,
-      reviewsCount: 56,
       stock: 3,
       image: 'images/resin/resin-quran-stand.jpg?v=5.0',
       description: 'Exquisite two-piece interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral accents, floating gold leaf, and sacred Arabic calligraphy ("Wa khalaqnakum azwaja"). Includes matching floral bookmark and gold silk tassel.',
@@ -73,8 +67,6 @@
       badge: 'Signature',
       price: 1899,
       mrp: 3200,
-      rating: 4.9,
-      reviewsCount: 22,
       stock: 2,
       image: 'images/resin/resin-clock.jpg?v=5.0',
       description: 'A breathtaking 3-layered ocean pour inspired by the serene waters of Kashmir. Crafted with real crushed white quartz crystals, authentic beach sand, and multi-layered cellular ocean foam. Fitted with a high-torque silent sweep quartz clock mechanism.',
@@ -88,8 +80,6 @@
       badge: 'Hand-Gilded',
       price: 699,
       mrp: 1199,
-      rating: 4.8,
-      reviewsCount: 41,
       stock: 5,
       image: 'images/resin/resin-coasters.jpg?v=5.0',
       description: 'Inspired by natural raw emerald geodes. Translucent jewel-toned green and pearlescent white resin swirls with genuine natural crackle texture. Each coaster rim is individually hand-gilded with metallic gold leaf paint.',
@@ -103,8 +93,6 @@
       badge: 'Spiritual Decor',
       price: 1299,
       mrp: 2199,
-      rating: 5.0,
-      reviewsCount: 53,
       stock: 3,
       image: 'images/resin/resin-ayat-frame.jpg?v=5.0',
       description: 'Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror acrylic, seamlessly cast within a pearl white and gold marble resin slab. The perfect spiritual gift for housewarmings, weddings, or personal study desks.',
@@ -118,8 +106,6 @@
       badge: 'Bespoke Order',
       price: 2499,
       mrp: 4000,
-      rating: 5.0,
-      reviewsCount: 19,
       stock: 3,
       image: 'images/resin/resin-wedding-cube.jpg?v=5.0',
       description: 'Preserve the real fresh roses, jasmine, and petals from your Nikah or wedding garland forever. Cast in an optical-grade solid crystal resin cube with couple names and wedding date engraved in gold.',
@@ -133,8 +119,6 @@
       badge: 'Artisan Crafted',
       price: 549,
       mrp: 899,
-      rating: 4.8,
-      reviewsCount: 30,
       stock: 6,
       image: 'images/resin/resin-tray.jpg?v=5.0',
       description: 'Organic leaf silhouette tray for rings, earrings, watches, and bedside trinkets. Hand-poured with semi-opaque milky white resin, deep amber accents, and gold leaf veins.',
@@ -148,8 +132,6 @@
       badge: 'Study Aesthetic',
       price: 499,
       mrp: 799,
-      rating: 4.9,
-      reviewsCount: 34,
       stock: 5,
       image: 'images/resin/resin-pen-stand.jpg?v=5.0',
       description: 'Heavyweight cylindrical & square desk vessels cast with crystal-clear resin, real embedded wildflower sprigs, floating bubbles, and ocean blue gradient bases. Perfect for holding study pens, makeup brushes, or desk scissors.',
@@ -167,7 +149,11 @@
     customPhotoData: null,
     customName: 'Rahul & Riya',
     customTrim: 'gold',
-    checkoutItems: []
+    checkoutItems: [],
+    productSearch: '',
+    productSort: 'featured',
+    showWishlistOnly: false,
+    visibleProductLimit: 8
   };
 
   // Load persisted cart & wishlist
@@ -205,16 +191,46 @@
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
 
-    const filtered = state.activeCategory === 'all' 
-      ? RESIN_PRODUCTS 
-      : RESIN_PRODUCTS.filter(p => p.category === state.activeCategory);
+    const query = state.productSearch.trim().toLowerCase();
+    const filtered = RESIN_PRODUCTS.filter(product => {
+      const categoryMatch = state.activeCategory === 'all' || product.category === state.activeCategory;
+      const wishlistMatch = !state.showWishlistOnly || state.wishlist.includes(product.id);
+      const searchMatch = !query || `${product.title} ${product.categoryLabel} ${product.description}`.toLowerCase().includes(query);
+      return categoryMatch && wishlistMatch && searchMatch;
+    });
+    const sorted = filtered.slice();
+    if (state.productSort === 'price-low' || state.productSort === 'price-high') {
+      const direction = state.productSort === 'price-low' ? 1 : -1;
+      sorted.sort((a, b) => direction * (getProductEffectivePrice(a).price - getProductEffectivePrice(b).price));
+    } else if (state.productSort === 'name') {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
 
-    grid.innerHTML = filtered.map(p => {
+    const countEl = document.getElementById('artProductCount');
+    const emptyEl = document.getElementById('artCatalogEmpty');
+    const loadMoreButton = document.getElementById('artCatalogLoadMore');
+    if (countEl) countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'piece' : 'pieces'}`;
+    if (emptyEl) {
+      emptyEl.hidden = filtered.length > 0;
+      emptyEl.textContent = state.showWishlistOnly && !state.wishlist.length
+        ? 'You have not saved any pieces yet.'
+        : 'No pieces match these filters. Try another search or collection.';
+    }
+    if (loadMoreButton) loadMoreButton.hidden = sorted.length <= state.visibleProductLimit;
+
+    const wishlistButtons = [document.getElementById('wishlistViewButton'), document.getElementById('showWishlistOnly')].filter(Boolean);
+    wishlistButtons.forEach(button => {
+      button.setAttribute('aria-pressed', String(state.showWishlistOnly));
+      button.classList.toggle('active', state.showWishlistOnly);
+    });
+
+    grid.innerHTML = sorted.slice(0, state.visibleProductLimit).map(p => {
       const isWish = state.wishlist.includes(p.id);
       const { price, mrp } = getProductEffectivePrice(p);
+      const discount = mrp > price ? Math.round((mrp - price) / mrp * 100) : 0;
       return `
         <article class="product-card" data-id="${p.id}" data-category="${p.category}">
-          ${p.badge ? `<span class="product-card-badge">${p.badge}</span>` : ''}
+          ${discount ? `<span class="product-card-badge">${discount}% OFF</span>` : ''}
           <button type="button" class="product-card-wishlist" onclick="window.auraAtelier.toggleWishlist('${p.id}')" aria-label="Add to wishlist" style="color: ${isWish ? '#ef4444' : 'inherit'};">
             <i class="${isWish ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
           </button>
@@ -229,16 +245,10 @@
           <div class="product-content">
             <span class="product-category-meta">${p.categoryLabel}</span>
             <h3 class="product-title" onclick="window.auraAtelier.openQuickView('${p.id}')">${p.title}</h3>
-            
-            <div class="product-rating">
-              ${renderStars(p.rating)}
-              <span class="product-rating-count">(${p.reviewsCount})</span>
-            </div>
 
             <div class="product-price-row">
               <span class="product-price">₹${price.toLocaleString('en-IN')}</span>
-              <span class="product-mrp">₹${mrp.toLocaleString('en-IN')}</span>
-              <span class="product-save-pill">Save ₹${(mrp - price).toLocaleString('en-IN')}</span>
+              ${mrp > price ? `<span class="product-mrp">₹${mrp.toLocaleString('en-IN')}</span>` : ''}
             </div>
 
             <div class="product-card-actions">
@@ -255,20 +265,6 @@
     }).join('');
 
     attach3DTiltEffect();
-  }
-
-  function renderStars(rating) {
-    let stars = '';
-    for (let i = 1; i <= 5; i++) {
-      if (i <= Math.floor(rating)) {
-        stars += '<i class="fa-solid fa-star"></i>';
-      } else if (i - 0.5 <= rating) {
-        stars += '<i class="fa-solid fa-star-half-stroke"></i>';
-      } else {
-        stars += '<i class="fa-regular fa-star"></i>';
-      }
-    }
-    return stars;
   }
 
   // 4. 3D CARD TILT ON MOUSEMOVE (Shopify Prestige Style)
@@ -599,15 +595,9 @@
         <span class="product-category-meta" style="margin-bottom:8px;">${prod.categoryLabel}</span>
         <h2 style="font-family:var(--font-serif); font-size:26px; line-height:1.2; margin-bottom:8px;">${prod.title}</h2>
         
-        <div class="product-rating" style="margin-bottom:14px;">
-          ${renderStars(prod.rating)}
-          <span class="product-rating-count">(${prod.reviewsCount} verified reviews)</span>
-        </div>
-
         <div class="product-price-row" style="margin-bottom:18px;">
           <span style="font-size:24px; font-weight:800; color:var(--bg-dark);">₹${price.toLocaleString('en-IN')}</span>
-          <span class="product-mrp" style="font-size:16px;">₹${mrp.toLocaleString('en-IN')}</span>
-          <span class="product-save-pill">Save ₹${(mrp - price).toLocaleString('en-IN')}</span>
+          ${mrp > price ? `<span class="product-mrp" style="font-size:16px;">₹${mrp.toLocaleString('en-IN')}</span>` : ''}
         </div>
 
         <p style="font-size:14px; color:var(--text-muted); line-height:1.6; margin-bottom:20px;">
@@ -1123,6 +1113,12 @@ ${itemsFormatted}─────────────────────
     persistState();
   }
 
+  function toggleWishlistView() {
+    state.showWishlistOnly = !state.showWishlistOnly;
+    state.visibleProductLimit = 8;
+    renderProducts();
+  }
+
   // 11.5 REAL-TIME FIRESTORE CLOUD PRICE SYNC (FROM SELLER PANEL)
   function initCloudPriceSync() {
     if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) {
@@ -1163,135 +1159,13 @@ ${itemsFormatted}─────────────────────
     }
   }
 
-  // 11.5 PATRON REVIEWS SYSTEM
-  const SEED_REVIEWS = [
-    {
-      id: 'rev-seed-1',
-      name: 'Dr. Adil Bhat',
-      location: 'Rajbagh, Srinagar',
-      rating: 5,
-      date: '28 Oct 2026',
-      product: '4-inch / 6-inch Heart Photo Keepsake',
-      comment: 'Ordered the 6-inch heart keepsake with our wedding picture and 24K gold foil trim. The optical clarity of the crystal resin is beyond stunning. Zero bubbles, flawless finish, and came with a lovely wooden acrylic stand. Delivered directly to Srinagar within 3 days. Highly recommended!',
-      photo: 'images/resin/demo-heart-keychain.jpg',
-      verified: true
-    },
-    {
-      id: 'rev-seed-2',
-      name: 'Zehra Jan & Mohsin',
-      location: 'Baramulla, Kashmir',
-      rating: 5,
-      date: '25 Oct 2026',
-      product: 'Round Geode Keychain',
-      comment: 'Gifted these custom purple amethyst & gold leaf keychains as wedding favor gifts. Every guest was blown away by the handmade craft quality. The gold foil flakes float inside the crystal clear resin like magic. The prepaid WhatsApp process was swift and polite.',
-      photo: 'images/resin/demo-round-keychain.jpg',
-      verified: true
-    },
-    {
-      id: 'rev-seed-3',
-      name: 'Pooja Sharma',
-      location: 'Greater Kailash, New Delhi',
-      rating: 5,
-      date: '19 Oct 2026',
-      product: 'Bismillah Calligraphy Resin Bookmark',
-      comment: 'I ordered the botanical bookmark with real pressed Kashmiri rose petals. The tassel is plush, the resin is crystal clear and thin enough to slip right into my books without bulging the spine. Excellent packaging with wax seal seal!',
-      photo: 'images/resin/resin-bookmark.jpg',
-      verified: true
-    },
-    {
-      id: 'rev-seed-4',
-      name: 'Mirza Farooq',
-      location: 'Anantnag, Kashmir',
-      rating: 5,
-      date: '14 Oct 2026',
-      product: 'Luxury Crystal Acrylic Quran Rehal',
-      comment: 'The Islamic calligraphy and golden Chinar leaf inlays on this prayer stand are magnificent. It holds my large Quran securely and adds immense spiritual warmth to our living space.',
-      photo: 'images/resin/resin-quran-stand.jpg',
-      verified: true
-    },
-    {
-      id: 'rev-seed-5',
-      name: 'Mehak Sheikh',
-      location: 'Gandhi Nagar, Jammu',
-      rating: 5,
-      date: '08 Oct 2026',
-      product: 'Ocean Wave Geode Wall Clock',
-      comment: 'True statement piece! The 3D ocean waves look real and the silent quartz movement has zero ticking noise. Beautifully packed with thermocol and bubble wrap. Reached Jammu in mint condition.',
-      photo: 'images/resin/resin-clock.jpg',
-      verified: true
-    },
-    {
-      id: 'rev-seed-6',
-      name: 'Sheikh Zubair',
-      location: 'Srinagar, Kashmir',
-      rating: 5,
-      date: '02 Oct 2026',
-      product: 'Wedding Flower Preservation Block',
-      comment: 'The atelier preserved our actual bridal roses in a diamond-cut resin hexagon. Now we can keep our special wedding memories on our mantlepiece forever. Extremely professional and communicative artist.',
-      photo: null,
-      verified: true
-    }
-  ];
-
+  // 11.5 CUSTOMER FEEDBACK
   let reviewTempPhotoData = null;
-
-  function getStoredReviews() {
-    try {
-      const raw = localStorage.getItem('aura_customer_reviews');
-      return raw ? JSON.parse(raw) : [];
-    } catch(e) {
-      return [];
-    }
-  }
 
   function renderReviews() {
     const grid = document.getElementById('customerReviewsGrid');
     if (!grid) return;
-
-    const userReviews = getStoredReviews();
-    const allReviews = [...userReviews, ...SEED_REVIEWS];
-
-    grid.innerHTML = allReviews.map(r => {
-      const initials = r.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'P';
-      let starHtml = '';
-      for (let i = 1; i <= 5; i++) {
-        starHtml += `<i class="fa-solid fa-star" style="color: ${i <= r.rating ? '#f59e0b' : '#cbd5e1'};"></i>`;
-      }
-
-      return `
-        <article class="review-card">
-          <div class="review-card-top">
-            <div class="review-patron-info">
-              <div class="patron-avatar">${initials}</div>
-              <div class="patron-details">
-                <h4>
-                  ${escapeHtml(r.name)}
-                  ${r.verified ? `<span class="patron-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>` : ''}
-                </h4>
-                <span class="patron-location">${escapeHtml(r.location)} &bull; ${r.date}</span>
-              </div>
-            </div>
-            <div class="review-rating-stars">${starHtml}</div>
-          </div>
-
-          <span class="review-item-badge">${escapeHtml(r.product)}</span>
-
-          <p class="review-comment-text">"${escapeHtml(r.comment)}"</p>
-
-          ${r.photo ? `
-            <div class="review-attached-photo">
-              <img src="${r.photo}" alt="Patron unboxing photo" onclick="window.open('${r.photo}', '_blank')">
-              <span style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-camera"></i> Attached Unboxing Photo</span>
-            </div>
-          ` : ''}
-
-          <div class="review-card-footer">
-            <span><i class="fa-solid fa-shield-halved" style="color:#16a34a;"></i> Verified Order</span>
-            <span>Aura Resin Atelier</span>
-          </div>
-        </article>
-      `;
-    }).join('');
+    grid.innerHTML = '<p class="reviews-empty-state">Have an order question? <a href="https://wa.me/919622605714" target="_blank" rel="noopener">Message Aura Resin Atelier on WhatsApp</a>.</p>';
   }
 
   function escapeHtml(str) {
@@ -1362,32 +1236,18 @@ ${itemsFormatted}─────────────────────
       return;
     }
 
-    const newRev = {
-      id: 'rev-user-' + Date.now(),
-      name,
-      location: location || 'Kashmir, India',
-      rating,
-      date: 'Just now',
-      product,
-      comment,
-      photo: reviewTempPhotoData,
-      verified: true
-    };
-
-    const stored = getStoredReviews();
-    stored.unshift(newRev);
-    try {
-      localStorage.setItem('aura_customer_reviews', JSON.stringify(stored));
-    } catch(e) {}
-
-    renderReviews();
+    const photoNote = reviewTempPhotoData ? '\n\nI selected an optional photo and will attach it in this chat.' : '';
+    const message = `Aura Resin Atelier customer feedback\n\nName: ${name}\nCity / region: ${location || 'Not specified'}\nProduct: ${product}\nRating: ${rating}/5\nFeedback: ${comment}${photoNote}\n\nPlease review this feedback before publishing it.`;
     closeReviewModal();
-    alert(`🎉 Thank you, ${name}! Your review has been published on Aura Resin Atelier.`);
+    openWhatsApp(message);
   }
 
   // 12. INITIALIZATION
   document.addEventListener('DOMContentLoaded', () => {
     purgeLegacyNavLinks();
+    const catalog = document.getElementById('collections');
+    const storeProfile = document.querySelector('.atelier-store-profile');
+    if (catalog && storeProfile) storeProfile.after(catalog);
     renderProducts();
     initSimulator();
     renderReviews();
@@ -1404,9 +1264,48 @@ ${itemsFormatted}─────────────────────
         filterPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         state.activeCategory = pill.getAttribute('data-filter') || 'all';
+        state.visibleProductLimit = 8;
         renderProducts();
       });
     });
+
+    const productSearch = document.getElementById('artProductSearch');
+    const productSearchClear = document.getElementById('artProductSearchClear');
+    if (productSearch) {
+      productSearch.addEventListener('input', () => {
+        state.productSearch = productSearch.value;
+        state.visibleProductLimit = 8;
+        if (productSearchClear) productSearchClear.hidden = !productSearch.value;
+        renderProducts();
+      });
+    }
+    if (productSearchClear && productSearch) {
+      productSearchClear.addEventListener('click', () => {
+        productSearch.value = '';
+        state.productSearch = '';
+        state.visibleProductLimit = 8;
+        productSearchClear.hidden = true;
+        productSearch.focus();
+        renderProducts();
+      });
+    }
+
+    const productSort = document.getElementById('artProductSort');
+    if (productSort) {
+      productSort.addEventListener('change', () => {
+        state.productSort = productSort.value;
+        state.visibleProductLimit = 8;
+        renderProducts();
+      });
+    }
+
+    const loadMoreButton = document.getElementById('artCatalogLoadMore');
+    if (loadMoreButton) {
+      loadMoreButton.addEventListener('click', () => {
+        state.visibleProductLimit += 8;
+        renderProducts();
+      });
+    }
 
     // Close modal on backdrop click
     const modal = document.getElementById('quickViewModal');
@@ -1447,6 +1346,7 @@ ${itemsFormatted}─────────────────────
     checkoutCartWhatsApp,
     handleBespokeInquiry,
     toggleWishlist,
+    toggleWishlistView,
     // Custom Photo & Name Studio
     setCustomCraftShape,
     setCustomHeartSize,

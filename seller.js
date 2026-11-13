@@ -253,6 +253,49 @@ function unlockSellerPanel() {
   if (lockScreen) lockScreen.style.display = 'none';
   if (appShell) appShell.style.display = 'flex';
 
+  // Automatic one-time fresh start cleanup for user
+  if (localStorage.getItem('jk_fresh_start_2026_applied') !== 'true') {
+    try {
+      // 1. Purge all legacy test order IDs across all storage keys
+      const raw1 = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+      const raw2 = JSON.parse(localStorage.getItem('jk_orders_db') || '[]');
+      const allPast = [...raw1, ...raw2].map(o => String(o.orderId || '').trim().toUpperCase()).filter(Boolean);
+      const prevPurged = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
+      localStorage.setItem('jk_purged_order_ids', JSON.stringify(Array.from(new Set([...prevPurged, ...allPast]))));
+      localStorage.setItem('jk_orders_reset_timestamp', String(Date.now()));
+      localStorage.setItem('jk_orders', '[]');
+      localStorage.removeItem('jk_orders_db');
+      localStorage.setItem('jk_order_status_overrides', '{}');
+      localStorage.setItem('jk_locked_orders', '{}');
+
+      // 2. Blacklist and purge any corrupt ghost product (e.g. "JK Study Hub", "surprise", etc.)
+      const delList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+      ['jk study hub', 'surprise', 'prd-surprise', 'jk study hub rai'].forEach(kw => {
+        if (!delList.includes(kw)) delList.push(kw);
+      });
+      localStorage.setItem('jk_deleted_catalog_ids', JSON.stringify(delList));
+
+      // Remove from jk_uploaded_catalog & jk_custom_products
+      let curUp = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+      curUp = curUp.filter(p => {
+        const title = String(p.title || p.name || '').trim().toLowerCase();
+        return title !== 'jk study hub' && !title.includes('surprise') && title !== '';
+      });
+      localStorage.setItem('jk_uploaded_catalog', JSON.stringify(curUp));
+
+      let curCust = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
+      curCust = curCust.filter(p => {
+        const title = String(p.title || p.name || '').trim().toLowerCase();
+        return title !== 'jk study hub' && !title.includes('surprise') && title !== '';
+      });
+      localStorage.setItem('jk_custom_products', JSON.stringify(curCust));
+
+      localStorage.setItem('jk_fresh_start_2026_applied', 'true');
+    } catch(err) {
+      console.warn("One-time cleanup notice:", err);
+    }
+  }
+
   // Apply device layout
   applySellerDeviceMode(getSellerDeviceMode());
 
@@ -418,6 +461,17 @@ function pushStatusUpdateToGoogleSheet(orderId, newStatus) {
   } catch(e) {}
 }
 
+// Helper: extract numeric epoch timestamp from order
+function getOrderEpoch(o) {
+  if (!o) return 0;
+  if (o.timestamp && !isNaN(Number(o.timestamp))) return Number(o.timestamp);
+  if (o.date) {
+    const t = Date.parse(o.date);
+    if (!isNaN(t)) return t;
+  }
+  return 0;
+}
+
 function getSellerOrders() {
   try {
     const raw = localStorage.getItem('jk_orders');
@@ -431,7 +485,11 @@ function getSellerOrders() {
         if (!o || !o.orderId) return false;
         const up = String(o.orderId || '').trim().toUpperCase();
         if (purgedIds.includes(up)) return false;
-        if (o.timestamp && Number(o.timestamp) <= resetTs) return false;
+        const epoch = getOrderEpoch(o);
+        if (resetTs > 0) {
+          if (epoch > 0 && epoch <= resetTs) return false;
+          if (epoch === 0) return false; // Purge legacy test orders
+        }
         return true;
       });
 
@@ -482,7 +540,11 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           }
           const remoteUpperId = String(remote.orderId).trim().toUpperCase();
           if (purgedIds.includes(remoteUpperId)) return false;
-          if (remote.timestamp && Number(remote.timestamp) <= resetTs) return false;
+          const epoch = getOrderEpoch(remote);
+          if (resetTs > 0) {
+            if (epoch > 0 && epoch <= resetTs) return false;
+            if (epoch === 0) return false; // Never re-import legacy untimestamped rows
+          }
           return true;
         });
 
@@ -550,11 +612,18 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           });
 
           if (remoteCatalogItems.length > 0) {
+            const deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+            const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
+
             let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
             const curIds = new Set(curCat.map(c => c.id || c.productId || c.name));
             let changed = false;
             remoteCatalogItems.forEach(rc => {
               const k = rc.id || rc.productId || rc.name;
+              const lk = String(k || '').trim().toLowerCase();
+              const lnk = String(rc.name || rc.title || '').trim().toLowerCase();
+              if (deletedIds.has(lk) || deletedIds.has(lnk)) return; // Never resurrect deleted items
+
               if (k && !curIds.has(k)) {
                 curCat.unshift(rc);
                 curIds.add(k);
@@ -1276,19 +1345,25 @@ function confirmResetAllToZero() {
 
 function resetAllOrdersAndMetricsToZero() {
   try {
-    // 1. Gather current order IDs and add to purged list so they are never re-imported from Google Sheets
-    const currentOrders = getSellerOrders();
+    // 1. Gather all local orders (raw, cached, status overrides) and purge them permanently
+    let allCurrentIds = [];
+    try {
+      const raw1 = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+      const raw2 = JSON.parse(localStorage.getItem('jk_orders_db') || '[]');
+      allCurrentIds = [...raw1, ...raw2].map(o => String(o.orderId || '').trim().toUpperCase()).filter(Boolean);
+    } catch(e) {}
+
     const existingPurged = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
     const newPurged = Array.from(new Set([
       ...existingPurged,
-      ...currentOrders.map(o => String(o.orderId || '').trim().toUpperCase()).filter(Boolean)
+      ...allCurrentIds
     ]));
     localStorage.setItem('jk_purged_order_ids', JSON.stringify(newPurged));
 
-    // 2. Set reset timestamp
+    // 2. Set reset timestamp to right now
     localStorage.setItem('jk_orders_reset_timestamp', String(Date.now()));
 
-    // 3. Clear local storage orders & overrides
+    // 3. Clear local storage orders & overrides completely across all tabs
     localStorage.setItem('jk_orders', '[]');
     localStorage.removeItem('jk_orders_db');
     localStorage.setItem('jk_order_status_overrides', '{}');
@@ -1311,15 +1386,121 @@ function resetAllOrdersAndMetricsToZero() {
       }));
     }
 
-    // 5. Re-render all views and tables
+    // 5. Re-render all views and tables to pristine zero
     renderSellerOrdersTable();
     calculateBusinessMetrics();
     calculatePaymentsSummary();
 
-    alert("✅ Complete Fresh Start: All metrics, orders, downloads, and search stats have been reset to 0!");
+    if (typeof showToast === 'function') {
+      showToast("✅ Fresh Clean Slate: All test and cancelled orders cleared to 0!");
+    } else {
+      alert("✅ Complete Fresh Start: All past orders have been cleared to 0!");
+    }
   } catch (err) {
     console.error("Reset error:", err);
     alert("Notice during reset: " + err.message);
+  }
+}
+
+// =========================================================
+// REAL WHATSAPP & MANUAL ORDER CREATOR
+// =========================================================
+function openManualWhatsAppOrderModal() {
+  const modal = document.getElementById('manualWhatsAppOrderModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const orderIdInput = document.getElementById('manualOrderId');
+    if (orderIdInput && !orderIdInput.value) {
+      orderIdInput.value = 'JK-WA-' + randomSuffix;
+    }
+    const dateInput = document.getElementById('manualOrderDate');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toLocaleDateString('en-IN');
+    }
+  }
+}
+
+function closeManualWhatsAppOrderModal() {
+  const modal = document.getElementById('manualWhatsAppOrderModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function saveManualWhatsAppOrder(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const orderId = (document.getElementById('manualOrderId')?.value || '').trim() || ('JK-WA-' + Date.now().toString().slice(-4));
+  const name = (document.getElementById('manualCustName')?.value || '').trim();
+  const phone = (document.getElementById('manualCustPhone')?.value || '').trim();
+  const address = (document.getElementById('manualCustAddress')?.value || '').trim();
+  const product = (document.getElementById('manualOrderProduct')?.value || '').trim();
+  const amount = Number(document.getElementById('manualOrderAmount')?.value) || 0;
+  const paymentMethod = document.getElementById('manualOrderPayment')?.value || 'prepaid';
+  const status = document.getElementById('manualOrderStatus')?.value || 'Delivered';
+  const date = document.getElementById('manualOrderDate')?.value || new Date().toLocaleDateString('en-IN');
+
+  if (!name || !phone || !product) {
+    alert("Please fill in Customer Name, Phone, and Book Title / Bookset.");
+    return;
+  }
+
+  const newOrder = {
+    orderId: orderId,
+    name: name,
+    phone: phone,
+    address: address,
+    product: product,
+    amount: amount,
+    paymentMethod: paymentMethod,
+    status: status,
+    date: date,
+    timestamp: Date.now(),
+    source: 'WhatsApp Organic Order',
+    isManualWhatsApp: true,
+    qty: 1
+  };
+
+  // Add to jk_orders
+  let orders = [];
+  try {
+    orders = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+  } catch(err) {}
+  orders.unshift(newOrder);
+  localStorage.setItem('jk_orders', JSON.stringify(orders));
+
+  // Sync to Google Sheets in background
+  try {
+    const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : '';
+    if (endpoint) {
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          action: 'create_order',
+          orderId: orderId,
+          name: name,
+          phone: phone,
+          address: address,
+          product: product,
+          amount: amount,
+          paymentMode: paymentMethod,
+          status: status,
+          date: date,
+          timestamp: String(Date.now()),
+          notes: 'Direct WhatsApp Customer Order'
+        })
+      }).catch(err => console.warn("Google Sheet sync notice:", err));
+    }
+  } catch(err) {}
+
+  closeManualWhatsAppOrderModal();
+  renderSellerOrdersTable();
+  calculateBusinessMetrics();
+  calculatePaymentsSummary();
+
+  if (typeof showToast === 'function') {
+    showToast(`🎉 Organic WhatsApp Order "${orderId}" recorded!`);
+  } else {
+    alert(`🎉 Order "${orderId}" for ${name} added to dashboard!`);
   }
 }
 
@@ -3213,16 +3394,27 @@ const DEFAULT_SELLER_PRODUCTS = [
 // Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
 function getSellerAllPublishedProducts() {
   const mergedMap = new Map();
+  const deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+  const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
+
   DEFAULT_SELLER_PRODUCTS.forEach(p => {
-    mergedMap.set(p.id, p);
+    const key = String(p.id || '').trim().toLowerCase();
+    const nameKey = String(p.name || p.title || '').trim().toLowerCase();
+    if (!deletedIds.has(key) && !deletedIds.has(nameKey)) {
+      mergedMap.set(p.id, p);
+    }
   });
 
   try {
     const list1 = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
     if (Array.isArray(list1)) {
       list1.forEach(p => {
-        const key = p.id || p.productId || p.name;
-        if (key && !mergedMap.has(key)) mergedMap.set(key, p);
+        const key = String(p.id || p.productId || '').trim().toLowerCase();
+        const nameKey = String(p.name || p.title || '').trim().toLowerCase();
+        if (!deletedIds.has(key) && !deletedIds.has(nameKey) && (p.name || p.title)) {
+          const mKey = p.id || p.productId || p.name;
+          if (mKey && !mergedMap.has(mKey)) mergedMap.set(mKey, p);
+        }
       });
     }
   } catch(e) {}
@@ -3231,8 +3423,12 @@ function getSellerAllPublishedProducts() {
     const list2 = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
     if (Array.isArray(list2)) {
       list2.forEach(p => {
-        const key = p.id || p.productId || p.name;
-        if (key && !mergedMap.has(key)) mergedMap.set(key, p);
+        const key = String(p.id || p.productId || '').trim().toLowerCase();
+        const nameKey = String(p.name || p.title || '').trim().toLowerCase();
+        if (!deletedIds.has(key) && !deletedIds.has(nameKey) && (p.name || p.title)) {
+          const mKey = p.id || p.productId || p.name;
+          if (mKey && !mergedMap.has(mKey)) mergedMap.set(mKey, p);
+        }
       });
     }
   } catch(e) {}
@@ -3455,6 +3651,17 @@ function deleteSellerPublishedProduct(prodId, prodName) {
     return;
   }
 
+  // 1. Blacklist in persistent local storage so it can never re-appear
+  try {
+    let deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+    if (prodId && !deletedList.includes(prodId)) deletedList.push(prodId);
+    if (prodName && !deletedList.includes(prodName)) deletedList.push(prodName);
+    const cleanId = String(prodId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+    if (cleanId && !deletedList.includes(cleanId)) deletedList.push(cleanId);
+    localStorage.setItem('jk_deleted_catalog_ids', JSON.stringify(deletedList));
+  } catch(e) {}
+
+  // 2. Remove from local storage arrays
   try {
     let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
     customProds = customProds.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
@@ -3466,6 +3673,21 @@ function deleteSellerPublishedProduct(prodId, prodName) {
     uploadedCat = uploadedCat.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
     localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
   } catch(e) {}
+
+  // 3. Delete from Firebase Firestore cloud collection permanently
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      const cleanId = String(prodId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+      if (cleanId) db.collection('published_catalog').doc(cleanId).delete().catch(e => console.warn(e));
+      if (prodName) {
+        const cleanNameId = String(prodName).toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+        db.collection('published_catalog').doc(cleanNameId).delete().catch(e => console.warn(e));
+      }
+    } catch(e) {
+      console.warn("Firestore delete published_catalog notice:", e);
+    }
+  }
 
   renderSellerPublishedCatalog();
   if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
@@ -3530,11 +3752,18 @@ function initSellerRealtimeCatalog() {
           if (d && (d.name || d.title)) firestoreProds.push(d);
         });
         if (firestoreProds.length > 0) {
+          const deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+          const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
+
           let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
           const curIds = new Set(curCat.map(c => c.id || c.productId || c.name));
           let changed = false;
           firestoreProds.forEach(fp => {
             const k = fp.id || fp.productId || fp.name;
+            const lk = String(k || '').trim().toLowerCase();
+            const lnk = String(fp.name || fp.title || '').trim().toLowerCase();
+            if (deletedIds.has(lk) || deletedIds.has(lnk)) return; // Skipped if deleted by seller
+
             if (k && !curIds.has(k)) {
               curCat.unshift(fp);
               curIds.add(k);

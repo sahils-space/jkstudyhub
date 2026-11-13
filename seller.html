@@ -249,6 +249,10 @@
             <i class="fa-solid fa-file-arrow-down"></i> Download Orders Data ⌵
           </button>
 
+          <button type="button" class="btn-hub-primary" onclick="openManualWhatsAppOrderModal()" style="background: #16a34a; border-color: #15803d; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-brands fa-whatsapp"></i> + Record WhatsApp Order
+          </button>
+
           <button type="button" class="btn-hub-primary" onclick="syncSellerWithGoogleSheets(true)">
             <i class="fa-solid fa-rotate"></i> Sync Live
           </button>
@@ -1447,6 +1451,92 @@
   <!-- =========================================================
        MODAL 1: LOGISTICS SHIPPING LABEL (SINGLE ORDER)
        ========================================================= -->
+  <!-- =========================================================
+       MODAL 0: RECORD MANUAL / WHATSAPP ORDER
+       ========================================================= -->
+  <div class="seller-modal-backdrop" id="manualWhatsAppOrderModal" style="display:none; align-items:center; justify-content:center;">
+    <div class="seller-modal-card" style="max-width: 540px; width: 95%;">
+      <div class="seller-modal-header" style="background: #16a34a; color: white; padding: 14px 18px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;"><i class="fa-brands fa-whatsapp"></i></span>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 0;">Record WhatsApp / Direct Customer Order</h3>
+            <p style="font-size: 11.5px; color: #dcfce7; margin: 2px 0 0;">Create a verified organic order for your dispatch dashboard &amp; labels</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeManualWhatsAppOrderModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#ffffff;">&times;</button>
+      </div>
+
+      <form onsubmit="saveManualWhatsAppOrder(event)">
+        <div class="seller-modal-body" style="background: #ffffff; padding: 20px; max-height: 80vh; overflow-y: auto;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Order ID</label>
+              <input type="text" id="manualOrderId" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 700; font-family: monospace;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Order Date</label>
+              <input type="text" id="manualOrderDate" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Customer Full Name *</label>
+              <input type="text" id="manualCustName" placeholder="e.g. Aamir Rashid" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">WhatsApp Phone Number *</label>
+              <input type="tel" id="manualCustPhone" placeholder="e.g. 9622XXXXXX" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Book Title / Items Ordered *</label>
+            <input type="text" id="manualOrderProduct" placeholder="e.g. Class 10th JKBOSE Complete Book Set (5 Books)" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Order Amount (₹) *</label>
+              <input type="number" id="manualOrderAmount" placeholder="e.g. 799" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 800; color: #16a34a;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Payment Mode</label>
+              <select id="manualOrderPayment" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white;">
+                <option value="prepaid">Online Prepaid (UPI / QR Code)</option>
+                <option value="cod">Cash on Delivery (COD)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Fulfillment Status</label>
+              <select id="manualOrderStatus" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white;">
+                <option value="Delivered">Delivered (Completed)</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Ready to Ship">Ready to Ship</option>
+                <option value="Shipped">Shipped</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Delivery Location / PIN</label>
+              <input type="text" id="manualCustAddress" placeholder="e.g. Pattan / Baramulla / Srinagar" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-hub-secondary" onclick="closeManualWhatsAppOrderModal()">Cancel</button>
+          <button type="submit" class="btn-hub-primary" style="background: #16a34a; border-color: #15803d; font-weight: 800;">
+            <i class="fa-solid fa-check"></i> Save Order to Dashboard
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="seller-modal-backdrop" id="sellerShippingLabelModal">
     <div class="seller-modal-card" style="max-width: 580px; width: 95%;">
       <div class="seller-modal-header" style="background: #0f172a; color: white; padding: 14px 18px;">

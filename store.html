@@ -3822,6 +3822,360 @@
 
   <link rel="stylesheet" href="premium-theme.css?v=1">
   <link rel="stylesheet" href="brand-theme.css?v=2">
+  <style>
+    .zapvi-top-bar {
+      background: linear-gradient(90deg, #172a22 0%, #315c4b 52%, #172a22 100%);
+    }
+    .zapvi-logo { color: #244638; }
+    .zapvi-nav-link:hover,
+    .zapvi-nav-link.active,
+    .zapvi-icon-btn:hover { color: #315c4b; }
+    .hub-store-catalog-layout {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      align-items: start;
+      gap: 18px;
+    }
+    .hub-store-category-rail {
+      position: sticky;
+      top: 76px;
+      padding: 14px 9px;
+      border: 1px solid #e2e8de;
+      border-radius: 14px;
+      background: #fffefa;
+    }
+    .hub-store-category-rail h2 {
+      margin: 0 0 10px 7px;
+      color: #20372c;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .hub-store-category-rail .store-category-filter-strip {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      overflow: visible;
+      padding: 0;
+    }
+    .hub-store-category-rail .store-filter-btn {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 9px 7px;
+      border-color: transparent;
+      border-radius: 9px;
+      background: transparent;
+      font-size: 11px;
+      line-height: 1.3;
+      text-align: left;
+      white-space: normal;
+    }
+    .hub-store-category-rail .store-filter-btn i {
+      width: 15px;
+      flex: 0 0 15px;
+      text-align: center;
+    }
+    .hub-store-category-rail .store-filter-btn.active,
+    .hub-store-category-rail .store-filter-btn:hover {
+      background: #edf3ee;
+      border-color: #e2e8de;
+      box-shadow: none;
+      color: #244638;
+    }
+    .hub-store-catalog-main { min-width: 0; }
+    .hub-store-catalog-main .store-search-container { margin-top: 0 !important; }
+    .store-advanced-filter-toggle { display: none; }
+    body.dark-mode .hub-store-category-rail {
+      border-color: #35473d;
+      background: #18251e;
+    }
+    body.dark-mode .hub-store-category-rail h2 { color: #edf4ee; }
+    body.dark-mode .hub-store-category-rail .store-filter-btn.active,
+    body.dark-mode .hub-store-category-rail .store-filter-btn:hover {
+      background: #263b30;
+      border-color: #35473d;
+      color: #d7e7d9;
+    }
+    .hub-store-profile {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 20px auto 16px;
+      padding: 18px 22px;
+      border: 1px solid #e2e8de;
+      border-radius: 18px;
+      background: linear-gradient(115deg, #fffefa, #f3f7f1);
+      box-shadow: 0 8px 26px rgba(23, 42, 34, 0.06);
+    }
+    .hub-store-profile-mark {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      flex: 0 0 52px;
+      place-items: center;
+      border-radius: 15px;
+      background: #e8f0e9;
+      color: #315c4b;
+      font-size: 21px;
+    }
+    .hub-store-profile-copy { min-width: 0; flex: 1; }
+    .hub-store-profile-eyebrow,
+    .hub-store-catalog-eyebrow {
+      display: block;
+      color: #537b68;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .13em;
+    }
+    .hub-store-profile-copy h1 {
+      margin: 2px 0 1px;
+      color: #172a22;
+      font-size: clamp(20px, 2.5vw, 26px);
+      letter-spacing: -.03em;
+      line-height: 1.2;
+    }
+    .hub-store-profile-copy p {
+      margin: 0;
+      color: #68756d;
+      font-size: 12.5px;
+    }
+    .hub-store-profile-contact {
+      display: inline-flex;
+      min-height: 40px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 10px;
+      background: #315c4b;
+      color: #fffefa !important;
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hub-store-profile-contact:hover { background: #244638; }
+    .store-search-container {
+      border: 1px solid #e3e9e1 !important;
+      border-radius: 18px !important;
+      background: #fffefa !important;
+      box-shadow: 0 8px 26px rgba(23, 42, 34, .055) !important;
+    }
+    .hub-store-catalog-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 14px;
+    }
+    .hub-store-catalog-heading h2 {
+      margin: 2px 0 0;
+      color: #172a22;
+      font-size: clamp(20px, 2.6vw, 27px);
+      letter-spacing: -.035em;
+    }
+    .hub-store-catalog-count {
+      color: #66746b;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .store-filter-btn {
+      border-color: #e3e9e1;
+      background: #f7f8f4;
+      color: #526158;
+    }
+    .store-filter-btn:hover { background: #edf3ee; color: #244638; }
+    .store-filter-btn.active {
+      background: #315c4b;
+      border-color: #315c4b;
+      box-shadow: 0 3px 10px rgba(49, 92, 75, .2);
+    }
+    .product-card,
+    .book-product-card {
+      border-color: #e5e9e1 !important;
+      border-radius: 16px !important;
+      box-shadow: 0 4px 14px rgba(23, 42, 34, .055) !important;
+    }
+    .product-card:hover,
+    .book-product-card:hover {
+      border-color: #c9d8ca !important;
+      box-shadow: 0 14px 28px rgba(23, 42, 34, .11) !important;
+    }
+    .product-title { color: #20372c !important; }
+    body:not(.dark-mode) .product-price { color: #244638 !important; }
+    .buy-btn,
+    .btn-primary,
+    .btn-add-cart { background-color: #315c4b; border-color: #315c4b; }
+    .buy-btn:hover,
+    .btn-primary:hover,
+    .btn-add-cart:hover { background-color: #244638; border-color: #244638; }
+    .hub-store-profile-contact:focus-visible,
+    .store-filter-btn:focus-visible,
+    .hub-store-profile a:focus-visible {
+      outline: 3px solid rgba(49, 92, 75, .35);
+      outline-offset: 3px;
+    }
+    body.dark-mode .hub-store-profile {
+      border-color: #35473d;
+      background: linear-gradient(115deg, #17241d, #1d2b23);
+    }
+    body.dark-mode .hub-store-profile-mark { background: #263b30; color: #c6dccb; }
+    body.dark-mode .zapvi-top-bar { background: linear-gradient(90deg, #101a14, #203b2e, #101a14) !important; }
+    body.dark-mode .zapvi-logo { color: #d7e7d9 !important; }
+    body.dark-mode .product-price { color: #b7d5bd !important; }
+    body.dark-mode .hub-store-profile-copy h1,
+    body.dark-mode .hub-store-catalog-heading h2 { color: #edf4ee; }
+    body.dark-mode .hub-store-profile-copy p,
+    body.dark-mode .hub-store-catalog-count { color: #becbc1; }
+    body.dark-mode .store-search-container { background: #18251e !important; border-color: #35473d !important; }
+    body.dark-mode .hub-store-catalog-eyebrow { color: #a4c6ad; }
+    @media (max-width: 640px) {
+      .zapvi-store-nav {
+        gap: 4px;
+        flex-wrap: nowrap;
+        padding: 8px 10px;
+      }
+      .zapvi-nav-left { flex: 0 0 auto; }
+      .zapvi-logo {
+        flex: 0 0 auto;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+      .zapvi-logo span:first-child { white-space: nowrap; }
+      .zapvi-logo-bolt { font-size: 15px; }
+      .zapvi-nav-right { flex: 0 0 auto; gap: 2px; }
+      .zapvi-icon-btn { padding: 4px; font-size: 16px; }
+      .zapvi-store-nav .back-btn-pill {
+        margin-left: 0 !important;
+        padding: 6px;
+        font-size: 0;
+      }
+      .zapvi-store-nav .back-btn-pill i { font-size: 14px; }
+      .hub-store-catalog-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+      .hub-store-category-rail {
+        position: static;
+        min-width: 0;
+        max-width: 100%;
+        padding: 10px;
+      }
+      .hub-store-category-rail h2 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        text-align: left;
+      }
+      .hub-store-category-rail .store-category-filter-strip {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        gap: 7px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        padding: 0 0 4px;
+        scrollbar-width: thin;
+      }
+      .hub-store-category-rail .store-filter-btn {
+        width: auto;
+        min-height: 36px;
+        flex: 0 0 auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 6px;
+        padding: 7px 10px;
+        font-size: 10px;
+        text-align: left;
+        white-space: nowrap;
+      }
+      .hub-store-category-rail .store-filter-btn i {
+        width: auto;
+        flex-basis: auto;
+        font-size: 12px;
+      }
+      .hub-store-catalog-main .store-search-container {
+        padding: 10px !important;
+      }
+      .hub-store-catalog-main .store-advanced-filter-toggle {
+        display: inline-flex;
+        min-height: 36px;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin-top: 10px;
+        padding: 0 12px;
+        border: 1px solid #e2e8de;
+        border-radius: 9px;
+        background: #f7f8f4;
+        color: #315c4b;
+        font: inherit;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .hub-store-catalog-main .store-advanced-filters { display: none !important; }
+      .hub-store-catalog-main .store-advanced-filters.is-expanded { display: grid !important; }
+      .hub-store-profile {
+        margin: 12px 10px;
+        padding: 14px;
+        gap: 11px;
+        border-radius: 14px;
+      }
+      .hub-store-profile-mark { width: 42px; height: 42px; flex-basis: 42px; border-radius: 12px; }
+      .hub-store-profile-copy p { font-size: 11px; }
+      .hub-store-profile-contact { width: 40px; min-width: 40px; padding: 0; font-size: 0; }
+      .hub-store-profile-contact i { font-size: 16px; }
+      .hub-store-catalog-heading { align-items: center; }
+      .hub-store-catalog-count { font-size: 10.5px; }
+      .hub-store-catalog-main .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+      }
+      .hub-store-catalog-main .product-card,
+      .hub-store-catalog-main .book-product-card {
+        min-width: 0;
+      }
+      .hub-store-catalog-main .product-info {
+        min-width: 0;
+        padding: 10px 8px !important;
+      }
+      .hub-store-catalog-main .product-footer {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .hub-store-catalog-main .product-actions {
+        width: 100%;
+        gap: 6px;
+      }
+      .hub-store-catalog-main .product-actions .buy-btn {
+        min-width: 0;
+        min-height: 40px;
+        flex: 1;
+        padding: 8px 10px !important;
+        font-size: 13px !important;
+        white-space: nowrap;
+      }
+      .hub-store-catalog-main .product-actions .btn-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+      }
+    }
+    @media (max-width: 360px) {
+      .hub-store-catalog-main .product-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+      .hub-store-catalog-main .product-info {
+        padding: 12px !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -4066,6 +4420,18 @@
     </div>
   </nav>
 
+  <section class="hub-store-profile" aria-label="JK Study Hub store information">
+    <div class="hub-store-profile-mark" aria-hidden="true"><i class="fa-solid fa-book-open"></i></div>
+    <div class="hub-store-profile-copy">
+      <span class="hub-store-profile-eyebrow">YOUR LOCAL STUDENT STORE</span>
+      <h1>JK Study Hub Store</h1>
+      <p>Books, school supplies and study essentials · Baramulla, Jammu &amp; Kashmir</p>
+    </div>
+    <a class="hub-store-profile-contact" href="https://wa.me/919622605714" target="_blank" rel="noopener">
+      <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Ask the store
+    </a>
+  </section>
+
   <section class="jk-offers" aria-label="Current store offers">
     <div class="jk-offers__inner">
       <h2 class="jk-offers__heading">Special offers from JK Study Hub</h2>
@@ -4158,13 +4524,20 @@
   </section>
 
 
-  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
+  <div id="hubStoreCatalog" class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
     
     <!-- Dedicated Flipkart/Amazon Style Live Search & Category Bar -->
     <div class="store-search-container" id="storeSearchContainer">
+      <div class="hub-store-catalog-heading">
+        <div>
+          <span class="hub-store-catalog-eyebrow">SHOP THE COLLECTION</span>
+          <h2>Store Catalog</h2>
+        </div>
+        <span class="hub-store-catalog-count" id="storeCatalogCount" aria-live="polite">Browse all items</span>
+      </div>
       <div class="store-search-box">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="storeSearchInput" placeholder="Search 50+ books, pen stand, guides, stationery, PYQs..." oninput="handleStoreLiveSearch(this.value)" autocomplete="off">
+        <input type="text" id="storeSearchInput" placeholder="Search books, stationery and study supplies" oninput="handleStoreLiveSearch(this.value)" autocomplete="off">
         <button id="storeSearchClear" onclick="clearStoreSearch()" style="display: none;" title="Clear Search">&times;</button>
         <div id="storeSearchSuggestions" class="search-suggestions-dropdown" style="display: none;"></div>
       </div>
@@ -4196,7 +4569,10 @@
         </button>
       </div>
 
-      <div class="store-advanced-filters" aria-label="Filter products">
+      <button type="button" class="store-advanced-filter-toggle" id="storeAdvancedFilterToggle" aria-expanded="false" aria-controls="storeAdvancedFilters">
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i> More filters
+      </button>
+      <div class="store-advanced-filters" id="storeAdvancedFilters" aria-label="Filter products">
         <label>Class
           <select id="storeClassFilter" onchange="applyStoreAdvancedFilters()">
             <option value="all">All classes</option>

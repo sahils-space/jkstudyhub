@@ -9515,6 +9515,12 @@ function applyStoreAdvancedFilters() {
   handleStoreLiveSearch(document.getElementById('storeSearchInput')?.value || '');
 }
 
+function updateStoreCatalogCount(count) {
+  const countEl = document.getElementById('storeCatalogCount');
+  if (!countEl) return;
+  countEl.textContent = `${count} product${count === 1 ? '' : 's'}`;
+}
+
 function clearStoreAdvancedFilters() {
   ['storeClassFilter', 'storeBoardFilter', 'storeAvailabilityFilter'].forEach(id => {
     const select = document.getElementById(id);
@@ -9541,12 +9547,15 @@ function getCardCategoryType(card) {
     if (explicitCat === 'resin' || explicitCat === 'art') return 'resin';
     return explicitCat;
   }
+  if (card.closest('#copiesGrid')) return 'copies';
+  if (card.closest('#schoolBooksGrid')) return 'school-books';
+  if (card.closest('#comingSoonGrid')) return 'coming-soon';
   if (card.classList.contains('book-product-card')) return 'novels';
   const text = (card.textContent || '').toLowerCase();
-  if (card.closest('#comingSoonGrid') || text.includes('coming soon') || text.includes('launching soon') || text.includes('pre-book')) return 'coming-soon';
+  if (text.includes('coming soon') || text.includes('launching soon') || text.includes('pre-book')) return 'coming-soon';
   if (text.includes('resin') || text.includes('rehal') || text.includes('quran stand') || text.includes('geode') || text.includes('ayat-ul-kursi') || text.includes('bookmark') || text.includes('keychain')) return 'resin';
-  if (card.closest('#copiesGrid') || text.includes('copies (pack') || text.includes('exercise copies') || text.includes('college register') || text.includes('practical lab copy') || text.includes('hardcover register') || text.includes('four-line english') || text.includes('two-line urdu') || text.includes('math square grid')) return 'copies';
-  if (card.closest('#schoolBooksGrid') || text.includes('complete book set') || text.includes('textbooks set') || text.includes('medical set') || text.includes('non-med set') || text.includes('commerce set') || text.includes('arts set') || text.includes('school book')) return 'school-books';
+  if (text.includes('copies (pack') || text.includes('exercise copies') || text.includes('college register') || text.includes('practical lab copy') || text.includes('hardcover register') || text.includes('four-line english') || text.includes('two-line urdu') || text.includes('math square grid')) return 'copies';
+  if (text.includes('complete book set') || text.includes('textbooks set') || text.includes('medical set') || text.includes('non-med set') || text.includes('commerce set') || text.includes('arts set') || text.includes('school book')) return 'school-books';
   if (text.includes('pyqs') || text.includes('instant notes') || text.includes('survival kit') || text.includes('solved papers')) return 'academic';
   if (text.includes('table') || text.includes('diary') || text.includes('pen') || text.includes('geometry') || text.includes('quran') || text.includes('lamp') || text.includes('paper') || text.includes('spectra')) return 'stationery';
   if (text.includes('form filling') || text.includes('digital') || text.includes('scholarship')) return 'digital';
@@ -9725,6 +9734,7 @@ function handleStoreLiveSearch(query) {
         feedback.style.display = 'none';
       }
     }
+    updateStoreCatalogCount(matchCount);
     return;
   }
 
@@ -9886,6 +9896,8 @@ function handleStoreLiveSearch(query) {
       countText.innerText = `0 items found for "${query}"`;
     }
   }
+
+  updateStoreCatalogCount(scoredMatches.length);
 
   // Real Visitor Analytics: Track student search query & demand
   if (q && q.length >= 2) {
@@ -11741,6 +11753,34 @@ function syncShoppableReelsPrices() {
 }
 
 function onStoreReady() {
+  const storeProfile = document.querySelector('.hub-store-profile');
+  const storeCatalog = document.getElementById('hubStoreCatalog');
+  if (storeProfile && storeCatalog) storeProfile.after(storeCatalog);
+  const advancedFilterToggle = document.getElementById('storeAdvancedFilterToggle');
+  const advancedFilterPanel = document.getElementById('storeAdvancedFilters');
+  advancedFilterToggle?.addEventListener('click', () => {
+    const expanded = advancedFilterPanel?.classList.toggle('is-expanded') || false;
+    advancedFilterToggle.setAttribute('aria-expanded', String(expanded));
+  });
+  const searchContainer = storeCatalog?.querySelector('#storeSearchContainer');
+  const categoryStrip = searchContainer?.querySelector('.store-category-filter-strip');
+  if (storeCatalog && searchContainer && categoryStrip && !storeCatalog.querySelector('.hub-store-catalog-layout')) {
+    const layout = document.createElement('div');
+    layout.className = 'hub-store-catalog-layout';
+    const categoryRail = document.createElement('aside');
+    categoryRail.className = 'hub-store-category-rail';
+    categoryRail.setAttribute('aria-label', 'Browse store categories');
+    const categoryHeading = document.createElement('h2');
+    categoryHeading.textContent = 'Categories';
+    const catalogContent = document.createElement('div');
+    catalogContent.className = 'hub-store-catalog-main';
+    categoryRail.append(categoryHeading, categoryStrip);
+    layout.append(categoryRail, catalogContent);
+    storeCatalog.appendChild(layout);
+    Array.from(storeCatalog.childNodes)
+      .filter(node => node !== layout)
+      .forEach(node => catalogContent.appendChild(node));
+  }
   try {
     localStorage.removeItem('jk_shoppable_photos');
   } catch (error) {
@@ -11748,6 +11788,7 @@ function onStoreReady() {
   }
   applyCustomPricesToStorefront();
   applyStockOverridesToStorefront();
+  handleStoreLiveSearch(document.getElementById('storeSearchInput')?.value || '');
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
   }
