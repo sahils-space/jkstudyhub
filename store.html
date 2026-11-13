@@ -23,7 +23,7 @@
   </script>
   <!-- Official Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <link rel="stylesheet" href="promo-offers.css?v=3">
+  <link rel="stylesheet" href="promo-offers.css?v=4">
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK Study Hub - Books & School Copies at Less Than Bookshop Rates & Less Than MRP">
@@ -4420,40 +4420,42 @@
     </div>
   </nav>
 
+  <!-- 2.5 Top Special Offers & Discount Coupons Showcase -->
+  <section class="jk-offers" aria-label="Current store offers">
+    <div class="jk-offers__inner">
+      <h2 class="jk-offers__heading">Special Offers &amp; Instant Student Discounts</h2>
+      <div class="jk-offers__grid">
+        <article class="jk-offer">
+          <img class="jk-offer__image" src="images/offer-mascot-savings.jpg" alt="Save ₹100 Mascot" width="320" height="320" decoding="async">
+          <div class="jk-offer__copy">
+            <span class="jk-offer__eyebrow" style="background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:999px; font-weight:800; display:inline-block; margin-bottom:4px;">COUPON: SAVE100</span>
+            <h2 class="jk-offer__title">Save ₹100 Instantly</h2>
+            <p class="jk-offer__description">Orders ₹1,499+ &bull; Discount applies automatically in checkout.</p>
+          </div>
+        </article>
+        <article class="jk-offer jk-offer--delivery">
+          <img class="jk-offer__image" src="images/offer-mascot-delivery.jpg" alt="Free Delivery Mascot" width="320" height="320" decoding="async">
+          <div class="jk-offer__copy">
+            <span class="jk-offer__eyebrow" style="background:#ccfbf1; color:#0f766e; padding:2px 8px; border-radius:999px; font-weight:800; display:inline-block; margin-bottom:4px;">ORDERS ₹499+</span>
+            <h2 class="jk-offer__title">100% Free Kashmir Delivery</h2>
+            <p class="jk-offer__description">Fast doorstep transport across all Kashmir districts with COD.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Store Profile & Direct Contact Strip -->
   <section class="hub-store-profile" aria-label="JK Study Hub store information">
     <div class="hub-store-profile-mark" aria-hidden="true"><i class="fa-solid fa-book-open"></i></div>
     <div class="hub-store-profile-copy">
       <span class="hub-store-profile-eyebrow">YOUR LOCAL STUDENT STORE</span>
       <h1>JK Study Hub Store</h1>
-      <p>Books, school supplies and study essentials · Baramulla, Jammu &amp; Kashmir</p>
+      <p>Books, school supplies and study essentials &middot; Baramulla, Jammu &amp; Kashmir</p>
     </div>
     <a class="hub-store-profile-contact" href="https://wa.me/919622605714" target="_blank" rel="noopener">
       <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Ask the store
     </a>
-  </section>
-
-  <section class="jk-offers" aria-label="Current store offers">
-    <div class="jk-offers__inner">
-      <h2 class="jk-offers__heading">Special offers from JK Study Hub</h2>
-      <div class="jk-offers__grid">
-        <article class="jk-offer">
-          <img class="jk-offer__image" src="images/offer-mascot-savings.jpg" alt="" width="320" height="320" decoding="async">
-          <div class="jk-offer__copy">
-            <span class="jk-offer__eyebrow">ORDERS ₹1,499+</span>
-            <h2 class="jk-offer__title">Save ₹100</h2>
-            <p class="jk-offer__description">Get an instant discount on eligible store orders.</p>
-          </div>
-        </article>
-        <article class="jk-offer jk-offer--delivery">
-          <img class="jk-offer__image" src="images/offer-mascot-delivery.jpg" alt="" width="320" height="320" decoding="async">
-          <div class="jk-offer__copy">
-            <span class="jk-offer__eyebrow">ORDERS ₹499+</span>
-            <h2 class="jk-offer__title">Free Kashmir delivery</h2>
-            <p class="jk-offer__description">Delivery is on us for qualifying Kashmir orders.</p>
-          </div>
-        </article>
-      </div>
-    </div>
   </section>
 
   <!-- 4. Featured Category Cards Row (Zapvi Style) -->
@@ -8030,61 +8032,6 @@
       <i class="fa-brands fa-whatsapp"></i>
     </div>
   </a>
-
-  <aside class="store-floating-offers" id="storeFloatingOffers" aria-label="Current store offers">
-    <div class="store-floating-offers__header">
-      <span class="store-floating-offers__label"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> Store offers</span>
-      <button class="store-floating-offers__dismiss" type="button" aria-label="Dismiss store offers" onclick="dismissStoreOffers(event)">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
-    <div class="store-floating-offers__item store-floating-offers__item--saving">
-      <span class="store-floating-offers__icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></span>
-      <span class="store-floating-offers__copy">
-        <strong>Save ₹100 on orders ₹1,499+</strong>
-        <span>Discount applied automatically</span>
-      </span>
-    </div>
-    <div class="store-floating-offers__item store-floating-offers__item--delivery">
-      <span class="store-floating-offers__icon"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></span>
-      <span class="store-floating-offers__copy">
-        <strong>Free Kashmir delivery at ₹499+</strong>
-        <span>Check eligibility with your PIN</span>
-      </span>
-    </div>
-  </aside>
-
-  <script>
-    function dismissStoreOffers(e) {
-      if (e) {
-        if (typeof e.preventDefault === 'function') e.preventDefault();
-        if (typeof e.stopPropagation === 'function') e.stopPropagation();
-      }
-      var el = document.getElementById('storeFloatingOffers');
-      if (el) {
-        el.classList.add('is-dismissed');
-        el.style.setProperty('display', 'none', 'important');
-        el.hidden = true;
-        try {
-          sessionStorage.setItem('store_offers_dismissed', 'true');
-        } catch(err) {}
-      }
-    }
-    window.dismissStoreOffers = dismissStoreOffers;
-
-    (function() {
-      try {
-        if (sessionStorage.getItem('store_offers_dismissed') === 'true') {
-          var el = document.getElementById('storeFloatingOffers');
-          if (el) {
-            el.classList.add('is-dismissed');
-            el.style.setProperty('display', 'none', 'important');
-            el.hidden = true;
-          }
-        }
-      } catch(err) {}
-    })();
-  </script>
 
 </body>
 </html>
