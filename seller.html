@@ -297,7 +297,10 @@
               <i class="fa-solid fa-box-open" style="font-size: 16px;"></i>
               <span><strong>Packaging Policy:</strong> Sealed Barcoded Packaging is standard for all student book deliveries across Kashmir.</span>
             </div>
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="notice-action-btn" style="padding: 4px 12px; font-size: 12px; background: #fffbeb; color: #92400e; border: 1.5px solid #fde68a; font-weight: 800;" onclick="openBoxCouponsModal('JK-WA-1001')">
+                <i class="fa-solid fa-gift"></i> Box Coupons (Tarzoo Sopore)
+              </button>
               <button type="button" class="notice-action-btn" style="padding: 4px 12px; font-size: 12px;" onclick="openBarcodeScannerModal()"><i class="fa-solid fa-camera"></i> Scan Barcode Packets</button>
             </div>
           </div>
@@ -1540,6 +1543,177 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODAL 0.5: PACKAGE BOX COUPONS (CUSTOMER + 10 FRIENDS PASS)
+       ========================================================= -->
+  <div class="seller-modal-backdrop" id="boxCouponsModal" style="display:none; align-items:center; justify-content:center; z-index:99999;">
+    <div class="seller-modal-card" style="max-width: 820px; width: 96%; max-height: 94vh; display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.35);">
+      
+      <!-- Modal Header -->
+      <div class="seller-modal-header" style="background: linear-gradient(135deg, #0b192c 0%, #064e3b 100%); color: white; padding: 14px 20px; border-bottom: 2px solid #d4af37;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #d4af37, #fef08a); color: #0b192c; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900;">
+            🎁
+          </div>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 8px;">
+              Package Box Customer &amp; Friends Coupons <span style="font-size: 11px; background: #d4af37; color: #0b192c; padding: 2px 8px; border-radius: 12px; font-weight: 800;">Tarzoo Sopore Exclusive</span>
+            </h3>
+            <p style="font-size: 12px; color: #cbd5e1; margin: 2px 0 0;" id="boxCouponsModalSubtitle">
+              Place these printed vouchers inside the book packaging box for Haris Bhat &bull; Order #JK-WA-1001
+            </p>
+          </div>
+        </div>
+        <button type="button" onclick="closeBoxCouponsModal()" style="background:none; border:none; font-size:26px; cursor:pointer; color:#cbd5e1; line-height: 1;">&times;</button>
+      </div>
+
+      <!-- Modal Body (Printable Sheet) -->
+      <div class="seller-modal-body" style="background: #f8fafc; padding: 20px; overflow-y: auto; display: flex; justify-content: center;">
+        <div id="boxCouponsPrintSheet" style="background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 760px; box-sizing: border-box;">
+          
+          <!-- Top Sheet Label -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; font-weight: 800; color: #0b192c; text-transform: uppercase; letter-spacing: 0.5px;">JK STUDY HUB &bull; OFFICIAL PACKAGING INSERTS</span>
+            </div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 4px;">
+              ✂ Cut along dotted lines &amp; drop inside parcel box
+            </span>
+          </div>
+
+          <!-- Cards Grid (2 Cards Side by Side) -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; align-items: stretch;">
+            
+            <!-- CARD 1: HARIS BHAT PERSONAL VOUCHER (₹50 OFF) -->
+            <div class="voucher-box-card" style="background: linear-gradient(145deg, #07111e 0%, #0e243f 100%); border: 2px solid #d4af37; border-radius: 12px; padding: 18px; color: #ffffff; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.25); display: flex; flex-direction: column; justify-content: space-between; min-height: 250px;">
+              
+              <!-- Card Top -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <div style="display: flex; align-items: center; gap: 7px;">
+                    <div style="width: 24px; height: 24px; border-radius: 5px; background: linear-gradient(135deg, #d4af37, #fef08a); color: #0b192c; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                      JK
+                    </div>
+                    <span style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.6px; color: #f8fafc;">JK STUDY HUB</span>
+                  </div>
+                  <span style="background: #d4af37; color: #0b192c; font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 12px; letter-spacing: 0.4px;">
+                    ⭐ 1ST CUSTOMER
+                  </span>
+                </div>
+
+                <div style="text-align: center; margin: 12px 0 10px;">
+                  <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; display: block;">Congratulations Haris Bhat!</span>
+                  <div style="font-size: 28px; font-weight: 900; color: #fef08a; text-shadow: 0 2px 8px rgba(212,175,55,0.4); line-height: 1.1; margin: 4px 0;">
+                    ₹50 FLAT OFF
+                  </div>
+                  <span style="font-size: 12px; font-weight: 800; color: #ffffff; letter-spacing: 0.3px;">ON YOUR NEXT ORDER</span>
+                </div>
+
+                <!-- Coupon Box -->
+                <div style="background: rgba(255,255,255,0.08); border: 1.5px dashed #d4af37; border-radius: 8px; padding: 8px 12px; margin: 10px 0; text-align: center;">
+                  <span style="font-size: 10px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 2px;">YOUR PERSONAL COUPON CODE</span>
+                  <span style="font-family: monospace; font-size: 20px; font-weight: 900; color: #fef08a; letter-spacing: 2px; user-select: all;" id="boxCard1Code">HARIS50</span>
+                </div>
+
+                <p style="font-size: 10.5px; color: #94a3b8; text-align: center; margin: 6px 0 0; line-height: 1.35;">
+                  Valid for 1-time personal order &bull; Applicable on all school books, registers &amp; study essentials.
+                </p>
+              </div>
+
+              <!-- Card Bottom -->
+              <div style="border-top: 1px solid rgba(212,175,55,0.3); padding-top: 8px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #cbd5e1;">
+                <div>
+                  <strong style="color: #ffffff; display: block;" id="boxCard1CustName">Haris Bhat &bull; Tarzoo Sopore</strong>
+                  <span style="color: #94a3b8; font-size: 9.5px;" id="boxCard1OrderRef">Order #JK-WA-1001</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-weight: 800; color: #fef08a; display: block;">Founder, JK Study Hub</span>
+                  <span style="font-size: 9.5px; color: #94a3b8;">jkstudyhub.online</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 2: 10 FRIENDS REFERRAL VOUCHER (₹40 OFF) -->
+            <div class="voucher-box-card" style="background: linear-gradient(145deg, #064e3b 0%, #065f46 100%); border: 2px solid #34d399; border-radius: 12px; padding: 18px; color: #ffffff; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.25); display: flex; flex-direction: column; justify-content: space-between; min-height: 250px;">
+              
+              <!-- Card Top -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <div style="display: flex; align-items: center; gap: 7px;">
+                    <div style="width: 24px; height: 24px; border-radius: 5px; background: linear-gradient(135deg, #34d399, #a7f3d0); color: #064e3b; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                      JK
+                    </div>
+                    <span style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.6px; color: #f8fafc;">JK STUDY HUB</span>
+                  </div>
+                  <span style="background: #34d399; color: #064e3b; font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 12px; letter-spacing: 0.4px;">
+                    🤝 10 FRIENDS PASS
+                  </span>
+                </div>
+
+                <div style="text-align: center; margin: 12px 0 10px;">
+                  <span style="font-size: 11px; font-weight: 700; color: #a7f3d0; text-transform: uppercase; letter-spacing: 0.5px; display: block;">Tarzoo Sopore Community Voucher</span>
+                  <div style="font-size: 28px; font-weight: 900; color: #ffffff; text-shadow: 0 2px 8px rgba(52,211,153,0.4); line-height: 1.1; margin: 4px 0;">
+                    ₹40 FLAT OFF
+                  </div>
+                  <span style="font-size: 12px; font-weight: 800; color: #a7f3d0; letter-spacing: 0.3px;">FOR YOUR 10 FRIENDS &amp; CLASSMATES</span>
+                </div>
+
+                <!-- Coupon Box -->
+                <div style="background: rgba(255,255,255,0.12); border: 1.5px dashed #34d399; border-radius: 8px; padding: 8px 12px; margin: 10px 0; text-align: center;">
+                  <span style="font-size: 10px; font-weight: 700; color: #d1fae5; display: block; margin-bottom: 2px;">GIVE THIS CODE TO YOUR 10 FRIENDS</span>
+                  <span style="font-family: monospace; font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: 2px; user-select: all;" id="boxCard2Code">HARISBHAT40</span>
+                </div>
+
+                <p style="font-size: 10.5px; color: #d1fae5; text-align: center; margin: 6px 0 0; line-height: 1.35;">
+                  Valid for 10 Friend Orders &bull; Restricted exclusively to Tarzoo Sopore (PIN: 193201).
+                </p>
+              </div>
+
+              <!-- Card Bottom -->
+              <div style="border-top: 1px solid rgba(52,211,153,0.3); padding-top: 8px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #d1fae5;">
+                <div>
+                  <strong style="color: #ffffff; display: block;">Classmates of Haris Bhat</strong>
+                  <span style="color: #a7f3d0; font-size: 9.5px;">Tarzoo Sopore &bull; PIN: 193201</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-weight: 800; color: #ffffff; display: block;">Founder, JK Study Hub</span>
+                  <span style="font-size: 9.5px; color: #a7f3d0;">WhatsApp 9622605714</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Cut Instructions -->
+          <div style="text-align: center; margin-top: 16px; padding-top: 12px; border-top: 1.5px dashed #cbd5e1; font-size: 11px; color: #64748b;">
+            💡 <strong>Packaging Tip:</strong> Print on normal paper or cardstock, cut along dotted lines, and drop both inside the bookset packaging box!
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal Footer Toolbar -->
+      <div style="padding: 14px 20px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <button type="button" class="btn-hub-secondary" onclick="closeBoxCouponsModal()">Close</button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <button type="button" class="btn-hub-primary" onclick="printBoxCoupons()" style="background: #0f172a; font-weight: 800; font-size: 12.5px;">
+            <i class="fa-solid fa-print"></i> Print Box Cards
+          </button>
+          <button type="button" class="btn-hub-secondary" onclick="downloadBoxCouponsImage(this)" style="font-weight: 700; color: #047857; border-color: #86efac; background: #f0fdf4;">
+            <i class="fa-solid fa-download"></i> Download PNG Image
+          </button>
+          <button type="button" class="btn-hub-secondary" onclick="copyBoxCouponsImage(this)" style="font-weight: 700; color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff;">
+            <i class="fa-solid fa-copy"></i> Copy Image
+          </button>
+          <button type="button" class="btn-hub-primary" onclick="shareBoxCouponsWhatsApp()" style="background: #16a34a; font-weight: 800; font-size: 12.5px;">
+            <i class="fa-brands fa-whatsapp"></i> Send on WhatsApp
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 

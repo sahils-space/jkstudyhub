@@ -4715,6 +4715,7 @@ let currentCheckoutCategory = 'standard';
 let isCartCheckoutSession = false;
 let activeRepeatDiscountAmount = 0;
 let activeRedeemedPrevOrderId = null;
+let activeRedeemedCouponCode = 'STUDENT20';
 
 function navigateToCheckoutPage(checkoutContext) {
   window._jkCheckoutPageStarted = false;
@@ -5241,24 +5242,95 @@ async function verifyAndApplyRepeatDiscount() {
   const couponInput = document.getElementById('repeatCouponCode');
   const msgEl = document.getElementById('repeatCouponMessage');
 
-  if (!orderIdInput || !couponInput || !msgEl) return;
+  if (!couponInput || !msgEl) return;
 
-  const rawOrderId = orderIdInput.value.trim().toUpperCase();
+  const rawOrderId = orderIdInput ? orderIdInput.value.trim().toUpperCase() : '';
   const rawCoupon = couponInput.value.trim().toUpperCase();
-
-  if (!rawOrderId) {
-    msgEl.style.display = 'block';
-    msgEl.style.color = '#dc2626';
-    msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your Previous Order ID.';
-    orderIdInput.focus();
-    return;
-  }
 
   if (!rawCoupon) {
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
-    msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your card Coupon Code.';
+    msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your Coupon Code.';
     couponInput.focus();
+    return;
+  }
+
+  // --- SPECIAL TARZOO SOPORE COMMUNITY REFERRAL PASS (10 FRIENDS) ---
+  if (rawCoupon === 'HARISBHAT40') {
+    const orderPin = (document.getElementById('orderPin')?.value || '').trim();
+    const orderAddress = (document.getElementById('orderAddress')?.value || '').toLowerCase();
+    const isSoporeArea = orderPin === '193201' || orderAddress.includes('tarzoo') || orderAddress.includes('sopore');
+
+    if (orderPin && orderPin.length === 6 && !isSoporeArea) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = '#dc2626';
+      msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Coupon <strong>HARISBHAT40</strong> is valid exclusively for students in <strong>Tarzoo Sopore (PIN: 193201)</strong>.';
+      return;
+    }
+
+    const usedCount = Number(localStorage.getItem('jk_coupon_HARISBHAT40_count') || 0);
+    if (usedCount >= 10) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = '#dc2626';
+      msgEl.innerHTML = '<i class="fa-solid fa-ban"></i> Coupon <strong>HARISBHAT40</strong> has reached its maximum limit of 10 friend orders.';
+      return;
+    }
+
+    activeRepeatDiscountAmount = Math.min(40, currentCheckoutPrice);
+    activeRedeemedCouponCode = 'HARISBHAT40';
+    activeRedeemedPrevOrderId = 'HARIS-FRIEND-' + (usedCount + 1);
+
+    if (couponInput) couponInput.disabled = true;
+    if (orderIdInput) orderIdInput.disabled = true;
+    const applyBtn = document.getElementById('btnApplyRepeatCoupon');
+    if (applyBtn) {
+      applyBtn.disabled = true;
+      applyBtn.innerHTML = '<i class="fa-solid fa-check"></i> ₹40 Applied';
+    }
+
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#16a34a';
+    msgEl.innerHTML = `🎉 <strong>₹40 Tarzoo Sopore Referral Applied!</strong> (${10 - usedCount} uses left). Saved ₹${activeRepeatDiscountAmount}. <button type="button" onclick="removeRepeatDiscount()" style="background:none; border:none; color:#dc2626; text-decoration:underline; cursor:pointer; font-size:11px; margin-left:6px;">Remove</button>`;
+
+    updateCheckoutInvoiceTotals();
+    return;
+  }
+
+  // --- HARIS BHAT PERSONAL 1ST CUSTOMER PRIVILEGE PASS (₹50 OFF) ---
+  if (rawCoupon === 'HARIS50' || rawCoupon === 'HARISBHAT50') {
+    if (localStorage.getItem('jk_haris50_redeemed') === 'true') {
+      msgEl.style.display = 'block';
+      msgEl.style.color = '#dc2626';
+      msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Personal coupon <strong>${rawCoupon}</strong> has already been redeemed for its one-time ₹50 discount.`;
+      return;
+    }
+
+    activeRepeatDiscountAmount = Math.min(50, currentCheckoutPrice);
+    activeRedeemedCouponCode = 'HARIS50';
+    activeRedeemedPrevOrderId = rawOrderId || 'JK-WA-1001';
+
+    if (couponInput) couponInput.disabled = true;
+    if (orderIdInput) orderIdInput.disabled = true;
+    const applyBtn = document.getElementById('btnApplyRepeatCoupon');
+    if (applyBtn) {
+      applyBtn.disabled = true;
+      applyBtn.innerHTML = '<i class="fa-solid fa-check"></i> ₹50 Applied';
+    }
+
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#16a34a';
+    msgEl.innerHTML = `🎉 <strong>₹50 First Customer Privilege Applied!</strong> Saved ₹${activeRepeatDiscountAmount} on your order. <button type="button" onclick="removeRepeatDiscount()" style="background:none; border:none; color:#dc2626; text-decoration:underline; cursor:pointer; font-size:11px; margin-left:6px;">Remove</button>`;
+
+    updateCheckoutInvoiceTotals();
+    return;
+  }
+
+  // --- REPEAT CUSTOMER VOUCHER (STUDENT20) ---
+  if (!rawOrderId) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#dc2626';
+    msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your Previous Order ID.';
+    if (orderIdInput) orderIdInput.focus();
     return;
   }
 
@@ -5266,7 +5338,7 @@ async function verifyAndApplyRepeatDiscount() {
   if (rawCoupon !== 'STUDENT20' && rawCoupon !== 'JKSTUDENT20') {
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
-    msgEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Coupon Code. Enter <strong>STUDENT20</strong> from your Thank You card.';
+    msgEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Coupon Code. Enter <strong>HARISBHAT40</strong>, <strong>HARIS50</strong>, or <strong>STUDENT20</strong>.';
     return;
   }
 
@@ -6117,17 +6189,25 @@ function processOrder(txnId, customStatus) {
     }
   } catch(e) {}
 
-  if (activeRepeatDiscountAmount > 0 && activeRedeemedPrevOrderId) {
+  if (activeRepeatDiscountAmount > 0) {
     orderRecord.discount = activeRepeatDiscountAmount;
-    orderRecord.repeatCoupon = 'STUDENT20';
-    orderRecord.redeemedPrevOrderId = activeRedeemedPrevOrderId;
-    try {
-      let redeemedList = JSON.parse(localStorage.getItem('jk_redeemed_repeat_coupons') || '[]');
-      if (!redeemedList.includes(activeRedeemedPrevOrderId)) {
-        redeemedList.push(activeRedeemedPrevOrderId);
-        localStorage.setItem('jk_redeemed_repeat_coupons', JSON.stringify(redeemedList));
-      }
-    } catch(e) {}
+    orderRecord.repeatCoupon = activeRedeemedCouponCode || 'STUDENT20';
+    orderRecord.redeemedPrevOrderId = activeRedeemedPrevOrderId || 'N/A';
+
+    if (activeRedeemedCouponCode === 'HARISBHAT40') {
+      const c = Number(localStorage.getItem('jk_coupon_HARISBHAT40_count') || 0);
+      localStorage.setItem('jk_coupon_HARISBHAT40_count', String(c + 1));
+    } else if (activeRedeemedCouponCode === 'HARIS50' || activeRedeemedCouponCode === 'HARISBHAT50') {
+      localStorage.setItem('jk_haris50_redeemed', 'true');
+    } else if (activeRedeemedPrevOrderId) {
+      try {
+        let redeemedList = JSON.parse(localStorage.getItem('jk_redeemed_repeat_coupons') || '[]');
+        if (!redeemedList.includes(activeRedeemedPrevOrderId)) {
+          redeemedList.push(activeRedeemedPrevOrderId);
+          localStorage.setItem('jk_redeemed_repeat_coupons', JSON.stringify(redeemedList));
+        }
+      } catch(e) {}
+    }
   }
 
   let orders = getOrders();
@@ -6153,9 +6233,9 @@ function processOrder(txnId, customStatus) {
   formData.append('delivery_otp', deliveryOtp);
   formData.append('amount', totalPaid);
   formData.append('status', orderStatus);
-  if (activeRepeatDiscountAmount > 0 && activeRedeemedPrevOrderId) {
+  if (activeRepeatDiscountAmount > 0) {
     formData.append('discount', '₹' + activeRepeatDiscountAmount);
-    formData.append('repeat_coupon', `STUDENT20 (Prev: #${activeRedeemedPrevOrderId})`);
+    formData.append('repeat_coupon', `${activeRedeemedCouponCode || 'PROMO'} (${activeRedeemedPrevOrderId || 'N/A'})`);
   }
 
   // Reset coupon state after successful submission

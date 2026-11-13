@@ -960,6 +960,9 @@ function renderSellerOrdersTable() {
             <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px; color: #1e40af; border-color: #bfdbfe; background: #eff6ff;" onclick="quickCopyOrderLabelImage('${safeOrderId}', this, event)" title="Copy Shipping Label as Image directly to clipboard">
               <i class="fa-solid fa-copy"></i> Copy Image
             </button>
+            <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px; color: #b45309; border-color: #fde68a; background: #fffbeb; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openBoxCouponsModal('${safeOrderId}')" title="Print & Download Packaging Box Coupons for this customer">
+              <i class="fa-solid fa-gift"></i> Box Coupons
+            </button>
             ${!statusLower.includes('cancel') ? `
               <button type="button" class="btn-hub-secondary" style="padding: 5px 8px; font-size: 11.5px; color: #dc2626; border-color: #fecaca; background: #fef2f2;" onclick="if(confirm('Are you sure you want to cancel order ${safeOrderId}?')) updateOrderStatusFromSeller('${safeOrderId}', 'Cancelled');" title="Cancel this Order">
                 <i class="fa-solid fa-xmark"></i> Cancel
@@ -2054,6 +2057,226 @@ async function downloadSellerShippingImage(targetType = 'label', buttonEl) {
         buttonEl.disabled = false;
       }, 2200);
     }
+  }
+}
+
+// =========================================================
+// 6.6. PACKAGE BOX DISCOUNT COUPONS & VOUCHERS ENGINE
+// =========================================================
+
+let activeBoxCouponOrderId = 'JK-WA-1001';
+
+function openBoxCouponsModal(orderId) {
+  const modal = document.getElementById('boxCouponsModal');
+  if (!modal) return;
+
+  activeBoxCouponOrderId = orderId || 'JK-WA-1001';
+  const orders = getSellerOrders();
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(activeBoxCouponOrderId).trim().toUpperCase()) || {
+    orderId: 'JK-WA-1001',
+    name: 'Haris Bhat',
+    phone: '9622605714',
+    address: 'Tarzoo, Sopore, Baramulla - PIN: 193201',
+    product: 'Class 10th JKBOSE Complete Book Set',
+    amount: 799
+  };
+
+  const name = o.name || 'Haris Bhat';
+  const cleanId = o.orderId || 'JK-WA-1001';
+
+  // Update dynamic fields
+  const subEl = document.getElementById('boxCouponsModalSubtitle');
+  if (subEl) {
+    subEl.innerHTML = `Place these printed vouchers inside the book packaging box for <strong>${name}</strong> &bull; Order #${cleanId}`;
+  }
+  const nameEl = document.getElementById('boxCard1CustName');
+  if (nameEl) nameEl.innerHTML = `${name} &bull; Tarzoo Sopore`;
+  const refEl = document.getElementById('boxCard1OrderRef');
+  if (refEl) refEl.innerText = `Order #${cleanId}`;
+
+  modal.style.display = 'flex';
+}
+
+function closeBoxCouponsModal() {
+  const modal = document.getElementById('boxCouponsModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function printBoxCoupons() {
+  const printSheet = document.getElementById('boxCouponsPrintSheet');
+  if (!printSheet) return;
+
+  const contentHtml = `
+    <div style="max-width: 760px; margin: 20px auto;">
+      ${printSheet.outerHTML}
+    </div>
+  `;
+
+  const printWindow = window.open('', '_blank', 'width=950,height=900');
+  if (!printWindow) {
+    window.print();
+    return;
+  }
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Packaging Box Coupons - ${activeBoxCouponOrderId}</title>
+      <meta charset="utf-8">
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
+      <style>
+        body { margin: 0; padding: 15px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .voucher-box-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; page-break-inside: avoid; }
+        @media print {
+          @page { size: A4 landscape; margin: 10mm; }
+          body { padding: 0; }
+        }
+      </style>
+    </head>
+    <body>
+      ${contentHtml}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+  }, 450);
+}
+
+async function downloadBoxCouponsImage(buttonEl) {
+  const origHtml = buttonEl ? buttonEl.innerHTML : null;
+  if (buttonEl) {
+    buttonEl.disabled = true;
+    buttonEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating PNG...';
+  }
+
+  try {
+    await ensureHtml2CanvasLoaded();
+    const sheetEl = document.getElementById('boxCouponsPrintSheet');
+    if (!sheetEl) throw new Error('Box coupons container not found');
+
+    const canvas = await window.html2canvas(sheetEl, {
+      scale: 2.5,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff'
+    });
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+    if (!blob) throw new Error('Could not create image blob');
+
+    const link = document.createElement('a');
+    link.download = `JK_Study_Hub_Box_Coupons_HarisBhat_${activeBoxCouponOrderId}.png`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 5000);
+
+    showSellerToast('📥 Package Box Coupons downloaded as high-res PNG!');
+    if (buttonEl) buttonEl.innerHTML = '<i class="fa-solid fa-check"></i> Downloaded!';
+  } catch(err) {
+    console.error('Error saving coupons image:', err);
+    showSellerToast('Failed to download image: ' + err.message, 'error');
+    if (buttonEl) buttonEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Error';
+  } finally {
+    if (buttonEl && origHtml) {
+      setTimeout(() => {
+        buttonEl.innerHTML = origHtml;
+        buttonEl.disabled = false;
+      }, 2200);
+    }
+  }
+}
+
+async function copyBoxCouponsImage(buttonEl) {
+  const origHtml = buttonEl ? buttonEl.innerHTML : null;
+  if (buttonEl) {
+    buttonEl.disabled = true;
+    buttonEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Copying...';
+  }
+
+  try {
+    await ensureHtml2CanvasLoaded();
+    const sheetEl = document.getElementById('boxCouponsPrintSheet');
+    if (!sheetEl) throw new Error('Box coupons container not found');
+
+    const canvas = await window.html2canvas(sheetEl, {
+      scale: 2.5,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff'
+    });
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+    if (!blob) throw new Error('Could not create image blob');
+
+    if (navigator.clipboard && navigator.clipboard.write) {
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]);
+      showSellerToast('📋 Coupon Vouchers copied to clipboard as image!');
+      if (buttonEl) buttonEl.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+    } else {
+      downloadBoxCouponsImage(buttonEl);
+    }
+  } catch(err) {
+    console.error('Error copying coupons image:', err);
+    showSellerToast('Clipboard not supported, downloading instead...', 'error');
+    downloadBoxCouponsImage(buttonEl);
+  } finally {
+    if (buttonEl && origHtml) {
+      setTimeout(() => {
+        buttonEl.innerHTML = origHtml;
+        buttonEl.disabled = false;
+      }, 2200);
+    }
+  }
+}
+
+function shareBoxCouponsWhatsApp() {
+  const orders = getSellerOrders();
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(activeBoxCouponOrderId).trim().toUpperCase()) || {
+    phone: '9622605714'
+  };
+
+  const text = `Congratulations🎉\nYou Have Got 50 rs Off on the next Order...\nYou are the first customer from Tarzoo Sopore!\n\nWe have made the Coupon Code of Your Name:- HARISBHAT40\nYou can tell your Friends They can order anything and will Get 40₹ Discount. This is for Your 10 Friends in Tarzoo Sopore (PIN: 193201)!\n\nBOTH THE coupons will be delivered to you in the Box of the books📦.\n\nThanks for choosing JK Study Hub!\nFOUNDER, JK STUDY HUB\nhttps://jkstudyhub.online`;
+
+  const phone = String(o.phone || '9622605714').replace(/\D/g, '').slice(-10);
+  const url = `https://wa.me/91${phone}?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+function seedHarisBhatDeliveredOrder() {
+  try {
+    let orders = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+    const exists = orders.some(o => 
+      String(o.orderId || '').toUpperCase() === 'JK-WA-1001' || 
+      String(o.name || '').toLowerCase().includes('haris bhat')
+    );
+    if (!exists) {
+      const harisOrder = {
+        orderId: 'JK-WA-1001',
+        name: 'Haris Bhat',
+        phone: '9622605714',
+        address: 'Tarzoo, Sopore, Baramulla - PIN: 193201',
+        product: 'Class 10th JKBOSE Complete Book Set (5 Books)',
+        amount: 799,
+        paymentMethod: 'cod',
+        status: 'Delivered',
+        date: new Date().toLocaleDateString('en-IN'),
+        timestamp: Date.now() - 3600000,
+        source: 'WhatsApp Organic Order',
+        isManualWhatsApp: true,
+        qty: 1,
+        couponsIssued: ['HARIS50', 'HARISBHAT40'],
+        notes: 'First customer from Tarzoo Sopore! Hand-delivered. 2 Box Coupons issued: HARIS50 (₹50 off personal) & HARISBHAT40 (₹40 off for 10 friends).'
+      };
+      orders.unshift(harisOrder);
+      localStorage.setItem('jk_orders', JSON.stringify(orders));
+    }
+  } catch(e) {
+    console.warn("Haris Bhat seed notice:", e);
   }
 }
 
@@ -3848,6 +4071,7 @@ function initSellerRealtimeCatalog() {
 }
 
 function initSellerSupplierPanel() {
+  if (typeof seedHarisBhatDeliveredOrder === 'function') seedHarisBhatDeliveredOrder();
   renderSellerOrdersTable();
   calculateBusinessMetrics();
   calculatePaymentsSummary();
