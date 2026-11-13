@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JK Study Hub — Exam Center Hand Flyers (2 per A4 Sheet)</title>
+  <link rel="icon" href="images/logo-app.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --brand-navy: #07111e;
+      --brand-blue: #1e40af;
+      --brand-gold: #f59e0b;
+      --brand-emerald: #047857;
+      --brand-bg: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: #0b1120;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    /* Screen Toolbar */
+    .screen-header {
+      max-width: 900px;
+      margin: 0 auto 20px auto;
+      background: #ffffff;
+      padding: 16px 22px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    .screen-header h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1.5px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .btn-primary:hover { background: #1e293b; }
+
+    .btn-emerald {
+      background: #047857;
+      color: #ffffff;
+    }
+    .btn-emerald:hover { background: #065f46; }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    /* A4 Sheet Container */
+    .a4-print-sheet {
+      width: 210mm;
+      min-height: 297mm;
+      max-width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 10mm 10mm;
+      box-sizing: border-box;
+      border-radius: 6px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Single Flyer Card (Fits 2 per A4 Page) */
+    .flyer-card {
+      width: 100%;
+      height: 132mm;
+      border: 2.5px solid #0f172a;
+      border-radius: 12px;
+      padding: 12px 16px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Xerox/Mono Mode */
+    body.mono-mode .flyer-card {
+      border: 3px solid #000000;
+      filter: grayscale(100%) contrast(125%);
+    }
+
+    /* Top Strip */
+    .flyer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 7px;
+    }
+
+    .flyer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flyer-brand-icon {
+      width: 32px;
+      height: 32px;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .flyer-brand-title {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+
+    .flyer-brand-sub {
+      font-size: 9px;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.2px;
+    }
+
+    .flyer-exam-tag {
+      background: #fef08a;
+      border: 1.5px solid #ca8a04;
+      color: #854d0e;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 4px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* Main Hook Headline */
+    .flyer-hook {
+      text-align: center;
+      margin: 6px 0 4px;
+    }
+
+    .flyer-hook-eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      color: #dc2626;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .flyer-hook-headline {
+      font-size: 21px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.15;
+    }
+
+    .flyer-hook-headline span {
+      background: #fef08a;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+
+    /* 4-Box Feature Matrix */
+    .flyer-matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin: 6px 0;
+    }
+
+    .matrix-box {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .matrix-icon {
+      font-size: 18px;
+      min-width: 24px;
+      text-align: center;
+      color: #1e40af;
+    }
+
+    .matrix-text strong {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1.15;
+    }
+
+    .matrix-text span {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #64748b;
+      line-height: 1.2;
+      display: block;
+    }
+
+    /* Highlight Offer Banner */
+    .flyer-promo-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 7px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 4px 0 6px;
+    }
+
+    .flyer-promo-copy strong {
+      font-size: 12px;
+      font-weight: 900;
+      color: #fef08a;
+      display: block;
+    }
+
+    .flyer-promo-copy span {
+      font-size: 10px;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .flyer-promo-code {
+      background: #ffffff;
+      color: #0f172a;
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 1px;
+      border: 1.5px dashed #0f172a;
+      white-space: nowrap;
+    }
+
+    /* Bottom Contact Strip */
+    .flyer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px solid #0f172a;
+      padding-top: 7px;
+      gap: 10px;
+    }
+
+    .flyer-qr-block {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flyer-qr-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      border: 1.5px solid #0f172a;
+      background: #fff;
+      padding: 2px;
+    }
+
+    .flyer-qr-info strong {
+      font-size: 11px;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+    }
+
+    .flyer-qr-info span {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #475569;
+      display: block;
+    }
+
+    .flyer-wa-btn {
+      background: #16a34a;
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .flyer-hub-tagline {
+      font-size: 9px;
+      color: #64748b;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    /* Scissor Cut Line */
+    .scissor-cut-line {
+      width: 100%;
+      height: 12mm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .scissor-cut-line::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 2px dashed #94a3b8;
+    }
+
+    .scissor-cut-badge {
+      background: #ffffff;
+      padding: 2px 14px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #64748b;
+      position: relative;
+      z-index: 2;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Print Styles */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 6mm 6mm;
+      }
+      body {
+        padding: 0 !important;
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .a4-print-sheet {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        min-height: auto !important;
+      }
+      .flyer-card {
+        page-break-inside: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Header Toolbar (Hidden when printing) -->
+  <div class="screen-header no-print">
+    <div>
+      <h1><i class="fa-solid fa-bullhorn" style="color:#f59e0b;"></i> Exam Center Hand Flyers (2 / A4 Sheet)</h1>
+      <p style="font-size: 12px; color: #64748b; margin-top: 2px;">
+        Designed for hand distribution outside 11th &amp; 12th Board Exam Centers &bull; 1 A4 Sheet = 2 Handouts (✂ Cut in half)
+      </p>
+    </div>
+    <div class="btn-group">
+      <button type="button" class="btn-action btn-primary" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> Print A4 Sheet
+      </button>
+      <button type="button" class="btn-action btn-emerald" onclick="downloadFlyersPng(this)">
+        <i class="fa-solid fa-download"></i> Save as PNG Image
+      </button>
+      <button type="button" class="btn-action btn-secondary" onclick="toggleMonoMode(this)">
+        <i class="fa-solid fa-circle-half-stroke"></i> B&amp;W Xerox Mode
+      </button>
+      <a href="seller.html" class="btn-action btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Back to Seller Hub
+      </a>
+    </div>
+  </div>
+
+  <!-- A4 Printable Sheet (2 Flyers) -->
+  <div class="a4-print-sheet" id="flyersA4Container">
+
+    <!-- ==================== TOP FLYER (FOR 11TH & 12TH STUDENTS) ==================== -->
+    <div class="flyer-card">
+      <!-- Header -->
+      <div class="flyer-header">
+        <div class="flyer-brand">
+          <div class="flyer-brand-icon">JK</div>
+          <div>
+            <div class="flyer-brand-title">JK STUDY HUB</div>
+            <div class="flyer-brand-sub">Kashmir's Verified Student &amp; Book Store &bull; Baramulla Hub</div>
+          </div>
+        </div>
+        <div class="flyer-exam-tag">
+          🎓 CLASS 11th &bull; 12th SPECIAL
+        </div>
+      </div>
+
+      <!-- Main Hook -->
+      <div class="flyer-hook">
+        <span class="flyer-hook-eyebrow">Board Exams Done? Welcome to Your New Session!</span>
+        <div class="flyer-hook-headline">
+          Get Next Class Books at <span>Less Than Bookshop Rates!</span>
+        </div>
+      </div>
+
+      <!-- 4 Matrix Points -->
+      <div class="flyer-matrix">
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-book-bookmark"></i></div>
+          <div class="matrix-text">
+            <strong>Class 12th Full Sets</strong>
+            <span>Medical, Non-Med, Arts &amp; Comm.</span>
+          </div>
+        </div>
+
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-crosshairs"></i></div>
+          <div class="matrix-text">
+            <strong>NEET &bull; JEE &bull; CUET 2026</strong>
+            <span>Solved PYQs, Modules &amp; NCERTs</span>
+          </div>
+        </div>
+
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="matrix-text">
+            <strong>100% Free Doorstep Delivery</strong>
+            <span>Baramulla, Sopore, Srinagar &amp; All Districts</span>
+          </div>
+        </div>
+
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+          <div class="matrix-text">
+            <strong>Cash on Delivery (COD)</strong>
+            <span>Inspect books at home before paying</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promo Code Banner -->
+      <div class="flyer-promo-banner">
+        <div class="flyer-promo-copy">
+          <strong>🎁 SPECIAL EXAM FINISH GIFT: FLAT ₹50 OFF</strong>
+          <span>Send "EXAM" on WhatsApp &bull; Get free PDF Solved Papers + Coupon</span>
+        </div>
+        <div class="flyer-promo-code">CODE: EXAM50</div>
+      </div>
+
+      <!-- Footer Contact Strip -->
+      <div class="flyer-footer">
+        <div class="flyer-qr-block">
+          <img class="flyer-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fwa.me%2F919622605714%3Ftext%3DHi%20JK%20Study%20Hub%2C%20I%20just%20finished%20my%20Board%20Exams!%20Please%20send%20me%20the%20books%20catalog%20and%20₹50%20discount." alt="Scan QR">
+          <div class="flyer-qr-info">
+            <strong>Scan QR &bull; Order on WhatsApp</strong>
+            <span>Save: <strong>9622605714</strong></span>
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <a href="https://wa.me/919622605714" class="flyer-wa-btn">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp 9622605714
+          </a>
+          <div class="flyer-hub-tagline" style="margin-top: 3px;">
+            Visit Store: <strong>jkstudyhub.online</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCISSOR CUTTING LINE ==================== -->
+    <div class="scissor-cut-line">
+      <div class="scissor-cut-badge">
+        <i class="fa-solid fa-scissors"></i> ✂ CUT HERE TO SEPARATE INTO 2 HAND FLYERS
+      </div>
+    </div>
+
+    <!-- ==================== BOTTOM FLYER (DUPLICATE FOR DISTRIBUTION) ==================== -->
+    <div class="flyer-card">
+      <!-- Header -->
+      <div class="flyer-header">
+        <div class="flyer-brand">
+          <div class="flyer-brand-icon">JK</div>
+          <div>
+            <div class="flyer-brand-title">JK STUDY HUB</div>
+            <div class="flyer-brand-sub">Kashmir's Verified Student &amp; Book Store &bull; Baramulla Hub</div>
+          </div>
+        </div>
+        <div class="flyer-exam-tag">
+          🎓 CLASS 11th &bull; 12th SPECIAL
+        </div>
+      </div>
+
+      <!-- Main Hook -->
+      <div class="flyer-hook">
+        <span class="flyer-hook-eyebrow">Board Exams Done? Welcome to Your New Session!</span>
+        <div class="flyer-hook-headline">
+          Get Next Class Books at <span>Less Than Bookshop Rates!</span>
+        </div>
+      </div>
+
+      <!-- 4 Matrix Points -->
+      <div class="flyer-matrix">
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-book-bookmark"></i></div>
+          <div class="matrix-text">
+            <strong>Class 12th Full Sets</strong>
+            <span>Medical, Non-Med, Arts &amp; Comm.</span>
+          </div>
+        </div>
+
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-crosshairs"></i></div>
+          <div class="matrix-text">
+            <strong>NEET &bull; JEE &bull; CUET 2026</strong>
+            <span>Solved PYQs, Modules &amp; NCERTs</span>
+          </div>
+        </div>
+
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="matrix-text">
+            <strong>100% Free Doorstep Delivery</strong>
+            <span>Baramulla, Sopore, Srinagar &amp; All Districts</span>
+          </div>
+        </div>
+
+        <div class="matrix-box">
+          <div class="matrix-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+          <div class="matrix-text">
+            <strong>Cash on Delivery (COD)</strong>
+            <span>Inspect books at home before paying</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promo Code Banner -->
+      <div class="flyer-promo-banner">
+        <div class="flyer-promo-copy">
+          <strong>🎁 SPECIAL EXAM FINISH GIFT: FLAT ₹50 OFF</strong>
+          <span>Send "EXAM" on WhatsApp &bull; Get free PDF Solved Papers + Coupon</span>
+        </div>
+        <div class="flyer-promo-code">CODE: EXAM50</div>
+      </div>
+
+      <!-- Footer Contact Strip -->
+      <div class="flyer-footer">
+        <div class="flyer-qr-block">
+          <img class="flyer-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fwa.me%2F919622605714%3Ftext%3DHi%20JK%20Study%20Hub%2C%20I%20just%20finished%20my%20Board%20Exams!%20Please%20send%20me%20the%20books%20catalog%20and%20₹50%20discount." alt="Scan QR">
+          <div class="flyer-qr-info">
+            <strong>Scan QR &bull; Order on WhatsApp</strong>
+            <span>Save: <strong>9622605714</strong></span>
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <a href="https://wa.me/919622605714" class="flyer-wa-btn">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp 9622605714
+          </a>
+          <div class="flyer-hub-tagline" style="margin-top: 3px;">
+            Visit Store: <strong>jkstudyhub.online</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleMonoMode(btn) {
+      document.body.classList.toggle('mono-mode');
+      const isMono = document.body.classList.contains('mono-mode');
+      btn.innerHTML = isMono 
+        ? '<i class="fa-solid fa-palette"></i> Full Color Mode' 
+        : '<i class="fa-solid fa-circle-half-stroke"></i> B&W Xerox Mode';
+    }
+
+    async function downloadFlyersPng(btn) {
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Rendering PNG...';
+
+      try {
+        const sheetEl = document.getElementById('flyersA4Container');
+        const canvas = await window.html2canvas(sheetEl, {
+          scale: 2.5,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff'
+        });
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+        const link = document.createElement('a');
+        link.download = 'JK_Study_Hub_Exam_Center_Flyers_2Up_A4.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 5000);
+
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Downloaded!';
+      } catch (err) {
+        alert('Could not download image: ' + err.message);
+        btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Error';
+      } finally {
+        setTimeout(() => {
+          btn.innerHTML = origHtml;
+          btn.disabled = false;
+        }, 2200);
+      }
+    }
+  </script>
+</body>
+</html>
