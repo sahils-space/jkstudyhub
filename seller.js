@@ -485,6 +485,8 @@ function getSellerOrders() {
         if (!o || !o.orderId) return false;
         const up = String(o.orderId || '').trim().toUpperCase();
         if (purgedIds.includes(up)) return false;
+        // Always protect organic / manual WhatsApp orders from timestamp purge
+        if (o.isManualWhatsApp || o.source === 'WhatsApp Organic Order') return true;
         const epoch = getOrderEpoch(o);
         if (resetTs > 0) {
           if (epoch > 0 && epoch <= resetTs) return false;
@@ -643,10 +645,20 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           console.warn("Seller catalog remote sync:", e);
         }
 
-        // The remote Google Sheet is the master source of truth:
-        // Any order that was deleted from Google Sheets must be removed from local storage!
+        // Preserve local and manual WhatsApp orders:
+        // Remote Google Sheets is a source of truth for remote orders, but local orders
+        // (like manual WhatsApp sales or new customer checkouts) must NEVER be discarded!
         const validRemoteIds = new Set(validRemoteOrders.map(r => String(r.orderId).trim().toUpperCase()));
-        localOrders = localOrders.filter(l => validRemoteIds.has(String(l.orderId).trim().toUpperCase()));
+        localOrders = localOrders.filter(l => {
+          if (!l || !l.orderId) return false;
+          const up = String(l.orderId).trim().toUpperCase();
+          if (purgedIds.includes(up)) return false;
+          // Always keep WhatsApp and organic orders
+          if (l.isManualWhatsApp || l.source === 'WhatsApp Organic Order') return true;
+          // If came from remote, verify it still exists on remote
+          if (l.fromRemote) return validRemoteIds.has(up);
+          return true;
+        });
 
         validRemoteOrders.forEach(remote => {
           const remoteUpperId = String(remote.orderId).trim().toUpperCase();
@@ -654,6 +666,7 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           if (isRemoteCod) {
             remote.paymentMethod = 'cod';
           }
+          remote.fromRemote = true;
 
           const ov = overrides[remoteUpperId];
           const idx = localOrders.findIndex(l => String(l.orderId).trim().toUpperCase() === remoteUpperId);
@@ -785,9 +798,11 @@ function renderSellerOrdersTable() {
   const paymentFilter = document.getElementById('filterPayment') ? document.getElementById('filterPayment').value : 'all';
 
   // Counts for tabs
+  let allCount = orders.length;
   let pendingCount = 0;
   let readyCount = 0;
   let shippedCount = 0;
+  let deliveredCount = 0;
   let cancelledCount = 0;
   let onHoldCount = 0;
 
@@ -795,19 +810,24 @@ function renderSellerOrdersTable() {
     const s = String(o.status || 'Confirmed').toLowerCase();
     if (s.includes('cancel')) cancelledCount++;
     else if (s.includes('hold')) onHoldCount++;
+    else if (s.includes('deliver') || s.includes('complete')) deliveredCount++;
     else if (s.includes('ready') || s.includes('dispatch') || s.includes('packed')) readyCount++;
-    else if (s.includes('ship') || s.includes('way') || s.includes('out') || s.includes('deliver')) shippedCount++;
+    else if (s.includes('ship') || s.includes('way') || s.includes('out')) shippedCount++;
     else pendingCount++;
   });
 
+  const elAll = document.getElementById('countTabAll');
   const elPending = document.getElementById('countTabPending');
   const elReady = document.getElementById('countTabReady');
   const elShipped = document.getElementById('countTabShipped');
+  const elDelivered = document.getElementById('countTabDelivered');
   const elCancelled = document.getElementById('countTabCancelled');
   const elOnHold = document.getElementById('countTabOnHold');
+  if (elAll) elAll.innerText = allCount;
   if (elPending) elPending.innerText = pendingCount;
   if (elReady) elReady.innerText = readyCount;
   if (elShipped) elShipped.innerText = shippedCount;
+  if (elDelivered) elDelivered.innerText = deliveredCount;
   if (elCancelled) elCancelled.innerText = cancelledCount;
   if (elOnHold) elOnHold.innerText = onHoldCount;
 
@@ -816,12 +836,16 @@ function renderSellerOrdersTable() {
     const s = String(o.status || 'Confirmed').toLowerCase();
     let tabMatch = false;
 
-    if (currentFulfillmentTab === 'pending') {
-      tabMatch = (s.includes('confirm') || s.includes('process') || s.includes('pending') || !o.status);
+    if (currentFulfillmentTab === 'all') {
+      tabMatch = true;
+    } else if (currentFulfillmentTab === 'pending') {
+      tabMatch = (s.includes('confirm') || s.includes('process') || s.includes('pending') || !o.status) && !s.includes('deliver') && !s.includes('ship') && !s.includes('ready') && !s.includes('cancel') && !s.includes('hold');
     } else if (currentFulfillmentTab === 'ready_to_ship') {
       tabMatch = (s.includes('ready') || s.includes('dispatch') || s.includes('packed'));
     } else if (currentFulfillmentTab === 'shipped') {
-      tabMatch = (s.includes('ship') || s.includes('way') || s.includes('out') || s.includes('deliver'));
+      tabMatch = (s.includes('ship') || s.includes('way') || s.includes('out')) && !s.includes('deliver');
+    } else if (currentFulfillmentTab === 'delivered') {
+      tabMatch = (s.includes('deliver') || s.includes('complete'));
     } else if (currentFulfillmentTab === 'cancelled') {
       tabMatch = s.includes('cancel');
     } else if (currentFulfillmentTab === 'on_hold') {
@@ -971,10 +995,10 @@ function renderSellerOrdersTable() {
 function updateOrderStatusFromSeller(orderId, newStatus) {
   if (!newStatus || !orderId) return;
 
-  // If marked delivered, ask for buyer OTP verification
+  // If marked delivered, ask for buyer OTP verification (optional for direct seller handovers)
   if (newStatus === 'Delivered') {
-    const otp = prompt("🔐 Enter Customer's 4-Digit Handover OTP:");
-    if (!otp) return;
+    const otp = prompt("🔐 Enter Customer's 4-Digit Handover OTP (or leave empty if direct seller handover):");
+    // Allows direct owner delivery without getting cancelled
   }
 
   // 1. Record persistent override so refresh can never revert this status!
@@ -1467,6 +1491,19 @@ function saveManualWhatsAppOrder(e) {
   orders.unshift(newOrder);
   localStorage.setItem('jk_orders', JSON.stringify(orders));
 
+  // Also set status override so it can never be altered by background sync
+  if (typeof setSellerStatusOverride === 'function') {
+    setSellerStatusOverride(orderId, status);
+  }
+
+  // Backup to Firebase Firestore if online
+  try {
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+      firebase.firestore().collection('orders').doc(orderId).set(newOrder, { merge: true })
+        .catch(err => console.warn("Firestore order sync:", err));
+    }
+  } catch(e) {}
+
   // Sync to Google Sheets in background
   try {
     const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : '';
@@ -1493,7 +1530,25 @@ function saveManualWhatsAppOrder(e) {
   } catch(err) {}
 
   closeManualWhatsAppOrderModal();
-  renderSellerOrdersTable();
+
+  // Auto-switch to Delivered tab or All Orders tab so the user sees their order right away!
+  const statusLower = status.toLowerCase();
+  if (statusLower.includes('deliver')) {
+    const deliveredBtn = document.querySelector('.hub-tab-btn[data-status="delivered"]');
+    if (deliveredBtn) {
+      setFulfillmentTab('delivered', deliveredBtn);
+    } else {
+      renderSellerOrdersTable();
+    }
+  } else {
+    const allBtn = document.querySelector('.hub-tab-btn[data-status="all"]');
+    if (allBtn) {
+      setFulfillmentTab('all', allBtn);
+    } else {
+      renderSellerOrdersTable();
+    }
+  }
+
   calculateBusinessMetrics();
   calculatePaymentsSummary();
 
