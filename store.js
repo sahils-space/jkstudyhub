@@ -1090,6 +1090,28 @@ function applyStockOverridesToStorefront() {
 
 // Master Catalog
 const PRODUCT_CATALOG = {
+  "Physical Education Master Notes": {
+    author: "JK Study Hub Academic Faculty",
+    mrp: 499,
+    price: 249,
+    category: "academic",
+    badge: "JKBOSE • Classes 11 & 12",
+    image: "images/products/physical-education-notes-cover.png",
+    images: [
+      "images/products/physical-education-notes-cover.png",
+      "images/products/physical-education-notes-cover-white.png"
+    ],
+    desc: "JKBOSE-aligned Physical Education theory and exam notes for Classes 11 and 12, with solved previous-year questions, practical-file guidance, sports rules, viva answers, and model answers.",
+    edition: "2026 JKBOSE edition",
+    contents: "Physical Education theory notes, solved PYQs, practical-file guide, sports rules, viva answers, and model answers.",
+    specs: {
+      length: "Not specified",
+      width: "Not specified",
+      thickness: "Not specified",
+      pages: "Not specified",
+      paper: "Printed format; paper details not specified"
+    }
+  },
   "Atomic Habits": {
     author: "James Clear",
     mrp: 499,
@@ -2289,7 +2311,7 @@ function renderCartPage() {
           ${(item.isCombo || (item.name && item.name.startsWith('[COMBO PACK]'))) ? `
             <div style="margin-bottom: 5px;">
               <span style="font-size: 11px; font-weight: 800; background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
-                <i class="fa-solid fa-gift"></i> Verified Combo Pack (Save ₹50)
+                <i class="fa-solid fa-gift"></i> ${Number(item.comboSavings) > 0 ? `Combo discount: Save ₹${Number(item.comboSavings)}` : 'Combo Pack'}
               </span>
             </div>
           ` : ''}
@@ -2297,6 +2319,7 @@ function renderCartPage() {
           ${item.comboDetails ? `<div style="font-size: 12px; color: #475569; margin-bottom: 6px;">📦 Package includes: <strong>${item.comboDetails}</strong></div>` : ''}
           <div style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
             <span>${(item.isCombo || (item.name && item.name.startsWith('[COMBO PACK]'))) ? 'Combo Price:' : 'Price:'} <strong>₹${item.price}</strong></span>
+            ${Number(item.comboRegularPrice) > Number(item.price) ? `<div style="font-size:12px; color:#15803d; margin-top:3px;">Regular total ₹${Number(item.comboRegularPrice)} · combo saves ₹${Number(item.comboSavings) || (Number(item.comboRegularPrice) - Number(item.price))}</div>` : ''}
           </div>
           <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden;">
@@ -8121,48 +8144,38 @@ function applyModalPincodeCheck(customPin) {
 // =========================================================================
 // FREQUENTLY BOUGHT TOGETHER (SEMESTER COMBO BUNDLE WIDGET)
 // =========================================================================
+const AUTO_COMBO_DISCOUNT = 40;
+
 const BOOK_BUNDLES_DATA = {
   "Atomic Habits": {
     companion: "Deep Work",
     companionPrice: 249,
-    companionImg: "images/books/deep-work-1.webp",
-    comboPrice: 399,
-    savings: 99
+    companionImg: "images/books/deep-work-1.webp"
   },
   "The Psychology of Money": {
     companion: "Rich Dad Poor Dad",
     companionPrice: 229,
-    companionImg: "images/books/rich-dad-1.webp",
-    comboPrice: 379,
-    savings: 99
+    companionImg: "images/books/rich-dad-1.webp"
   },
   "Deep Work": {
     companion: "Atomic Habits",
     companionPrice: 249,
-    companionImg: "images/books/atomic-habits-1.webp",
-    comboPrice: 399,
-    savings: 99
+    companionImg: "images/books/atomic-habits-1.webp"
   },
   "The Alchemist": {
     companion: "Wings of Fire",
     companionPrice: 229,
-    companionImg: "images/books/wings-of-fire-1.webp",
-    comboPrice: 369,
-    savings: 89
+    companionImg: "images/books/wings-of-fire-1.webp"
   },
   "Lucent's General Knowledge": {
     companion: "Wren & Martin English Grammar",
     companionPrice: 249,
-    companionImg: "images/books/wren-martin-1.webp",
-    comboPrice: 399,
-    savings: 99
+    companionImg: "images/books/wren-martin-1.webp"
   },
   "default": {
     companion: "Atomic Habits",
     companionPrice: 249,
-    companionImg: "images/books/atomic-habits-1.webp",
-    comboPrice: 399,
-    savings: 99
+    companionImg: "images/books/atomic-habits-1.webp"
   }
 };
 
@@ -8174,13 +8187,11 @@ function renderFrequentlyBoughtTogether(bookName) {
   const mainBook = BOOK_CATALOG_DATA.find(b => b.name === bookName) || (PRODUCT_CATALOG[bookName] ? { name: bookName, ...PRODUCT_CATALOG[bookName] } : { name: bookName, price: 249, allImages: ['images/books/atomic-habits-1.webp'] });
   const mainImg = (mainBook.allImages && mainBook.allImages[0]) || mainBook.image || 'images/books/atomic-habits-1.webp';
 
-  const p1 = Number(mainBook.price) || 249;
-  const p2 = Number(bundle.companionPrice) || 249;
+  const p1 = Number(getCustomPrice(mainBook.name, Number(mainBook.price) || 249)) || 249;
+  const p2 = Number(getCustomPrice(bundle.companion, Number(bundle.companionPrice) || 249)) || 249;
   const regTotal = p1 + p2;
-
-  // Controlled, safe bundle discount of ₹50 (buyer saves ₹50, seller guarantees profit)
-  const savings = (bundle.savings && bundle.savings <= 60) ? bundle.savings : 50;
-  const comboPrice = Math.max(99, regTotal - savings);
+  const savings = Math.min(AUTO_COMBO_DISCOUNT, regTotal);
+  const comboPrice = regTotal - savings;
 
   const safeMainName = safeEscape(mainBook.name);
   const safeCompanionName = safeEscape(bundle.companion);
@@ -8212,7 +8223,7 @@ function renderFrequentlyBoughtTogether(bookName) {
       </div>
 
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" onclick="addBundleToCart('${safeMainName}', '${safeCompanionName}', ${comboPrice})" class="bundle-cta-btn" style="flex:1; justify-content:center; padding:10px 14px; font-size:12.5px;">
+        <button type="button" onclick="addBundleToCart('${safeMainName}', '${safeCompanionName}', ${comboPrice}, ${savings}, ${regTotal})" class="bundle-cta-btn" style="flex:1; justify-content:center; padding:10px 14px; font-size:12.5px;">
           <i class="fa-solid fa-cart-plus"></i> Add Combo to Cart
         </button>
         <button type="button" onclick="openCheckout('${comboTitle.replace(/'/g, "\\'")}', ${comboPrice}, 'physical', 'books')" class="buy-btn" style="padding:10px 16px; font-size:12.5px; font-weight:800; border-radius:8px;">
@@ -8223,9 +8234,11 @@ function renderFrequentlyBoughtTogether(bookName) {
   `;
 }
 
-function addBundleToCart(book1Name, book2Name, bundlePrice) {
+function addBundleToCart(book1Name, book2Name, bundlePrice, bundleSavings, regularPrice) {
   const comboName = `[COMBO PACK] ${book1Name} + ${book2Name}`;
   const comboPrice = Number(bundlePrice);
+  const comboSavings = Number(bundleSavings) || 0;
+  const comboRegularPrice = Number(regularPrice) || comboPrice + comboSavings;
 
   const mainBook = (typeof BOOK_CATALOG_DATA !== 'undefined' ? BOOK_CATALOG_DATA.find(b => b.name === book1Name) : null) || (PRODUCT_CATALOG[book1Name] ? { name: book1Name, ...PRODUCT_CATALOG[book1Name] } : null);
   const img = (mainBook && (mainBook.image || (mainBook.allImages && mainBook.allImages[0]))) || 'images/logo-app.png';
@@ -8235,6 +8248,9 @@ function addBundleToCart(book1Name, book2Name, bundlePrice) {
 
   if (existingIdx > -1) {
     cart[existingIdx].qty = (parseInt(cart[existingIdx].qty) || 1) + 1;
+    cart[existingIdx].price = comboPrice;
+    cart[existingIdx].comboSavings = comboSavings;
+    cart[existingIdx].comboRegularPrice = comboRegularPrice;
   } else {
     cart.push({
       name: comboName,
@@ -8243,7 +8259,9 @@ function addBundleToCart(book1Name, book2Name, bundlePrice) {
       image: img,
       qty: 1,
       isCombo: true,
-      comboDetails: `${book1Name} + ${book2Name}`
+      comboDetails: `${book1Name} + ${book2Name}`,
+      comboSavings: comboSavings,
+      comboRegularPrice: comboRegularPrice
     });
   }
 
@@ -9363,13 +9381,13 @@ function openBookDetailsModal(bookName) {
   const buyBtn = document.getElementById('modalBuyBtn');
   if (buyBtn) {
     buyBtn.onclick = () => {
-      openCheckout(book.name, effectivePrice, 'physical', 'books');
+      openCheckout(book.name, effectivePrice, 'physical', book.category || 'books');
     };
   }
   const cartBtn = document.getElementById('modalCartBtn');
   if (cartBtn) {
     cartBtn.onclick = () => {
-      addToCart(book.name, effectivePrice, 'physical', 'books');
+      addToCart(book.name, effectivePrice, 'physical', book.category || 'books');
     };
   }
 
@@ -10205,6 +10223,15 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
   }
 ];
 
+function isGeneralAcademicPhysicalEducationProduct(product) {
+  const name = String(product && (product.name || product.title) || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+  return name.includes('physical education') &&
+    (name.includes('notes') || name.includes('master guide') || name.includes('theory guide'));
+}
+
 let CUSTOM_PRODUCTS = [...DEFAULT_PUBLISHED_PRODUCTS];
 let ownerUploadedPhotos = [null, null, null, null];
 
@@ -10238,7 +10265,11 @@ try {
     } catch(e) {}
   }
   // Exclude boutique resin art items from the regular study store
-  CUSTOM_PRODUCTS = initialProducts.filter(p => p.category !== 'resin' && !String(p.id).startsWith('PRD-RESIN-'));
+  CUSTOM_PRODUCTS = initialProducts.filter(p =>
+    p.category !== 'resin' &&
+    !String(p.id).startsWith('PRD-RESIN-') &&
+    !isGeneralAcademicPhysicalEducationProduct(p)
+  );
   registerAllCustomProducts(CUSTOM_PRODUCTS);
 } catch (e) {
   console.warn("Could not parse cached custom products:", e);
@@ -10251,7 +10282,7 @@ function registerAllCustomProducts(products) {
 
 function registerCustomProductInCatalogs(p) {
   if (!p || (!p.name && !p.title)) return;
-  if (p.category === 'resin' || String(p.id).startsWith('PRD-RESIN-')) return;
+  if (p.category === 'resin' || String(p.id).startsWith('PRD-RESIN-') || isGeneralAcademicPhysicalEducationProduct(p)) return;
   const prodName = p.name || p.title;
   p.name = prodName;
   p.title = prodName;
@@ -10840,6 +10871,7 @@ async function syncCustomProductsWithSheet() {
 
       // Merge incoming sheet products
       sheetProducts.forEach(sp => {
+        if (isGeneralAcademicPhysicalEducationProduct(sp)) return;
         if (!mergedMap.has(sp.id)) {
           mergedMap.set(sp.id, sp);
         } else {
@@ -10977,7 +11009,7 @@ function mergeAndRenderLiveProducts(incoming) {
 
   incoming.forEach(sp => {
     const key = sp.id || sp.productId || sp.name;
-    if (!key) return;
+    if (!key || isGeneralAcademicPhysicalEducationProduct(sp)) return;
     if (!mergedMap.has(key)) {
       mergedMap.set(key, sp);
     } else {
@@ -11014,8 +11046,14 @@ function renderDynamicStoreProducts() {
 
   section.style.display = 'block';
 
+  const visibleProducts = CUSTOM_PRODUCTS.filter(prod => !isGeneralAcademicPhysicalEducationProduct(prod));
+  if (visibleProducts.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
   let html = '';
-  CUSTOM_PRODUCTS.forEach((prod, index) => {
+  visibleProducts.forEach((prod, index) => {
     const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
     const safeCarouselId = `carousel-dyn-${index}`;
     const pName = prod.name || prod.title || 'Product';
