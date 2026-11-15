@@ -160,6 +160,60 @@ function handleSellerGoogleAuth() {
   }
 }
 
+async function ensureSellerFirebaseOwnerAuth() {
+  if (typeof firebase === 'undefined' || !firebase.auth || !firebase.apps || !firebase.apps.length) {
+    throw new Error('Firebase authentication is unavailable. Check the Firebase configuration and reload.');
+  }
+
+  const auth = firebase.auth();
+  let user = auth.currentUser;
+  const isOwner = account => account
+    && account.emailVerified === true
+    && AUTHORIZED_OWNER_EMAILS.includes(String(account.email || '').trim().toLowerCase());
+
+  if (user && !isOwner(user)) {
+    await auth.signOut();
+    user = null;
+  }
+  if (!user) {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const result = await auth.signInWithPopup(provider);
+    user = result.user;
+  }
+  if (!isOwner(user)) {
+    await auth.signOut();
+    throw new Error('Sign in with a verified, authorized JK Study Hub owner Google account to publish changes.');
+  }
+  return user;
+}
+
+function getSellerCloudErrorMessage(error) {
+  const code = error && error.code ? ` (${error.code})` : '';
+  const message = error && error.message ? error.message : 'Unknown Firebase error';
+  return `${message}${code}`;
+}
+
+async function writeSellerPriceToCloud(productName, price, mrp) {
+  await ensureSellerFirebaseOwnerAuth();
+  const db = firebase.firestore();
+  const safeDocId = String(productName).toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+
+  await db.collection('price_overrides').doc(safeDocId).set({
+    name: productName,
+    price,
+    mrp,
+    updatedAt: Date.now()
+  }, { merge: true });
+
+  const catalogMatches = await db.collection('published_catalog').where('name', '==', productName).get();
+  await Promise.all(catalogMatches.docs.map(doc => doc.ref.update({
+    price,
+    mrp,
+    updatedAt: Date.now()
+  })));
+}
+
 // =========================================================
 // 1B. DEDICATED DEVICE LAYOUT ENGINE (DESKTOP vs MOBILE)
 // =========================================================
@@ -1502,8 +1556,14 @@ function saveManualWhatsAppOrder(e) {
   // Backup to Firebase Firestore if online
   try {
     if (typeof firebase !== 'undefined' && firebase.firestore) {
-      firebase.firestore().collection('orders').doc(orderId).set(newOrder, { merge: true })
-        .catch(err => console.warn("Firestore order sync:", err));
+      ensureSellerFirebaseOwnerAuth()
+        .then(() => firebase.firestore().collection('orders').doc(orderId).set(newOrder, { merge: true }))
+        .catch(error => {
+          console.warn("Firestore order sync failed:", error);
+          if (typeof showToast === 'function') {
+            showToast(`Order saved locally, but cloud sync failed: ${getSellerCloudErrorMessage(error)}`);
+          }
+        });
     }
   } catch(e) {}
 
@@ -1908,10 +1968,13 @@ function showSellerToast(message, type = 'success') {
     toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#0f172a;color:#ffffff;padding:12px 20px;border-radius:10px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3),0 8px 10px -6px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;z-index:999999;transition:transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),opacity 0.25s ease;opacity:0;pointer-events:none;max-width:90vw;';
     document.body.appendChild(toast);
   }
-  const icon = type === 'error' 
-    ? '<i class="fa-solid fa-circle-exclamation" style="color:#ef4444;font-size:16px;"></i>' 
-    : '<i class="fa-solid fa-circle-check" style="color:#22c55e;font-size:16px;"></i>';
-  toast.innerHTML = `${icon}<span>${message}</span>`;
+  const icon = document.createElement('i');
+  icon.className = type === 'error' ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+  icon.style.color = type === 'error' ? '#ef4444' : '#22c55e';
+  icon.style.fontSize = '16px';
+  const text = document.createElement('span');
+  text.textContent = message;
+  toast.replaceChildren(icon, text);
   toast.style.opacity = '1';
   toast.style.transform = 'translateX(-50%) translateY(0)';
   clearTimeout(toast._timeout);
@@ -3231,6 +3294,7 @@ async function handleSellerCatalogSubmit(e) {
   const title = (document.getElementById('catTitle')?.value || '').trim();
   const category = document.getElementById('catCategory')?.value || 'academic';
   const price = parseFloat(document.getElementById('catPrice')?.value) || 0;
+  const paymentMode = document.getElementById('catPaymentMode')?.value === 'prepaid' ? 'prepaid' : 'cod';
   const mrpInput = document.getElementById('catMrp')?.value;
   const mrp = mrpInput ? parseFloat(mrpInput) : Math.round(price * 1.35);
   const stock = parseInt(document.getElementById('catStock')?.value || '20', 10);
@@ -3271,7 +3335,12 @@ async function handleSellerCatalogSubmit(e) {
     statusNotice.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing images and broadcasting product to Google Sheets and live store...`;
   }
 
+  let cloudCatalogPublished = false;
+  let cloudPublishError = '';
   try {
+    const hasFirebaseCloud = typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length;
+    if (hasFirebaseCloud) await ensureSellerFirebaseOwnerAuth();
+
     const rawPhotos = sellerUploadedPhotos.filter(p => !!p);
     const cdnPhotos = [];
     for (let i = 0; i < rawPhotos.length; i++) {
@@ -3294,6 +3363,7 @@ async function handleSellerCatalogSubmit(e) {
       category: category,
       price: price,
       mrp: mrp,
+      paymentMode: paymentMode,
       badge: badge,
       stock: stock,
       classLevel: classLevel,
@@ -3311,15 +3381,30 @@ async function handleSellerCatalogSubmit(e) {
       timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
     };
 
+    const priceOverrides = getSellerCustomPriceOverrides();
+    priceOverrides[title] = price;
+    localStorage.setItem('jk_custom_prices', JSON.stringify(priceOverrides));
+    const mrpOverrides = getSellerCustomMrpOverrides();
+    mrpOverrides[title] = mrp;
+    localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+
     // 0. Instant Cloud Publishing to Firebase Firestore (Real-Time for all visitors worldwide!)
-    try {
-      if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    if (hasFirebaseCloud) {
+      try {
         const db = firebase.firestore();
         await db.collection('published_catalog').doc(prodId).set(newProduct);
-        console.log("Product published live to Firebase Firestore!");
+        const safePriceDocId = title.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+        await db.collection('price_overrides').doc(safePriceDocId).set({
+          name: title,
+          price,
+          mrp,
+          updatedAt: Date.now()
+        }, { merge: true });
+        cloudCatalogPublished = true;
+      } catch (fbErr) {
+        cloudPublishError = getSellerCloudErrorMessage(fbErr);
+        console.error("Firestore catalog publish failed:", fbErr);
       }
-    } catch (fbErr) {
-      console.warn("Firestore save notice:", fbErr);
     }
 
     // 1. Save to local storage for store.js and seller.js
@@ -3360,6 +3445,7 @@ async function handleSellerCatalogSubmit(e) {
       postData.append('category', category);
       postData.append('price', String(price));
       postData.append('mrp', String(mrp));
+      postData.append('payment_mode', paymentMode);
       postData.append('badge', badge);
       postData.append('description', desc);
       postData.append('class_level', classLevel);
@@ -3389,6 +3475,7 @@ async function handleSellerCatalogSubmit(e) {
         category: category,
         price: price,
         mrp: mrp,
+        paymentMode: paymentMode,
         badge: badge,
         stock: stock,
         classLevel: classLevel,
@@ -3432,17 +3519,21 @@ async function handleSellerCatalogSubmit(e) {
     }
 
     if (statusNotice) {
-      statusNotice.style.background = '#f0fdf4';
-      statusNotice.style.color = '#15803d';
-      statusNotice.style.border = '1px solid #bbf7d0';
-      statusNotice.innerHTML = `🎉 <strong>Success!</strong> "${title}" is published live to the storefront with ${finalPhotos.length} photo(s) and synced to Google Sheets.`;
+      statusNotice.style.background = cloudCatalogPublished ? '#f0fdf4' : '#fff7ed';
+      statusNotice.style.color = cloudCatalogPublished ? '#15803d' : '#9a3412';
+      statusNotice.style.border = cloudCatalogPublished ? '1px solid #bbf7d0' : '1px solid #fed7aa';
+      statusNotice.textContent = cloudCatalogPublished
+        ? `Success! "${title}" is published live with ${finalPhotos.length} photo(s), payment set to ${paymentMode === 'cod' ? 'COD' : 'Prepaid'}, and synced to Google Sheets.`
+        : `Cloud sync incomplete. "${title}" is saved on this device and queued for Google Sheets, but did not sync to Firestore. ${cloudPublishError || 'Firebase Cloud is unavailable.'}`;
       setTimeout(() => {
         if (statusNotice) statusNotice.style.display = 'none';
       }, 7000);
     }
 
     if (typeof showToast === 'function') {
-      showToast(`🎉 "${title}" published live with ${finalPhotos.length} photos!`);
+      showToast(cloudCatalogPublished
+        ? `🎉 "${title}" published live with ${finalPhotos.length} photos.`
+        : `Cloud sync incomplete: ${cloudPublishError || 'Firebase Cloud is unavailable.'}`);
     }
 
     // 5. Update listings and inventory views
@@ -3453,7 +3544,7 @@ async function handleSellerCatalogSubmit(e) {
 
   } catch (err) {
     console.error("Catalog upload error:", err);
-    alert("An error occurred while publishing the product. Please try again.");
+    alert(`Could not publish the product: ${getSellerCloudErrorMessage(err)}`);
     if (statusNotice) statusNotice.style.display = 'none';
   } finally {
     if (btnPublish) {
@@ -3691,7 +3782,7 @@ function getSellerAllPublishedProducts() {
         const nameKey = String(p.name || p.title || '').trim().toLowerCase();
         if (!deletedIds.has(key) && !deletedIds.has(nameKey) && (p.name || p.title)) {
           const mKey = p.id || p.productId || p.name;
-          if (mKey && !mergedMap.has(mKey)) mergedMap.set(mKey, p);
+          if (mKey) mergedMap.set(mKey, { ...(mergedMap.get(mKey) || {}), ...p });
         }
       });
     }
@@ -3705,7 +3796,7 @@ function getSellerAllPublishedProducts() {
         const nameKey = String(p.name || p.title || '').trim().toLowerCase();
         if (!deletedIds.has(key) && !deletedIds.has(nameKey) && (p.name || p.title)) {
           const mKey = p.id || p.productId || p.name;
-          if (mKey && !mergedMap.has(mKey)) mergedMap.set(mKey, p);
+          if (mKey) mergedMap.set(mKey, { ...(mergedMap.get(mKey) || {}), ...p });
         }
       });
     }
@@ -3746,7 +3837,7 @@ function renderSellerPublishedCatalog() {
   products.forEach(p => {
     const photos = (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos : (p.image ? [p.image] : ['images/logo-app.png']);
     const mainImg = photos[0] || 'images/logo-app.png';
-    const prodId = p.id || p.productId || '';
+    const prodId = p.id || p.productId || p.name || p.title || '';
     const cleanId = String(prodId).replace(/[^a-zA-Z0-9_-]/g, '_');
     const prodName = p.title || p.name || 'Untitled';
     const resolvedPrice = resolveSellerPriceOverride(customPrices, prodName);
@@ -3779,11 +3870,16 @@ function renderSellerPublishedCatalog() {
         <td>
           <div style="font-weight: 800; font-size: 13.5px; color: #0f172a;">${escapedTitle}</div>
           <div style="font-size: 11px; color: #64748b; margin-top: 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-            ${p.desc || p.description || ''}
+            ${String(p.desc || p.description || '').replace(/[&<>"']/g, function (character) {
+              return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+            })}
           </div>
           <div style="display: flex; gap: 5px; margin-top: 4px;">
             <span style="font-size: 10px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 1px 6px; border-radius: 4px;">
               ${p.badge || '✨ Fresh Stock'}
+            </span>
+            <span style="font-size:10px; font-weight:700; color:#166534; background:#dcfce7; padding:1px 6px; border-radius:4px;">
+              ${p.paymentMode === 'prepaid' ? 'Prepaid only' : 'COD only'}
             </span>
           </div>
         </td>
@@ -3825,6 +3921,9 @@ function renderSellerPublishedCatalog() {
             <button type="button" class="btn-hub-primary" onclick="quickSavePublishedProductPrice('${cleanId}', '${safeTitle}')" style="padding: 5px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px;">
               <i class="fa-solid fa-floppy-disk"></i> Save
             </button>
+            <button type="button" onclick="openSellerProductEditor('${encodeURIComponent(String(prodId))}')" title="Edit name, description, payment mode, or photos" aria-label="Edit ${escapedTitle}" style="background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; padding:5px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
             <button type="button" onclick="deleteSellerPublishedProduct('${prodId}', '${safeTitle}')" title="Remove from store" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 5px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;">
               <i class="fa-solid fa-trash-can"></i>
             </button>
@@ -3835,6 +3934,237 @@ function renderSellerPublishedCatalog() {
   });
 
   tbody.innerHTML = html;
+}
+
+let activeSellerProductEdit = null;
+let sellerProductEditPreviewUrls = [];
+
+function openSellerProductEditor(encodedId) {
+  let productId = '';
+  try {
+    productId = decodeURIComponent(String(encodedId || ''));
+  } catch (error) {
+    console.warn('Invalid catalog product identifier:', error);
+  }
+  const product = getSellerAllPublishedProducts().find(item =>
+    String(item.id || item.productId || item.name) === productId
+  );
+  if (!product) {
+    if (typeof showToast === 'function') {
+      showToast('This catalog product could not be found. Refresh the seller panel and try again.');
+    }
+    return;
+  }
+
+  activeSellerProductEdit = { ...product };
+  document.getElementById('sellerEditProductId').value = productId;
+  document.getElementById('sellerEditProductName').value = product.title || product.name || '';
+  document.getElementById('sellerEditProductDescription').value = product.desc || product.description || '';
+  document.getElementById('sellerEditPaymentMode').value = product.paymentMode === 'prepaid' ? 'prepaid' : 'cod';
+  document.getElementById('sellerEditProductPhotos').value = '';
+  renderSellerProductEditPhotoPreview(product.photos || (product.image ? [product.image] : []));
+  const modal = document.getElementById('sellerProductEditModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.getElementById('sellerEditProductName').focus();
+  }
+}
+
+function closeSellerProductEditor() {
+  const modal = document.getElementById('sellerProductEditModal');
+  if (modal) modal.style.display = 'none';
+  sellerProductEditPreviewUrls.forEach(url => URL.revokeObjectURL(url));
+  sellerProductEditPreviewUrls = [];
+  activeSellerProductEdit = null;
+}
+
+function renderSellerProductEditPhotoPreview(photos) {
+  const preview = document.getElementById('sellerEditPhotoPreview');
+  if (!preview) return;
+  sellerProductEditPreviewUrls.forEach(url => URL.revokeObjectURL(url));
+  sellerProductEditPreviewUrls = [];
+  preview.replaceChildren();
+  (Array.isArray(photos) ? photos : []).forEach((photo, index) => {
+    const image = document.createElement('img');
+    image.src = photo;
+    image.alt = `Product photo ${index + 1}`;
+    image.style.cssText = 'width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid #cbd5e1;flex:0 0 auto;';
+    preview.appendChild(image);
+  });
+}
+
+function previewSellerProductPhotos() {
+  const input = document.getElementById('sellerEditProductPhotos');
+  if (!input || !input.files || input.files.length === 0) {
+    renderSellerProductEditPhotoPreview(activeSellerProductEdit?.photos || []);
+    return;
+  }
+  const previewUrls = Array.from(input.files).slice(0, 3).map(file => URL.createObjectURL(file));
+  renderSellerProductEditPhotoPreview(previewUrls);
+  sellerProductEditPreviewUrls = previewUrls;
+}
+
+function saveSellerLocalCatalogProduct(updatedProduct, oldProduct) {
+  const matchIds = new Set([
+    String(updatedProduct.id || updatedProduct.productId || ''),
+    String(oldProduct.id || oldProduct.productId || '')
+  ].filter(Boolean));
+  const matchNames = new Set([
+    String(updatedProduct.name || updatedProduct.title || '').trim().toLowerCase(),
+    String(oldProduct.name || oldProduct.title || '').trim().toLowerCase()
+  ].filter(Boolean));
+
+  ['jk_custom_products', 'jk_uploaded_catalog'].forEach(storageKey => {
+    let catalog = [];
+    try {
+      catalog = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (!Array.isArray(catalog)) throw new Error('Stored catalog is not an array.');
+    } catch (error) {
+      console.warn(`Could not read ${storageKey} before product edit:`, error);
+      catalog = [];
+    }
+
+    const index = catalog.findIndex(item =>
+      matchIds.has(String(item.id || item.productId || '')) ||
+      matchNames.has(String(item.name || item.title || '').trim().toLowerCase())
+    );
+    if (index >= 0) {
+      catalog[index] = { ...catalog[index], ...updatedProduct };
+    } else {
+      catalog.unshift(updatedProduct);
+    }
+    if (catalog.length > 25) catalog = catalog.slice(0, 25);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(catalog));
+    } catch (error) {
+      console.warn(`Could not persist edited catalog in ${storageKey}:`, error);
+    }
+  });
+}
+
+function syncSellerProductEditToGoogleSheet(product) {
+  const data = new URLSearchParams();
+  data.append('action', 'update_product');
+  data.append('product_id', String(product.id || product.productId || ''));
+  data.append('title', product.title || product.name || '');
+  data.append('category', product.category || 'academic');
+  data.append('price', String(product.price || 0));
+  data.append('mrp', String(product.mrp || 0));
+  data.append('description', product.desc || product.description || '');
+  data.append('payment_mode', product.paymentMode || 'cod');
+  data.append('photo1', (product.photos || [])[0] || product.image || '');
+  data.append('photo2', (product.photos || [])[1] || '');
+  data.append('photo3', (product.photos || [])[2] || '');
+  data.append('photo4', (product.photos || [])[3] || '');
+  data.append('class_level', product.classLevel || '');
+  data.append('board', product.board || '');
+  data.append('subject', product.subject || '');
+  data.append('edition', product.edition || '');
+  data.append('contents', product.contents || '');
+  data.append('stock', String(product.stock ?? 20));
+  data.append('status', product.status || 'Active');
+  fetch(SELLER_SCRIPT_URL, { method: 'POST', body: data, mode: 'no-cors' })
+    .catch(error => console.warn('Google Sheets product update could not be sent:', error));
+}
+
+async function handleSellerProductEditSubmit(event) {
+  if (event) event.preventDefault();
+  if (!activeSellerProductEdit) return;
+
+  const saveButton = document.getElementById('sellerEditProductSaveBtn');
+  if (!saveButton) return;
+  const input = document.getElementById('sellerEditProductPhotos');
+  const files = input && input.files ? Array.from(input.files) : [];
+  if (files.length > 3) {
+    alert('Please choose no more than 3 product photos.');
+    return;
+  }
+  const newName = document.getElementById('sellerEditProductName').value.trim();
+  const description = document.getElementById('sellerEditProductDescription').value.trim();
+  if (!newName || !description) {
+    alert('Please enter both a product name and description.');
+    return;
+  }
+
+  const previous = activeSellerProductEdit;
+  const originalButton = saveButton.innerHTML;
+  saveButton.disabled = true;
+  saveButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
+  try {
+    await ensureSellerFirebaseOwnerAuth();
+    let photos = Array.isArray(previous.photos) && previous.photos.length
+      ? [...previous.photos]
+      : (previous.image ? [previous.image] : []);
+    if (files.length) {
+      photos = [];
+      for (const file of files) {
+        const compressedPhoto = await compressSellerPhotoFile(file, 640, 750, 0.72);
+        const uploadedPhoto = await uploadSellerPhotoToCdn(compressedPhoto);
+        if (uploadedPhoto.startsWith('data:')) {
+          throw new Error('Photo upload failed. Check the image host connection and try again.');
+        }
+        photos.push(uploadedPhoto);
+      }
+    }
+
+    const updatedProduct = {
+      ...previous,
+      id: previous.id || previous.productId || previous.name,
+      productId: previous.productId || previous.id || previous.name,
+      name: newName,
+      title: newName,
+      desc: description,
+      description,
+      paymentMode: document.getElementById('sellerEditPaymentMode').value === 'prepaid' ? 'prepaid' : 'cod',
+      photos,
+      image: photos[0] || 'images/logo-app.png',
+      allImages: photos,
+      updatedAt: Date.now()
+    };
+
+    const db = firebase.firestore();
+    const firestoreId = String(updatedProduct.id).replace(/\//g, '_');
+    await db.collection('published_catalog').doc(firestoreId).set(updatedProduct, { merge: true });
+
+    const oldName = String(previous.name || previous.title || '').trim();
+    const oldPriceOverrides = getSellerCustomPriceOverrides();
+    const oldMrpOverrides = getSellerCustomMrpOverrides();
+    const customPrice = resolveSellerPriceOverride(oldPriceOverrides, oldName);
+    const customMrp = resolveSellerMrpOverride(oldMrpOverrides, oldName);
+    if (oldName.toLowerCase() !== newName.toLowerCase() && (customPrice !== undefined || customMrp !== undefined)) {
+      Object.keys(oldPriceOverrides).forEach(key => {
+        if (key.trim().toLowerCase() === oldName.toLowerCase()) delete oldPriceOverrides[key];
+      });
+      Object.keys(oldMrpOverrides).forEach(key => {
+        if (key.trim().toLowerCase() === oldName.toLowerCase()) delete oldMrpOverrides[key];
+      });
+      if (customPrice !== undefined) oldPriceOverrides[newName] = customPrice;
+      if (customMrp !== undefined) oldMrpOverrides[newName] = customMrp;
+      await db.collection('price_overrides').doc(oldName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80)).delete();
+      await db.collection('price_overrides').doc(newName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80)).set({
+        name: newName,
+        ...(customPrice !== undefined ? { price: customPrice } : {}),
+        ...(customMrp !== undefined ? { mrp: customMrp } : {}),
+        updatedAt: Date.now()
+      }, { merge: true });
+      localStorage.setItem('jk_custom_prices', JSON.stringify(oldPriceOverrides));
+      localStorage.setItem('jk_custom_mrps', JSON.stringify(oldMrpOverrides));
+    }
+
+    saveSellerLocalCatalogProduct(updatedProduct, previous);
+    syncSellerProductEditToGoogleSheet(updatedProduct);
+    if (typeof showToast === 'function') showToast(`Updated "${newName}" on the live catalog.`);
+    closeSellerProductEditor();
+    renderSellerPublishedCatalog();
+    renderSellerPricingTable();
+  } catch (error) {
+    console.error('Seller catalog edit failed:', error);
+    alert(`Catalog update failed: ${getSellerCloudErrorMessage(error)}`);
+  } finally {
+    saveButton.disabled = false;
+    saveButton.innerHTML = originalButton;
+  }
 }
 
 async function quickSavePublishedProductPrice(cleanId, prodTitle) {
@@ -3860,64 +4190,25 @@ async function quickSavePublishedProductPrice(cleanId, prodTitle) {
   const mrpOverrides = getSellerCustomMrpOverrides();
   mrpOverrides[prodTitle] = newMrp;
   localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+  updateSellerLocalCatalogPrices(prodTitle, newPrice, newMrp);
 
   if (typeof showToast === 'function') {
     showToast('Saving price on this device and publishing to the live store…');
   }
 
-  if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) {
-    if (typeof showToast === 'function') {
-      showToast('Price saved only on this device. Cloud sync is unavailable.');
-    } else {
-      alert('Price saved only on this device. Cloud sync is unavailable.');
-    }
-    renderSellerPublishedCatalog();
-    if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
-    return;
-  }
-
-  const safeDocId = String(prodTitle).toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
   try {
-    await firebase.firestore().collection('price_overrides').doc(safeDocId).set({
-      name: prodTitle,
-      price: newPrice,
-      mrp: newMrp,
-      updatedAt: Date.now()
-    }, { merge: true });
+    await writeSellerPriceToCloud(prodTitle, newPrice, newMrp);
   } catch (error) {
     console.error('[Firestore] Could not publish seller catalog price:', error);
     if (typeof showToast === 'function') {
-      showToast('Cloud price update failed. The new price is saved only on this device.');
+      showToast(`Price saved on this device, but cloud sync failed: ${getSellerCloudErrorMessage(error)}`);
     } else {
-      alert('Cloud price update failed. The new price is saved only on this device.');
+      alert(`Price saved on this device, but cloud sync failed: ${getSellerCloudErrorMessage(error)}`);
     }
     renderSellerPublishedCatalog();
     if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
     return;
   }
-
-  // Update in jk_uploaded_catalog & jk_custom_products
-  try {
-    let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-    cat.forEach(item => {
-      if (item.name === prodTitle || item.title === prodTitle || item.id === cleanId || item.productId === cleanId) {
-        item.price = newPrice;
-        item.mrp = newMrp;
-      }
-    });
-    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
-  } catch(e) {}
-
-  try {
-    let prods = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
-    prods.forEach(item => {
-      if (item.name === prodTitle || item.title === prodTitle || item.id === cleanId || item.productId === cleanId) {
-        item.price = newPrice;
-        item.mrp = newMrp;
-      }
-    });
-    localStorage.setItem('jk_custom_products', JSON.stringify(prods));
-  } catch(e) {}
 
   if (typeof showToast === 'function') {
     showToast(`✅ Saved! ${prodTitle} updated to ₹${newPrice} (MRP ₹${newMrp}) on live store!`);
@@ -3928,9 +4219,28 @@ async function quickSavePublishedProductPrice(cleanId, prodTitle) {
 }
 
 // Delete / Unpublish Product
-function deleteSellerPublishedProduct(prodId, prodName) {
+async function deleteSellerPublishedProduct(prodId, prodName) {
   if (!confirm(`Are you sure you want to remove "${prodName || 'this product'}" from the live store?`)) {
     return;
+  }
+
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      await ensureSellerFirebaseOwnerAuth();
+      const db = firebase.firestore();
+      const documentIds = [...new Set([
+        String(prodId || ''),
+        String(prodId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80),
+        String(prodName || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80)
+      ].filter(Boolean))];
+      await Promise.all(documentIds.map(id => db.collection('published_catalog').doc(id).delete()));
+    } catch (error) {
+      console.error("Firestore delete published_catalog failed:", error);
+      if (typeof showToast === 'function') {
+        showToast(`Could not remove the live product: ${getSellerCloudErrorMessage(error)}`);
+      }
+      return;
+    }
   }
 
   // 1. Blacklist in persistent local storage so it can never re-appear
@@ -3955,21 +4265,6 @@ function deleteSellerPublishedProduct(prodId, prodName) {
     uploadedCat = uploadedCat.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
     localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
   } catch(e) {}
-
-  // 3. Delete from Firebase Firestore cloud collection permanently
-  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
-    try {
-      const db = firebase.firestore();
-      const cleanId = String(prodId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-      if (cleanId) db.collection('published_catalog').doc(cleanId).delete().catch(e => console.warn(e));
-      if (prodName) {
-        const cleanNameId = String(prodName).toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-        db.collection('published_catalog').doc(cleanNameId).delete().catch(e => console.warn(e));
-      }
-    } catch(e) {
-      console.warn("Firestore delete published_catalog notice:", e);
-    }
-  }
 
   renderSellerPublishedCatalog();
   if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
@@ -4038,7 +4333,6 @@ function initSellerRealtimeCatalog() {
           const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
 
           let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-          const curIds = new Set(curCat.map(c => c.id || c.productId || c.name));
           let changed = false;
           firestoreProds.forEach(fp => {
             const k = fp.id || fp.productId || fp.name;
@@ -4046,9 +4340,14 @@ function initSellerRealtimeCatalog() {
             const lnk = String(fp.name || fp.title || '').trim().toLowerCase();
             if (deletedIds.has(lk) || deletedIds.has(lnk)) return; // Skipped if deleted by seller
 
-            if (k && !curIds.has(k)) {
+            const existingIndex = curCat.findIndex(product =>
+              String(product.id || product.productId || product.name || '').trim().toLowerCase() === lk
+            );
+            if (existingIndex < 0 && k) {
               curCat.unshift(fp);
-              curIds.add(k);
+              changed = true;
+            } else if (existingIndex >= 0 && JSON.stringify(curCat[existingIndex]) !== JSON.stringify(fp)) {
+              curCat[existingIndex] = { ...curCat[existingIndex], ...fp };
               changed = true;
             }
           });
@@ -4359,6 +4658,35 @@ function getSellerCustomMrpOverrides() {
   }
 }
 
+function updateSellerLocalCatalogPrices(productName, price, mrp) {
+  const normalizedName = String(productName || '').trim().toLowerCase();
+  if (!normalizedName) return;
+
+  ['jk_custom_products', 'jk_uploaded_catalog'].forEach(storageKey => {
+    try {
+      const catalog = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (!Array.isArray(catalog)) {
+        console.warn(`Seller catalog price sync skipped: ${storageKey} is not an array.`);
+        return;
+      }
+
+      let changed = false;
+      catalog.forEach(item => {
+        const itemName = String(item && (item.name || item.title) || '').trim().toLowerCase();
+        if (itemName === normalizedName) {
+          item.price = price;
+          item.mrp = mrp;
+          changed = true;
+        }
+      });
+
+      if (changed) localStorage.setItem(storageKey, JSON.stringify(catalog));
+    } catch (error) {
+      console.warn(`Seller catalog price sync failed for ${storageKey}:`, error);
+    }
+  });
+}
+
 function resolveSellerPriceOverride(overrides, name) {
   if (!overrides || typeof overrides !== 'object' || !name) return undefined;
   if (overrides[name] !== undefined && overrides[name] !== null) {
@@ -4558,49 +4886,22 @@ async function saveSellerProductPriceFromRow(triggerEl) {
     const mrpOverrides = getSellerCustomMrpOverrides();
     mrpOverrides[productName] = newMrp;
     localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
+    updateSellerLocalCatalogPrices(productName, newPrice, newMrp);
 
     // Dispatch cross-tab storage event so all storefront tabs update immediately
     window.dispatchEvent(new Event('storage'));
 
-    // 2. Broadcast to Firebase Firestore in background (Non-blocking, never freezes UI)
-    const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+    let cloudPriceError = '';
     if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
       try {
-        const db = firebase.firestore();
-        db.collection('price_overrides').doc(safeDocId).set({
-          name: productName,
-          price: newPrice,
-          mrp: newMrp,
-          updatedAt: Date.now()
-        }, { merge: true }).catch(e => console.warn("[Firestore] Price override push notice:", e));
-
-        db.collection('published_catalog').where('name', '==', productName).get().then(catQuery => {
-          if (!catQuery.empty) {
-            catQuery.forEach(docSnap => {
-              docSnap.ref.update({
-                price: newPrice,
-                mrp: newMrp,
-                updatedAt: Date.now()
-              }).catch(e => console.warn("Doc update notice:", e));
-            });
-          }
-        }).catch(e => console.warn("[Firestore] Query notice:", e));
-      } catch(err) {
-        console.warn("[Firestore] Price override push notice:", err);
+        await writeSellerPriceToCloud(productName, newPrice, newMrp);
+      } catch (error) {
+        cloudPriceError = getSellerCloudErrorMessage(error);
+        console.error("[Firestore] Price override push failed:", error);
       }
+    } else {
+      cloudPriceError = 'Firebase Cloud is unavailable.';
     }
-
-    // 3. Update in local catalogs if present
-    try {
-      let cat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-      cat.forEach(item => {
-        if (item.name === productName || item.title === productName) {
-          item.price = newPrice;
-          item.mrp = newMrp;
-        }
-      });
-      localStorage.setItem('jk_uploaded_catalog', JSON.stringify(cat));
-    } catch(e) {}
 
     // Button success state
     saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
@@ -4611,12 +4912,16 @@ async function saveSellerProductPriceFromRow(triggerEl) {
     const msgEl = document.getElementById('pricingFeedbackMessage');
     if (msgEl) {
       msgEl.style.display = 'block';
-      msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Saved &amp; Live!</strong> "${productName}" is now <strong>₹${newPrice}</strong> (MRP: ₹${newMrp}).`;
+      msgEl.textContent = cloudPriceError
+        ? `Saved on this device only. Cloud sync failed: ${cloudPriceError}`
+        : `Saved & live! "${productName}" is now ₹${newPrice} (MRP ₹${newMrp}).`;
       setTimeout(() => { if (msgEl) msgEl.style.display = 'none'; }, 5000);
     }
 
     if (typeof showToast === 'function') {
-      showToast(`✅ Price & MRP Live: "${productName}" is ₹${newPrice} (MRP ₹${newMrp})!`);
+      showToast(cloudPriceError
+        ? `Price saved on this device; cloud sync failed: ${cloudPriceError}`
+        : `✅ Price & MRP Live: "${productName}" is ₹${newPrice} (MRP ₹${newMrp})!`);
     }
 
     setTimeout(() => {
@@ -4660,6 +4965,20 @@ async function resetSingleSellerProductPriceFromRow(triggerEl) {
 }
 
 async function resetSingleSellerProductPrice(productName) {
+  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      await ensureSellerFirebaseOwnerAuth();
+      await firebase.firestore().collection('price_overrides').doc(safeDocId).delete();
+    } catch (error) {
+      console.error("Firestore delete override failed:", error);
+      if (typeof showToast === 'function') {
+        showToast(`Could not reset the cloud price: ${getSellerCloudErrorMessage(error)}`);
+      }
+      return;
+    }
+  }
+
   const overrides = getSellerCustomPriceOverrides();
   const mrpOverrides = getSellerCustomMrpOverrides();
   delete overrides[productName];
@@ -4668,19 +4987,10 @@ async function resetSingleSellerProductPrice(productName) {
   localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
   window.dispatchEvent(new Event('storage'));
 
-  // Remove from Firestore
-  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
-    try {
-      const db = firebase.firestore();
-      db.collection('price_overrides').doc(safeDocId).delete().catch(e => console.warn("Firestore delete notice:", e));
-    } catch(e) {
-      console.warn("Firestore delete override notice:", e);
-    }
-  }
-
   if (typeof showToast === 'function') {
-    showToast(`Restored default price & MRP for ${productName}.`);
+    showToast(typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length
+      ? `Restored default price & MRP for ${productName}.`
+      : `Restored default price & MRP for ${productName} on this device only.`);
   }
   renderSellerPricingTable();
 }
@@ -4822,22 +5132,27 @@ async function syncSellerPricesFromJsonFile() {
 
 async function resetAllSellerPricesToDefault() {
   if (confirm("Reset all products back to their factory default prices and MRPs? Any custom overrides will be removed.")) {
-    localStorage.removeItem('jk_custom_prices');
-    localStorage.removeItem('jk_custom_mrps');
-
     if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
       try {
+        await ensureSellerFirebaseOwnerAuth();
         const db = firebase.firestore();
-        db.collection('price_overrides').get().then(snap => {
+        const snapshot = await db.collection('price_overrides').get();
+        if (!snapshot.empty) {
           const batch = db.batch();
-          snap.forEach(doc => batch.delete(doc.ref));
-          batch.commit().catch(e => console.warn(e));
-        }).catch(e => console.warn("Firestore batch delete notice:", e));
-      } catch(e) {
-        console.warn("Firestore batch delete notice:", e);
+          snapshot.forEach(doc => batch.delete(doc.ref));
+          await batch.commit();
+        }
+      } catch(error) {
+        console.error("Firestore batch delete failed:", error);
+        if (typeof showToast === 'function') {
+          showToast(`Could not reset cloud prices: ${getSellerCloudErrorMessage(error)}`);
+        }
+        return;
       }
     }
 
+    localStorage.removeItem('jk_custom_prices');
+    localStorage.removeItem('jk_custom_mrps');
     if (typeof showToast === 'function') {
       showToast("All product prices & MRPs have been reset to factory defaults.");
     }
@@ -5049,6 +5364,7 @@ async function publishSellerStockOverride(productName, stockOverride) {
 
   const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
   try {
+    await ensureSellerFirebaseOwnerAuth();
     await firebase.firestore().collection('stock_overrides').doc(safeDocId).set({
       name: productName,
       status: stockOverride.status,
@@ -5923,18 +6239,10 @@ async function publishSellerReelToCloud(reelId) {
     return false;
   }
 
-  const user = firebase.auth().currentUser;
-  const ownerEmails = ['sahilsspace20@gmail.com', 'sahilsspace@gmail.com', 'info.jkstudyhub@gmail.com'];
-  const ownerEmail = String(user && user.email || '').trim().toLowerCase();
-  if (!user || !ownerEmails.includes(ownerEmail)) {
-    if (typeof showToast === 'function') showToast('Saved only on this device. Sign in with an authorized Google seller account to publish.');
-    else alert('Sign in with an authorized Google seller account to publish this ad for all students.');
-    return false;
-  }
-
   let uploadedPath = '';
   let videoUrl = reel.videoUrl || '';
   try {
+    await ensureSellerFirebaseOwnerAuth();
     if (videoUrl.indexOf('idb:') === 0) {
       const file = await AdsMedia.getFile(videoUrl.slice(4));
       if (!file) throw new Error('The local video file is missing. Re-upload it before publishing.');
@@ -6061,6 +6369,7 @@ async function toggleSellerReelActive(reelId) {
   reel.active = (reel.active === false);
   if (reel.cloudManaged) {
     try {
+      await ensureSellerFirebaseOwnerAuth();
       await firebase.firestore().collection('shoppable_reels').doc(reelId).update({
         active: reel.active,
         updatedAt: new Date().toISOString()
@@ -6068,7 +6377,7 @@ async function toggleSellerReelActive(reelId) {
     } catch (error) {
       reel.active = oldActive;
       console.error('Could not update shared video ad status:', error);
-      if (typeof showToast === 'function') showToast('Could not update the live ad. Check Firestore access.');
+      if (typeof showToast === 'function') showToast(`Could not update the live ad: ${getSellerCloudErrorMessage(error)}`);
       return;
     }
   }
@@ -6090,10 +6399,11 @@ async function deleteSellerReel(reelId) {
   const updatedReels = (g_sellerReelsList || []).filter(r => r.id !== reelId);
   if (reel && reel.cloudManaged) {
     try {
+      await ensureSellerFirebaseOwnerAuth();
       await firebase.firestore().collection('shoppable_reels').doc(reelId).delete();
     } catch (error) {
       console.error('Could not delete shared video ad:', error);
-      if (typeof showToast === 'function') showToast('Could not delete the live ad. Check Firestore access.');
+      if (typeof showToast === 'function') showToast(`Could not delete the live ad: ${getSellerCloudErrorMessage(error)}`);
       return;
     }
   }

@@ -4735,6 +4735,7 @@ window.addEventListener('pageshow', function() {
 let currentCheckoutProduct = '';
 let currentCheckoutPrice = 0;
 let currentCheckoutCategory = 'standard';
+let currentCheckoutPaymentMode = 'both';
 let isCartCheckoutSession = false;
 let activeRepeatDiscountAmount = 0;
 let activeRedeemedPrevOrderId = null;
@@ -4759,6 +4760,29 @@ function navigateToCheckoutPage(checkoutContext) {
   syncStoreRouteFromLocation();
 }
 
+function getProductPaymentMode(productName) {
+  const normalizedName = String(productName || '').trim().toLowerCase();
+  const catalogKey = typeof PRODUCT_CATALOG !== 'undefined'
+    ? Object.keys(PRODUCT_CATALOG).find(key => key.trim().toLowerCase() === normalizedName)
+    : null;
+  const catalogProduct = catalogKey ? PRODUCT_CATALOG[catalogKey] : null;
+  const customProduct = Array.isArray(CUSTOM_PRODUCTS)
+    ? CUSTOM_PRODUCTS.find(product => String(product.name || product.title || '').trim().toLowerCase() === normalizedName)
+    : null;
+  const mode = (customProduct && customProduct.paymentMode) || (catalogProduct && catalogProduct.paymentMode);
+  return mode === 'cod' || mode === 'prepaid' ? mode : 'both';
+}
+
+function getCartPaymentMode(cart) {
+  const modes = cart.map(item => getProductPaymentMode(item.name));
+  const allowsCod = modes.every(mode => mode !== 'prepaid');
+  const allowsPrepaid = modes.every(mode => mode !== 'cod');
+  if (allowsCod && allowsPrepaid) return 'both';
+  if (allowsCod) return 'cod';
+  if (allowsPrepaid) return 'prepaid';
+  return 'none';
+}
+
 function openCheckout(name, price, type, category) {
   if (typeof isProductOutOfStock === 'function' && isProductOutOfStock(name)) {
     alert(`⚠️ Sorry! "${name}" is currently Out of Stock.\nThe seller is replenishing inventory shortly. You can contact us on WhatsApp for emergency book reservations.`);
@@ -4774,7 +4798,8 @@ function openCheckout(name, price, type, category) {
     isCart: false,
     name,
     price: effectivePrice,
-    category: currentCheckoutCategory
+    category: currentCheckoutCategory,
+    paymentMode: getProductPaymentMode(name)
   });
 }
 
@@ -4785,7 +4810,12 @@ function openCartCheckout() {
     return;
   }
 
-  navigateToCheckoutPage({ isCart: true });
+  const paymentMode = getCartPaymentMode(cart);
+  if (paymentMode === 'none') {
+    alert('Your cart contains products that require different payment modes. Please place separate orders for COD-only and prepaid-only products.');
+    return;
+  }
+  navigateToCheckoutPage({ isCart: true, paymentMode });
 }
 
 function initializeCheckoutPageFromRoute() {
@@ -4830,7 +4860,13 @@ function initializeCheckoutPageFromRoute() {
     else if (hasNotes) combinedCategory = 'notes';
     else if (hasForms) combinedCategory = 'form';
     isCartCheckoutSession = true;
-    setupCheckoutModal(`Cart Order [${names.join(', ')}]`, total, combinedCategory);
+    const paymentMode = context.paymentMode || getCartPaymentMode(cart);
+    if (paymentMode === 'none') {
+      alert('Your cart contains products that require different payment modes. Please place separate orders.');
+      window.location.replace('cart.html');
+      return;
+    }
+    setupCheckoutModal(`Cart Order [${names.join(', ')}]`, total, combinedCategory, paymentMode);
     return;
   }
 
@@ -4839,7 +4875,7 @@ function initializeCheckoutPageFromRoute() {
     return;
   }
   isCartCheckoutSession = false;
-  setupCheckoutModal(context.name, Number(context.price), context.category || 'standard');
+  setupCheckoutModal(context.name, Number(context.price), context.category || 'standard', context.paymentMode || getProductPaymentMode(context.name));
 }
 
 function initializeProductPageFromRoute() {
@@ -4989,13 +5025,16 @@ function getCheckoutDeliveryInfo() {
   };
 }
 
-function setupCheckoutModal(name, price, category) {
+function setupCheckoutModal(name, price, category, paymentMode) {
   const modal = document.getElementById('checkoutModal');
   if (!modal) return;
 
   currentCheckoutProduct = name;
   currentCheckoutPrice = price;
   currentCheckoutCategory = category;
+  currentCheckoutPaymentMode = ['cod', 'prepaid', 'both'].includes(paymentMode)
+    ? paymentMode
+    : getProductPaymentMode(name);
 
   const autoDiscount = (Number(price) >= 1499) ? 100 : 0;
   const deliveryInfo = getCheckoutDeliveryInfo();
@@ -5096,12 +5135,24 @@ function setupCheckoutModal(name, price, category) {
   populatePincodeDatalist();
   renderCheckoutQuickTownPills();
 
-  // Default to Cash on Delivery (COD) for fastest student checkout
+  // Keep the customer on a payment method permitted for every item in this order.
   const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
+  const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+  const codLabel = document.getElementById('payMethodCodLabel');
+  const onlineLabel = document.getElementById('payMethodOnlineLabel');
+  const codAllowed = currentCheckoutPaymentMode !== 'prepaid';
+  const onlineAllowed = currentCheckoutPaymentMode !== 'cod';
   if (codRadio) {
-    codRadio.checked = true;
+    codRadio.disabled = !codAllowed;
+    codRadio.checked = codAllowed;
   }
-  togglePaymentMethod('cod');
+  if (onlineRadio) {
+    onlineRadio.disabled = !onlineAllowed;
+    onlineRadio.checked = !codAllowed && onlineAllowed;
+  }
+  if (codLabel) codLabel.style.display = codAllowed ? '' : 'none';
+  if (onlineLabel) onlineLabel.style.display = onlineAllowed ? '' : 'none';
+  togglePaymentMethod(onlineAllowed && !codAllowed ? 'online' : 'cod');
 
   goToCheckoutStep(1);
 
@@ -5706,6 +5757,13 @@ function updateChecklist() {
 let currentCheckoutStep = 1;
 
 function validateCheckoutInputs() {
+  const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+  if ((currentCheckoutPaymentMode === 'cod' && selectedPaymentMethod !== 'cod') ||
+      (currentCheckoutPaymentMode === 'prepaid' && selectedPaymentMethod !== 'online')) {
+    alert(`This product can only be ordered using ${currentCheckoutPaymentMode === 'cod' ? 'Cash on Delivery' : 'prepaid online payment'}.`);
+    return false;
+  }
+
   const nameInput = document.getElementById('orderName');
   const phoneInput = document.getElementById('orderPhone');
   const name = nameInput ? nameInput.value.trim() : '';
@@ -10238,16 +10296,23 @@ let ownerUploadedPhotos = [null, null, null, null];
 // Initialize and load custom products from cache (combining DEFAULT_PUBLISHED_PRODUCTS, jk_custom_products, and jk_uploaded_catalog)
 try {
   let initialProducts = [...DEFAULT_PUBLISHED_PRODUCTS];
+  const mergeCachedProduct = p => {
+    if (!p || (!p.name && !p.title)) return;
+    const productId = String(p.id || p.productId || '');
+    const productName = String(p.name || p.title || '').trim().toLowerCase();
+    const existingIndex = initialProducts.findIndex(item =>
+      (productId && String(item.id || item.productId || '') === productId) ||
+      String(item.name || item.title || '').trim().toLowerCase() === productName
+    );
+    if (existingIndex >= 0) initialProducts[existingIndex] = { ...initialProducts[existingIndex], ...p };
+    else initialProducts.push(p);
+  };
   const cachedProducts = localStorage.getItem('jk_custom_products');
   if (cachedProducts) {
     try {
       const parsed = JSON.parse(cachedProducts);
       if (Array.isArray(parsed)) {
-        parsed.forEach(p => {
-          if (!initialProducts.some(ip => (ip.id === p.id || ip.name === (p.title || p.name)))) {
-            initialProducts.push(p);
-          }
-        });
+        parsed.forEach(mergeCachedProduct);
       }
     } catch(e) {}
   }
@@ -10256,11 +10321,7 @@ try {
     try {
       const parsedCat = JSON.parse(uploadedCat);
       if (Array.isArray(parsedCat)) {
-        parsedCat.forEach(p => {
-          if (!initialProducts.some(ip => (ip.id === p.id || ip.name === (p.title || p.name)))) {
-            initialProducts.push(p);
-          }
-        });
+        parsedCat.forEach(mergeCachedProduct);
       }
     } catch(e) {}
   }
@@ -10298,6 +10359,7 @@ function registerCustomProductInCatalogs(p) {
       mrp: mrp,
       price: price,
       category: p.category || 'books',
+      paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
       badge: p.badge || 'Fresh Stock',
       image: mainPhoto,
       images: allPhotos,
@@ -10320,6 +10382,7 @@ function registerCustomProductInCatalogs(p) {
       mrp: mrp,
       price: price,
       category: p.category || 'books',
+      paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
       badge: p.badge || 'Fresh Stock',
       desc: p.desc || p.description || '',
       photos: allPhotos,
@@ -10708,6 +10771,7 @@ async function syncCustomProductsWithSheet() {
               category: p.category || 'stationery',
               price: Number(p.price) || 0,
               mrp: Number(p.mrp) || Math.round((Number(p.price) || 0) * 1.35),
+              paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
               badge: p.badge || '✨ Fresh Stock',
               desc: p.desc || p.description || '',
               description: p.desc || p.description || '',
@@ -10830,6 +10894,7 @@ async function syncCustomProductsWithSheet() {
               category: prodCategory,
               price: prodPrice,
               mrp: prodMrp,
+              paymentMode: parsedMeta && parsedMeta.paymentMode === 'prepaid' ? 'prepaid' : (parsedMeta && parsedMeta.paymentMode === 'cod' ? 'cod' : 'both'),
               badge: prodBadge,
               desc: prodDesc,
               description: prodDesc,
@@ -10886,7 +10951,7 @@ async function syncCustomProductsWithSheet() {
             contents: sp.contents || existing.contents || ''
           };
           // If existing already has clean images/ path, preserve it!
-          if (existing.image && existing.image.startsWith('images/')) {
+          if (existing.image && existing.image.startsWith('images/') && !sp.image && (!Array.isArray(sp.photos) || sp.photos.length === 0)) {
             mergedMap.set(sp.id, { ...merged, photos: existing.photos, image: existing.image, allImages: existing.photos });
           } else {
             mergedMap.set(sp.id, merged);
@@ -11014,7 +11079,7 @@ function mergeAndRenderLiveProducts(incoming) {
       mergedMap.set(key, sp);
     } else {
       const existing = mergedMap.get(key);
-      if (existing.image && existing.image.startsWith('images/')) {
+      if (existing.image && existing.image.startsWith('images/') && !sp.image && (!Array.isArray(sp.photos) || sp.photos.length === 0)) {
         mergedMap.set(key, { ...sp, photos: existing.photos, image: existing.image, allImages: existing.photos });
       } else {
         mergedMap.set(key, sp);

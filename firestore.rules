@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthorizedOwner() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+          'sahilsspace20@gmail.com',
+          'sahilsspace@gmail.com',
+          'info.jkstudyhub@gmail.com'
+        ];
+    }
+
+    match /published_catalog/{productId} {
+      allow read: if true;
+      allow write: if isAuthorizedOwner();
+    }
+
+    match /price_overrides/{productId} {
+      allow read: if true;
+      allow write: if isAuthorizedOwner();
+    }
+
+    match /stock_overrides/{productId} {
+      allow read: if true;
+      allow write: if isAuthorizedOwner();
+    }
+
+    match /shoppable_reels/{reelId} {
+      allow read: if true;
+      allow write: if isAuthorizedOwner();
+    }
+
+    match /orders/{orderId} {
+      allow read, write: if isAuthorizedOwner();
+    }
+
+    match /site_analytics/summary {
+      allow read: if isAuthorizedOwner();
+      allow create, update: if request.resource.data.keys().hasOnly([
+          'totalViews',
+          'totalClicks',
+          'totalDownloads',
+          'totalOrders',
+          'updatedAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'totalViews',
+          'totalClicks',
+          'totalDownloads',
+          'totalOrders',
+          'updatedAt'
+        ])
+        && request.resource.data.totalViews is number
+        && request.resource.data.totalClicks is number
+        && request.resource.data.totalDownloads is number
+        && request.resource.data.totalOrders is number
+        && request.resource.data.updatedAt is number;
+      allow delete: if isAuthorizedOwner();
+    }
+
+    match /student_libraries/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

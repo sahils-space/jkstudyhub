@@ -131,9 +131,10 @@ function doPost(e) {
           "Board",
           "Subject",
           "Edition",
-          "Items Included"
+          "Items Included",
+          "Payment Mode"
         ]);
-        prodSheet.getRange(1, 1, 1, 17).setFontWeight("bold").setBackground("#fef3c7");
+        prodSheet.getRange(1, 1, 1, 18).setFontWeight("bold").setBackground("#fef3c7");
       }
 
       var lastProductColumn = prodSheet.getLastColumn();
@@ -147,7 +148,7 @@ function doPost(e) {
         ];
         prodSheet.getRange(1, 1, 1, productHeaders.length).setValues([productHeaders]);
       }
-      ["Class Level", "Board", "Subject", "Edition", "Items Included"].forEach(function(header) {
+      ["Class Level", "Board", "Subject", "Edition", "Items Included", "Payment Mode"].forEach(function(header) {
         if (productHeaders.indexOf(header) === -1) {
           productHeaders.push(header);
           prodSheet.getRange(1, productHeaders.length).setValue(header);
@@ -187,12 +188,91 @@ function doPost(e) {
       productRow[productHeaders.indexOf("Subject")] = String(p.subject || "");
       productRow[productHeaders.indexOf("Edition")] = String(p.edition || "");
       productRow[productHeaders.indexOf("Items Included")] = String(p.contents || "");
+      productRow[productHeaders.indexOf("Payment Mode")] = p.payment_mode === "prepaid" ? "prepaid" : "cod";
       prodSheet.appendRow(productRow);
 
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
         product_id: prdId,
         title: prdTitle
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Update an existing published catalog product by its stable product ID
+    if (p.action === "update_product") {
+      var updateSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Products");
+      if (!updateSheet) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "not_found",
+          message: "Products sheet does not exist"
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+
+      var updateLastColumn = updateSheet.getLastColumn();
+      var updateHeaders = updateLastColumn
+        ? updateSheet.getRange(1, 1, 1, updateLastColumn).getValues()[0]
+        : [];
+      ["Class Level", "Board", "Subject", "Edition", "Items Included", "Payment Mode"].forEach(function(header) {
+        if (updateHeaders.indexOf(header) === -1) {
+          updateHeaders.push(header);
+          updateSheet.getRange(1, updateHeaders.length).setValue(header);
+        }
+      });
+
+      var updateId = String(p.product_id || "").trim();
+      var idColumn = updateHeaders.indexOf("Product ID");
+      if (!updateId || idColumn < 0) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "not_found",
+          product_id: updateId
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+
+      var updateData = updateSheet.getDataRange().getValues();
+      var updatedRow = 0;
+      for (var ui = 1; ui < updateData.length; ui++) {
+        if (String(updateData[ui][idColumn] || "").trim() === updateId) {
+          updatedRow = ui + 1;
+          break;
+        }
+      }
+      if (!updatedRow) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "not_found",
+          product_id: updateId
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+
+      var updatedValues = updateData[updatedRow - 1].slice();
+      while (updatedValues.length < updateHeaders.length) updatedValues.push("");
+      var editableValues = {
+        "Title": String(p.title || "").trim(),
+        "Category": String(p.category || "academic").trim(),
+        "Price": String(p.price || "0").trim(),
+        "MRP": String(p.mrp || "").trim(),
+        "Description": String(p.description || "").trim(),
+        "Photo 1": String(p.photo1 || "").trim(),
+        "Photo 2": String(p.photo2 || "").trim(),
+        "Photo 3": String(p.photo3 || "").trim(),
+        "Photo 4": String(p.photo4 || "").trim(),
+        "Status": String(p.status || "Active").trim(),
+        "Class Level": String(p.class_level || ""),
+        "Board": String(p.board || ""),
+        "Subject": String(p.subject || ""),
+        "Edition": String(p.edition || ""),
+        "Items Included": String(p.contents || ""),
+        "Payment Mode": p.payment_mode === "prepaid" ? "prepaid" : "cod"
+      };
+      Object.keys(editableValues).forEach(function(header) {
+        var columnIndex = updateHeaders.indexOf(header);
+        if (columnIndex >= 0) updatedValues[columnIndex] = editableValues[header];
+      });
+      updateSheet.getRange(updatedRow, 1, 1, updateHeaders.length).setValues([updatedValues]);
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        product_id: updateId,
+        title: editableValues.Title
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -410,6 +490,7 @@ function doGet(e) {
         var subjectIndex = productHeaders.indexOf("Subject");
         var editionIndex = productHeaders.indexOf("Edition");
         var contentsIndex = productHeaders.indexOf("Items Included");
+        var paymentModeIndex = productHeaders.indexOf("Payment Mode");
         var pData = prodSheet.getDataRange().getValues();
         for (var pj = 1; pj < pData.length; pj++) {
           var pRow = pData[pj];
@@ -437,6 +518,9 @@ function doGet(e) {
             subject: subjectIndex >= 0 ? String(pRow[subjectIndex] || "") : "",
             edition: editionIndex >= 0 ? String(pRow[editionIndex] || "") : "",
             contents: contentsIndex >= 0 ? String(pRow[contentsIndex] || "") : "",
+            paymentMode: paymentModeIndex < 0 || !String(pRow[paymentModeIndex] || "").trim()
+              ? "both"
+              : String(pRow[paymentModeIndex]).toLowerCase() === "prepaid" ? "prepaid" : "cod",
             timestamp: pRow[0]
           });
         }
