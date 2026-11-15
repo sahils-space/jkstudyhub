@@ -9,6 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta name="theme-color" content="#172a22">
+  <meta name="description" content="Browse books, school exercise copies, book sets and exam guides from JK Study Hub. Search and filter the catalog, then enter your PIN at checkout to confirm delivery options and charges.">
   <script>
     const checkoutRoute = new URLSearchParams(window.location.search).get('checkout') === '1';
     const productRoute = new URLSearchParams(window.location.search).has('product');
@@ -32,7 +33,7 @@
   <meta property="og:url" content="https://jkstudyhub.online/store.html">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="JK Study Hub Official Storefront">
-  <meta name="twitter:description" content="School copies and syllabus booksets at less than bookshop rates & less than MRP and bestselling novels with Kashmir doorstep delivery.">
+  <meta name="twitter:description" content="Browse school copies, syllabus booksets and novels. Enter your PIN at checkout to confirm delivery options and charges.">
   <meta name="twitter:image" content="https://jkstudyhub.online/images/logo-app.png">
   <!-- Google Search JSON-LD Structured Data for Bookstore & Education -->
   <script type="application/ld+json">
@@ -45,7 +46,7 @@
         "name": "JK Study Hub Bookstore & Educational Supplies",
         "url": "https://jkstudyhub.online/store.html",
         "logo": "https://jkstudyhub.online/images/logo-app.png",
-        "description": "Buy JKBOSE Class 10th, 11th, and 12th textbooks, question banks, solved papers, stationery and student supplies with fast home delivery across Jammu & Kashmir.",
+        "description": "Browse JKBOSE Class 10th, 11th, and 12th textbooks, question banks, solved papers, stationery and student supplies. Enter a PIN at checkout to confirm delivery options and charges.",
         "telephone": "+91-9622605714",
         "priceRange": "₹49 - ₹1,499",
         "address": {
@@ -70,8 +71,6 @@
     ]
   }
   </script>
-  <!-- Preload Critical Above-The-Fold 3D Ads for Instant 0ms Rendering -->
-  <link rel="preload" as="image" href="images/ad-3d-scooter.webp" type="image/webp">
   <!-- Instant Zero-Flicker Price Hydration (Runs before First Paint to eliminate any price flicker on hard refresh) -->
   <script>
     (function() {
@@ -3887,6 +3886,47 @@
     }
     .hub-store-catalog-main { min-width: 0; }
     .hub-store-catalog-main .store-search-container { margin-top: 0 !important; }
+    .store-catalog-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin-top: 10px;
+    }
+    .store-catalog-delivery-note {
+      margin: 0;
+      color: #526357;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .store-catalog-delivery-note a { color: #315c4b; font-weight: 700; }
+    .store-catalog-sort-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #526357;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .store-catalog-sort-control select {
+      min-height: 34px;
+      max-width: 180px;
+      padding: 5px 8px;
+      border: 1px solid #d5ded5;
+      border-radius: 8px;
+      background: #fff;
+      color: #20372c;
+      font: inherit;
+    }
+    body.dark-mode .store-catalog-delivery-note,
+    body.dark-mode .store-catalog-sort-control { color: #c4d2c5; }
+    body.dark-mode .store-catalog-delivery-note a { color: #b7d7bb; }
+    body.dark-mode .store-catalog-sort-control select {
+      border-color: #35473d;
+      background: #18251e;
+      color: #edf4ee;
+    }
     .store-advanced-filter-toggle { display: none; }
     body.dark-mode .hub-store-category-rail {
       border-color: #35473d;
@@ -4436,9 +4476,9 @@
         <article class="jk-offer jk-offer--delivery">
           <img class="jk-offer__image" src="images/offer-mascot-delivery.jpg" alt="Free Delivery Mascot" width="320" height="320" decoding="async">
           <div class="jk-offer__copy">
-            <span class="jk-offer__eyebrow" style="background:#ccfbf1; color:#0f766e; padding:2px 8px; border-radius:999px; font-weight:800; display:inline-block; margin-bottom:4px;">ORDERS ₹499+</span>
-            <h2 class="jk-offer__title">100% Free Kashmir Delivery</h2>
-            <p class="jk-offer__description">Fast doorstep transport across all Kashmir districts with COD.</p>
+            <span class="jk-offer__eyebrow" style="background:#ccfbf1; color:#0f766e; padding:2px 8px; border-radius:999px; font-weight:800; display:inline-block; margin-bottom:4px;">ELIGIBLE KASHMIR PINs • ORDERS ₹499+</span>
+            <h2 class="jk-offer__title">Free Delivery on Eligible PINs</h2>
+            <p class="jk-offer__description">Enter your PIN at checkout to confirm delivery coverage, charges and payment options.</p>
           </div>
         </article>
       </div>
@@ -4612,6 +4652,16 @@
       <div id="storeSearchFeedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; color: #475569; justify-content: space-between; align-items: center;">
         <span id="searchResultCountText">Found 0 items</span>
         <button onclick="clearStoreSearch()" style="background: none; border: none; color: #2563eb; font-weight: 700; cursor: pointer; font-size: 12.5px;">Show All Items</button>
+      </div>
+      <div class="store-catalog-meta-row">
+        <p class="store-catalog-delivery-note">Delivery availability, charges and payment options are confirmed by PIN at <a href="cart.html">checkout</a>.</p>
+        <label class="store-catalog-sort-control">Sort items
+          <select id="storeCatalogSort" onchange="setStoreCatalogSort(this.value)">
+            <option value="featured">Featured order</option>
+            <option value="price-low">Price: low to high</option>
+            <option value="price-high">Price: high to low</option>
+          </select>
+        </label>
       </div>
     </div>
 
@@ -7735,7 +7785,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.0"></script>
+  <script src="store.js?v=92.1"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
@@ -7992,31 +8042,6 @@
     </div>
   </div>
 
-
-  <!-- Instant In-Memory Image Preloader for All Novels & 3D Ads -->
-  <script>
-    (function preloadAllStoreAssets() {
-      const assets = [
-        'images/ad-3d-scooter.webp',
-        'images/ad-3d-founder.webp',
-        'images/books/atomic-habits-1.webp', 'images/books/atomic-habits-2.webp', 'images/books/atomic-habits-3.webp', 'images/books/atomic-habits-4.webp',
-        'images/books/psychology-of-money-1.webp', 'images/books/psychology-of-money-2.webp', 'images/books/psychology-of-money-3.webp', 'images/books/psychology-of-money-4.webp',
-        'images/books/deep-work-1.webp', 'images/books/deep-work-2.webp', 'images/books/deep-work-3.webp', 'images/books/deep-work-4.webp',
-        'images/books/the-alchemist-1.webp', 'images/books/the-alchemist-2.webp', 'images/books/the-alchemist-3.webp', 'images/books/the-alchemist-4.webp',
-        'images/books/the-kite-runner-1.webp', 'images/books/the-kite-runner-2.webp', 'images/books/the-kite-runner-3.webp', 'images/books/the-kite-runner-4.webp',
-        'images/books/thousand-splendid-suns-1.webp', 'images/books/thousand-splendid-suns-2.webp', 'images/books/thousand-splendid-suns-3.webp', 'images/books/thousand-splendid-suns-4.webp',
-        'images/books/secrets-of-divine-love-1.webp', 'images/books/secrets-of-divine-love-2.webp', 'images/books/secrets-of-divine-love-3.webp', 'images/books/secrets-of-divine-love-4.webp',
-        'images/books/reclaim-your-heart-1.webp', 'images/books/reclaim-your-heart-2.webp', 'images/books/reclaim-your-heart-3.webp', 'images/books/reclaim-your-heart-4.webp',
-        'images/books/wings-of-fire-1.webp', 'images/books/wings-of-fire-2.webp', 'images/books/wings-of-fire-3.webp', 'images/books/wings-of-fire-4.webp',
-        'images/books/lucent-gk-1.webp', 'images/books/lucent-gk-2.webp', 'images/books/lucent-gk-3.webp', 'images/books/lucent-gk-4.webp',
-        'images/books/wren-martin-1.webp', 'images/books/wren-martin-2.webp', 'images/books/wren-martin-3.webp', 'images/books/wren-martin-4.webp'
-      ];
-      assets.forEach(url => {
-        const img = new Image();
-        img.src = url;
-      });
-    })();
-  </script>
 
   <!-- Floating WhatsApp Quick-Chat & Order Widget -->
   <a href="https://wa.me/919622605714?text=Hello%20JK%20Study%20Hub!%20I%20am%20browsing%20the%20store%20and%20want%20to%20order%20books%20or%20study%20materials." 

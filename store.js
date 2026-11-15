@@ -2262,18 +2262,18 @@ function renderCartPage() {
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
         <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifies1499Offer ? '#15803d' : (qualifiesFreeShipping ? '#166534' : '#1e40af')};">
           <i class="fa-solid fa-gift" style="font-size: 16px; color: ${qualifies1499Offer ? '#16a34a' : '#2563eb'};"></i>
-          <span>${qualifies1499Offer ? '🎉 <strong>Mega Offer Applied:</strong> FREE Shipping + <strong>₹100 Instant Discount</strong> active on this order!' : (qualifiesFreeShipping ? `🚚 FREE Delivery unlocked! Add <strong style="color:#b45309;">₹${diffTo1499}</strong> more to unlock an extra <strong>₹100 OFF</strong>!` : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> more to unlock FREE Delivery across Kashmir!`)}</span>
+          <span>${qualifies1499Offer ? '🎉 <strong>₹100 offer unlocked.</strong> Delivery eligibility and charges are confirmed by PIN at checkout.' : (qualifiesFreeShipping ? `🚚 Orders ₹499+ may get free delivery on eligible Kashmir PINs. Add <strong style="color:#b45309;">₹${diffTo1499}</strong> more to unlock the <strong>₹100 discount</strong>.` : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> to reach ₹499. Free delivery is available on eligible Kashmir PINs.`)}</span>
         </div>
         <span style="font-size: 11.5px; background: ${qualifies1499Offer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : '#2563eb')}; color: white; font-weight: 800; padding: 3px 10px; border-radius: 20px;">
-          ${qualifies1499Offer ? '₹100 OFF + FREE DELIVERY' : (qualifiesFreeShipping ? 'FREE DELIVERY UNLOCKED' : `${progressPercent}% COMPLETED`)}
+          ${qualifies1499Offer ? '₹100 OFFER UNLOCKED' : (qualifiesFreeShipping ? 'CHECK PIN ELIGIBILITY' : `${progressPercent}% COMPLETED`)}
         </span>
       </div>
       <div style="width: 100%; height: 7px; background: ${qualifiesFreeShipping ? '#dcfce7' : '#dbeafe'}; border-radius: 10px; overflow: hidden;">
         <div style="width: ${progressPercent}%; height: 100%; background: ${qualifies1499Offer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : 'linear-gradient(90deg, #3b82f6, #2563eb)')}; border-radius: 10px; transition: width 0.4s ease;"></div>
       </div>
       <div style="font-size: 11px; color: #64748b; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
-        <span>Free delivery: <strong>₹499+</strong> • Mega Savings: <strong>₹1499+ (₹100 OFF)</strong></span>
-        <span>${qualifies1499Offer ? '<strong style="color:#16a34a;">₹100 Saved!</strong>' : 'Standard Delivery: ₹40-₹55'}</span>
+        <span>Eligible Kashmir PINs: <strong>₹499+ free delivery</strong> • <strong>₹1499+ (₹100 OFF)</strong></span>
+        <span>${qualifies1499Offer ? '<strong style="color:#16a34a;">₹100 offer unlocked</strong>' : 'Delivery charges confirmed by PIN at checkout'}</span>
       </div>
     </div>
   `;
@@ -9513,36 +9513,58 @@ function cycleModalPhoto(delta) {
 }
 
 
-// Global Asset Preloader for Store, Cart & Orders
-(function preloadAllCatalogPhotos() {
-  if (typeof window === 'undefined') return;
-  const webpUrls = [
-    'images/ad-3d-scooter.webp', 'images/ad-3d-founder.webp',
-    'images/books/atomic-habits-1.webp', 'images/books/atomic-habits-2.webp', 'images/books/atomic-habits-3.webp', 'images/books/atomic-habits-4.webp',
-    'images/books/psychology-of-money-1.webp', 'images/books/psychology-of-money-2.webp', 'images/books/psychology-of-money-3.webp', 'images/books/psychology-of-money-4.webp',
-    'images/books/deep-work-1.webp', 'images/books/deep-work-2.webp', 'images/books/deep-work-3.webp', 'images/books/deep-work-4.webp',
-    'images/books/the-alchemist-1.webp', 'images/books/the-alchemist-2.webp', 'images/books/the-alchemist-3.webp', 'images/books/the-alchemist-4.webp',
-    'images/books/the-kite-runner-1.webp', 'images/books/the-kite-runner-2.webp', 'images/books/the-kite-runner-3.webp', 'images/books/the-kite-runner-4.webp',
-    'images/books/thousand-splendid-suns-1.webp', 'images/books/thousand-splendid-suns-2.webp', 'images/books/thousand-splendid-suns-3.webp', 'images/books/thousand-splendid-suns-4.webp',
-    'images/books/secrets-of-divine-love-1.webp', 'images/books/secrets-of-divine-love-2.webp', 'images/books/secrets-of-divine-love-3.webp', 'images/books/secrets-of-divine-love-4.webp',
-    'images/books/reclaim-your-heart-1.webp', 'images/books/reclaim-your-heart-2.webp', 'images/books/reclaim-your-heart-3.webp', 'images/books/reclaim-your-heart-4.webp',
-    'images/books/wings-of-fire-1.webp', 'images/books/wings-of-fire-2.webp', 'images/books/wings-of-fire-3.webp', 'images/books/wings-of-fire-4.webp',
-    'images/books/lucent-gk-1.webp', 'images/books/lucent-gk-2.webp', 'images/books/lucent-gk-3.webp', 'images/books/lucent-gk-4.webp',
-    'images/books/wren-martin-1.webp', 'images/books/wren-martin-2.webp', 'images/books/wren-martin-3.webp', 'images/books/wren-martin-4.webp'
-  ];
-  setTimeout(() => {
-    webpUrls.forEach(url => {
-      const img = new Image();
-      img.src = url;
-    });
-  }, 100);
-})();
-
 // ==========================================
 // DEDICATED STORE SEARCH & CATEGORY ENGINE
 // ==========================================
 
 let currentStoreCategory = 'all';
+let currentStoreCatalogSort = 'featured';
+
+function setStoreCatalogSort(sortOrder) {
+  currentStoreCatalogSort = ['price-low', 'price-high'].includes(sortOrder) ? sortOrder : 'featured';
+  const catalog = document.getElementById('hubStoreCatalog');
+  if (!catalog) return;
+
+  catalog.querySelectorAll('.product-grid').forEach(grid => {
+    const cards = Array.from(grid.children).filter(card => card.matches('.book-product-card, .product-card'));
+    if (cards.length < 2) return;
+
+    cards.forEach((card, index) => {
+      if (!Number.isFinite(Number(card.dataset.catalogFeaturedOrder))) {
+        card.dataset.catalogFeaturedOrder = String(index);
+      }
+    });
+
+    const sortedCards = cards.slice().sort((a, b) => {
+      if (currentStoreCatalogSort === 'featured') {
+        return Number(a.dataset.catalogFeaturedOrder) - Number(b.dataset.catalogFeaturedOrder);
+      }
+
+      const readPrice = card => {
+        const priceText = card.querySelector('.product-price')?.textContent || '';
+        const price = Number(priceText.replace(/[^\d.]/g, ''));
+        return Number.isFinite(price) ? price : null;
+      };
+      const priceA = readPrice(a);
+      const priceB = readPrice(b);
+      if (priceA === null || priceB === null) {
+        if (priceA === priceB) return Number(a.dataset.catalogFeaturedOrder) - Number(b.dataset.catalogFeaturedOrder);
+        return priceA === null ? 1 : -1;
+      }
+      const direction = currentStoreCatalogSort === 'price-low' ? 1 : -1;
+      return direction * (priceA - priceB)
+        || Number(a.dataset.catalogFeaturedOrder) - Number(b.dataset.catalogFeaturedOrder);
+    });
+
+    const cardSet = new Set(cards);
+    let sortedIndex = 0;
+    const reorderedNodes = Array.from(grid.childNodes).map(node => {
+      if (!cardSet.has(node)) return node;
+      return sortedCards[sortedIndex++];
+    });
+    grid.replaceChildren(...reorderedNodes);
+  });
+}
 
 function getStoreAdvancedFilterValues() {
   return {

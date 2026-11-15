@@ -104,6 +104,7 @@
       category: 'wedding',
       categoryLabel: 'Wedding Keepsakes',
       badge: 'Bespoke Order',
+      customOrder: true,
       price: 2499,
       mrp: 4000,
       stock: 3,
@@ -228,6 +229,20 @@
       const isWish = state.wishlist.includes(p.id);
       const { price, mrp } = getProductEffectivePrice(p);
       const discount = mrp > price ? Math.round((mrp - price) / mrp * 100) : 0;
+      const actions = p.customOrder
+        ? `<div class="product-card-actions product-card-actions-bespoke">
+             <button type="button" class="btn-card-add" onclick="window.auraAtelier.orderViaWhatsApp('${p.id}')" aria-label="Request a custom order quote for ${p.title}" title="Request a custom order quote">
+               <i class="fa-brands fa-whatsapp"></i> Custom quote
+             </button>
+           </div>`
+        : `<div class="product-card-actions">
+             <button type="button" class="btn-card-add" onclick="window.auraAtelier.addToCart('${p.id}')">
+               <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+             </button>
+             <button type="button" class="btn-card-wa" onclick="window.auraAtelier.orderViaWhatsApp('${p.id}')" title="Quick WhatsApp Order">
+               <i class="fa-brands fa-whatsapp"></i>
+             </button>
+           </div>`;
       return `
         <article class="product-card" data-id="${p.id}" data-category="${p.category}">
           ${discount ? `<span class="product-card-badge">${discount}% OFF</span>` : ''}
@@ -250,15 +265,7 @@
               <span class="product-price">₹${price.toLocaleString('en-IN')}</span>
               ${mrp > price ? `<span class="product-mrp">₹${mrp.toLocaleString('en-IN')}</span>` : ''}
             </div>
-
-            <div class="product-card-actions">
-              <button type="button" class="btn-card-add" onclick="window.auraAtelier.addToCart('${p.id}')">
-                <i class="fa-solid fa-bag-shopping"></i> Add to Cart
-              </button>
-              <button type="button" class="btn-card-wa" onclick="window.auraAtelier.orderViaWhatsApp('${p.id}')" title="Quick WhatsApp Order">
-                <i class="fa-brands fa-whatsapp"></i>
-              </button>
-            </div>
+            ${actions}
           </div>
         </article>
       `;
@@ -580,14 +587,20 @@
     const modal = document.getElementById('quickViewModal');
     const content = document.getElementById('quickViewContent');
     if (!modal || !content) return;
+    modal.dataset.productId = productId;
 
     const { price, mrp } = getProductEffectivePrice(prod);
+    const isCustomOrder = Boolean(prod.customOrder);
+    const supportsPersonalization = prod.id === 'prod-2' || isCustomOrder;
+    const personalizationLabel = isCustomOrder
+      ? 'Names and wedding date (share details when you enquire):'
+      : 'Custom word or initial (optional):';
 
     content.innerHTML = `
       <div style="display:flex; flex-direction:column; gap:12px;">
         <img src="${prod.image}" alt="${prod.title}" class="modal-gallery-img">
         <div style="font-size:11.5px; color:#15803d; font-weight:700; background:#dcfce7; padding:6px 12px; border-radius:8px; display:inline-flex; align-items:center; gap:6px;">
-          <i class="fa-solid fa-leaf"></i> 100% Non-toxic, UV-protected epoxy resin
+          <i class="fa-solid fa-leaf"></i> Handcrafted resin artwork
         </div>
       </div>
 
@@ -599,6 +612,7 @@
           <span style="font-size:24px; font-weight:800; color:var(--bg-dark);">₹${price.toLocaleString('en-IN')}</span>
           ${mrp > price ? `<span class="product-mrp" style="font-size:16px;">₹${mrp.toLocaleString('en-IN')}</span>` : ''}
         </div>
+        ${isCustomOrder ? '<p style="font-size:12px; color:var(--text-muted); margin:-10px 0 16px;">Confirm the final price, flower requirements, delivery details and timing before placing a bespoke order.</p>' : ''}
 
         <p style="font-size:14px; color:var(--text-muted); line-height:1.6; margin-bottom:20px;">
           ${prod.description}
@@ -608,23 +622,31 @@
           ${prod.specs.map(s => `<li><i class="fa-solid fa-check" style="color:var(--accent-gold); margin-right:8px;"></i> ${s}</li>`).join('')}
         </ul>
 
-        <div style="margin-bottom:20px;">
-          <label style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:6px;">Custom Engraving / Name / Initial (Optional):</label>
-          <input type="text" id="quickCustomInput" placeholder="e.g. Letter 'A', or Name 'Zoya & Faizan'" style="width:100%; padding:10px 14px; border:1.5px solid var(--border-subtle); border-radius:8px; font-size:13px; outline:none;">
-        </div>
+        ${supportsPersonalization ? `
+          <div style="margin-bottom:20px;">
+            <label for="quickCustomInput" style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:6px;">${personalizationLabel}</label>
+            <input type="text" id="quickCustomInput" placeholder="${isCustomOrder ? 'Add a short note for your enquiry' : 'e.g. a word or initial'}" style="width:100%; padding:10px 14px; border:1.5px solid var(--border-subtle); border-radius:8px; font-size:13px; outline:none;">
+          </div>
+        ` : ''}
 
         <div style="display:flex; flex-direction:column; gap:10px; margin-top:auto;">
-          <div style="display:flex; gap:10px;">
-            <button type="button" class="btn-luxury-primary" style="flex-grow:1; justify-content:center;" onclick="window.auraAtelier.addFromModal('${prod.id}')">
-              <i class="fa-solid fa-bag-shopping"></i> Add to Bag
+          ${isCustomOrder ? `
+            <button type="button" class="btn-luxury-primary" style="justify-content:center;" onclick="window.auraAtelier.orderViaWhatsApp('${prod.id}')">
+              <i class="fa-brands fa-whatsapp"></i> Discuss custom order
             </button>
-            <button type="button" class="btn-card-wa" style="padding:14px 18px; font-size:18px;" onclick="window.auraAtelier.orderViaWhatsApp('${prod.id}')" title="Quick WhatsApp Order">
-              <i class="fa-brands fa-whatsapp"></i>
+          ` : `
+            <div style="display:flex; gap:10px;">
+              <button type="button" class="btn-luxury-primary" style="flex-grow:1; justify-content:center;" onclick="window.auraAtelier.addFromModal('${prod.id}')">
+                <i class="fa-solid fa-bag-shopping"></i> Add to Bag
+              </button>
+              <button type="button" class="btn-card-wa" style="padding:14px 18px; font-size:18px;" onclick="window.auraAtelier.orderViaWhatsApp('${prod.id}')" title="Quick WhatsApp Order">
+                <i class="fa-brands fa-whatsapp"></i>
+              </button>
+            </div>
+            <button type="button" class="btn-checkout-prepaid-rzp" style="padding:12px; font-size:13px;" onclick="window.auraAtelier.buyNowOnline('${prod.id}')">
+              <i class="fa-solid fa-lock"></i> Buy Now (Prepaid Razorpay)
             </button>
-          </div>
-          <button type="button" class="btn-checkout-prepaid-rzp" style="padding:12px; font-size:13px;" onclick="window.auraAtelier.buyNowOnline('${prod.id}')">
-            <i class="fa-solid fa-lock"></i> Buy Now (Prepaid Razorpay)
-          </button>
+          `}
         </div>
       </div>
     `;
@@ -689,26 +711,30 @@
     if (!prod) return;
 
     const imgUrl = prod.image.startsWith('http') ? prod.image : `${DOMAIN_URL}/${prod.image.replace(/^\.\//, '')}`;
-    const mrp = prod.mrp || Math.round(prod.price * 1.5);
+    const { price, mrp } = getProductEffectivePrice(prod);
+    const modal = document.getElementById('quickViewModal');
+    const input = modal?.classList.contains('active') && modal.dataset.productId === productId
+      ? document.getElementById('quickCustomInput')
+      : null;
+    const customNote = input?.value.trim();
 
     const msg = 
-`✨💎 *AURA RESIN ATELIER — BESPOKE ART ORDER* 💎✨
+`✨💎 *AURA RESIN ATELIER — PRODUCT ENQUIRY* 💎✨
 ════════════════════════════════
 🛍️ *ITEM DETAILS:*
 ════════════════════════════════
 🏷️ *Product:* ${prod.title}
 💎 *Collection:* ${prod.categoryLabel}
-💰 *Prepaid Price:* ₹${prod.price.toLocaleString('en-IN')} (MRP: ₹${mrp.toLocaleString('en-IN')})
+💰 *Current listed price:* ₹${price.toLocaleString('en-IN')}${mrp > price ? ` (MRP: ₹${mrp.toLocaleString('en-IN')})` : ''}
 🔢 *Quantity:* 1 Piece
+${customNote ? `✍️ *Customization/enquiry note:* ${customNote}\n` : ''}
 
 🖼️ *Product Image Preview:*
 ${imgUrl}
 
 ════════════════════════════════
-💳 *Payment Mode:* 100% Prepaid via UPI QR Code
-📍 *Free Kashmir Delivery on ₹999+*
 ════════════════════════════════
-🙏 *Hello!* I want to place a prepaid order for this handcrafted piece. Please send your *UPI QR Code / Payment details* so I can pay and confirm!`;
+🙏 Please confirm availability, final price, any customization requirements, delivery coverage/charges/timing and payment options before I place the order.`;
 
     openWhatsApp(msg);
   }

@@ -1283,6 +1283,10 @@ a {
   gap: 8px;
 }
 
+.product-card-actions-bespoke {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .btn-card-add {
   background: var(--bg-surface-soft);
   color: var(--bg-dark);

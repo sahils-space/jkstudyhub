@@ -3861,6 +3861,10 @@ async function quickSavePublishedProductPrice(cleanId, prodTitle) {
   mrpOverrides[prodTitle] = newMrp;
   localStorage.setItem('jk_custom_mrps', JSON.stringify(mrpOverrides));
 
+  if (typeof showToast === 'function') {
+    showToast('Saving price on this device and publishing to the live store…');
+  }
+
   if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.apps || !firebase.apps.length) {
     if (typeof showToast === 'function') {
       showToast('Price saved only on this device. Cloud sync is unavailable.');
@@ -5036,7 +5040,46 @@ function renderSellerInventoryTable() {
   tbody.innerHTML = html || '<tr><td colspan="7" style="text-align: center; padding: 24px; color: #64748b;">No products matched your inventory filter.</td></tr>';
 }
 
-function saveSellerProductStock(productName, index) {
+function sellerStockSyncAvailable() {
+  return typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length;
+}
+
+async function publishSellerStockOverride(productName, stockOverride) {
+  if (!sellerStockSyncAvailable()) return 'unavailable';
+
+  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
+  try {
+    await firebase.firestore().collection('stock_overrides').doc(safeDocId).set({
+      name: productName,
+      status: stockOverride.status,
+      qty: stockOverride.qty,
+      updatedAt: stockOverride.updatedAt
+    }, { merge: true });
+    return 'published';
+  } catch (error) {
+    console.error('[Firestore] Could not publish seller stock update:', error);
+    return 'failed';
+  }
+}
+
+let sellerStockFeedbackTimeout = null;
+
+function showSellerStockFeedback(message) {
+  const msgEl = document.getElementById('inventoryFeedbackMessage');
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    msgEl.textContent = message;
+    const isFailure = /cloud sync (?:failed|is unavailable)/i.test(message);
+    const isPending = message.startsWith('Saving ');
+    msgEl.style.color = isFailure ? '#b91c1c' : (isPending ? '#1d4ed8' : '#166534');
+    msgEl.style.background = isFailure ? '#fef2f2' : (isPending ? '#eff6ff' : '#dcfce7');
+    if (sellerStockFeedbackTimeout) clearTimeout(sellerStockFeedbackTimeout);
+    sellerStockFeedbackTimeout = setTimeout(() => { msgEl.style.display = 'none'; }, 6000);
+  }
+  if (typeof showToast === 'function') showToast(message);
+}
+
+async function saveSellerProductStock(productName, index) {
   const statusSelect = document.getElementById(`seller-stock-status-${index}`);
   const qtyInput = document.getElementById(`seller-stock-qty-${index}`);
   if (!statusSelect || !qtyInput) return;
@@ -5053,67 +5096,44 @@ function saveSellerProductStock(productName, index) {
   }
 
   const overrides = getSellerStockOverrides();
-  overrides[productName] = {
+  const stockOverride = {
     status: status,
     qty: qty,
     updatedAt: Date.now()
   };
+  overrides[productName] = stockOverride;
   localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
-
-  // Sync to Firestore stock_overrides
-  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
-    try {
-      firebase.firestore().collection('stock_overrides').doc(safeDocId).set({
-        name: productName,
-        status: status,
-        qty: qty,
-        updatedAt: Date.now()
-      }, { merge: true }).catch(e => console.warn("Firestore stock push notice:", e));
-    } catch(e) {}
-  }
-
-  const msgEl = document.getElementById('inventoryFeedbackMessage');
-  if (msgEl) {
-    msgEl.style.display = 'block';
-    const statusLabel = status === 'out_of_stock' ? '🔴 Out of Stock (Sold Out)' : (status === 'low_stock' ? `🟡 Low Stock (${qty} left)` : `🟢 In Stock (${qty} left)`);
-    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Saved! "${productName}" is now <strong>${statusLabel}</strong>.`;
-    setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
-  }
-
-  if (typeof showToast === 'function') {
-    showToast(`Stock updated: ${productName} (${status})`);
-  }
-
+  showSellerStockFeedback(`Saving stock locally and publishing "${productName}" to the live store…`);
   renderSellerInventoryTable();
+  const syncStatus = await publishSellerStockOverride(productName, stockOverride);
+  const statusLabel = status === 'out_of_stock' ? 'Out of stock' : (status === 'low_stock' ? `Low stock (${qty} left)` : `In stock (${qty} left)`);
+  const syncMessage = syncStatus === 'published'
+    ? 'Published to the live store.'
+    : syncStatus === 'failed'
+      ? 'Cloud sync failed; the change is saved only on this device.'
+      : 'Cloud sync is unavailable; the change is saved only on this device.';
+  showSellerStockFeedback(`${productName}: ${statusLabel}. ${syncMessage}`);
 }
 
-function quickSetStockStatus(productName, status, qty) {
+async function quickSetStockStatus(productName, status, qty) {
   const overrides = getSellerStockOverrides();
-  overrides[productName] = {
+  const stockOverride = {
     status: status,
     qty: qty,
     updatedAt: Date.now()
   };
+  overrides[productName] = stockOverride;
   localStorage.setItem('jk_stock_overrides', JSON.stringify(overrides));
-
-  // Sync to Firestore stock_overrides
-  const safeDocId = productName.toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
-    try {
-      firebase.firestore().collection('stock_overrides').doc(safeDocId).set({
-        name: productName,
-        status: status,
-        qty: qty,
-        updatedAt: Date.now()
-      }, { merge: true }).catch(e => console.warn("Firestore stock push notice:", e));
-    } catch(e) {}
-  }
-
-  if (typeof showToast === 'function') {
-    showToast(`✅ "${productName}" is now ${status === 'out_of_stock' ? 'Out of Stock' : 'In Stock (' + qty + ')'}!`);
-  }
+  showSellerStockFeedback(`Saving stock locally and publishing "${productName}" to the live store…`);
   renderSellerInventoryTable();
+  const syncStatus = await publishSellerStockOverride(productName, stockOverride);
+  const statusLabel = status === 'out_of_stock' ? 'Out of stock' : (status === 'low_stock' ? `Low stock (${qty} left)` : `In stock (${qty} left)`);
+  const syncMessage = syncStatus === 'published'
+    ? 'Published to the live store.'
+    : syncStatus === 'failed'
+      ? 'Cloud sync failed; the change is saved only on this device.'
+      : 'Cloud sync is unavailable; the change is saved only on this device.';
+  showSellerStockFeedback(`${productName}: ${statusLabel}. ${syncMessage}`);
 }
 
 function bulkRestockAll(units) {
