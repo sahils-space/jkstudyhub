@@ -5399,6 +5399,45 @@ async function verifyAndApplyRepeatDiscount() {
     return;
   }
 
+  // --- SPECIAL VIP PROMO (HUZAIFABASS@50) ---
+  // Secret promo: Orders of ₹1,250 or above, ₹50 FLAT OFF, Max 10 redemptions, hidden from public listings
+  if (rawCoupon === 'HUZAIFABASS@50' || rawCoupon === 'HUZAIFABASS50') {
+    const currentVal = Number(currentCheckoutPrice) || 0;
+    if (currentVal < 1250) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = '#dc2626';
+      msgEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Coupon <strong>${rawCoupon}</strong> is only valid on orders of ₹1,250 or above. (Current cart: ₹${currentVal})`;
+      return;
+    }
+
+    const usedCount = Number(localStorage.getItem('jk_coupon_HUZAIFABASS50_count') || 0);
+    if (usedCount >= 10) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = '#dc2626';
+      msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Coupon <strong>${rawCoupon}</strong> has reached its maximum limit of 10 orders.`;
+      return;
+    }
+
+    activeRepeatDiscountAmount = Math.min(50, currentVal);
+    activeRedeemedCouponCode = 'HUZAIFABASS@50';
+    activeRedeemedPrevOrderId = 'VIP-HUZAIFABASS-' + (usedCount + 1);
+
+    if (couponInput) couponInput.disabled = true;
+    if (orderIdInput) orderIdInput.disabled = true;
+    const applyBtn = document.getElementById('btnApplyRepeatCoupon');
+    if (applyBtn) {
+      applyBtn.disabled = true;
+      applyBtn.innerHTML = '<i class="fa-solid fa-check"></i> ₹50 Applied';
+    }
+
+    msgEl.style.display = 'block';
+    msgEl.style.color = '#16a34a';
+    msgEl.innerHTML = `🎉 <strong>₹50 Special Discount Applied!</strong> Saved ₹${activeRepeatDiscountAmount} on your order of ₹${currentVal}. <button type="button" onclick="removeRepeatDiscount()" style="background:none; border:none; color:#dc2626; text-decoration:underline; cursor:pointer; font-size:11px; margin-left:6px;">Remove</button>`;
+
+    updateCheckoutInvoiceTotals();
+    return;
+  }
+
   // --- REPEAT CUSTOMER VOUCHER (STUDENT20) ---
   if (!rawOrderId) {
     msgEl.style.display = 'block';
@@ -6279,6 +6318,9 @@ function processOrder(txnId, customStatus) {
     if (activeRedeemedCouponCode === 'HARISBHAT40') {
       const c = Number(localStorage.getItem('jk_coupon_HARISBHAT40_count') || 0);
       localStorage.setItem('jk_coupon_HARISBHAT40_count', String(c + 1));
+    } else if (activeRedeemedCouponCode === 'HUZAIFABASS@50' || activeRedeemedCouponCode === 'HUZAIFABASS50') {
+      const c = Number(localStorage.getItem('jk_coupon_HUZAIFABASS50_count') || 0);
+      localStorage.setItem('jk_coupon_HUZAIFABASS50_count', String(c + 1));
     } else if (activeRedeemedCouponCode === 'HARIS50' || activeRedeemedCouponCode === 'HARISBHAT50') {
       localStorage.setItem('jk_haris50_redeemed', 'true');
     } else if (activeRedeemedPrevOrderId) {
