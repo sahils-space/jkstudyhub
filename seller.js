@@ -860,11 +860,21 @@ function renderSellerOrdersTable() {
   let cancelledCount = 0;
   let onHoldCount = 0;
 
+  const isHarisBhatOrder = (o) => {
+    if (!o) return false;
+    const n = String(o.name || '').toLowerCase();
+    const id = String(o.orderId || '').toUpperCase();
+    return (n.includes('haris') || n.includes('harris')) && (n.includes('bhat') || n.includes('bhatt')) || id === 'JK-WA-1001' || id === 'OD1730001001' || id.includes('HARIS');
+  };
+
   orders.forEach(o => {
     const s = String(o.status || 'Confirmed').toLowerCase();
     if (s.includes('cancel')) cancelledCount++;
     else if (s.includes('hold')) onHoldCount++;
-    else if (s.includes('deliver') || s.includes('complete')) deliveredCount++;
+    else if (s.includes('deliver') || s.includes('complete')) {
+      // ONLY Harris Bhatt (Haris Bhat) is kept in the delivered count
+      if (isHarisBhatOrder(o)) deliveredCount++;
+    }
     else if (s.includes('ready') || s.includes('dispatch') || s.includes('packed')) readyCount++;
     else if (s.includes('ship') || s.includes('way') || s.includes('out')) shippedCount++;
     else pendingCount++;
@@ -899,7 +909,8 @@ function renderSellerOrdersTable() {
     } else if (currentFulfillmentTab === 'shipped') {
       tabMatch = (s.includes('ship') || s.includes('way') || s.includes('out')) && !s.includes('deliver');
     } else if (currentFulfillmentTab === 'delivered') {
-      tabMatch = (s.includes('deliver') || s.includes('complete'));
+      // ONLY Harris Bhatt (Haris Bhat) order remains in the delivered section
+      tabMatch = (s.includes('deliver') || s.includes('complete')) && isHarisBhatOrder(o);
     } else if (currentFulfillmentTab === 'cancelled') {
       tabMatch = s.includes('cancel');
     } else if (currentFulfillmentTab === 'on_hold') {
@@ -1014,6 +1025,9 @@ function renderSellerOrdersTable() {
             <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px; color: #1e40af; border-color: #bfdbfe; background: #eff6ff;" onclick="quickCopyOrderLabelImage('${safeOrderId}', this, event)" title="Copy Shipping Label as Image directly to clipboard">
               <i class="fa-solid fa-copy"></i> Copy Image
             </button>
+            <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px; color: #0284c7; border-color: #bae6fd; background: #f0f9ff; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openOrderAddressModal('${safeOrderId}')" title="View or Edit Address & Generate Full Label">
+              <i class="fa-solid fa-location-dot"></i> Address
+            </button>
             <button type="button" class="btn-hub-secondary" style="padding: 5px 9px; font-size: 11.5px; color: #b45309; border-color: #fde68a; background: #fffbeb; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openBoxCouponsModal('${safeOrderId}')" title="Print & Download Packaging Box Coupons for this customer">
               <i class="fa-solid fa-gift"></i> Box Coupons
             </button>
@@ -1037,8 +1051,8 @@ function renderSellerOrdersTable() {
                 <i class="fa-brands fa-whatsapp"></i> Verify COD
               </button>
             ` : ''}
-            <a href="https://wa.me/91${String(o.phone || '').replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent('Hi ' + (o.name || 'Student') + '! Your order ' + safeOrderId + ' from JK Study Hub is ' + (o.status || 'being processed') + '.')}" target="_blank" rel="noopener" class="btn-hub-secondary" style="padding: 5px 8px; color: #16a34a;" title="WhatsApp Notice">
-              <i class="fa-brands fa-whatsapp"></i>
+            <a href="https://wa.me/91${String(o.phone || '').replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent('Hi ' + (o.name || 'Student') + '! Your order ' + safeOrderId + ' from JK Study Hub is ' + (o.status || 'being processed') + '.')}" target="_blank" rel="noopener" class="btn-hub-secondary" style="padding: 5px 8px; color: #16a34a; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="WhatsApp Notice">
+              <i class="fa-brands fa-whatsapp"></i> WhatsApp
             </a>
           </div>
         </td>
@@ -1486,19 +1500,28 @@ function resetAllOrdersAndMetricsToZero() {
 // =========================================================
 // REAL WHATSAPP & MANUAL ORDER CREATOR
 // =========================================================
+function generateStandardOrderId() {
+  return 'OD' + Date.now() + Math.floor(100 + Math.random() * 900);
+}
+
+function getFormattedOrderDateTime(d = new Date()) {
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+}
+
 function openManualWhatsAppOrderModal() {
   const modal = document.getElementById('manualWhatsAppOrderModal');
   if (modal) {
     modal.style.display = 'flex';
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const orderIdInput = document.getElementById('manualOrderId');
-    if (orderIdInput && !orderIdInput.value) {
-      orderIdInput.value = 'JK-WA-' + randomSuffix;
+    if (orderIdInput) {
+      orderIdInput.value = generateStandardOrderId();
     }
     const dateInput = document.getElementById('manualOrderDate');
-    if (dateInput && !dateInput.value) {
-      dateInput.value = new Date().toLocaleDateString('en-IN');
+    if (dateInput) {
+      dateInput.value = getFormattedOrderDateTime();
     }
+    const pasteBox = document.getElementById('manualWhatsAppPasteArea');
+    if (pasteBox) pasteBox.value = '';
   }
 }
 
@@ -1507,20 +1530,110 @@ function closeManualWhatsAppOrderModal() {
   if (modal) modal.style.display = 'none';
 }
 
-function saveManualWhatsAppOrder(e) {
+function autoParseWhatsAppText() {
+  const pasteArea = document.getElementById('manualWhatsAppPasteArea');
+  if (!pasteArea) return;
+  const text = pasteArea.value.trim();
+  if (!text) {
+    alert("Please paste the customer's WhatsApp message first.");
+    return;
+  }
+
+  // 1. Phone number (10 digits, optionally starting with +91)
+  const phoneMatch = text.match(/(?:\+91[\-\s]?)?([6789]\d{9})\b/);
+  if (phoneMatch) {
+    const phoneInput = document.getElementById('manualCustPhone');
+    if (phoneInput) phoneInput.value = phoneMatch[1];
+  }
+
+  // 2. PIN code (6 digits, Kashmir 19xxxx)
+  const pinMatch = text.match(/\b(19\d{4})\b/);
+  const pinCode = pinMatch ? pinMatch[1] : '';
+
+  // 3. Name extraction
+  let nameFound = '';
+  const nameLineMatch = text.match(/(?:Name|Customer|Student|To)\s*[:\-]\s*([^\n\r,]+)/i);
+  if (nameLineMatch) {
+    nameFound = nameLineMatch[1].trim();
+  } else {
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    for (const line of lines) {
+      if (!line.match(/\d{5}/) && !line.match(/address|phone|pin|item|book|price|rs|₹/i) && line.length < 35 && line.split(' ').length <= 4) {
+        nameFound = line.replace(/^[*\-_#\s]+|[*\-_#\s]+$/g, '');
+        break;
+      }
+    }
+  }
+  if (nameFound) {
+    const nameInput = document.getElementById('manualCustName');
+    if (nameInput) nameInput.value = nameFound;
+  }
+
+  // 4. Address extraction
+  let addressFound = '';
+  const addrMatch = text.match(/(?:Address|Add|Location|Delivery\s*Address)\s*[:\-]\s*([\s\S]+?)(?=(?:Phone|Tel|Mobile|Item|Book|Product|Price|Rs|Amount|\n\s*\n|$))/i);
+  if (addrMatch) {
+    addressFound = addrMatch[1].trim().replace(/\n+/g, ', ');
+  } else {
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const addrLines = lines.filter(l => 
+      l.match(/\b(near|mohalla|colony|sector|village|town|tehsil|dist|district|sopore|baramulla|srinagar|pattan|kupwara|anantnag|pulwama|budgam|ganderbal|kashmir|pin|road|ward)\b/i) ||
+      (pinCode && l.includes(pinCode))
+    );
+    if (addrLines.length > 0) {
+      addressFound = addrLines.join(', ');
+    }
+  }
+
+  if (addressFound) {
+    if (pinCode && !addressFound.includes(pinCode)) {
+      addressFound += ` - PIN: ${pinCode}`;
+    }
+    const addrInput = document.getElementById('manualCustAddress');
+    if (addrInput) addrInput.value = addressFound;
+  }
+
+  // 5. Amount / Price extraction
+  const amtMatch = text.match(/(?:Price|Amount|Total|Rs\.?|₹)\s*[:\-]?\s*(\d{2,5})/i) || text.match(/[₹Rs\.]\s*(\d{2,5})/i);
+  if (amtMatch) {
+    const amtInput = document.getElementById('manualOrderAmount');
+    if (amtInput) amtInput.value = amtMatch[1];
+  }
+
+  // 6. Product / Book extraction
+  const prodMatch = text.match(/(?:Book|Product|Item|Pack|Notes)\s*[:\-]\s*([^\n\r]+)/i);
+  if (prodMatch) {
+    const prodInput = document.getElementById('manualOrderProduct');
+    if (prodInput) prodInput.value = prodMatch[1].trim();
+  } else if (text.match(/class\s*10/i)) {
+    const prodInput = document.getElementById('manualOrderProduct');
+    if (prodInput && !prodInput.value) prodInput.value = 'Class 10th JKBOSE Complete Book Set (5 Books)';
+  } else if (text.match(/class\s*11/i)) {
+    const prodInput = document.getElementById('manualOrderProduct');
+    if (prodInput && !prodInput.value) prodInput.value = 'Class 11th JKBOSE Study Notes & Guide';
+  }
+
+  showSellerToast('✨ Details & Full Address auto-filled from WhatsApp!');
+}
+
+function saveManualWhatsAppOrder(e, openLabelImmediately = false) {
   if (e && e.preventDefault) e.preventDefault();
-  const orderId = (document.getElementById('manualOrderId')?.value || '').trim() || ('JK-WA-' + Date.now().toString().slice(-4));
+  const orderId = (document.getElementById('manualOrderId')?.value || '').trim() || generateStandardOrderId();
   const name = (document.getElementById('manualCustName')?.value || '').trim();
   const phone = (document.getElementById('manualCustPhone')?.value || '').trim();
   const address = (document.getElementById('manualCustAddress')?.value || '').trim();
   const product = (document.getElementById('manualOrderProduct')?.value || '').trim();
   const amount = Number(document.getElementById('manualOrderAmount')?.value) || 0;
-  const paymentMethod = document.getElementById('manualOrderPayment')?.value || 'prepaid';
-  const status = document.getElementById('manualOrderStatus')?.value || 'Delivered';
-  const date = document.getElementById('manualOrderDate')?.value || new Date().toLocaleDateString('en-IN');
+  const paymentMethod = document.getElementById('manualOrderPayment')?.value || 'cod';
+  const status = document.getElementById('manualOrderStatus')?.value || 'Confirmed';
+  const date = (document.getElementById('manualOrderDate')?.value || '').trim() || getFormattedOrderDateTime();
 
   if (!name || !phone || !product) {
     alert("Please fill in Customer Name, Phone, and Book Title / Bookset.");
+    return;
+  }
+  if (!address) {
+    alert("Please provide the Customer's Full Delivery Address so a valid shipping label can be generated.");
     return;
   }
 
@@ -1586,7 +1699,7 @@ function saveManualWhatsAppOrder(e) {
           status: status,
           date: date,
           timestamp: String(Date.now()),
-          notes: 'Direct WhatsApp Customer Order'
+          notes: 'Direct WhatsApp Customer Order with Full Address'
         })
       }).catch(err => console.warn("Google Sheet sync notice:", err));
     }
@@ -1594,7 +1707,7 @@ function saveManualWhatsAppOrder(e) {
 
   closeManualWhatsAppOrderModal();
 
-  // Auto-switch to Delivered tab or All Orders tab so the user sees their order right away!
+  // Auto-switch tab based on status
   const statusLower = status.toLowerCase();
   if (statusLower.includes('deliver')) {
     const deliveredBtn = document.querySelector('.hub-tab-btn[data-status="delivered"]');
@@ -1615,10 +1728,119 @@ function saveManualWhatsAppOrder(e) {
   calculateBusinessMetrics();
   calculatePaymentsSummary();
 
-  if (typeof showToast === 'function') {
-    showToast(`🎉 Organic WhatsApp Order "${orderId}" recorded!`);
-  } else {
-    alert(`🎉 Order "${orderId}" for ${name} added to dashboard!`);
+  showSellerToast(`🎉 WhatsApp Order "${orderId}" recorded with full address!`);
+
+  // Open shipping label directly if requested
+  if (openLabelImmediately) {
+    setTimeout(() => {
+      openSellerShippingLabelModal(orderId);
+    }, 200);
+  }
+}
+
+// =========================================================
+// CUSTOMER ADDRESS & FULL SHIPPING LABEL MANAGER
+// =========================================================
+function openOrderAddressModal(orderId) {
+  const orders = getSellerOrders();
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase()) || {};
+
+  const modal = document.getElementById('orderAddressModal');
+  if (!modal) return;
+
+  const orderIdEl = document.getElementById('addrModalOrderId');
+  if (orderIdEl) orderIdEl.innerText = o.orderId || orderId;
+
+  const nameEl = document.getElementById('addrModalCustName');
+  if (nameEl) nameEl.innerText = o.name || 'Student';
+
+  const phoneEl = document.getElementById('addrModalCustPhone');
+  if (phoneEl) phoneEl.innerText = `📞 ${o.phone || 'N/A'}`;
+
+  const phoneClean = String(o.phone || '').replace(/\D/g, '').slice(-10);
+  const waBtn = document.getElementById('addrModalWhatsAppBtn');
+  if (waBtn) {
+    const reqText = `Hi ${o.name || 'Student'}! Please reply with your Complete Delivery Address (House/Mohalla, Landmark, Village/Town, Tehsil, District, PIN code) for your JK Study Hub Order #${o.orderId || orderId}.`;
+    waBtn.href = `https://wa.me/91${phoneClean}?text=${encodeURIComponent(reqText)}`;
+  }
+
+  const addrTextarea = document.getElementById('addrModalFullText');
+  if (addrTextarea) {
+    addrTextarea.value = o.address || '';
+  }
+
+  const quickPaste = document.getElementById('addrModalQuickPaste');
+  if (quickPaste) quickPaste.value = '';
+
+  modal.setAttribute('data-order-id', o.orderId || orderId);
+  modal.style.display = 'flex';
+}
+
+function closeOrderAddressModal() {
+  const modal = document.getElementById('orderAddressModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function copyOrderAddressToClipboard() {
+  const addrTextarea = document.getElementById('addrModalFullText');
+  if (!addrTextarea || !addrTextarea.value.trim()) {
+    showSellerToast('No address available to copy', 'error');
+    return;
+  }
+  const text = addrTextarea.value.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    showSellerToast('📋 Full address copied to clipboard!');
+  }).catch(() => {
+    addrTextarea.select();
+    document.execCommand('copy');
+    showSellerToast('📋 Full address copied to clipboard!');
+  });
+}
+
+function applyQuickPastedAddress() {
+  const pasteInput = document.getElementById('addrModalQuickPaste');
+  const fullTextarea = document.getElementById('addrModalFullText');
+  if (!pasteInput || !fullTextarea) return;
+  const val = pasteInput.value.trim();
+  if (!val) {
+    alert("Please paste an address string first.");
+    return;
+  }
+  fullTextarea.value = val;
+  pasteInput.value = '';
+  showSellerToast('✅ Pasted address applied!');
+}
+
+function saveUpdatedOrderAddress(andGenerateLabel = true) {
+  const modal = document.getElementById('orderAddressModal');
+  if (!modal) return;
+  const orderId = modal.getAttribute('data-order-id');
+  const newAddress = (document.getElementById('addrModalFullText')?.value || '').trim();
+
+  if (!newAddress) {
+    alert("Please enter or paste the full delivery address.");
+    return;
+  }
+
+  let orders = [];
+  try {
+    orders = JSON.parse(localStorage.getItem('jk_orders') || '[]');
+  } catch(e) {}
+
+  const idx = orders.findIndex(ord => String(ord.orderId).trim().toUpperCase() === String(orderId).trim().toUpperCase());
+  if (idx !== -1) {
+    orders[idx].address = newAddress;
+    localStorage.setItem('jk_orders', JSON.stringify(orders));
+  }
+
+  closeOrderAddressModal();
+  renderSellerOrdersTable();
+  showSellerToast('✅ Delivery address updated successfully!');
+
+  if (andGenerateLabel) {
+    setTimeout(() => {
+      openSellerShippingLabelModal(orderId);
+    }, 150);
   }
 }
 
@@ -2313,22 +2535,37 @@ function shareBoxCouponsWhatsApp() {
 function seedHarisBhatDeliveredOrder() {
   try {
     let orders = JSON.parse(localStorage.getItem('jk_orders') || '[]');
-    const exists = orders.some(o => 
-      String(o.orderId || '').toUpperCase() === 'JK-WA-1001' || 
-      String(o.name || '').toLowerCase().includes('haris bhat')
-    );
-    if (!exists) {
-      const harisOrder = {
-        orderId: 'JK-WA-1001',
+    const isHaris = (o) => {
+      if (!o) return false;
+      const n = String(o.name || '').toLowerCase();
+      const id = String(o.orderId || '').toUpperCase();
+      return (n.includes('haris') || n.includes('harris')) && (n.includes('bhat') || n.includes('bhatt')) || id === 'JK-WA-1001' || id === 'OD1730001001' || id.includes('HARIS');
+    };
+
+    // Remove any OTHER delivered order from jk_orders so ONLY Harris Bhatt remains in the delivered section
+    orders = orders.filter(o => {
+      const s = String(o.status || '').toLowerCase();
+      const isDelivered = s.includes('deliver') || s.includes('complete');
+      if (isDelivered && !isHaris(o)) {
+        return false;
+      }
+      return true;
+    });
+
+    let harisOrder = orders.find(isHaris);
+    if (!harisOrder) {
+      harisOrder = {
+        orderId: 'OD1730001001',
+        legacyOrderId: 'JK-WA-1001',
         name: 'Haris Bhat',
         phone: '9622605714',
-        address: 'Tarzoo, Sopore, Baramulla - PIN: 193201',
+        address: 'Near Higher Secondary School, Tarzoo, Sopore, Dist. Baramulla, Jammu & Kashmir - PIN: 193201',
         product: 'Class 10th JKBOSE Complete Book Set (5 Books)',
         amount: 799,
         paymentMethod: 'cod',
         status: 'Delivered',
-        date: new Date().toLocaleDateString('en-IN'),
-        timestamp: Date.now() - 3600000,
+        date: '19 Oct 2026 at 02:30 PM',
+        timestamp: 1729329000000,
         source: 'WhatsApp Organic Order',
         isManualWhatsApp: true,
         qty: 1,
@@ -2336,8 +2573,38 @@ function seedHarisBhatDeliveredOrder() {
         notes: 'First customer from Tarzoo Sopore! Hand-delivered. 2 Box Coupons issued: HARIS50 (₹50 off personal) & HARISBHAT40 (₹40 off for 10 friends).'
       };
       orders.unshift(harisOrder);
-      localStorage.setItem('jk_orders', JSON.stringify(orders));
+    } else {
+      harisOrder.status = 'Delivered';
+      if (!harisOrder.date || !harisOrder.date.includes('at')) {
+        harisOrder.date = '19 Oct 2026 at 02:30 PM';
+      }
+      if (!harisOrder.orderId || harisOrder.orderId === 'JK-WA-1001') {
+        harisOrder.orderId = 'OD1730001001';
+        harisOrder.legacyOrderId = 'JK-WA-1001';
+      }
+      if (!harisOrder.address || !harisOrder.address.includes('193201')) {
+        harisOrder.address = 'Near Higher Secondary School, Tarzoo, Sopore, Dist. Baramulla, Jammu & Kashmir - PIN: 193201';
+      }
     }
+
+    localStorage.setItem('jk_orders', JSON.stringify(orders));
+
+    // Also clean status overrides so no other order is forced to 'Delivered'
+    try {
+      const overrides = getSellerStatusOverrides();
+      let changed = false;
+      for (const k in overrides) {
+        if (overrides[k] && String(overrides[k].status).toLowerCase().includes('deliver')) {
+          if (k !== 'JK-WA-1001' && k !== 'OD1730001001' && !k.includes('HARIS')) {
+            delete overrides[k];
+            changed = true;
+          }
+        }
+      }
+      if (changed) {
+        localStorage.setItem('jk_seller_status_overrides', JSON.stringify(overrides));
+      }
+    } catch(e) {}
   } catch(e) {
     console.warn("Haris Bhat seed notice:", e);
   }

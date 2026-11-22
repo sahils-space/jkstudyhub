@@ -1507,40 +1507,63 @@
        MODAL 0: RECORD MANUAL / WHATSAPP ORDER
        ========================================================= -->
   <div class="seller-modal-backdrop" id="manualWhatsAppOrderModal" style="display:none; align-items:center; justify-content:center;">
-    <div class="seller-modal-card" style="max-width: 540px; width: 95%;">
+    <div class="seller-modal-card" style="max-width: 580px; width: 95%;">
       <div class="seller-modal-header" style="background: #16a34a; color: white; padding: 14px 18px;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 22px;"><i class="fa-brands fa-whatsapp"></i></span>
           <div>
             <h3 style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 0;">Record WhatsApp / Direct Customer Order</h3>
-            <p style="font-size: 11.5px; color: #dcfce7; margin: 2px 0 0;">Create a verified organic order for your dispatch dashboard &amp; labels</p>
+            <p style="font-size: 11.5px; color: #dcfce7; margin: 2px 0 0;">Standard OD Order ID &bull; Full Delivery Address &bull; Instant Label Generation</p>
           </div>
         </div>
         <button type="button" onclick="closeManualWhatsAppOrderModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#ffffff;">&times;</button>
       </div>
 
-      <form onsubmit="saveManualWhatsAppOrder(event)">
+      <form onsubmit="saveManualWhatsAppOrder(event, false)">
         <div class="seller-modal-body" style="background: #ffffff; padding: 20px; max-height: 80vh; overflow-y: auto;">
+          
+          <!-- Quick WhatsApp Message Auto-Paste & Address Parser -->
+          <div style="background: #f0fdf4; border: 1.5px dashed #86efac; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 12px; font-weight: 800; color: #166534; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa-brands fa-whatsapp"></i> Upload / Paste WhatsApp Text (Auto-Fill Address)
+              </span>
+              <button type="button" onclick="autoParseWhatsAppText()" class="btn-hub-primary" style="padding: 4px 10px; font-size: 11px; background: #16a34a; border-radius: 6px; font-weight: 800;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Detect &amp; Fill
+              </button>
+            </div>
+            <textarea id="manualWhatsAppPasteArea" rows="2" placeholder="Paste customer's message (e.g. Name, Phone, Full Address with landmark & PIN, Book name)..." style="width: 100%; padding: 7px 10px; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 11.5px; resize: vertical;"></textarea>
+          </div>
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div>
-              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Order ID</label>
-              <input type="text" id="manualOrderId" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 700; font-family: monospace;">
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Standard Order ID</label>
+              <input type="text" id="manualOrderId" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-family: monospace; color: #0f172a; background: #f8fafc;">
             </div>
             <div>
-              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Order Date</label>
-              <input type="text" id="manualOrderDate" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Order Date &amp; Time</label>
+              <input type="text" id="manualOrderDate" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 600;">
             </div>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div>
               <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Customer Full Name *</label>
-              <input type="text" id="manualCustName" placeholder="e.g. Aamir Rashid" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+              <input type="text" id="manualCustName" placeholder="e.g. Haris Bhat" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
             </div>
             <div>
               <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">WhatsApp Phone Number *</label>
-              <input type="tel" id="manualCustPhone" placeholder="e.g. 9622XXXXXX" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+              <input type="tel" id="manualCustPhone" placeholder="e.g. 9622605714" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
             </div>
+          </div>
+
+          <!-- Full Delivery Address for Thermal Label -->
+          <div style="margin-bottom: 12px;">
+            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+              <span>Full Delivery Address (For Shipping Label) *</span>
+              <span style="font-size: 10.5px; color: #0284c7; font-weight: 600;">Village/Town, Landmark, District &amp; PIN</span>
+            </label>
+            <textarea id="manualCustAddress" rows="2" required placeholder="e.g. Near Higher Secondary School, Tarzoo, Sopore, Dist. Baramulla - PIN: 193201" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px;"></textarea>
           </div>
 
           <div style="margin-bottom: 12px;">
@@ -1556,8 +1579,8 @@
             <div>
               <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Payment Mode</label>
               <select id="manualOrderPayment" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white;">
-                <option value="prepaid">Online Prepaid (UPI / QR Code)</option>
                 <option value="cod">Cash on Delivery (COD)</option>
+                <option value="prepaid">Online Prepaid (UPI / QR Code)</option>
               </select>
             </div>
           </div>
@@ -1566,26 +1589,110 @@
             <div>
               <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Fulfillment Status</label>
               <select id="manualOrderStatus" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white;">
-                <option value="Delivered">Delivered (Completed)</option>
                 <option value="Confirmed">Confirmed</option>
                 <option value="Ready to Ship">Ready to Ship</option>
                 <option value="Shipped">Shipped</option>
+                <option value="Delivered">Delivered (Completed)</option>
               </select>
             </div>
             <div>
-              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Delivery Location / PIN</label>
-              <input type="text" id="manualCustAddress" placeholder="e.g. Pattan / Baramulla / Srinagar" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Dispatch Route</label>
+              <input type="text" id="manualOrderRoute" value="Baramulla / Pattan / Sopore Hub" readonly style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 12px; color: #64748b;">
             </div>
           </div>
         </div>
 
-        <div style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
+        <div style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-wrap: wrap;">
           <button type="button" class="btn-hub-secondary" onclick="closeManualWhatsAppOrderModal()">Cancel</button>
-          <button type="submit" class="btn-hub-primary" style="background: #16a34a; border-color: #15803d; font-weight: 800;">
+          <button type="button" onclick="saveManualWhatsAppOrder(event, true)" class="btn-hub-secondary" style="color: #0284c7; border-color: #bae6fd; background: #f0f9ff; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-print"></i> Save &amp; Generate Label &rarr;
+          </button>
+          <button type="submit" class="btn-hub-primary" style="background: #16a34a; border-color: #15803d; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-check"></i> Save Order to Dashboard
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODAL 0.2: CUSTOMER ADDRESS & SHIPPING LABEL MANAGER
+       ========================================================= -->
+  <div class="seller-modal-backdrop" id="orderAddressModal" style="display:none; align-items:center; justify-content:center; z-index:99999;">
+    <div class="seller-modal-card" style="max-width: 580px; width: 95%; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.35);">
+      <div class="seller-modal-header" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; padding: 14px 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;"><i class="fa-solid fa-location-dot"></i></span>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 0;">Customer Address &amp; Shipping Label</h3>
+            <p style="font-size: 11.5px; color: #e0f2fe; margin: 2px 0 0;">Update consignee delivery address and generate full thermal shipping label</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeOrderAddressModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#ffffff;">&times;</button>
+      </div>
+
+      <div class="seller-modal-body" style="background: #ffffff; padding: 20px; max-height: 80vh; overflow-y: auto;">
+        <!-- Order Meta Summary -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Order ID:</span>
+            <div id="addrModalOrderId" style="font-family: monospace; font-size: 13.5px; font-weight: 800; color: #0f172a;">OD1730001001</div>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Customer:</span>
+            <div id="addrModalCustName" style="font-size: 13px; font-weight: 800; color: #0f172a;">Haris Bhat</div>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Phone / WhatsApp:</span>
+            <div id="addrModalCustPhone" style="font-size: 13px; font-weight: 800; color: #16a34a;">📞 9622605714</div>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Quick WhatsApp:</span>
+            <div>
+              <a id="addrModalWhatsAppBtn" href="#" target="_blank" rel="noopener" class="btn-hub-secondary" style="padding: 3px 8px; font-size: 11px; color: #16a34a; border-color: #86efac; background: #f0fdf4; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Delivery Address Field -->
+        <div style="margin-bottom: 14px;">
+          <label style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">
+            <span>Full Delivery Address (Consignee) *</span>
+            <button type="button" onclick="copyOrderAddressToClipboard()" style="background: none; border: none; color: #0284c7; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              <i class="fa-solid fa-copy"></i> Copy Address
+            </button>
+          </label>
+          <textarea id="addrModalFullText" rows="3" placeholder="Enter full address: House / Mohalla, Landmark, Village or Town, Tehsil, District, PIN code" style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-family: inherit; line-height: 1.4; color: #0f172a;"></textarea>
+          <p style="font-size: 11px; color: #64748b; margin: 4px 0 0;">Make sure to include PIN code (e.g. 193201 or 193121) so courier routing and barcodes generate accurately on the label.</p>
+        </div>
+
+        <!-- Quick Address Paste & Parse for this Order -->
+        <div style="background: #eff6ff; border: 1px dashed #93c5fd; border-radius: 8px; padding: 10px 12px;">
+          <span style="font-size: 11.5px; font-weight: 800; color: #1e40af; display: block; margin-bottom: 4px;">
+            <i class="fa-solid fa-paste"></i> Paste New WhatsApp Address Text
+          </span>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="addrModalQuickPaste" placeholder="Paste updated address from student WhatsApp message..." style="flex: 1; padding: 6px 10px; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 12px;">
+            <button type="button" onclick="applyQuickPastedAddress()" class="btn-hub-primary" style="padding: 6px 12px; font-size: 11.5px; background: #0284c7; border-radius: 6px; font-weight: 800;">
+              Apply
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <button type="button" class="btn-hub-secondary" onclick="closeOrderAddressModal()">Close</button>
+        <button type="button" onclick="saveUpdatedOrderAddress(false)" class="btn-hub-secondary" style="font-weight: 700;">
+          Save Address
+        </button>
+        <button type="button" onclick="saveUpdatedOrderAddress(true)" class="btn-hub-primary" style="background: #0284c7; border-color: #0369a1; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-print"></i> Save &amp; Generate Label &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
     </div>
   </div>
 
