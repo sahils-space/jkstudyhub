@@ -2348,6 +2348,8 @@ async function downloadSellerShippingImage(targetType = 'label', buttonEl) {
 // =========================================================
 // 6.6. PACKAGE BOX DISCOUNT COUPONS & VOUCHERS ENGINE
 // =========================================================
+// 8. PACKAGE BOX COUPONS GENERATOR (CUSTOMER NAME + ₹20 DISCOUNT)
+// =========================================================
 
 let activeBoxCouponOrderId = 'JK-WA-1001';
 
@@ -2355,29 +2357,102 @@ function openBoxCouponsModal(orderId) {
   const modal = document.getElementById('boxCouponsModal');
   if (!modal) return;
 
-  activeBoxCouponOrderId = orderId || 'JK-WA-1001';
+  activeBoxCouponOrderId = orderId || 'OD1795355383266254';
   const orders = getSellerOrders();
-  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(activeBoxCouponOrderId).trim().toUpperCase()) || {
-    orderId: 'JK-WA-1001',
-    name: 'Haris Bhat',
-    phone: '9622605714',
-    address: 'Tarzoo, Sopore, Baramulla - PIN: 193201',
-    product: 'Class 10th JKBOSE Complete Book Set',
-    amount: 799
-  };
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(activeBoxCouponOrderId).trim().toUpperCase()) || {};
 
-  const name = o.name || 'Haris Bhat';
-  const cleanId = o.orderId || 'JK-WA-1001';
+  const rawName = (o.name || 'Valued Student').replace(/^[*\-_#\s]+|[*\-_#\s]+$/g, '').trim();
+  const cleanId = o.orderId || activeBoxCouponOrderId;
+  const isHaris = (rawName.toLowerCase().includes('haris') || rawName.toLowerCase().includes('harris')) && (rawName.toLowerCase().includes('bhat') || rawName.toLowerCase().includes('bhatt')) || String(cleanId).toUpperCase().includes('HARIS') || String(cleanId).toUpperCase() === 'JK-WA-1001';
 
-  // Update dynamic fields
+  // Extract clean first name for generating personalized coupon
+  const firstWord = rawName.split(/\s+/)[0] || 'STUDENT';
+  const cleanFirst = firstWord.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 10) || 'STUDENT';
+
+  // Standard generated coupon for this customer (e.g. HUZAI20)
+  const personalCouponCode = isHaris ? 'HARIS50' : (cleanFirst + '20');
+  const friendsCouponCode = isHaris ? 'HARISBHAT40' : (cleanFirst + '20');
+
+  // Customer location
+  let location = 'Kashmir';
+  if (isHaris) {
+    location = 'Tarzoo Sopore &bull; PIN: 193201';
+  } else if (o.address) {
+    const pinMatch = String(o.address).match(/\b(19\d{4})\b/);
+    const pin = pinMatch ? `PIN: ${pinMatch[1]}` : '';
+    const cleanAddr = o.address.replace(/^[*\-_#\s]+|[*\-_#\s]+$/g, '').trim();
+    const parts = cleanAddr.split(',').map(p => p.trim()).filter(Boolean);
+    const town = parts.slice(-3, -1).join(', ') || parts.slice(-2).join(', ') || 'Kashmir';
+    location = `${town}${pin ? ' &bull; ' + pin : ''}`;
+  }
+
+  // Update modal header
+  const badgeEl = document.getElementById('boxCouponsModalBadge');
+  if (badgeEl) {
+    badgeEl.innerText = isHaris ? 'Tarzoo Sopore Exclusive' : 'Personal Student Packaging Pass';
+  }
   const subEl = document.getElementById('boxCouponsModalSubtitle');
   if (subEl) {
-    subEl.innerHTML = `Place these printed vouchers inside the book packaging box for <strong>${name}</strong> &bull; Order #${cleanId}`;
+    subEl.innerHTML = `Place these printed vouchers inside the packaging box for <strong>${rawName}</strong> &bull; Order #${cleanId}`;
   }
-  const nameEl = document.getElementById('boxCard1CustName');
-  if (nameEl) nameEl.innerHTML = `${name} &bull; Tarzoo Sopore`;
-  const refEl = document.getElementById('boxCard1OrderRef');
-  if (refEl) refEl.innerText = `Order #${cleanId}`;
+
+  // Update Card 1: Personal Voucher
+  const card1Badge = document.getElementById('boxCard1Badge');
+  if (card1Badge) card1Badge.innerText = isHaris ? '⭐ 1ST CUSTOMER' : '⭐ REPEAT STUDENT PASS';
+
+  const card1Greeting = document.getElementById('boxCard1Greeting');
+  if (card1Greeting) card1Greeting.innerText = `Congratulations ${rawName}!`;
+
+  const card1Amount = document.getElementById('boxCard1Amount');
+  if (card1Amount) card1Amount.innerText = isHaris ? '₹50 FLAT OFF' : '₹20 FLAT OFF';
+
+  const card1Tag = document.getElementById('boxCard1Tag');
+  if (card1Tag) card1Tag.innerText = 'ON YOUR NEXT ORDER';
+
+  const card1Code = document.getElementById('boxCard1Code');
+  if (card1Code) card1Code.innerText = personalCouponCode;
+
+  const card1Note = document.getElementById('boxCard1Note');
+  if (card1Note) {
+    card1Note.innerHTML = isHaris
+      ? 'Valid for 1-time personal order &bull; Applicable on all school books, registers &amp; study essentials.'
+      : `Enter with your Order #${cleanId} on checkout to get ₹20 off on your next books or notes purchase.`;
+  }
+
+  const card1CustName = document.getElementById('boxCard1CustName');
+  if (card1CustName) card1CustName.innerHTML = `${rawName} &bull; ${location}`;
+
+  const card1OrderRef = document.getElementById('boxCard1OrderRef');
+  if (card1OrderRef) card1OrderRef.innerText = `Order #${cleanId}`;
+
+  // Update Card 2: Friends & Classmates Pass
+  const card2Badge = document.getElementById('boxCard2Badge');
+  if (card2Badge) card2Badge.innerText = isHaris ? '🤝 10 FRIENDS PASS' : '🤝 CLASSMATES PASS';
+
+  const card2Greeting = document.getElementById('boxCard2Greeting');
+  if (card2Greeting) card2Greeting.innerText = isHaris ? 'Tarzoo Sopore Community Voucher' : 'Student Community Voucher';
+
+  const card2Amount = document.getElementById('boxCard2Amount');
+  if (card2Amount) card2Amount.innerText = isHaris ? '₹40 FLAT OFF' : '₹20 FLAT OFF';
+
+  const card2Tag = document.getElementById('boxCard2Tag');
+  if (card2Tag) card2Tag.innerText = isHaris ? 'FOR YOUR 10 FRIENDS & CLASSMATES' : 'FOR YOUR FRIENDS & CLASSMATES';
+
+  const card2Code = document.getElementById('boxCard2Code');
+  if (card2Code) card2Code.innerText = friendsCouponCode;
+
+  const card2Note = document.getElementById('boxCard2Note');
+  if (card2Note) {
+    card2Note.innerHTML = isHaris
+      ? 'Valid for 10 Friend Orders &bull; Restricted exclusively to Tarzoo Sopore (PIN: 193201).'
+      : `Share with classmates! They can enter coupon code <strong>${friendsCouponCode}</strong> with Order #${cleanId} on jkstudyhub.online.`;
+  }
+
+  const card2CustName = document.getElementById('boxCard2CustName');
+  if (card2CustName) card2CustName.innerHTML = `Classmates of ${rawName}`;
+
+  const card2Location = document.getElementById('boxCard2Location');
+  if (card2Location) card2Location.innerHTML = location;
 
   modal.style.display = 'flex';
 }
@@ -2521,11 +2596,22 @@ async function copyBoxCouponsImage(buttonEl) {
 
 function shareBoxCouponsWhatsApp() {
   const orders = getSellerOrders();
-  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(activeBoxCouponOrderId).trim().toUpperCase()) || {
-    phone: '9622605714'
-  };
+  const o = orders.find(ord => String(ord.orderId).trim().toUpperCase() === String(activeBoxCouponOrderId).trim().toUpperCase()) || {};
 
-  const text = `Congratulations🎉\nYou Have Got 50 rs Off on the next Order...\nYou are the first customer from Tarzoo Sopore!\n\nWe have made the Coupon Code of Your Name:- HARISBHAT40\nYou can tell your Friends They can order anything and will Get 40₹ Discount. This is for Your 10 Friends in Tarzoo Sopore (PIN: 193201)!\n\nBOTH THE coupons will be delivered to you in the Box of the books📦.\n\nThanks for choosing JK Study Hub!\nFOUNDER, JK STUDY HUB\nhttps://jkstudyhub.online`;
+  const rawName = (o.name || 'Valued Student').replace(/^[*\-_#\s]+|[*\-_#\s]+$/g, '').trim();
+  const cleanId = o.orderId || activeBoxCouponOrderId;
+  const isHaris = (rawName.toLowerCase().includes('haris') || rawName.toLowerCase().includes('harris')) && (rawName.toLowerCase().includes('bhat') || rawName.toLowerCase().includes('bhatt')) || String(cleanId).toUpperCase().includes('HARIS') || String(cleanId).toUpperCase() === 'JK-WA-1001';
+
+  const firstWord = rawName.split(/\s+/)[0] || 'STUDENT';
+  const cleanFirst = firstWord.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 10) || 'STUDENT';
+  const couponCode = isHaris ? 'HARIS50' : (cleanFirst + '20');
+
+  let text = '';
+  if (isHaris) {
+    text = `Congratulations🎉\nYou Have Got 50 rs Off on the next Order...\nYou are the first customer from Tarzoo Sopore!\n\nWe have made the Coupon Code of Your Name:- HARISBHAT40\nYou can tell your Friends They can order anything and will Get 40₹ Discount. This is for Your 10 Friends in Tarzoo Sopore (PIN: 193201)!\n\nBOTH THE coupons will be delivered to you in the Box of the books📦.\n\nThanks for choosing JK Study Hub!\nFOUNDER, JK STUDY HUB\nhttps://jkstudyhub.online`;
+  } else {
+    text = `Congratulations🎉 ${rawName}!\nYou have got ₹20 OFF on your next order on JK Study Hub!\n\nWe have generated a Personal Coupon Code of your name:- ${couponCode}\n\nYou and your friends can use coupon code "${couponCode}" along with your Order #${cleanId} to get ₹20 Discount on any book, notes or stationery on jkstudyhub.online.\n\nBOTH printed coupon cards are placed inside your parcel box📦!\n\nThanks for choosing JK Study Hub!\nFOUNDER, JK STUDY HUB\nhttps://jkstudyhub.online`;
+  }
 
   const phone = String(o.phone || '9622605714').replace(/\D/g, '').slice(-10);
   const url = `https://wa.me/91${phone}?text=${encodeURIComponent(text)}`;

@@ -5408,11 +5408,12 @@ async function verifyAndApplyRepeatDiscount() {
     return;
   }
 
-  // 1. Verify coupon code text
-  if (rawCoupon !== 'STUDENT20' && rawCoupon !== 'JKSTUDENT20') {
+  // 1. Verify coupon code text (accepts STUDENT20, JKSTUDENT20, or any personalized student coupon ending with 20 e.g. HUZAI20)
+  const isPersonalized20Coupon = (/^[A-Z0-9_\-]{3,}20$/.test(rawCoupon));
+  if (rawCoupon !== 'STUDENT20' && rawCoupon !== 'JKSTUDENT20' && !isPersonalized20Coupon) {
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
-    msgEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Coupon Code. Enter <strong>HARISBHAT40</strong>, <strong>HARIS50</strong>, or <strong>STUDENT20</strong>.';
+    msgEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Coupon Code. Enter your personal coupon (e.g. <strong>' + rawCoupon + '</strong>) or <strong>STUDENT20</strong> with your Previous Order ID.';
     return;
   }
 
@@ -9595,6 +9596,94 @@ function cycleModalPhoto(delta) {
 
 let currentStoreCategory = 'all';
 let currentStoreCatalogSort = 'featured';
+const STORE_STUDY_PROFILE_KEY = 'jk_student_browse_profile';
+
+function getStoreStudyProfile() {
+  try {
+    const profile = JSON.parse(localStorage.getItem(STORE_STUDY_PROFILE_KEY) || 'null');
+    if (!profile || !/^(?:[1-9]|1[0-2])$/.test(String(profile.classLevel || ''))) return null;
+    const board = ['all', 'jkbose', 'ncert'].includes(profile.board) ? profile.board : 'all';
+    return { classLevel: String(profile.classLevel), board };
+  } catch (error) {
+    console.warn('Could not read the saved study profile:', error);
+    return null;
+  }
+}
+
+function updateStoreStudyProfileStatus(message) {
+  const status = document.getElementById('storeStudyProfileStatus');
+  if (status) status.textContent = message;
+}
+
+function saveStoreStudyProfile() {
+  const classLevel = document.getElementById('storeStudyProfileClass')?.value || '';
+  const board = document.getElementById('storeStudyProfileBoard')?.value || 'all';
+  if (!/^(?:[1-9]|1[0-2])$/.test(classLevel)) {
+    updateStoreStudyProfileStatus('Choose your class to see matching catalog listings.');
+    return;
+  }
+
+  const profile = {
+    classLevel,
+    board: ['all', 'jkbose', 'ncert'].includes(board) ? board : 'all'
+  };
+  const classFilter = document.getElementById('storeClassFilter');
+  const boardFilter = document.getElementById('storeBoardFilter');
+  if (classFilter) classFilter.value = profile.classLevel;
+  if (boardFilter) boardFilter.value = profile.board;
+
+  let saved = true;
+  try {
+    localStorage.setItem(STORE_STUDY_PROFILE_KEY, JSON.stringify(profile));
+  } catch (error) {
+    saved = false;
+    console.warn('Could not save the study profile on this device:', error);
+  }
+
+  applyStoreAdvancedFilters();
+  const boardLabel = profile.board === 'jkbose' ? ' · JKBOSE' : profile.board === 'ncert' ? ' · NCERT / CBSE' : '';
+  updateStoreStudyProfileStatus(
+    `${saved ? 'Profile saved on this device.' : 'Could not save the profile on this device; filters are applied for now.'} Showing listings tagged for Class ${profile.classLevel}${boardLabel}.`
+  );
+}
+
+function restoreStoreStudyProfile() {
+  const profile = getStoreStudyProfile();
+  if (!profile) return;
+
+  const profileClass = document.getElementById('storeStudyProfileClass');
+  const profileBoard = document.getElementById('storeStudyProfileBoard');
+  const classFilter = document.getElementById('storeClassFilter');
+  const boardFilter = document.getElementById('storeBoardFilter');
+  if (profileClass) profileClass.value = profile.classLevel;
+  if (profileBoard) profileBoard.value = profile.board;
+  if (classFilter) classFilter.value = profile.classLevel;
+  if (boardFilter) boardFilter.value = profile.board;
+
+  const boardLabel = profile.board === 'jkbose' ? ' · JKBOSE' : profile.board === 'ncert' ? ' · NCERT / CBSE' : '';
+  updateStoreStudyProfileStatus(`Showing listings tagged for Class ${profile.classLevel}${boardLabel}. Update or clear your profile any time.`);
+}
+
+function clearStoreStudyProfile() {
+  try {
+    localStorage.removeItem(STORE_STUDY_PROFILE_KEY);
+  } catch (error) {
+    console.warn('Could not clear the saved study profile:', error);
+    updateStoreStudyProfileStatus('Could not clear the saved profile from this device.');
+    return;
+  }
+
+  const profileClass = document.getElementById('storeStudyProfileClass');
+  const profileBoard = document.getElementById('storeStudyProfileBoard');
+  const classFilter = document.getElementById('storeClassFilter');
+  const boardFilter = document.getElementById('storeBoardFilter');
+  if (profileClass) profileClass.value = '';
+  if (profileBoard) profileBoard.value = 'all';
+  if (classFilter) classFilter.value = 'all';
+  if (boardFilter) boardFilter.value = 'all';
+  applyStoreAdvancedFilters();
+  updateStoreStudyProfileStatus('Study profile cleared. You can still filter the catalog manually.');
+}
 
 function setStoreCatalogSort(sortOrder) {
   currentStoreCatalogSort = ['price-low', 'price-high'].includes(sortOrder) ? sortOrder : 'featured';
@@ -11993,6 +12082,7 @@ function onStoreReady() {
   }
   applyCustomPricesToStorefront();
   applyStockOverridesToStorefront();
+  restoreStoreStudyProfile();
   handleStoreLiveSearch(document.getElementById('storeSearchInput')?.value || '');
   if (document.getElementById('bundleCopiesSelect')) {
     calculateBundleTotal();
