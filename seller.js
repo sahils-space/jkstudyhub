@@ -4,6 +4,45 @@
 // =========================================================
 
 const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
+const PERMANENTLY_HIDDEN_SELLER_CATALOG_NAMES = new Set(['jk study hub']);
+
+function normalizeSellerCatalogIdentity(value) {
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function isSellerCatalogProductDeleted(product) {
+  if (!product) return false;
+  const name = normalizeSellerCatalogIdentity(product.name || product.title);
+  if (PERMANENTLY_HIDDEN_SELLER_CATALOG_NAMES.has(name)) return true;
+
+  try {
+    const deleted = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+    const deletedIdentities = new Set(Array.isArray(deleted) ? deleted.map(normalizeSellerCatalogIdentity) : []);
+    return [product.id, product.productId, product.name, product.title]
+      .map(normalizeSellerCatalogIdentity)
+      .some(identity => identity && deletedIdentities.has(identity));
+  } catch (error) {
+    console.warn('Could not read the deleted seller catalog list:', error);
+    return false;
+  }
+}
+
+function rememberSellerCatalogDeletion(product) {
+  const identities = [product && product.id, product && product.productId, product && product.name, product && product.title]
+    .map(normalizeSellerCatalogIdentity)
+    .filter(Boolean);
+  try {
+    const deleted = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+    const values = Array.isArray(deleted) ? deleted : [];
+    const existing = new Set(values.map(normalizeSellerCatalogIdentity));
+    identities.forEach(identity => {
+      if (!existing.has(identity)) values.push(identity);
+    });
+    localStorage.setItem('jk_deleted_catalog_ids', JSON.stringify(values));
+  } catch (error) {
+    console.error('Could not save the deleted seller catalog record:', error);
+  }
+}
 
 // Resilient Network Fetch Engine with Exponential Backoff
 async function fetchWithRetry(url, options = {}, retries = 2, delayMs = 1500) {
@@ -668,17 +707,14 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
           });
 
           if (remoteCatalogItems.length > 0) {
-            const deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
-            const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
-
             let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+            const originalLength = curCat.length;
+            curCat = curCat.filter(product => !isSellerCatalogProductDeleted(product));
             const curIds = new Set(curCat.map(c => c.id || c.productId || c.name));
-            let changed = false;
+            let changed = curCat.length !== originalLength;
             remoteCatalogItems.forEach(rc => {
               const k = rc.id || rc.productId || rc.name;
-              const lk = String(k || '').trim().toLowerCase();
-              const lnk = String(rc.name || rc.title || '').trim().toLowerCase();
-              if (deletedIds.has(lk) || deletedIds.has(lnk)) return; // Never resurrect deleted items
+              if (isSellerCatalogProductDeleted(rc)) return;
 
               if (k && !curIds.has(k)) {
                 curCat.unshift(rc);
@@ -4089,13 +4125,9 @@ const DEFAULT_SELLER_PRODUCTS = [
 // Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
 function getSellerAllPublishedProducts() {
   const mergedMap = new Map();
-  const deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
-  const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
 
   DEFAULT_SELLER_PRODUCTS.forEach(p => {
-    const key = String(p.id || '').trim().toLowerCase();
-    const nameKey = String(p.name || p.title || '').trim().toLowerCase();
-    if (!deletedIds.has(key) && !deletedIds.has(nameKey)) {
+    if (!isSellerCatalogProductDeleted(p)) {
       mergedMap.set(p.id, p);
     }
   });
@@ -4104,9 +4136,7 @@ function getSellerAllPublishedProducts() {
     const list1 = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
     if (Array.isArray(list1)) {
       list1.forEach(p => {
-        const key = String(p.id || p.productId || '').trim().toLowerCase();
-        const nameKey = String(p.name || p.title || '').trim().toLowerCase();
-        if (!deletedIds.has(key) && !deletedIds.has(nameKey) && (p.name || p.title)) {
+        if (!isSellerCatalogProductDeleted(p) && (p.name || p.title)) {
           const mKey = p.id || p.productId || p.name;
           if (mKey) mergedMap.set(mKey, { ...(mergedMap.get(mKey) || {}), ...p });
         }
@@ -4118,9 +4148,7 @@ function getSellerAllPublishedProducts() {
     const list2 = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
     if (Array.isArray(list2)) {
       list2.forEach(p => {
-        const key = String(p.id || p.productId || '').trim().toLowerCase();
-        const nameKey = String(p.name || p.title || '').trim().toLowerCase();
-        if (!deletedIds.has(key) && !deletedIds.has(nameKey) && (p.name || p.title)) {
+        if (!isSellerCatalogProductDeleted(p) && (p.name || p.title)) {
           const mKey = p.id || p.productId || p.name;
           if (mKey) mergedMap.set(mKey, { ...(mergedMap.get(mKey) || {}), ...p });
         }
@@ -4550,47 +4578,74 @@ async function deleteSellerPublishedProduct(prodId, prodName) {
     return;
   }
 
+  const product = getSellerAllPublishedProducts().find(item =>
+    String(item.id || item.productId || item.name) === String(prodId)
+  ) || { id: prodId, name: prodName };
+  const productName = product.name || product.title || prodName || '';
+  rememberSellerCatalogDeletion({ ...product, id: prodId, name: productName });
+  const remoteErrors = [];
+
   if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
     try {
       await ensureSellerFirebaseOwnerAuth();
       const db = firebase.firestore();
-      const documentIds = [...new Set([
+      const documentIds = new Set([
         String(prodId || ''),
         String(prodId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80),
-        String(prodName || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80)
-      ].filter(Boolean))];
-      await Promise.all(documentIds.map(id => db.collection('published_catalog').doc(id).delete()));
+        String(productName || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80)
+      ].filter(Boolean));
+      const references = new Map(Array.from(documentIds, id => {
+        const ref = db.collection('published_catalog').doc(id);
+        return [ref.path, ref];
+      }));
+      await Promise.all(Array.from(references.values(), ref => ref.delete()));
+      if (productName) {
+        try {
+          const [nameMatches, titleMatches] = await Promise.all([
+            db.collection('published_catalog').where('name', '==', productName).get(),
+            db.collection('published_catalog').where('title', '==', productName).get()
+          ]);
+          [...nameMatches.docs, ...titleMatches.docs].forEach(doc => references.set(doc.ref.path, doc.ref));
+          await Promise.all(Array.from(references.values(), ref => ref.delete()));
+        } catch (error) {
+          console.warn('Could not search for duplicate published catalog entries:', error);
+          remoteErrors.push(`Firestore duplicate cleanup: ${getSellerCloudErrorMessage(error)}`);
+        }
+      }
     } catch (error) {
       console.error("Firestore delete published_catalog failed:", error);
-      if (typeof showToast === 'function') {
-        showToast(`Could not remove the live product: ${getSellerCloudErrorMessage(error)}`);
-      }
-      return;
+      remoteErrors.push(`Firestore: ${getSellerCloudErrorMessage(error)}`);
     }
+  } else {
+    remoteErrors.push('Firebase is unavailable; Firestore deletion could not be applied.');
   }
 
-  // 1. Blacklist in persistent local storage so it can never re-appear
   try {
-    let deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
-    if (prodId && !deletedList.includes(prodId)) deletedList.push(prodId);
-    if (prodName && !deletedList.includes(prodName)) deletedList.push(prodName);
-    const cleanId = String(prodId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80);
-    if (cleanId && !deletedList.includes(cleanId)) deletedList.push(cleanId);
-    localStorage.setItem('jk_deleted_catalog_ids', JSON.stringify(deletedList));
-  } catch(e) {}
+    const deleteData = new URLSearchParams({
+      action: 'delete_product',
+      product_id: String(prodId || ''),
+      product_name: String(productName || '')
+    });
+    await fetch(SELLER_SCRIPT_URL, {
+      method: 'POST',
+      body: deleteData,
+      mode: 'no-cors'
+    });
+  } catch (error) {
+    console.error('Google Sheets catalog deletion failed:', error);
+    remoteErrors.push('Google Sheets: request could not be sent.');
+  }
 
-  // 2. Remove from local storage arrays
-  try {
-    let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
-    customProds = customProds.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
-    localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
-  } catch(e) {}
-
-  try {
-    let uploadedCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-    uploadedCat = uploadedCat.filter(p => (p.id !== prodId && p.productId !== prodId && p.name !== prodName && p.title !== prodName));
-    localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
-  } catch(e) {}
+  ['jk_custom_products', 'jk_uploaded_catalog'].forEach(storageKey => {
+    try {
+      const products = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (Array.isArray(products)) {
+        localStorage.setItem(storageKey, JSON.stringify(products.filter(item => !isSellerCatalogProductDeleted(item))));
+      }
+    } catch (error) {
+      console.error(`Could not update ${storageKey} after deletion:`, error);
+    }
+  });
 
   renderSellerPublishedCatalog();
   if (typeof updateSellerInventoryBadges === 'function') updateSellerInventoryBadges();
@@ -4598,7 +4653,8 @@ async function deleteSellerPublishedProduct(prodId, prodName) {
   if (typeof renderSellerPricingTable === 'function') renderSellerPricingTable();
 
   if (typeof showToast === 'function') {
-    showToast(`Removed "${prodName}" from catalog.`);
+    const warning = remoteErrors.length ? ` Hidden here, but cloud cleanup needs attention (${remoteErrors.join('; ')}).` : '';
+    showToast(`Removed "${productName}" from catalog.${warning}`);
   }
 }
 
@@ -4654,35 +4710,33 @@ function initSellerRealtimeCatalog() {
           const d = doc.data();
           if (d && (d.name || d.title)) firestoreProds.push(d);
         });
-        if (firestoreProds.length > 0) {
-          const deletedList = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
-          const deletedIds = new Set(deletedList.map(s => String(s || '').trim().toLowerCase()));
+        let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
+        const originalLength = curCat.length;
+        curCat = curCat.filter(product => !isSellerCatalogProductDeleted(product));
+        let changed = curCat.length !== originalLength;
+        firestoreProds.forEach(fp => {
+          if (isSellerCatalogProductDeleted(fp)) return;
+          const k = fp.id || fp.productId || fp.name;
+          const lk = normalizeSellerCatalogIdentity(k);
 
-          let curCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-          let changed = false;
-          firestoreProds.forEach(fp => {
-            const k = fp.id || fp.productId || fp.name;
-            const lk = String(k || '').trim().toLowerCase();
-            const lnk = String(fp.name || fp.title || '').trim().toLowerCase();
-            if (deletedIds.has(lk) || deletedIds.has(lnk)) return; // Skipped if deleted by seller
-
-            const existingIndex = curCat.findIndex(product =>
-              String(product.id || product.productId || product.name || '').trim().toLowerCase() === lk
-            );
-            if (existingIndex < 0 && k) {
-              curCat.unshift(fp);
-              changed = true;
-            } else if (existingIndex >= 0 && JSON.stringify(curCat[existingIndex]) !== JSON.stringify(fp)) {
-              curCat[existingIndex] = { ...curCat[existingIndex], ...fp };
-              changed = true;
-            }
-          });
-          if (changed) {
-            try {
-              localStorage.setItem('jk_uploaded_catalog', JSON.stringify(curCat));
-            } catch(e) {}
-            if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
+          const existingIndex = curCat.findIndex(product =>
+            normalizeSellerCatalogIdentity(product.id || product.productId || product.name) === lk
+          );
+          if (existingIndex < 0 && k) {
+            curCat.unshift(fp);
+            changed = true;
+          } else if (existingIndex >= 0 && JSON.stringify(curCat[existingIndex]) !== JSON.stringify(fp)) {
+            curCat[existingIndex] = { ...curCat[existingIndex], ...fp };
+            changed = true;
           }
+        });
+        if (changed) {
+          try {
+            localStorage.setItem('jk_uploaded_catalog', JSON.stringify(curCat));
+          } catch(error) {
+            console.warn('Could not update the seller catalog cache:', error);
+          }
+          if (typeof renderSellerPublishedCatalog === 'function') renderSellerPublishedCatalog();
         }
       }, err => {
         console.error('Could not receive the shared catalog from Firestore:', err);

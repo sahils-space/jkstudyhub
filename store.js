@@ -24,6 +24,87 @@ async function fetchWithRetry(url, options = {}, retries = 2, delayMs = 1500) {
   }
 }
 
+const PERMANENTLY_HIDDEN_CATALOG_NAMES = new Set(['jk study hub']);
+
+function normalizeCatalogIdentity(value) {
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function getDeletedCatalogIdentities() {
+  try {
+    const deleted = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+    return new Set(Array.isArray(deleted) ? deleted.map(normalizeCatalogIdentity).filter(Boolean) : []);
+  } catch (error) {
+    console.warn('Could not read the deleted catalog list:', error);
+    return new Set();
+  }
+}
+
+function isDeletedCatalogProduct(product) {
+  if (!product) return false;
+  const name = normalizeCatalogIdentity(product.name || product.title);
+  if (PERMANENTLY_HIDDEN_CATALOG_NAMES.has(name)) return true;
+
+  const deletedIdentities = getDeletedCatalogIdentities();
+  return [product.id, product.productId, product.name, product.title]
+    .map(normalizeCatalogIdentity)
+    .some(identity => identity && deletedIdentities.has(identity));
+}
+
+function purgeDeletedCatalogCache() {
+  ['jk_custom_products', 'jk_uploaded_catalog'].forEach(storageKey => {
+    try {
+      const cached = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (!Array.isArray(cached)) return;
+      const visible = cached.filter(product => !isDeletedCatalogProduct(product));
+      if (visible.length !== cached.length) {
+        localStorage.setItem(storageKey, JSON.stringify(visible));
+      }
+    } catch (error) {
+      console.warn(`Could not clean ${storageKey}:`, error);
+    }
+  });
+}
+
+function rememberDeletedCatalogProduct(product) {
+  const identities = [product && product.id, product && product.productId, product && product.name, product && product.title]
+    .map(normalizeCatalogIdentity)
+    .filter(Boolean);
+  if (!identities.length) return;
+
+  try {
+    const deleted = JSON.parse(localStorage.getItem('jk_deleted_catalog_ids') || '[]');
+    const values = Array.isArray(deleted) ? deleted : [];
+    const normalized = new Set(values.map(normalizeCatalogIdentity));
+    identities.forEach(identity => {
+      if (!normalized.has(identity)) values.push(identity);
+    });
+    localStorage.setItem('jk_deleted_catalog_ids', JSON.stringify(values));
+  } catch (error) {
+    console.error('Could not save the deleted catalog record:', error);
+  }
+  purgeDeletedCatalogCache();
+  unregisterDeletedCatalogProduct(product);
+}
+
+function unregisterDeletedCatalogProduct(product) {
+  const identity = normalizeCatalogIdentity(product && (product.name || product.title));
+  if (!identity) return;
+
+  if (typeof PRODUCT_CATALOG !== 'undefined') {
+    Object.keys(PRODUCT_CATALOG).forEach(name => {
+      if (normalizeCatalogIdentity(name) === identity) delete PRODUCT_CATALOG[name];
+    });
+  }
+  if (typeof BOOK_CATALOG_DATA !== 'undefined' && Array.isArray(BOOK_CATALOG_DATA)) {
+    for (let index = BOOK_CATALOG_DATA.length - 1; index >= 0; index--) {
+      if (normalizeCatalogIdentity(BOOK_CATALOG_DATA[index].name) === identity) {
+        BOOK_CATALOG_DATA.splice(index, 1);
+      }
+    }
+  }
+}
+
 // ============================================================================
 // MASTER J&K DISTRICT, AREA & PIN CODE DIRECTORY (ALL 20 DISTRICTS)
 // Covers every local post office, town, college, hospital, and village
@@ -10638,9 +10719,10 @@ let ownerUploadedPhotos = [null, null, null, null];
 
 // Initialize and load custom products from cache (combining DEFAULT_PUBLISHED_PRODUCTS, jk_custom_products, and jk_uploaded_catalog)
 try {
+  purgeDeletedCatalogCache();
   let initialProducts = [...DEFAULT_PUBLISHED_PRODUCTS];
   const mergeCachedProduct = p => {
-    if (!p || (!p.name && !p.title)) return;
+    if (!p || (!p.name && !p.title) || isDeletedCatalogProduct(p)) return;
     const productId = String(p.id || p.productId || '');
     const productName = String(p.name || p.title || '').trim().toLowerCase();
     const existingIndex = initialProducts.findIndex(item =>
@@ -10672,7 +10754,8 @@ try {
   CUSTOM_PRODUCTS = initialProducts.filter(p =>
     p.category !== 'resin' &&
     !String(p.id).startsWith('PRD-RESIN-') &&
-    !isGeneralAcademicPhysicalEducationProduct(p)
+    !isGeneralAcademicPhysicalEducationProduct(p) &&
+    !isDeletedCatalogProduct(p)
   );
   registerAllCustomProducts(CUSTOM_PRODUCTS);
 } catch (e) {
@@ -10685,7 +10768,7 @@ function registerAllCustomProducts(products) {
 }
 
 function registerCustomProductInCatalogs(p) {
-  if (!p || (!p.name && !p.title)) return;
+  if (!p || (!p.name && !p.title) || isDeletedCatalogProduct(p)) return;
   if (p.category === 'resin' || String(p.id).startsWith('PRD-RESIN-') || isGeneralAcademicPhysicalEducationProduct(p)) return;
   const prodName = p.name || p.title;
   p.name = prodName;
@@ -11003,6 +11086,10 @@ async function handleOwnerProductSubmit(event) {
   // 3. Render in storefront & owner dashboard
   renderDynamicStoreProducts();
   renderOwnerProductList();
+  const searchInput = document.getElementById('storeSearchInput');
+  if (typeof handleStoreLiveSearch === 'function') {
+    handleStoreLiveSearch(searchInput ? searchInput.value : '');
+  }
 
   // 4. Dispatch to Google Apps Script / Google Sheet (Both dedicated action and universal fallback row)
   try {
@@ -11129,7 +11216,7 @@ async function syncCustomProductsWithSheet() {
               status: p.status || 'Active',
               timestamp: p.timestamp || ''
             };
-            if (prodItem.id && !sheetProducts.some(sp => sp.id === prodItem.id)) {
+            if (prodItem.id && !isDeletedCatalogProduct(prodItem) && !sheetProducts.some(sp => sp.id === prodItem.id)) {
               sheetProducts.push(prodItem);
             }
           });
@@ -11253,7 +11340,7 @@ async function syncCustomProductsWithSheet() {
               timestamp: (parsedMeta && parsedMeta.timestamp) || o.timestamp || ''
             };
 
-            if (prodItem.id && !sheetProducts.some(sp => sp.id === prodItem.id || sp.name === prodItem.name)) {
+            if (prodItem.id && !isDeletedCatalogProduct(prodItem) && !sheetProducts.some(sp => sp.id === prodItem.id || sp.name === prodItem.name)) {
               sheetProducts.push(prodItem);
             }
           });
@@ -11274,12 +11361,12 @@ async function syncCustomProductsWithSheet() {
       
       // Seed with current products (which have clean local images)
       CUSTOM_PRODUCTS.forEach(p => {
-        mergedMap.set(p.id, p);
+        if (!isDeletedCatalogProduct(p)) mergedMap.set(p.id, p);
       });
 
       // Merge incoming sheet products
       sheetProducts.forEach(sp => {
-        if (isGeneralAcademicPhysicalEducationProduct(sp)) return;
+        if (isGeneralAcademicPhysicalEducationProduct(sp) || isDeletedCatalogProduct(sp)) return;
         if (!mergedMap.has(sp.id)) {
           mergedMap.set(sp.id, sp);
         } else {
@@ -11302,7 +11389,7 @@ async function syncCustomProductsWithSheet() {
         }
       });
 
-      CUSTOM_PRODUCTS = Array.from(mergedMap.values());
+      CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
       try {
         const lightProducts = CUSTOM_PRODUCTS.map(cp => {
           const isLargeB64 = cp.image && cp.image.length > 50000;
@@ -11348,9 +11435,7 @@ function initRealtimeCatalogSync() {
             firestoreProducts.push(item);
           }
         });
-        if (firestoreProducts.length > 0) {
-          mergeAndRenderLiveProducts(firestoreProducts);
-        }
+        mergeAndRenderLiveProducts(firestoreProducts);
       }, err => {
         console.warn("Firestore real-time catalog listener notice:", err);
       });
@@ -11407,17 +11492,16 @@ function initRealtimeCatalogSync() {
 }
 
 function mergeAndRenderLiveProducts(incoming) {
-  if (!Array.isArray(incoming) || incoming.length === 0) return;
   const mergedMap = new Map();
   
   // Seed with current products
-  CUSTOM_PRODUCTS.forEach(p => {
-    mergedMap.set(p.id, p);
+  CUSTOM_PRODUCTS.filter(p => !isDeletedCatalogProduct(p)).forEach(p => {
+    mergedMap.set(p.id || p.productId || p.name, p);
   });
 
-  incoming.forEach(sp => {
+  (Array.isArray(incoming) ? incoming : []).forEach(sp => {
     const key = sp.id || sp.productId || sp.name;
-    if (!key || isGeneralAcademicPhysicalEducationProduct(sp)) return;
+    if (!key || isGeneralAcademicPhysicalEducationProduct(sp) || isDeletedCatalogProduct(sp)) return;
     if (!mergedMap.has(key)) {
       mergedMap.set(key, sp);
     } else {
@@ -11430,7 +11514,12 @@ function mergeAndRenderLiveProducts(incoming) {
     }
   });
 
-  CUSTOM_PRODUCTS = Array.from(mergedMap.values());
+  CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
+  try {
+    localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
+  } catch (error) {
+    console.warn('Could not save the synchronized catalog cache:', error);
+  }
   registerAllCustomProducts(CUSTOM_PRODUCTS);
   renderDynamicStoreProducts();
   renderOwnerProductList();
@@ -11631,33 +11720,81 @@ async function deleteProductByOwner(prodId) {
     return;
   }
 
-  // Remove locally
-  CUSTOM_PRODUCTS = CUSTOM_PRODUCTS.filter(p => (p.id !== prodId && p.productId !== prodId));
+  const product = CUSTOM_PRODUCTS.find(item =>
+    String(item.id || item.productId || '') === String(prodId)
+  ) || { id: prodId };
+  const productName = product.name || product.title || '';
+  rememberDeletedCatalogProduct({ ...product, id: prodId });
+  CUSTOM_PRODUCTS = CUSTOM_PRODUCTS.filter(item => !isDeletedCatalogProduct(item));
+  purgeDeletedCatalogCache();
   try {
     localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
-  } catch (e) {}
+  } catch (error) {
+    console.warn('Could not update the local catalog cache:', error);
+  }
 
   renderDynamicStoreProducts();
   renderOwnerProductList();
 
-  if (typeof showToast === 'function') {
-    showToast("🗑️ Product removed from store catalog.");
+  let firestoreDeleteFailed = false;
+  if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+    try {
+      const db = firebase.firestore();
+      const documentIds = new Set([
+        String(prodId || ''),
+        String(product.id || ''),
+        String(product.productId || ''),
+        String(productName || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_').substring(0, 80)
+      ].filter(Boolean));
+      const references = Array.from(documentIds, id => db.collection('published_catalog').doc(id));
+      await Promise.all(references.map(ref => ref.delete()));
+      if (productName) {
+        try {
+          const [nameMatches, titleMatches] = await Promise.all([
+            db.collection('published_catalog').where('name', '==', productName).get(),
+            db.collection('published_catalog').where('title', '==', productName).get()
+          ]);
+          const duplicateReferences = new Map(
+            [...nameMatches.docs, ...titleMatches.docs].map(doc => [doc.ref.path, doc.ref])
+          );
+          await Promise.all(Array.from(duplicateReferences.values(), ref => ref.delete()));
+        } catch (error) {
+          firestoreDeleteFailed = true;
+          console.error('Could not search for duplicate published catalog products:', error);
+        }
+      }
+    } catch (error) {
+      firestoreDeleteFailed = true;
+      console.error('Could not remove the published Firestore product:', error);
+    }
+  } else {
+    firestoreDeleteFailed = true;
+    console.warn('Firebase is unavailable; the catalog removal could not be applied to Firestore.');
   }
 
-  // Dispatch delete to sheet
+  let sheetDeleteSent = false;
   try {
     const postData = new URLSearchParams();
     postData.append('action', 'delete_product');
     postData.append('product_id', prodId);
+    postData.append('product_name', productName);
 
     const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
-    fetch(endpoint, {
+    await fetch(endpoint, {
       method: 'POST',
       body: postData,
       mode: 'no-cors'
-    }).catch(e => console.warn("Delete sheet sync:", e));
-  } catch (e) {
-    console.warn("Delete dispatch error:", e);
+    });
+    sheetDeleteSent = true;
+  } catch (error) {
+    console.error('Could not dispatch the catalog deletion to Google Sheets:', error);
+  }
+
+  if (typeof showToast === 'function') {
+    const remoteWarning = firestoreDeleteFailed || !sheetDeleteSent
+      ? ' It was hidden on this device, but a cloud source may need a retry.'
+      : '';
+    showToast(`🗑️ Product removed from the store catalog.${remoteWarning}`);
   }
 }
 

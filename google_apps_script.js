@@ -279,22 +279,60 @@ function doPost(e) {
     // ACTION: Delete / Remove Product by Owner
     if (p.action === "delete_product") {
       var targetPrdId = String(p.product_id || "").trim();
+      var targetPrdName = String(p.product_name || p.title || "").trim();
+      if (!targetPrdId) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "A product ID is required."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var prodSheet = ss.getSheetByName("Products");
       var deleted = false;
       if (prodSheet) {
         var pData = prodSheet.getDataRange().getValues();
-        for (var pi = 1; pi < pData.length; pi++) {
-          if (String(pData[pi][1] || "").trim() === targetPrdId) {
+        for (var pi = pData.length - 1; pi >= 1; pi--) {
+          var productRowId = String(pData[pi][1] || "").trim();
+          if (productRowId === targetPrdId) {
             prodSheet.deleteRow(pi + 1);
             deleted = true;
-            break;
           }
         }
       }
+
+      ss.getSheets().forEach(function(orderSheet) {
+        if (orderSheet.getName() === "Products") return;
+        var orderData = orderSheet.getDataRange().getValues();
+        for (var oi = orderData.length - 1; oi >= 1; oi--) {
+          var orderRow = orderData[oi];
+          var isCatalogRow = String(orderRow[3] || "").trim() === "CATALOG_PRODUCT" ||
+            String(orderRow[7] || "").trim() === "CATALOG_PRODUCT" ||
+            String(orderRow[1] || "").trim().toUpperCase().indexOf("PRD-") === 0;
+          if (!isCatalogRow) continue;
+
+          var matchesProduct = String(orderRow[1] || "").trim() === targetPrdId;
+          for (var oiCol = 0; oiCol < orderRow.length; oiCol++) {
+            var cell = orderRow[oiCol];
+            if (typeof cell !== "string" || cell.charAt(0) !== "{") continue;
+            try {
+              var metadata = JSON.parse(cell);
+              var metadataId = String(metadata.id || metadata.productId || "").trim();
+              if (metadataId === targetPrdId) matchesProduct = true;
+            } catch (parseError) {}
+          }
+
+          if (matchesProduct) {
+            orderSheet.deleteRow(oi + 1);
+            deleted = true;
+          }
+        }
+      });
+
       return ContentService.createTextOutput(JSON.stringify({
         status: deleted ? "success" : "not_found",
-        product_id: targetPrdId
+        product_id: targetPrdId,
+        product_name: targetPrdName
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
