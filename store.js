@@ -5150,8 +5150,8 @@ function setupCheckoutModal(name, price, category, paymentMode) {
     onlineRadio.disabled = !onlineAllowed;
     onlineRadio.checked = !codAllowed && onlineAllowed;
   }
-  if (codLabel) codLabel.style.display = codAllowed ? '' : 'none';
-  if (onlineLabel) onlineLabel.style.display = onlineAllowed ? '' : 'none';
+  if (codLabel) codLabel.style.display = codAllowed ? 'flex' : 'none';
+  if (onlineLabel) onlineLabel.style.display = onlineAllowed ? 'flex' : 'none';
   togglePaymentMethod(onlineAllowed && !codAllowed ? 'online' : 'cod');
 
   goToCheckoutStep(1);
@@ -5299,6 +5299,7 @@ function resetRepeatDiscountState() {
   }
   const discountRow = document.getElementById('invoiceRepeatDiscountRow');
   if (discountRow) discountRow.style.display = 'none';
+  updateCheckoutInvoiceTotals();
 }
 
 function toggleRepeatCustomerReward(isChecked) {
@@ -5322,6 +5323,10 @@ async function verifyAndApplyRepeatDiscount() {
   const rawCoupon = couponInput.value.trim().toUpperCase();
 
   if (!rawCoupon) {
+    activeRepeatDiscountAmount = 0;
+    activeRedeemedCouponCode = null;
+    activeRedeemedPrevOrderId = null;
+    updateCheckoutInvoiceTotals();
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
     msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your Coupon Code.';
@@ -5336,6 +5341,10 @@ async function verifyAndApplyRepeatDiscount() {
     const isSoporeArea = orderPin === '193201' || orderAddress.includes('tarzoo') || orderAddress.includes('sopore');
 
     if (orderPin && orderPin.length === 6 && !isSoporeArea) {
+      activeRepeatDiscountAmount = 0;
+      activeRedeemedCouponCode = null;
+      activeRedeemedPrevOrderId = null;
+      updateCheckoutInvoiceTotals();
       msgEl.style.display = 'block';
       msgEl.style.color = '#dc2626';
       msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Coupon <strong>HARISBHAT40</strong> is valid exclusively for students in <strong>Tarzoo Sopore (PIN: 193201)</strong>.';
@@ -5344,6 +5353,10 @@ async function verifyAndApplyRepeatDiscount() {
 
     const usedCount = Number(localStorage.getItem('jk_coupon_HARISBHAT40_count') || 0);
     if (usedCount >= 10) {
+      activeRepeatDiscountAmount = 0;
+      activeRedeemedCouponCode = null;
+      activeRedeemedPrevOrderId = null;
+      updateCheckoutInvoiceTotals();
       msgEl.style.display = 'block';
       msgEl.style.color = '#dc2626';
       msgEl.innerHTML = '<i class="fa-solid fa-ban"></i> Coupon <strong>HARISBHAT40</strong> has reached its maximum limit of 10 friend orders.';
@@ -5373,6 +5386,10 @@ async function verifyAndApplyRepeatDiscount() {
   // --- HARIS BHAT PERSONAL 1ST CUSTOMER PRIVILEGE PASS (₹50 OFF) ---
   if (rawCoupon === 'HARIS50' || rawCoupon === 'HARISBHAT50') {
     if (localStorage.getItem('jk_haris50_redeemed') === 'true') {
+      activeRepeatDiscountAmount = 0;
+      activeRedeemedCouponCode = null;
+      activeRedeemedPrevOrderId = null;
+      updateCheckoutInvoiceTotals();
       msgEl.style.display = 'block';
       msgEl.style.color = '#dc2626';
       msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Personal coupon <strong>${rawCoupon}</strong> has already been redeemed for its one-time ₹50 discount.`;
@@ -5404,6 +5421,10 @@ async function verifyAndApplyRepeatDiscount() {
   if (rawCoupon === 'HUZAIFABASS@50' || rawCoupon === 'HUZAIFABASS50') {
     const currentVal = Number(currentCheckoutPrice) || 0;
     if (currentVal < 1250) {
+      activeRepeatDiscountAmount = 0;
+      activeRedeemedCouponCode = null;
+      activeRedeemedPrevOrderId = null;
+      updateCheckoutInvoiceTotals();
       msgEl.style.display = 'block';
       msgEl.style.color = '#dc2626';
       msgEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Coupon <strong>${rawCoupon}</strong> is only valid on orders of ₹1,250 or above. (Current cart: ₹${currentVal})`;
@@ -5412,6 +5433,10 @@ async function verifyAndApplyRepeatDiscount() {
 
     const usedCount = Number(localStorage.getItem('jk_coupon_HUZAIFABASS50_count') || 0);
     if (usedCount >= 10) {
+      activeRepeatDiscountAmount = 0;
+      activeRedeemedCouponCode = null;
+      activeRedeemedPrevOrderId = null;
+      updateCheckoutInvoiceTotals();
       msgEl.style.display = 'block';
       msgEl.style.color = '#dc2626';
       msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Coupon <strong>${rawCoupon}</strong> has reached its maximum limit of 10 orders.`;
@@ -5440,6 +5465,10 @@ async function verifyAndApplyRepeatDiscount() {
 
   // --- REPEAT CUSTOMER VOUCHER (STUDENT20) ---
   if (!rawOrderId) {
+    activeRepeatDiscountAmount = 0;
+    activeRedeemedCouponCode = null;
+    activeRedeemedPrevOrderId = null;
+    updateCheckoutInvoiceTotals();
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
     msgEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your Previous Order ID.';
@@ -5450,6 +5479,10 @@ async function verifyAndApplyRepeatDiscount() {
   // 1. Verify coupon code text (accepts STUDENT20, JKSTUDENT20, or any personalized student coupon ending with 20 e.g. HUZAI20)
   const isPersonalized20Coupon = (/^[A-Z0-9_\-]{3,}20$/.test(rawCoupon));
   if (rawCoupon !== 'STUDENT20' && rawCoupon !== 'JKSTUDENT20' && !isPersonalized20Coupon) {
+    activeRepeatDiscountAmount = 0;
+    activeRedeemedCouponCode = null;
+    activeRedeemedPrevOrderId = null;
+    updateCheckoutInvoiceTotals();
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
     msgEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Coupon Code. Enter your personal coupon (e.g. <strong>' + rawCoupon + '</strong>) or <strong>STUDENT20</strong> with your Previous Order ID.';
@@ -5463,6 +5496,10 @@ async function verifyAndApplyRepeatDiscount() {
   } catch(e) {}
 
   if (redeemedList.includes(rawOrderId)) {
+    activeRepeatDiscountAmount = 0;
+    activeRedeemedCouponCode = null;
+    activeRedeemedPrevOrderId = null;
+    updateCheckoutInvoiceTotals();
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
     msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Order #${rawOrderId} has <strong>ALREADY redeemed</strong> its one-time ₹20 discount. It cannot be used again!`;
@@ -5476,6 +5513,10 @@ async function verifyAndApplyRepeatDiscount() {
   );
 
   if (alreadyUsedInOrders) {
+    activeRepeatDiscountAmount = 0;
+    activeRedeemedCouponCode = null;
+    activeRedeemedPrevOrderId = null;
+    updateCheckoutInvoiceTotals();
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
     msgEl.innerHTML = `<i class="fa-solid fa-ban"></i> Order #${rawOrderId} has already been used on a previous order.`;
@@ -5546,6 +5587,10 @@ async function verifyAndApplyRepeatDiscount() {
 
   // STRICT REQUIREMENT: Order ID MUST exist in the system's order records!
   if (!isValidOrder) {
+    activeRepeatDiscountAmount = 0;
+    activeRedeemedCouponCode = null;
+    activeRedeemedPrevOrderId = null;
+    updateCheckoutInvoiceTotals();
     msgEl.style.display = 'block';
     msgEl.style.color = '#dc2626';
     msgEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Order #${rawOrderId} not found in our records. Only students who have previously ordered can claim this ₹20 discount!`;
@@ -5764,10 +5809,16 @@ function updateCheckoutPageSummary(deliveryInfo, discount, total, codFee) {
   const paymentEl = document.getElementById('checkoutPagePayment');
   const totalEl = document.getElementById('checkoutPageTotal');
   if (subtotalEl) subtotalEl.textContent = `₹${subtotal}`;
-  if (discountRow) discountRow.hidden = discount <= 0;
+  if (discountRow) {
+    discountRow.hidden = discount <= 0;
+    discountRow.style.display = discount <= 0 ? 'none' : 'flex';
+  }
   if (discountEl) discountEl.textContent = `−₹${discount}`;
   if (deliveryEl) deliveryEl.textContent = deliveryInfo.fee === 0 ? 'FREE' : `₹${deliveryInfo.fee}`;
-  if (codFeeRow) codFeeRow.hidden = codFee <= 0;
+  if (codFeeRow) {
+    codFeeRow.hidden = codFee <= 0;
+    codFeeRow.style.display = codFee <= 0 ? 'none' : 'flex';
+  }
   if (codFeeEl) codFeeEl.textContent = `₹${codFee}`;
   const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked')?.value;
   if (paymentEl) paymentEl.textContent = selectedPayment === 'online' ? 'Online payment' : 'Cash on Delivery';
@@ -6053,8 +6104,16 @@ function togglePaymentMethod(method) {
   const codFee = Number(deliveryInfo.codFee) || 0;
 
   if (method === 'cod') {
-    if (onlineLabel) onlineLabel.style.border = '1.5px solid #cbd5e1';
-    if (codLabel) codLabel.style.border = '2px solid #16a34a';
+    if (onlineLabel) {
+      onlineLabel.classList.remove('selected-online');
+      onlineLabel.style.border = '1.5px solid #cbd5e1';
+      onlineLabel.style.background = '#ffffff';
+    }
+    if (codLabel) {
+      codLabel.classList.add('selected-cod');
+      codLabel.style.border = '2px solid #16a34a';
+      codLabel.style.background = '#fbfdfb';
+    }
     const totalWithCod = baseOrderAmount + codFee;
     if (submitBtn) {
       submitBtn.innerHTML = `<i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery) • ₹${totalWithCod}`;
@@ -6064,8 +6123,16 @@ function togglePaymentMethod(method) {
       note.innerHTML = '<i class="fa-solid fa-truck-fast" style="color:#16a34a;"></i> Pay cash or UPI scan at your doorstep when books arrive!';
     }
   } else {
-    if (onlineLabel) onlineLabel.style.border = '2px solid #2563eb';
-    if (codLabel) codLabel.style.border = '1.5px solid #cbd5e1';
+    if (onlineLabel) {
+      onlineLabel.classList.add('selected-online');
+      onlineLabel.style.border = '2px solid #2563eb';
+      onlineLabel.style.background = '#f8faff';
+    }
+    if (codLabel) {
+      codLabel.classList.remove('selected-cod');
+      codLabel.style.border = '1.5px solid #cbd5e1';
+      codLabel.style.background = '#ffffff';
+    }
     if (submitBtn) {
       submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Proceed to Pay Online • ₹${baseOrderAmount}`;
       submitBtn.style.backgroundColor = '#2563eb';

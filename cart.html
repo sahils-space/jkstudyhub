@@ -45,6 +45,59 @@
     .form-input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; font-family: inherit; box-sizing: border-box; font-size: 14px; }
     .form-input:focus { border-color: #2563eb; }
 
+    .pay-method-card {
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .pay-method-card.selected-cod {
+      border: 2px solid #16a34a !important;
+      background: #fbfdfb;
+    }
+    .pay-method-card.selected-online {
+      border: 2px solid #2563eb !important;
+      background: #f8faff;
+    }
+    .pay-method-card input[type="radio"] {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+    }
+    .pay-method-card .pay-method-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .pay-method-card .pay-method-info strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+    .pay-method-card .pay-method-info p {
+      font-size: 11px;
+      color: #64748b;
+      margin: 2px 0 0;
+      line-height: 1.35;
+    }
+    .pay-method-card .pay-method-badge-wrap {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+
     /* Multi-step Checkout Wizard */
     .checkout-stepper {
       display: flex;
@@ -908,23 +961,25 @@
               </h4>
               
               <!-- COD Option (Default & Recommended) -->
-              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 2px solid #16a34a; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" id="payMethodCodLabel">
+              <label class="pay-method-card selected-cod" id="payMethodCodLabel">
                 <input type="radio" name="paymentMethod" value="cod" checked onchange="togglePaymentMethod('cod')">
-                <div style="flex: 1;">
-                  <strong style="font-size: 13px; color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
-                  <p id="payMethodCodDesc" style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Inspect your parcel before paying cash or scanning UPI</p>
+                <div class="pay-method-info">
+                  <strong style="color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
+                  <p id="payMethodCodDesc">Inspect your parcel before paying cash or scanning UPI</p>
                 </div>
-                <span id="payMethodCodBadge" style="background: #dcfce7; color: #16a34a; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px; white-space: nowrap;">COD</span>
+                <div class="pay-method-badge-wrap">
+                  <span id="payMethodCodBadge" style="background: #dcfce7; color: #16a34a; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px; white-space: nowrap;">COD</span>
+                </div>
               </label>
 
               <!-- Online Payment Option -->
-              <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.2s;" id="payMethodOnlineLabel">
+              <label class="pay-method-card" id="payMethodOnlineLabel">
                 <input type="radio" name="paymentMethod" value="online" onchange="togglePaymentMethod('online')">
-                <div style="flex: 1;">
-                  <strong style="font-size: 13px; color: #1e293b;">Online Payment (UPI / QR / Cards / NetBanking)</strong>
-                  <p id="payMethodOnlineDesc" style="font-size: 11px; color: #64748b; margin: 1px 0 0;">Instant confirmation &amp; priority fast dispatch</p>
+                <div class="pay-method-info">
+                  <strong style="color: #1e293b;">Online Payment (UPI / QR / Cards / NetBanking)</strong>
+                  <p id="payMethodOnlineDesc">Instant confirmation &amp; priority fast dispatch</p>
                 </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+                <div class="pay-method-badge-wrap">
                   <span id="payMethodOnlineBadge" style="background: #dcfce7; color: #15803d; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px; white-space: nowrap;">₹0 Extra</span>
                   <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="height:12px;">
                 </div>
@@ -1091,7 +1146,7 @@
 
   <!-- Real-Time Visitor Analytics Tracker -->
   <script src="analytics.js?v=2"></script>
-  <script src="store.js?v=92.5"></script>
+  <script src="store.js?v=92.7"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {
