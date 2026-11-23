@@ -11762,8 +11762,83 @@ function renderSchoolCatalogSections() {
     .filter(product => product && !isDeletedCatalogProduct(product));
   const copyCategories = new Set(['school-copies', 'copies', 'copy', 'registers']);
   const bookCategories = new Set(['school-books', 'school', 'textbooks']);
+  const examKitCategories = new Set(['exam-kits', 'exam-kit', 'master-kits', 'master-kit']);
   const copies = products.filter(product => copyCategories.has(String(product.category || '').trim().toLowerCase()));
   const books = products.filter(product => bookCategories.has(String(product.category || '').trim().toLowerCase()));
+  const uploadedKits = products.filter(product => examKitCategories.has(String(product.category || '').trim().toLowerCase()));
+
+  // Render dynamic Exam Master Kits into the section if available
+  const examKitsGrid = document.getElementById('examKitsGrid');
+  if (examKitsGrid) {
+    // Retain hardcoded default kits (Class 10th and 12th) while appending any uploaded kits dynamically
+    const dynamicKitCards = uploadedKits.map(product => {
+      const pName = String(product.name || product.title || 'Master Kit');
+      const safeInlineName = pName.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\r\n]/g, ' ');
+      const photos = Array.isArray(product.photos) && product.photos.length ? product.photos : [product.image || 'images/logo-app.png'];
+      const image = safeEscape(photos[0] || 'images/logo-app.png');
+      const price = getCustomPrice(pName, Number(product.price) || 0);
+      const mrp = getCustomMrp(pName, Number(product.mrp) || Math.round(price * 1.35));
+      const grade = getSchoolCatalogClassLevel(product.classLevel);
+      const gradeLabel = grade ? `CLASS ${grade}TH JKBOSE` : 'JKBOSE BOARD PREP';
+      const badge = product.badge || '2026 BOARD SPECIAL • TOPPER PACK';
+      const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', 'notes')`);
+      const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', 'notes')`);
+      const waHandler = safeEscape(`orderViaWhatsApp('${safeInlineName}', ${price}, 'notes')`);
+      const favHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
+
+      return `
+        <div class="product-card" style="border: 2px solid #ea580c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);" data-category="exam-kits">
+          <button class="wishlist-icon" onclick="${favHandler}"><i class="fa-solid fa-heart"></i></button>
+          <div style="position:relative;">
+            <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+            <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
+              <i class="fa-solid fa-fire"></i> ${safeEscape(badge)}
+            </span>
+          </div>
+          <div class="product-info">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+              <span style="background:#ffedd5; color:#9a3412; font-size:11px; font-weight:800; padding:2px 8px; border-radius:4px;">${safeEscape(gradeLabel)}</span>
+              <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> Master Kit Collection</span>
+            </div>
+            <h3 class="product-title" style="font-size:17px; font-weight:800; color:#0f172a;">${safeEscape(pName)}</h3>
+            <p class="product-desc" style="color:#475569; font-size:12.5px; line-height:1.5;">${safeEscape(product.desc || product.description || '')}</p>
+            <div class="product-footer" style="margin-top:10px;">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price" style="font-size:22px; color:#ea580c;">₹${price}</span>
+                  ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹${mrp}</span>` : ''}
+                </div>
+                ${mrp > price ? `<span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹${mrp - price} • Free Pattan Delivery</span>` : ''}
+              </div>
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="flex:1; background:#ea580c; border:none; padding:9px 12px;" onclick="${checkoutHandler}">
+                  <i class="fa-solid fa-bolt"></i> Buy Now
+                </button>
+                <button class="btn-icon" onclick="${cartHandler}" title="Add to Cart">
+                  <i class="fa-solid fa-cart-plus"></i>
+                </button>
+                <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="${waHandler}" title="Order on WhatsApp">
+                  <i class="fa-brands fa-whatsapp"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Append dynamic kits if any exist
+    const dynamicContainer = document.getElementById('dynamicExamKitsContainer');
+    if (!dynamicContainer) {
+      const dynWrap = document.createElement('div');
+      dynWrap.id = 'dynamicExamKitsContainer';
+      dynWrap.style.display = 'contents';
+      dynWrap.innerHTML = dynamicKitCards;
+      examKitsGrid.appendChild(dynWrap);
+    } else {
+      dynamicContainer.innerHTML = dynamicKitCards;
+    }
+  }
 
   copiesGrid.replaceChildren();
   booksGrid.replaceChildren();
