@@ -11865,12 +11865,20 @@ function renderSchoolCatalogSections() {
 }
 
 // Open & Close Novels Dedicated Modal Window
-function openNovelsModal() {
+function openNovelsModal(targetId) {
   const modal = document.getElementById('novelsCollectionModal');
   if (modal) {
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     if (typeof initCardSwipes === 'function') initCardSwipes();
+    if (targetId) {
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 150);
+    }
   }
 }
 
@@ -11893,10 +11901,12 @@ function renderDynamicNovelsInModal(products) {
   });
 
   // Update total badge count
-  const badgeCountEl = document.getElementById('novelsTotalBadgeCount');
-  const countTextEl = document.getElementById('novelsModalCountText');
   const totalCount = 10 + uploadedNovels.length;
-  if (badgeCountEl) badgeCountEl.textContent = `${totalCount} Books`;
+  ['novelsTotalBadgeCount', 'novelsTotalBadgeCount2', 'novelsTotalBadgeCount3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = `${totalCount}+`;
+  });
+  const countTextEl = document.getElementById('novelsModalCountText');
   if (countTextEl) countTextEl.textContent = `${totalCount} Bestsellers & Novels`;
 
   if (uploadedNovels.length === 0) {
