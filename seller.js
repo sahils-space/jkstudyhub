@@ -4238,19 +4238,33 @@ const DEFAULT_SELLER_PRODUCTS = [
 
 // Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
 function getSellerAllPublishedProducts() {
+  const userRole = getSellerUserRole();
+  const isAmbassador = (userRole === 'ambassador');
+  const ambassadorEmail = String(localStorage.getItem('jk_seller_hub_phone') || '').trim().toLowerCase();
+
   const mergedMap = new Map();
 
-  DEFAULT_SELLER_PRODUCTS.forEach(p => {
-    if (!isSellerCatalogProductDeleted(p)) {
-      mergedMap.set(p.id, p);
-    }
-  });
+  // If user is owner, include default seller products
+  if (!isAmbassador) {
+    DEFAULT_SELLER_PRODUCTS.forEach(p => {
+      if (!isSellerCatalogProductDeleted(p)) {
+        mergedMap.set(p.id, p);
+      }
+    });
+  }
 
   try {
     const list1 = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
     if (Array.isArray(list1)) {
       list1.forEach(p => {
         if (!isSellerCatalogProductDeleted(p) && (p.name || p.title)) {
+          // If ambassador, only include products that match their email or were uploaded by them
+          if (isAmbassador) {
+            const prodAmbEmail = String(p.ambassadorEmail || '').trim().toLowerCase();
+            const prodUploader = String(p.uploader || '').trim().toLowerCase();
+            const matchesAmbassador = (prodAmbEmail === ambassadorEmail) || prodUploader === `ambassador:${ambassadorEmail}`;
+            if (!matchesAmbassador) return;
+          }
           const mKey = p.id || p.productId || p.name;
           if (mKey) mergedMap.set(mKey, { ...(mergedMap.get(mKey) || {}), ...p });
         }
@@ -4263,6 +4277,13 @@ function getSellerAllPublishedProducts() {
     if (Array.isArray(list2)) {
       list2.forEach(p => {
         if (!isSellerCatalogProductDeleted(p) && (p.name || p.title)) {
+          // If ambassador, only include products that match their email or were uploaded by them
+          if (isAmbassador) {
+            const prodAmbEmail = String(p.ambassadorEmail || '').trim().toLowerCase();
+            const prodUploader = String(p.uploader || '').trim().toLowerCase();
+            const matchesAmbassador = (prodAmbEmail === ambassadorEmail) || prodUploader === `ambassador:${ambassadorEmail}`;
+            if (!matchesAmbassador) return;
+          }
           const mKey = p.id || p.productId || p.name;
           if (mKey) mergedMap.set(mKey, { ...(mergedMap.get(mKey) || {}), ...p });
         }
