@@ -6558,6 +6558,16 @@ function processOrder(txnId, customStatus) {
   const newOrderId = 'OD' + Date.now() + Math.floor(Math.random() * 1000);
   const deliveryOtp = getOrderDeliveryOtp({ orderId: newOrderId });
 
+  // Check if product is attributed to Brand Ambassador
+  let ambassadorAttribution = '';
+  try {
+    const allCustom = Array.isArray(CUSTOM_PRODUCTS) ? CUSTOM_PRODUCTS : [];
+    const matchedCustom = allCustom.find(cp => cp && (cp.name === currentCheckoutProduct || cp.title === currentCheckoutProduct));
+    if (matchedCustom && (matchedCustom.isAmbassadorProduct || matchedCustom.ambassadorEmail || (matchedCustom.uploader && matchedCustom.uploader.startsWith('ambassador:')))) {
+      ambassadorAttribution = matchedCustom.ambassadorEmail || (matchedCustom.uploader ? matchedCustom.uploader.replace('ambassador:', '') : 'ambassador');
+    }
+  } catch(e) {}
+
   const orderRecord = {
     orderId: newOrderId,
     txnId: cleanTxnId,
@@ -6570,6 +6580,8 @@ function processOrder(txnId, customStatus) {
     email: orderEmail,
     address: finalAddress,
     product: finalProductDesc,
+    ambassadorEmail: ambassadorAttribution || '',
+    isAmbassadorOrder: Boolean(ambassadorAttribution),
     schoolName: schoolName || '',
     studentClass: studentClass || '',
     deliveryFee: deliveryFee,
@@ -11587,10 +11599,19 @@ function renderDynamicStoreProducts() {
       });
     }
 
+    // Ambassador Ribbon Tag:
+    const isAmbassadorItem = Boolean(prod.isAmbassadorProduct || (prod.ambassadorEmail && prod.ambassadorEmail.length > 0) || (prod.uploader && prod.uploader.startsWith('ambassador:')));
+    const ambassadorRibbonHtml = isAmbassadorItem ? `
+      <span class="ambassador-curated-ribbon" title="Curated Pick" style="position:absolute; top:10px; left:10px; z-index:10; background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color:#ffffff; font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:20px; box-shadow:0 3px 8px rgba(37,99,235,0.35); display:inline-flex; align-items:center; gap:5px; border:1px solid rgba(255,255,255,0.3); letter-spacing:0.3px;">
+        <i class="fa-solid fa-ribbon" style="color:#fbbf24;"></i> Verified Choice
+      </span>
+    ` : '';
+
     html += `
       <div class="book-product-card" data-category="${safeEscape(prod.category || 'books')}" data-class-level="${safeClassLevel}" data-board="${safeEscape(safeBoard)}" data-subject="${safeEscape(prod.subject || '')}" data-stock-status="${isOutOfStock ? 'out_of_stock' : (isLowStock ? 'low_stock' : 'in_stock')}">
         <button class="wishlist-icon" onclick="toggleFavorite(this, '${safeName}')"><i class="fa-solid fa-heart"></i></button>
-        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9;"><i class="fa-solid fa-sparkles"></i> ${badgeText}</span>
+        ${ambassadorRibbonHtml}
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9; ${isAmbassadorItem ? 'top: 38px;' : ''}"><i class="fa-solid fa-sparkles"></i> ${badgeText}</span>
         
         <!-- Multi-Photo Swipeable Container -->
         <div class="swipe-photo-container" id="${safeCarouselId}">

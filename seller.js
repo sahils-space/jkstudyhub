@@ -71,6 +71,26 @@ const AUTHORIZED_OWNER_EMAILS = [
   'sahilsspace@gmail.com',
   'info.jkstudyhub@gmail.com'
 ];
+
+// Authorized Brand Ambassador Emails (Can ONLY access Catalog Uploads):
+const AUTHORIZED_AMBASSADOR_EMAILS = [
+  // When user provides Gmail IDs, they will be listed here
+];
+
+function isAmbassadorUser(emailOrId) {
+  const clean = String(emailOrId || '').trim().toLowerCase();
+  return AUTHORIZED_AMBASSADOR_EMAILS.includes(clean);
+}
+
+function getSellerUserRole() {
+  try {
+    const role = localStorage.getItem('jk_seller_user_role');
+    if (role === 'ambassador') return 'ambassador';
+    const id = String(localStorage.getItem('jk_seller_hub_phone') || '').trim().toLowerCase();
+    if (isAmbassadorUser(id)) return 'ambassador';
+  } catch(e) {}
+  return 'owner';
+}
 // Secret master passcodes known only to owner
 const MASTER_OWNER_PASSCODES = ['9622605714', 'sahil123', 'admin786'];
 
@@ -108,11 +128,12 @@ function isSellerUnlocked() {
     const isUnlocked = localStorage.getItem('jk_seller_hub_unlocked') === 'true';
     const unlockedIdentifier = String(localStorage.getItem('jk_seller_hub_phone') || '').trim().toLowerCase();
     
-    // Strict validation: must have true flag AND identifier must match authorized list
+    // Strict validation: must have true flag AND identifier must match authorized list (Owner or Ambassador)
     const isPhoneMatched = AUTHORIZED_OWNER_PHONES.includes(unlockedIdentifier.replace(/\D/g, '').slice(-10));
     const isEmailMatched = AUTHORIZED_OWNER_EMAILS.includes(unlockedIdentifier);
+    const isAmbassadorMatched = isAmbassadorUser(unlockedIdentifier);
     
-    if (isUnlocked && (isPhoneMatched || isEmailMatched)) {
+    if (isUnlocked && (isPhoneMatched || isEmailMatched || isAmbassadorMatched)) {
       return true;
     }
   } catch(e) {}
@@ -120,6 +141,7 @@ function isSellerUnlocked() {
   try {
     localStorage.removeItem('jk_seller_hub_unlocked');
     localStorage.removeItem('jk_seller_hub_phone');
+    localStorage.removeItem('jk_seller_user_role');
   } catch(e) {}
   return false;
 }
@@ -166,7 +188,7 @@ function verifySellerOwnerCredentials() {
   }
 }
 
-// 1-Click Google Sign In for Store Owner
+// 1-Click Google Sign In for Store Owner & Brand Ambassadors
 function handleSellerGoogleAuth() {
   const errBox = document.getElementById('sellerAuthErrorMessage');
   if (typeof firebase !== 'undefined' && firebase.auth) {
@@ -177,14 +199,25 @@ function handleSellerGoogleAuth() {
       if (AUTHORIZED_OWNER_EMAILS.includes(email)) {
         try {
           localStorage.setItem('jk_seller_hub_unlocked', 'true');
-          localStorage.setItem('jk_seller_hub_phone', '9622605714');
+          localStorage.setItem('jk_seller_hub_phone', email);
+          localStorage.setItem('jk_seller_user_role', 'owner');
           localStorage.setItem('jk_admin_unlocked', 'true');
+        } catch(e) {}
+        if (errBox) errBox.style.display = 'none';
+        unlockSellerPanel();
+      } else if (isAmbassadorUser(email)) {
+        // Authenticated Brand Ambassador
+        try {
+          localStorage.setItem('jk_seller_hub_unlocked', 'true');
+          localStorage.setItem('jk_seller_hub_phone', email);
+          localStorage.setItem('jk_seller_user_role', 'ambassador');
+          localStorage.setItem('jk_admin_unlocked', 'false');
         } catch(e) {}
         if (errBox) errBox.style.display = 'none';
         unlockSellerPanel();
       } else {
         if (errBox) {
-          errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Google account (${email}) is not authorized as store owner.`;
+          errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Access Denied: Google account (${email}) is not authorized as store owner or brand ambassador.`;
           errBox.style.display = 'block';
         }
       }
@@ -392,8 +425,78 @@ function unlockSellerPanel() {
   // Apply device layout
   applySellerDeviceMode(getSellerDeviceMode());
 
+  // Enforce role-based restrictions (Ambassador vs Owner)
+  applyRoleRestrictions();
+
   // Initialize data
   initSellerSupplierPanel();
+}
+
+function applyRoleRestrictions() {
+  const role = getSellerUserRole();
+  const isAmbassador = (role === 'ambassador');
+
+  if (isAmbassador) {
+    // Hide all owner-only sidebar tabs
+    const ownerNavIds = [
+      'nav-link-home', 'nav-link-orders', 'nav-link-returns', 'nav-link-pricing',
+      'nav-link-inventory', 'nav-link-delivery', 'nav-link-video-ads', 'nav-link-payments',
+      'nav-link-warehouse', 'nav-link-leads', 'nav-link-dashboard'
+    ];
+    ownerNavIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // Hide sidebar headers except Catalog
+    document.querySelectorAll('.sidebar-nav-group').forEach(grp => {
+      const hasCatalog = grp.querySelector('#nav-link-catalog');
+      if (!hasCatalog) {
+        grp.style.display = 'none';
+      }
+    });
+
+    // Hide top navbar owner actions
+    const syncPill = document.getElementById('sellerSyncPill');
+    if (syncPill) syncPill.style.display = 'none';
+    const quickMode = document.getElementById('btnQuickModeSwitch');
+    if (quickMode) quickMode.style.display = 'none';
+
+    // Hide all top action buttons that owners use for orders/barcodes
+    document.querySelectorAll('.top-navbar-actions button, .top-navbar-actions a').forEach(btn => {
+      // Keep only logout / reset or nothing sensitive
+      btn.style.display = 'none';
+    });
+
+    // Add Ambassador Badge & Sign Out in top navbar
+    const actionsBar = document.querySelector('.top-navbar-actions');
+    if (actionsBar && !document.getElementById('ambassadorBadgePill')) {
+      const ambPill = document.createElement('div');
+      ambPill.id = 'ambassadorBadgePill';
+      ambPill.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#eff6ff; color:#1d4ed8; border:1.5px solid #bfdbfe; padding:6px 14px; border-radius:20px; font-weight:800; font-size:12px;';
+      ambPill.innerHTML = '<i class="fa-solid fa-ribbon" style="color:#2563eb;"></i> Brand Ambassador Portal';
+      actionsBar.prepend(ambPill);
+
+      const logoutBtn = document.createElement('button');
+      logoutBtn.type = 'button';
+      logoutBtn.className = 'btn-hub-secondary';
+      logoutBtn.style.cssText = 'font-weight:700; color:#ef4444; border-color:#fecaca; background:#fef2f2; padding:6px 12px; cursor:pointer;';
+      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Sign Out';
+      logoutBtn.onclick = handleSellerSignOut;
+      actionsBar.appendChild(logoutBtn);
+    }
+
+    // Force view directly to Catalog Uploads
+    setTimeout(() => {
+      switchSellerView('catalog');
+    }, 50);
+  } else {
+    // Owner mode: ensure all navigation is restored
+    document.querySelectorAll('.sidebar-nav-group').forEach(grp => grp.style.display = '');
+    document.querySelectorAll('.sidebar-nav-link').forEach(l => l.style.display = '');
+    const ambPill = document.getElementById('ambassadorBadgePill');
+    if (ambPill) ambPill.remove();
+  }
 }
 
 function handleSellerSignOut() {
@@ -798,6 +901,10 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
 // =========================================================
 
 function switchSellerView(viewName) {
+  // If Ambassador, strictly enforce Catalog-only view
+  if (getSellerUserRole() === 'ambassador' && viewName !== 'catalog') {
+    viewName = 'catalog';
+  }
   document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
   const activeNav = document.getElementById(`nav-link-${viewName}`);
   if (activeNav) activeNav.classList.add('active');
@@ -3716,6 +3823,9 @@ async function handleSellerCatalogSubmit(e) {
 
     const finalPhotos = cdnPhotos.length > 0 ? cdnPhotos : rawPhotos;
     const prodId = 'PRD-' + Date.now();
+    const userRole = getSellerUserRole();
+    const isAmbassador = (userRole === 'ambassador');
+    const uploaderEmail = String(localStorage.getItem('jk_seller_hub_phone') || '').trim().toLowerCase();
 
     const newProduct = {
       id: prodId,
@@ -3739,6 +3849,8 @@ async function handleSellerCatalogSubmit(e) {
       image: finalPhotos[0] || 'images/logo-app.png',
       allImages: finalPhotos,
       status: 'Active',
+      isAmbassadorProduct: isAmbassador,
+      ambassadorEmail: isAmbassador ? uploaderEmail : '',
       dateAdded: new Date().toLocaleDateString("en-IN"),
       timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
     };
@@ -3820,7 +3932,9 @@ async function handleSellerCatalogSubmit(e) {
       postData.append('photo3', finalPhotos[2] || '');
       postData.append('stock', String(stock));
       postData.append('status', 'Active');
-      postData.append('uploader', 'seller');
+      postData.append('uploader', isAmbassador ? `ambassador:${uploaderEmail}` : 'seller');
+      postData.append('is_ambassador', isAmbassador ? 'true' : 'false');
+      postData.append('ambassador_email', isAmbassador ? uploaderEmail : '');
 
       fetch(endpoint, {
         method: 'POST',
