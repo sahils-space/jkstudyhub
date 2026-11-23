@@ -18,7 +18,7 @@
   <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK STUDY HUB - Class 10th, 11th & 12th Academic & Books Portal">
-  <meta property="og:description" content="JKBOSE Annual Regular Exam countdown, curated notes, question banks, bestselling novels, and school copies at less than bookshop rates & less than MRP with free Kashmir doorstep delivery.">
+  <meta property="og:description" content="JKBOSE exam resources, books, question banks, novels and school supplies at less than bookshop rates. Orders of ₹999+ qualify for free delivery across Jammu and Kashmir.">
   <meta property="og:image" content="https://jkstudyhub.online/images/logo-app.png">
   <meta property="og:url" content="https://jkstudyhub.online/">
   <meta name="twitter:card" content="summary_large_image">
@@ -61,15 +61,15 @@
           </div>
         </div>
 
-        <!-- Class 12th (Exam from 21st Oct) -->
-        <div class="exam-timer-pill" data-class="12" title="Class 12th Annual Regular Exam started 21st Oct - Currently Ongoing">
+        <!-- Class 12th (Exams Concluded) -->
+        <div class="exam-timer-pill" data-class="12" title="Class 12th Annual Regular Exams Finished">
           <div class="pill-left">
             <span class="pill-class">12th</span>
-            <span class="pill-date">(21st Oct)</span>
+            <span class="pill-date">(Concluded)</span>
           </div>
           <div class="pill-time" id="timerClass12">
-            <span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
-              <span class="exam-status-dot"></span> Exam Ongoing 🎯
+            <span style="color:#38bdf8; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <i class="fa-solid fa-circle-check" style="color:#38bdf8;"></i> Exams Finished ✨
             </span>
           </div>
         </div>
@@ -1133,7 +1133,8 @@
         '12': {
           start: new Date(2026, 9, 21, 10, 0, 0), // 21st Oct 2026
           end: new Date(2026, 11, 5, 18, 0, 0),   // Dec 2026
-          label: '21st Oct'
+          label: 'Concluded',
+          finished: true
         },
         '11': {
           start: new Date(2026, 9, 29, 10, 0, 0), // 29th Oct 2026
@@ -1150,7 +1151,7 @@
           const pillTime = document.getElementById('timerClass' + cls);
           if (!pillTime) return;
 
-          if (cls === '10' || now > item.end) {
+          if (cls === '10' || item.finished || now > item.end) {
             pillTime.innerHTML = '<span style="color:#38bdf8; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-circle-check" style="color:#38bdf8;"></i> Exams Finished ✨</span>';
           } else if (now >= item.start && now <= item.end) {
             pillTime.innerHTML = '<span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><span class="exam-status-dot"></span> Exam Ongoing 🎯</span>';

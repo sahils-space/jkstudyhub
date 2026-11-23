@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta name="theme-color" content="#172a22">
-  <meta name="description" content="Browse books, school exercise copies, book sets and exam guides from JK Study Hub. Search and filter the catalog, then enter your PIN at checkout to confirm delivery options and charges.">
+  <meta name="description" content="Browse books, school exercise copies, book sets and exam guides from JK Study Hub. Search the full catalog, then enter your PIN at checkout to confirm delivery options and charges.">
   <script>
     const checkoutRoute = new URLSearchParams(window.location.search).get('checkout') === '1';
     const productRoute = new URLSearchParams(window.location.search).has('product');
@@ -24,11 +24,11 @@
   </script>
   <!-- Official Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <link rel="stylesheet" href="promo-offers.css?v=4">
+  <link rel="stylesheet" href="promo-offers.css?v=5">
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK Study Hub - Books & School Copies at Less Than Bookshop Rates & Less Than MRP">
-  <meta property="og:description" content="Browse novels, school exercise copies, book sets and board exam guides. Enter your PIN at checkout to confirm delivery availability, charges and payment options.">
+  <meta property="og:description" content="Browse books and school supplies. Orders of ₹999+ qualify for free delivery across Jammu and Kashmir; enter your PIN to confirm coverage and payment options.">
   <meta property="og:image" content="https://jkstudyhub.online/images/logo-app.png">
   <meta property="og:url" content="https://jkstudyhub.online/store.html">
   <meta name="twitter:card" content="summary_large_image">
@@ -46,7 +46,7 @@
         "name": "JK Study Hub Bookstore & Educational Supplies",
         "url": "https://jkstudyhub.online/store.html",
         "logo": "https://jkstudyhub.online/images/logo-app.png",
-        "description": "Browse JKBOSE Class 10th, 11th, and 12th textbooks, question banks, solved papers, stationery and student supplies. Enter a PIN at checkout to confirm delivery options and charges.",
+        "description": "Browse JKBOSE Class 10th, 11th, and 12th textbooks, question banks, solved papers, stationery and student supplies. Orders of ₹999 or more qualify for free delivery across Jammu and Kashmir; enter a PIN to confirm coverage.",
         "telephone": "+91-9622605714",
         "priceRange": "₹49 - ₹1,499",
         "address": {
@@ -175,8 +175,8 @@
       font-size: 24px;
       font-weight: 700;
       color: #1e293b;
-      margin-bottom: 20px;
-      margin-top: 40px;
+      margin-bottom: 12px;
+      margin-top: 24px;
       padding-bottom: 10px;
       border-bottom: 2px solid #e2e8f0;
       width: 100%;
@@ -189,7 +189,7 @@
       width: 100%;
       box-sizing: border-box;
       justify-content: center;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
     .product-card {
       background: white;
@@ -235,10 +235,10 @@
       display: flex;
       gap: 10px;
       overflow-x: auto;
-      padding: 12px 0 16px 0;
+      padding: 8px 0 6px;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
-      margin-bottom: 6px;
+      margin-bottom: 0;
     }
     .store-trust-strip::-webkit-scrollbar { display: none; }
     .trust-pill {
@@ -698,7 +698,7 @@
     }
     .cart-drawer-view-cart {
       display: block;
-      margin-top: 10px;
+      margin-top: 6px;
       color: #385a43;
       font-size: 12px;
       font-weight: 700;
@@ -1333,7 +1333,7 @@
 
     @media (max-width: 768px) {
       .container {
-        padding: 0 12px 75px !important;
+        padding: 0 12px 36px !important;
       }
       .product-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -1341,14 +1341,14 @@
       }
       .category-title {
         font-size: 20px !important;
-        margin-top: 28px !important;
-        margin-bottom: 14px !important;
+        margin-top: 18px !important;
+        margin-bottom: 10px !important;
       }
     }
 
     @media (max-width: 520px) {
       .container {
-        padding: 0 8px 80px !important;
+        padding: 0 8px 32px !important;
       }
       .product-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -1356,8 +1356,8 @@
       }
       .category-title {
         font-size: 18px !important;
-        margin-top: 22px !important;
-        margin-bottom: 12px !important;
+        margin-top: 16px !important;
+        margin-bottom: 8px !important;
       }
       .product-card, .book-product-card {
         border-radius: 12px !important;
@@ -1667,7 +1667,7 @@
       font-size: 52px;
       font-weight: 900;
       line-height: 1.08;
-      margin: 0 0 14px;
+      margin: 0 0 8px;
       letter-spacing: -1.2px;
       font-family: 'Outfit', sans-serif;
     }
@@ -1768,7 +1768,7 @@
     /* 4. Featured Category Cards Row */
     .zapvi-category-strip {
       max-width: 1200px;
-      margin: 28px auto 36px;
+      margin: 18px auto 20px;
       padding: 0 20px;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -1827,7 +1827,7 @@
       background: #ffffff;
     }
 
-    /* 5. Top 3D Floating Interactive Offers Showcase (Left: ₹1499+, Right: ₹499+) */
+    /* 5. Top 3D Floating Interactive Offers Showcase (Left: ₹1499+, Right: ₹999+) */
     .top-3d-offers-showcase {
       max-width: 1360px;
       margin: 18px auto 24px;
@@ -2077,7 +2077,7 @@
         overscroll-behavior-x: contain;
         gap: 12px;
         padding: 0 14px 10px;
-        margin: 18px auto 26px;
+        margin: 12px auto 16px;
         scrollbar-width: none;
       }
       .zapvi-cat-card {
@@ -3973,61 +3973,15 @@
     .zapvi-icon-btn:hover { color: #315c4b; }
     .hub-store-catalog-layout {
       display: grid;
-      grid-template-columns: 170px minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
-      gap: 18px;
-    }
-    .hub-store-category-rail {
-      position: sticky;
-      top: 76px;
-      padding: 14px 9px;
-      border: 1px solid #e2e8de;
-      border-radius: 14px;
-      background: #fffefa;
-    }
-    .hub-store-category-rail h2 {
-      margin: 0 0 10px 7px;
-      color: #20372c;
-      font-size: 13px;
-      font-weight: 800;
-    }
-    .hub-store-category-rail .store-category-filter-strip {
-      display: grid;
-      gap: 4px;
-      margin: 0;
-      overflow: visible;
-      padding: 0;
-    }
-    .hub-store-category-rail .store-filter-btn {
-      display: flex;
-      width: 100%;
-      min-width: 0;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-      padding: 9px 7px;
-      border-color: transparent;
-      border-radius: 9px;
-      background: transparent;
-      font-size: 11px;
-      line-height: 1.3;
-      text-align: left;
-      white-space: normal;
-    }
-    .hub-store-category-rail .store-filter-btn i {
-      width: 15px;
-      flex: 0 0 15px;
-      text-align: center;
-    }
-    .hub-store-category-rail .store-filter-btn.active,
-    .hub-store-category-rail .store-filter-btn:hover {
-      background: #edf3ee;
-      border-color: #e2e8de;
-      box-shadow: none;
-      color: #244638;
+      gap: 0;
     }
     .hub-store-catalog-main { min-width: 0; }
-    .hub-store-catalog-main .store-search-container { margin-top: 0 !important; }
+    .hub-store-catalog-main .store-search-container {
+      margin: 0 0 8px !important;
+      padding: 12px 16px;
+    }
     .store-catalog-meta-row {
       display: flex;
       align-items: center;
@@ -4070,24 +4024,13 @@
       color: #edf4ee;
     }
     .store-advanced-filter-toggle { display: none; }
-    body.dark-mode .hub-store-category-rail {
-      border-color: #35473d;
-      background: #18251e;
-    }
-    body.dark-mode .hub-store-category-rail h2 { color: #edf4ee; }
-    body.dark-mode .hub-store-category-rail .store-filter-btn.active,
-    body.dark-mode .hub-store-category-rail .store-filter-btn:hover {
-      background: #263b30;
-      border-color: #35473d;
-      color: #d7e7d9;
-    }
     .hub-store-profile {
       display: flex;
       align-items: center;
       gap: 16px;
       max-width: 1200px;
-      margin: 20px auto 16px;
-      padding: 18px 22px;
+      margin: 8px auto;
+      padding: 12px 16px;
       border: 1px solid #e2e8de;
       border-radius: 18px;
       background: linear-gradient(115deg, #fffefa, #f3f7f1);
@@ -4240,49 +4183,10 @@
       .zapvi-store-nav .back-btn-pill i { font-size: 14px; }
       .hub-store-catalog-layout {
         grid-template-columns: minmax(0, 1fr);
-        gap: 12px;
-      }
-      .hub-store-category-rail {
-        position: static;
-        min-width: 0;
-        max-width: 100%;
-        padding: 10px;
-      }
-      .hub-store-category-rail h2 {
-        margin: 0 0 8px;
-        font-size: 12px;
-        text-align: left;
-      }
-      .hub-store-category-rail .store-category-filter-strip {
-        display: flex;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        gap: 7px;
-        overflow-x: auto;
-        overscroll-behavior-x: contain;
-        padding: 0 0 4px;
-        scrollbar-width: thin;
-      }
-      .hub-store-category-rail .store-filter-btn {
-        width: auto;
-        min-height: 36px;
-        flex: 0 0 auto;
-        flex-direction: row;
-        justify-content: flex-start;
-        gap: 6px;
-        padding: 7px 10px;
-        font-size: 10px;
-        text-align: left;
-        white-space: nowrap;
-      }
-      .hub-store-category-rail .store-filter-btn i {
-        width: auto;
-        flex-basis: auto;
-        font-size: 12px;
+        gap: 0;
       }
       .hub-store-catalog-main .store-search-container {
-        padding: 10px !important;
+        padding: 8px !important;
       }
       .hub-store-catalog-main .store-advanced-filter-toggle {
         display: inline-flex;
@@ -4303,17 +4207,25 @@
       .hub-store-catalog-main .store-advanced-filters { display: none !important; }
       .hub-store-catalog-main .store-advanced-filters.is-expanded { display: grid !important; }
       .hub-store-profile {
-        margin: 12px 10px;
-        padding: 14px;
-        gap: 11px;
+        margin: 8px 8px;
+        padding: 8px 10px;
+        gap: 8px;
         border-radius: 14px;
       }
-      .hub-store-profile-mark { width: 42px; height: 42px; flex-basis: 42px; border-radius: 12px; }
-      .hub-store-profile-copy p { font-size: 11px; }
+      .hub-store-profile-mark { width: 36px; height: 36px; flex-basis: 36px; border-radius: 10px; font-size: 17px; }
+      .hub-store-profile-copy h1 { font-size: 18px; }
+      .hub-store-profile-copy p { font-size: 10.5px; line-height: 1.3; }
       .hub-store-profile-contact { width: 40px; min-width: 40px; padding: 0; font-size: 0; }
       .hub-store-profile-contact i { font-size: 16px; }
       .hub-store-catalog-heading { align-items: center; }
       .hub-store-catalog-count { font-size: 10.5px; }
+      .hub-store-catalog-eyebrow { display: none; }
+      .hub-store-catalog-heading h2 { margin-top: 0; }
+      #dynamicProductsSection > div:first-child { align-items: flex-start !important; }
+      #dynamicProductsSection > div:first-child h2 { font-size: 21px !important; }
+      #dynamicProductsSection > div:first-child p { font-size: 12px !important; line-height: 1.35; }
+      #dynamicProductsSection > div:first-child > span { padding: 4px 10px !important; font-size: 11px !important; }
+      .floating-whatsapp-widget { display: none !important; }
       .hub-store-catalog-main .product-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 10px !important;
@@ -4722,8 +4634,8 @@
         <article class="jk-offer jk-offer--delivery">
           <img class="jk-offer__image" src="images/offer-mascot-delivery.jpg" alt="Free Delivery Mascot" width="320" height="320" decoding="async">
           <div class="jk-offer__copy">
-            <span class="jk-offer__eyebrow" style="background:#ccfbf1; color:#0f766e; padding:2px 8px; border-radius:999px; font-weight:800; display:inline-block; margin-bottom:4px;">ELIGIBLE KASHMIR PINs • ORDERS ₹499+</span>
-            <h2 class="jk-offer__title">Free Delivery on Eligible PINs</h2>
+            <span class="jk-offer__eyebrow" style="background:#ccfbf1; color:#0f766e; padding:2px 8px; border-radius:999px; font-weight:800; display:inline-block; margin-bottom:4px;">JAMMU &amp; KASHMIR • ORDERS ₹999+</span>
+            <h2 class="jk-offer__title">Free Delivery Across J&amp;K</h2>
             <p class="jk-offer__description">Enter your PIN at checkout to confirm delivery coverage, charges and payment options.</p>
           </div>
         </article>
@@ -4812,9 +4724,9 @@
   </section>
 
 
-  <div id="hubStoreCatalog" class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; padding-bottom: 60px;">
+  <div id="hubStoreCatalog" class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px 24px;">
     
-    <!-- Dedicated Flipkart/Amazon Style Live Search & Category Bar -->
+    <!-- Store catalog search and sorting -->
     <div class="store-search-container" id="storeSearchContainer">
       <div class="hub-store-catalog-heading">
         <div>
@@ -4830,122 +4742,11 @@
         <div id="storeSearchSuggestions" class="search-suggestions-dropdown" style="display: none;"></div>
       </div>
 
-      <div class="store-category-filter-strip">
-        <button type="button" class="store-filter-btn active" data-category="all" onclick="setStoreCategoryFilter('all', this)">
-          <i class="fa-solid fa-border-all"></i> All Items
-        </button>
-        <button type="button" class="store-filter-btn" data-category="copies" onclick="setStoreCategoryFilter('copies', this)">
-          <i class="fa-solid fa-book"></i> School Copies &amp; Registers
-        </button>
-        <button type="button" class="store-filter-btn" data-category="school-books" onclick="setStoreCategoryFilter('school-books', this)">
-          <i class="fa-solid fa-graduation-cap"></i> School Books (1st–12th)
-        </button>
-        <button type="button" class="store-filter-btn" data-category="novels" onclick="setStoreCategoryFilter('novels', this)">
-          <i class="fa-solid fa-book-open"></i> Novels &amp; Bestsellers (11)
-        </button>
-        <button type="button" class="store-filter-btn" data-category="academic" onclick="setStoreCategoryFilter('academic', this)">
-          <i class="fa-solid fa-file-lines"></i> Board Kits &amp; PYQs
-        </button>
-        <button type="button" class="store-filter-btn" data-category="stationery" onclick="setStoreCategoryFilter('stationery', this)">
-          <i class="fa-solid fa-pencil"></i> Stationery &amp; Tables
-        </button>
-        <button type="button" class="store-filter-btn" data-category="digital" onclick="setStoreCategoryFilter('digital', this)">
-          <i class="fa-solid fa-laptop-code"></i> Digital Services
-        </button>
-        <button type="button" class="store-filter-btn" data-category="coming-soon" onclick="setStoreCategoryFilter('coming-soon', this)">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </button>
-      </div>
-
-      <button type="button" class="store-advanced-filter-toggle" id="storeAdvancedFilterToggle" aria-expanded="false" aria-controls="storeAdvancedFilters">
-        <i class="fa-solid fa-sliders" aria-hidden="true"></i> More filters
-      </button>
-      <div class="store-advanced-filters" id="storeAdvancedFilters" aria-label="Filter products">
-        <label>Class
-          <select id="storeClassFilter" onchange="applyStoreAdvancedFilters()">
-            <option value="all">All classes</option>
-            <option value="1">Class 1</option>
-            <option value="2">Class 2</option>
-            <option value="3">Class 3</option>
-            <option value="4">Class 4</option>
-            <option value="5">Class 5</option>
-            <option value="6">Class 6</option>
-            <option value="7">Class 7</option>
-            <option value="8">Class 8</option>
-            <option value="9">Class 9</option>
-            <option value="10">Class 10</option>
-            <option value="11">Class 11</option>
-            <option value="12">Class 12</option>
-          </select>
-        </label>
-        <label>Subject or keyword
-          <input id="storeSubjectFilter" type="search" placeholder="e.g. Physics" oninput="applyStoreAdvancedFilters()">
-        </label>
-        <label>Board
-          <select id="storeBoardFilter" onchange="applyStoreAdvancedFilters()">
-            <option value="all">All boards</option>
-            <option value="jkbose">JKBOSE</option>
-            <option value="ncert">NCERT / CBSE</option>
-          </select>
-        </label>
-        <label>Minimum price
-          <input id="storeMinPrice" type="number" min="0" inputmode="numeric" placeholder="₹0" oninput="applyStoreAdvancedFilters()">
-        </label>
-        <label>Maximum price
-          <input id="storeMaxPrice" type="number" min="0" inputmode="numeric" placeholder="No limit" oninput="applyStoreAdvancedFilters()">
-        </label>
-        <label>Availability
-          <select id="storeAvailabilityFilter" onchange="applyStoreAdvancedFilters()">
-            <option value="all">All stock</option>
-            <option value="in_stock">In stock</option>
-            <option value="out_of_stock">Out of stock</option>
-          </select>
-        </label>
-        <button type="button" class="store-filter-reset" onclick="clearStoreAdvancedFilters()">Clear filters</button>
-      </div>
-
-      <section class="store-study-profile" aria-labelledby="storeStudyProfileHeading">
-        <div class="store-study-profile-copy">
-          <strong id="storeStudyProfileHeading"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Find materials for your class</strong>
-          <span>Save your class and board on this device to quickly filter matching listings. No student account details are collected.</span>
-        </div>
-        <div class="store-study-profile-controls">
-          <label for="storeStudyProfileClass">Class
-            <select id="storeStudyProfileClass">
-              <option value="">Choose class</option>
-              <option value="1">Class 1</option>
-              <option value="2">Class 2</option>
-              <option value="3">Class 3</option>
-              <option value="4">Class 4</option>
-              <option value="5">Class 5</option>
-              <option value="6">Class 6</option>
-              <option value="7">Class 7</option>
-              <option value="8">Class 8</option>
-              <option value="9">Class 9</option>
-              <option value="10">Class 10</option>
-              <option value="11">Class 11</option>
-              <option value="12">Class 12</option>
-            </select>
-          </label>
-          <label for="storeStudyProfileBoard">Board
-            <select id="storeStudyProfileBoard">
-              <option value="all">Any board</option>
-              <option value="jkbose">JKBOSE</option>
-              <option value="ncert">NCERT / CBSE</option>
-            </select>
-          </label>
-          <button type="button" onclick="saveStoreStudyProfile()"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Show my picks</button>
-          <button type="button" class="profile-clear" onclick="clearStoreStudyProfile()">Clear profile</button>
-        </div>
-        <p id="storeStudyProfileStatus" role="status" aria-live="polite"></p>
-      </section>
-
       <div id="storeSearchFeedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; color: #475569; justify-content: space-between; align-items: center;">
         <span id="searchResultCountText">Found 0 items</span>
         <button onclick="clearStoreSearch()" style="background: none; border: none; color: #2563eb; font-weight: 700; cursor: pointer; font-size: 12.5px;">Show All Items</button>
       </div>
       <div class="store-catalog-meta-row">
-        <p class="store-catalog-delivery-note">Delivery availability, charges and payment options are confirmed by PIN at <a href="cart.html">checkout</a>.</p>
         <label class="store-catalog-sort-control">Sort items
           <select id="storeCatalogSort" onchange="setStoreCatalogSort(this.value)">
             <option value="featured">Featured order</option>
@@ -4993,8 +4794,8 @@
     </div>
 
     <!-- Newly Added Custom Products Section (Live from Owner Catalog) -->
-    <div id="dynamicProductsSection" style="display: block; margin-bottom: 35px;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 15px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
+    <div id="dynamicProductsSection" style="display: block; margin-bottom: 18px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 0; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; flex-wrap:wrap; gap:8px;">
         <div>
           <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
             <i class="fa-solid fa-sparkles" style="color: #f59e0b;"></i> Fresh Stock &amp; New Arrivals
@@ -5408,7 +5209,7 @@
     </div>
 
     <!-- Bestselling Books & Novels Section -->
-    <div id="section-novels" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 25px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
+    <div id="section-novels" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 16px; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
           <i class="fa-solid fa-book-open-reader" style="color: #2563eb;"></i> Bestselling Books, Novels &amp; Exam Prep
@@ -6219,7 +6020,7 @@
     <!-- =========================================================================
          SECTION: SCHOOL COPIES & REGISTERS (NURSERY TO COLLEGE & GRADUATION)
          ========================================================================= -->
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:40px; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 class="category-title" id="section-copies" style="margin:0; padding:0; border:none;">
           <i class="fa-solid fa-book" style="color:#2563eb;"></i> School Copies &amp; Registers (Less Than Bookshop Rates &amp; Less Than MRP)
@@ -6432,7 +6233,7 @@
     <!-- =========================================================
          SECTION: SCHOOL BOOKS (CLASS 1ST TO CLASS 12TH)
          ========================================================= -->
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:50px; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 class="category-title" id="section-school-books" style="margin:0; padding:0; border:none;">
           <i class="fa-solid fa-graduation-cap" style="color:#2563eb;"></i> School Books (Class 1st to 12th)
@@ -6926,7 +6727,7 @@
     </div>
 
     <!-- Dedicated 2026 Board Exam Master Kits (Class 10th & 12th) -->
-    <div id="section-exam-kits" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #fed7aa; padding-bottom: 12px; flex-wrap:wrap; gap:10px;">
+    <div id="section-exam-kits" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 20px; margin-bottom: 12px; border-bottom: 2px solid #fed7aa; padding-bottom: 8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 style="font-size: 26px; font-weight: 800; color: #9a3412; margin: 0; display:flex; align-items:center; gap:10px;">
           <i class="fa-solid fa-graduation-cap" style="color: #ea580c;"></i> JKBOSE 2026 Board Exam Master Kits (Class 10th &amp; 12th)
@@ -7375,7 +7176,7 @@
     <!-- =========================================================================
          SECTION: COMING SOON (UPCOMING ARRIVALS & PRE-ORDERS)
          ========================================================================= -->
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:50px; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 class="category-title" id="section-coming-soon" style="margin:0; padding:0; border:none; display:flex; align-items:center; gap:8px;">
           <i class="fa-solid fa-clock-rotate-left" style="color:#eab308;"></i> Coming Soon (Less Than MRP &amp; Book Sellers Price)
@@ -7482,7 +7283,7 @@
     </div>
 
 
-    <h2 class="category-title" id="section-digital" style="margin-top: 60px;"><i class="fa-solid fa-laptop-code"></i> Digital Services</h2>
+    <h2 class="category-title" id="section-digital" style="margin-top: 28px;"><i class="fa-solid fa-laptop-code"></i> Digital Services</h2>
     <div class="product-grid">
       
       <div class="product-card">
@@ -7507,7 +7308,7 @@
 
     </div>
 
-    <div id="section-reviews" style="margin-top: 60px; margin-bottom: 40px; padding: 24px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fffefa; text-align: center;">
+    <div id="section-reviews" style="margin-top: 32px; margin-bottom: 24px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fffefa; text-align: center;">
       <h2 class="category-title" style="justify-content: center;">Customer feedback</h2>
       <p style="max-width: 700px; margin: 10px auto 18px; color: #59655e; line-height: 1.6;">
         We do not display ratings or testimonials until feedback has been confirmed with the customer. If you have ordered from us, you can share your experience directly with our support team.
@@ -7523,7 +7324,7 @@
           <i class="fa-solid fa-truck-fast" style="font-size: 24px; color: #2563eb;"></i>
           <div>
             <h4 style="font-size: 13px; font-weight: 800; margin: 0; color: #0f172a;">Free delivery on eligible orders</h4>
-            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Kashmir delivery is free at ₹499+; PIN confirms the charge</p>
+            <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Free delivery across Jammu &amp; Kashmir on orders ₹999+; enter your PIN to confirm coverage</p>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
@@ -7690,7 +7491,7 @@
             <div id="addressFields" style="display:none; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11.5px; font-weight: 700; padding: 6px 10px; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                 <i class="fa-solid fa-gift" style="color:#10b981; font-size:14px;"></i>
-                <span><strong>Delivery cost:</strong> Calculated from your PIN. Eligible Kashmir orders of ₹499+ qualify for free delivery.</span>
+                <span><strong>Delivery cost:</strong> Calculated from your PIN. Orders ₹999+ qualify for free delivery across Jammu &amp; Kashmir.</span>
               </div>
 
               <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
@@ -7988,7 +7789,7 @@
         <h4 id="checkoutPageSummaryTitle">Your order</h4>
         <div id="checkoutPageSummaryItems" class="checkout-page-summary-items"></div>
         <div class="checkout-page-offers">
-          <div class="checkout-page-offer">🚚 Free Kashmir delivery on eligible orders of ₹499+</div>
+          <div class="checkout-page-offer">🚚 Free delivery across Jammu &amp; Kashmir on orders of ₹999+</div>
           <div class="checkout-page-offer">🎁 Save ₹100 automatically when your order is ₹1,499+</div>
         </div>
         <div class="checkout-page-totals" aria-live="polite">
@@ -8105,7 +7906,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.8"></script>
+  <script src="store.js?v=92.10"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
@@ -8152,7 +7953,7 @@
       <div class="product-page-header">
         <button type="button" class="product-page-back" onclick="closeBookDetailsModal()"><i class="fa-solid fa-arrow-left"></i> Back to store</button>
         <div class="product-page-offer-chips" aria-label="Current store offers">
-          <span class="product-page-offer-chip">Free Kashmir delivery at ₹499+</span>
+          <span class="product-page-offer-chip">Free J&amp;K delivery at ₹999+</span>
           <span class="product-page-offer-chip">₹100 off at ₹1,499+</span>
         </div>
       </div>
@@ -8284,7 +8085,7 @@
           <section class="product-page-faq" aria-label="Shopping questions">
             <details>
               <summary>How much is delivery to my area?</summary>
-              <p>Enter your PIN above to check delivery availability and the exact charge. Eligible Kashmir orders of ₹499 or more qualify for free delivery.</p>
+              <p>Enter your PIN above to check delivery availability and the exact charge. Orders of ₹999 or more qualify for free delivery across Jammu &amp; Kashmir.</p>
             </details>
             <details>
               <summary>How do the store offers work?</summary>

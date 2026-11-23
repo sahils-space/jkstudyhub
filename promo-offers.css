@@ -259,45 +259,46 @@ body.dark-mode .store-floating-offers__copy strong {
 
 @media (max-width: 700px) {
   .jk-offers {
-    padding: 14px 12px;
+    padding: 10px 10px;
   }
 
   .jk-offers__heading {
-    margin-bottom: 10px;
-    font-size: 13px;
+    margin-bottom: 7px;
+    font-size: 12px;
   }
 
   .jk-offers__grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 9px;
+    gap: 7px;
   }
 
   .jk-offer {
-    min-height: 106px;
-    gap: 12px;
-    padding: 9px 12px;
-    border-radius: 16px;
+    min-height: 88px;
+    gap: 8px;
+    padding: 7px 9px;
+    border-radius: 14px;
   }
 
   .jk-offer__image {
-    flex-basis: 82px;
-    width: 82px;
-    height: 82px;
+    flex-basis: 68px;
+    width: 68px;
+    height: 68px;
   }
 
   .jk-offer__eyebrow {
-    margin-bottom: 3px;
-    padding: 3px 8px;
-    font-size: 10px;
+    margin-bottom: 2px;
+    padding: 2px 6px;
+    font-size: 9px;
   }
 
   .jk-offer__title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .jk-offer__description {
-    margin-top: 3px;
-    font-size: 12px;
+    margin-top: 2px;
+    font-size: 11px;
+    line-height: 1.35;
   }
 
   .store-floating-offers {
