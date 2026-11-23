@@ -10141,7 +10141,7 @@ function getCardCategoryType(card) {
   if (explicitCat) {
     if (explicitCat === 'books' || explicitCat === 'book' || explicitCat === 'novels' || explicitCat === 'novel') return 'novels';
     if (explicitCat === 'school-books' || explicitCat === 'school' || explicitCat === 'textbooks') return 'school-books';
-    if (explicitCat === 'copies' || explicitCat === 'copy' || explicitCat === 'registers') return 'copies';
+    if (explicitCat === 'school-copies' || explicitCat === 'copies' || explicitCat === 'copy' || explicitCat === 'registers') return 'copies';
     if (explicitCat === 'stationery' || explicitCat === 'stationary') return 'stationery';
     if (explicitCat === 'academic' || explicitCat === 'pyq' || explicitCat === 'notes') return 'academic';
     if (explicitCat === 'digital' || explicitCat === 'forms') return 'digital';
@@ -10279,7 +10279,7 @@ function handleStoreLiveSearch(query) {
     allCards.forEach(card => {
       const cardCat = getCardCategoryType(card);
       const catMatch = (currentStoreCategory === 'all' || currentStoreCategory === cardCat);
-      if (catMatch && matchesStoreAdvancedFilters(card)) {
+      if (catMatch && matchesStoreAdvancedFilters(card) && matchesSchoolBooksClass(card)) {
         card.style.display = 'flex';
         matchCount++;
       } else {
@@ -10295,12 +10295,12 @@ function handleStoreLiveSearch(query) {
       if (parentHeading) parentHeading.style.display = hasVisibleComingSoon ? 'flex' : 'none';
     }
     if (secCopies) {
-      const parentHeading = secCopies.closest('div');
+      const parentHeading = document.getElementById('school-copies-header');
       const hasVisibleCopies = Array.from(document.querySelectorAll('#copiesGrid .product-card')).some(c => c.style.display !== 'none');
       if (parentHeading) parentHeading.style.display = hasVisibleCopies ? 'flex' : 'none';
     }
     if (secSchoolBooks) {
-      const parentHeading = secSchoolBooks.closest('div');
+      const parentHeading = document.getElementById('school-books-header');
       const hasVisibleSchoolBooks = Array.from(document.querySelectorAll('#schoolBooksGrid .product-card')).some(c => c.style.display !== 'none');
       if (parentHeading) parentHeading.style.display = hasVisibleSchoolBooks ? 'flex' : 'none';
     }
@@ -10354,7 +10354,7 @@ function handleStoreLiveSearch(query) {
     const imgEl = card.querySelector('img');
     const img = imgEl ? (imgEl.getAttribute('src') || '') : '';
     const cardCat = getCardCategoryType(card);
-    if (!matchesStoreAdvancedFilters(card)) return;
+    if (!matchesStoreAdvancedFilters(card) || !matchesSchoolBooksClass(card)) return;
 
     const titleLower = title.toLowerCase();
     const descLower = desc.toLowerCase();
@@ -10431,8 +10431,10 @@ function handleStoreLiveSearch(query) {
   const secDynamic = document.getElementById('dynamicProductsSection');
   if (secDynamic) secDynamic.style.display = 'none';
   if (secNovels) secNovels.style.display = 'none';
-  if (secCopies) { const p = secCopies.closest('div'); if (p) p.style.display = 'none'; }
-  if (secSchoolBooks) { const p = secSchoolBooks.closest('div'); if (p) p.style.display = 'none'; }
+  const copiesHeader = document.getElementById('school-copies-header');
+  if (copiesHeader) copiesHeader.style.display = 'none';
+  const schoolBooksHeader = document.getElementById('school-books-header');
+  if (schoolBooksHeader) schoolBooksHeader.style.display = 'none';
   if (secAcademic) secAcademic.style.display = 'none';
   if (secComingSoon) { const p = secComingSoon.closest('div'); if (p) p.style.display = 'none'; }
   if (secDigital) secDigital.style.display = 'none';
@@ -10714,6 +10716,7 @@ function isGeneralAcademicPhysicalEducationProduct(product) {
     (name.includes('notes') || name.includes('master guide') || name.includes('theory guide'));
 }
 
+let activeSchoolBooksClass = 'all';
 let CUSTOM_PRODUCTS = [...DEFAULT_PUBLISHED_PRODUCTS];
 let ownerUploadedPhotos = [null, null, null, null];
 
@@ -10758,6 +10761,7 @@ try {
     !isDeletedCatalogProduct(p)
   );
   registerAllCustomProducts(CUSTOM_PRODUCTS);
+  renderDynamicStoreProducts();
 } catch (e) {
   console.warn("Could not parse cached custom products:", e);
 }
@@ -11532,6 +11536,7 @@ function mergeAndRenderLiveProducts(incoming) {
 
 // Render dynamic products on Storefront (Fresh Stock grid)
 function renderDynamicStoreProducts() {
+  renderSchoolCatalogSections();
   const container = document.getElementById('dynamicProductsGrid');
   const section = document.getElementById('dynamicProductsSection');
   if (!container || !section) return;
@@ -11649,6 +11654,115 @@ function renderDynamicStoreProducts() {
   if (typeof initCardSwipes === 'function') {
     initCardSwipes();
   }
+}
+
+function getSchoolCatalogClassLevel(value) {
+  const match = String(value || '').match(/\d{1,2}/);
+  if (!match) return '';
+  const grade = Number(match[0]);
+  return grade >= 1 && grade <= 12 ? String(grade) : '';
+}
+
+function matchesSchoolBooksClass(card, cls = activeSchoolBooksClass) {
+  if (!card || !card.closest('#schoolBooksGrid') || cls === 'all') return true;
+  const targetGrade = Number(String(cls).match(/\d{1,2}/)?.[0] || 0);
+  const cardGrade = Number(getSchoolCatalogClassLevel(card.dataset.classLevel) || 0);
+  if (targetGrade && cardGrade) return cardGrade === targetGrade;
+  const text = card.textContent.toLowerCase();
+  return text.includes('class ' + String(cls).toLowerCase()) ||
+    text.includes(String(cls).toLowerCase() + ' board') ||
+    text.includes(String(cls).toLowerCase() + ' stream');
+}
+
+function renderSchoolCatalogProductCard(product, sectionType) {
+  const productName = String(product.name || product.title || 'Product');
+  const category = sectionType === 'books' ? 'school-books' : 'school-copies';
+  const safeInlineName = productName
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/[\r\n]/g, ' ');
+  const grade = getSchoolCatalogClassLevel(product.classLevel);
+  const gradeLabel = grade ? `Class ${grade}${grade === '1' ? 'st' : grade === '2' ? 'nd' : grade === '3' ? 'rd' : 'th'}` : '';
+  const photos = Array.isArray(product.photos) && product.photos.length
+    ? product.photos
+    : [product.image || 'images/logo-app.png'];
+  const image = safeEscape(photos[0] || 'images/logo-app.png');
+  const price = getCustomPrice(productName, Number(product.price) || 0);
+  const mrp = getCustomMrp(productName, Number(product.mrp) || Math.round(price * 1.35));
+  const stock = getProductStock(productName);
+  const outOfStock = stock.status === 'out_of_stock' || Number(stock.qty) <= 0;
+  const stockLabel = outOfStock ? 'Out of stock' : 'In stock';
+  const classMeta = gradeLabel ? ` · ${gradeLabel}` : '';
+  const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', '${category}')`);
+  const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', '${category}')`);
+  const detailsHandler = safeEscape(`openBookDetailsModal('${safeInlineName}')`);
+  const favoriteHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
+
+  return `
+    <div class="product-card school-catalog-product-card" data-category="${category}" data-class-level="${grade}" data-stock-status="${outOfStock ? 'out_of_stock' : 'in_stock'}">
+      <button class="wishlist-icon" onclick="${favoriteHandler}" aria-label="Add ${safeEscape(productName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
+      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-info">
+        <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+          ${sectionType === 'books' ? 'School Books' : 'School Copies & Registers'}${classMeta ? safeEscape(classMeta) : ''}
+        </div>
+        <h3 class="product-title" style="cursor:pointer;" onclick="${detailsHandler}">${safeEscape(productName)}</h3>
+        <p class="product-desc">${safeEscape(product.desc || product.description || '')}</p>
+        <div style="font-size:11px; color:${outOfStock ? '#b91c1c' : '#166534'}; font-weight:700; margin-bottom:6px;">${stockLabel}</div>
+        <div class="product-footer">
+          <div style="display:flex; flex-direction:column;">
+            <div style="display:flex; align-items:baseline; gap:6px;">
+              <span class="product-price">₹${price}</span>
+              ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹${mrp}</span>` : ''}
+            </div>
+          </div>
+          <div class="product-actions" style="gap:6px;">
+            <button type="button" class="buy-btn" onclick="${checkoutHandler}" ${outOfStock ? 'disabled' : ''}>Buy Now</button>
+            <button type="button" class="btn-icon" onclick="${cartHandler}" title="Add to Cart" ${outOfStock ? 'disabled' : ''}><i class="fa-solid fa-cart-plus"></i></button>
+            <button type="button" class="btn-icon" onclick="${detailsHandler}" title="${photos.length} product photo${photos.length === 1 ? '' : 's'}"><i class="fa-solid fa-eye"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSchoolCatalogSections() {
+  const copiesHeader = document.getElementById('school-copies-header');
+  const copiesGrid = document.getElementById('copiesGrid');
+  const booksHeader = document.getElementById('school-books-header');
+  const booksGrid = document.getElementById('schoolBooksGrid');
+  const classMenu = document.getElementById('schoolClassMenu');
+  const copiesCategoryCard = document.getElementById('school-copies-category-card');
+  const booksCategoryCard = document.getElementById('school-books-category-card');
+  if (!copiesHeader || !copiesGrid || !booksHeader || !booksGrid || !classMenu) return;
+
+  const products = (Array.isArray(CUSTOM_PRODUCTS) ? CUSTOM_PRODUCTS : [])
+    .filter(product => product && !isDeletedCatalogProduct(product));
+  const copyCategories = new Set(['school-copies', 'copies', 'copy', 'registers']);
+  const bookCategories = new Set(['school-books', 'school', 'textbooks']);
+  const copies = products.filter(product => copyCategories.has(String(product.category || '').trim().toLowerCase()));
+  const books = products.filter(product => bookCategories.has(String(product.category || '').trim().toLowerCase()));
+
+  copiesGrid.replaceChildren();
+  booksGrid.replaceChildren();
+  copiesHeader.style.display = copies.length ? 'flex' : 'none';
+  copiesGrid.style.display = copies.length ? '' : 'none';
+  if (copiesCategoryCard) copiesCategoryCard.style.display = copies.length ? '' : 'none';
+  booksHeader.style.display = books.length ? 'flex' : 'none';
+  booksGrid.style.display = books.length ? '' : 'none';
+  if (booksCategoryCard) booksCategoryCard.style.display = books.length ? '' : 'none';
+  copiesGrid.innerHTML = copies.map(product => renderSchoolCatalogProductCard(product, 'copies')).join('');
+  booksGrid.innerHTML = books.map(product => renderSchoolCatalogProductCard(product, 'books')).join('');
+
+  const hasClassProducts = books.some(product => getSchoolCatalogClassLevel(product.classLevel));
+  classMenu.style.display = hasClassProducts ? 'flex' : 'none';
+  if (!hasClassProducts) activeSchoolBooksClass = 'all';
+  const activeTab = Array.from(classMenu.querySelectorAll('.school-class-tab'))
+    .find(tab => tab.dataset.class === activeSchoolBooksClass) || classMenu.querySelector('[data-class="all"]');
+  if (activeTab) filterSchoolClassBooks(activeSchoolBooksClass, activeTab);
+
+  if (typeof initCardSwipes === 'function') initCardSwipes();
 }
 
 // Render Owner Product List in account.html
@@ -11955,6 +12069,7 @@ We haven't opened sales yet. Tap WhatsApp to pre-book and get notified when stoc
 
 
 function filterSchoolClassBooks(cls, btnEl) {
+  activeSchoolBooksClass = cls || 'all';
   const tabs = document.querySelectorAll('.school-class-tab');
   tabs.forEach(t => {
     t.style.background = 'white';
@@ -11972,13 +12087,7 @@ function filterSchoolClassBooks(cls, btnEl) {
 
   const cards = document.querySelectorAll('#schoolBooksGrid .product-card');
   cards.forEach(card => {
-    const text = card.textContent.toLowerCase();
-    if (cls === 'all') {
-      card.style.display = 'flex';
-    } else {
-      const match = text.includes('class ' + cls.toLowerCase()) || text.includes(cls.toLowerCase() + ' board') || text.includes(cls.toLowerCase() + ' stream');
-      card.style.display = match ? 'flex' : 'none';
-    }
+    card.style.display = matchesSchoolBooksClass(card) ? 'flex' : 'none';
   });
 }
 
