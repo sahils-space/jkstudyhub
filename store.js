@@ -290,6 +290,11 @@ function handleKashmirPincodeLookup(pinVal) {
     return;
   }
 
+  const isCodPin = (pin === '193121');
+  const codBadgeText = isCodPin 
+    ? ' • <span style="color:#15803d; font-weight:800;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery Available</span>' 
+    : ' • <span style="color:#b45309; font-weight:800;"><i class="fa-solid fa-credit-card"></i> Prepaid Online Only (COD Blocked for this PIN)</span>';
+
   const match = KASHMIR_PINCODES[pin];
   if (match) {
     if (citySelect) {
@@ -301,22 +306,22 @@ function handleKashmirPincodeLookup(pinVal) {
       }
     }
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>${match.town}</strong> (${match.district}) • <span style="color:#15803d; font-weight:700;">🟢 Local Doorstep Delivery Eligible</span>`;
+      badgeEl.innerHTML = `📍 <strong>${match.town}</strong> (${match.district}) • <span style="color:#15803d; font-weight:700;">🟢 Fast Dispatch</span>${codBadgeText}`;
       badgeEl.style.display = 'block';
     }
   } else if (pin.startsWith('19')) {
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>Kashmir Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 Fast Express Dispatch Eligible</span>`;
+      badgeEl.innerHTML = `📍 <strong>Kashmir Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 Express Dispatch</span>${codBadgeText}`;
       badgeEl.style.display = 'block';
     }
   } else if (pin.startsWith('18')) {
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>Jammu Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 J&K Doorstep Courier Eligible</span>`;
+      badgeEl.innerHTML = `📍 <strong>Jammu Division (${pin})</strong> • <span style="color:#15803d; font-weight:700;">🟢 J&K Courier</span>${codBadgeText}`;
       badgeEl.style.display = 'block';
     }
   } else {
     if (badgeEl) {
-      badgeEl.innerHTML = `📍 <strong>PIN: ${pin}</strong> • Standard National / J&K Courier`;
+      badgeEl.innerHTML = `📍 <strong>PIN: ${pin}</strong> • National Courier${codBadgeText}`;
       badgeEl.style.display = 'block';
     }
   }
@@ -5025,6 +5030,38 @@ function getCheckoutDeliveryInfo() {
   };
 }
 
+// --- STRICT CASH ON DELIVERY (COD) PIN POLICY ---
+// Rule: ONLY PIN 193121 (Pattan Hub) is dealt with Cash on Delivery (COD).
+// All other PIN codes and areas are blocked from COD and must be ordered via Prepaid Online.
+function isCodAllowedForCheckout() {
+  if (currentCheckoutPaymentMode === 'prepaid') return false;
+
+  const pinInput = document.getElementById('orderPin');
+  const cleanPin = pinInput ? pinInput.value.trim().replace(/[^0-9]/g, '') : '';
+
+  if (cleanPin.length > 0) {
+    return cleanPin === '193121';
+  }
+
+  const savedPin = (localStorage.getItem('jk_delivery_pincode') || '193121').replace(/[^0-9]/g, '');
+  return savedPin === '193121';
+}
+
+function handleCodOptionClick(evt) {
+  if (!isCodAllowedForCheckout()) {
+    if (evt) {
+      try { evt.preventDefault(); evt.stopPropagation(); } catch(e) {}
+    }
+    const pinVal = (document.getElementById('orderPin')?.value || '').trim();
+    alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nFor PIN ${pinVal || 'other locations'}, Cash on Delivery is blocked. Please proceed with Online Payment (UPI / QR / Cards).`);
+    const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+    if (onlineRadio) {
+      onlineRadio.checked = true;
+      togglePaymentMethod('online');
+    }
+  }
+}
+
 function setupCheckoutModal(name, price, category, paymentMode) {
   const modal = document.getElementById('checkoutModal');
   if (!modal) return;
@@ -5140,7 +5177,7 @@ function setupCheckoutModal(name, price, category, paymentMode) {
   const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
   const codLabel = document.getElementById('payMethodCodLabel');
   const onlineLabel = document.getElementById('payMethodOnlineLabel');
-  const codAllowed = currentCheckoutPaymentMode !== 'prepaid';
+  const codAllowed = isCodAllowedForCheckout();
   const onlineAllowed = currentCheckoutPaymentMode !== 'cod';
   if (codRadio) {
     codRadio.disabled = !codAllowed;
@@ -5150,9 +5187,9 @@ function setupCheckoutModal(name, price, category, paymentMode) {
     onlineRadio.disabled = !onlineAllowed;
     onlineRadio.checked = !codAllowed && onlineAllowed;
   }
-  if (codLabel) codLabel.style.display = codAllowed ? 'flex' : 'none';
+  if (codLabel) codLabel.style.display = 'flex';
   if (onlineLabel) onlineLabel.style.display = onlineAllowed ? 'flex' : 'none';
-  togglePaymentMethod(onlineAllowed && !codAllowed ? 'online' : 'cod');
+  togglePaymentMethod(codAllowed ? 'cod' : 'online');
 
   goToCheckoutStep(1);
 
@@ -5237,6 +5274,18 @@ function quickOneClickCodCheckout(btnEl, evt) {
   const now = Date.now();
   if (isOrderSubmissionInProgress || (now - lastOrderSubmissionTimestamp < 5000)) {
     console.warn("Order submission already in progress, ignoring duplicate tap.");
+    return;
+  }
+
+  if (!isCodAllowedForCheckout()) {
+    const pinVal = (document.getElementById('orderPin')?.value || '').trim();
+    alert(`⚠️ 1-Click COD is dealt ONLY with PIN 193121 (Pattan Hub).\n\nFor PIN ${pinVal || 'other locations'}, please proceed with Online Payment (UPI / QR / Cards).`);
+    const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+    if (onlineRadio) {
+      onlineRadio.checked = true;
+      togglePaymentMethod('online');
+    }
+    goToCheckoutStep(3);
     return;
   }
 
@@ -5652,9 +5701,66 @@ function updateCheckoutInvoiceTotals() {
   // This is shown cleanly on Step 2 (Order Summary) BEFORE the customer chooses their payment method.
   const baseOrderAmount = finalPrice + deliveryFee + platformFee;
 
+  // Strict COD Policy: ONLY PIN 193121 allows Cash on Delivery
+  const codAllowed = isCodAllowedForCheckout();
+  const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
+  const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+  const codLabel = document.getElementById('payMethodCodLabel');
+  const codBadge = document.getElementById('payMethodCodBadge');
+  const codDesc = document.getElementById('payMethodCodDesc');
+  const currentPin = (document.getElementById('orderPin')?.value || '').trim();
+
+  // If COD is blocked for this PIN, disable COD radio and automatically switch to Online
+  if (!codAllowed) {
+    if (codRadio) {
+      codRadio.disabled = true;
+      if (codRadio.checked) {
+        codRadio.checked = false;
+        if (onlineRadio) onlineRadio.checked = true;
+        togglePaymentMethod('online');
+        return;
+      }
+    }
+    if (codLabel) {
+      codLabel.classList.remove('selected-cod');
+      codLabel.style.opacity = '0.55';
+      codLabel.style.cursor = 'not-allowed';
+      codLabel.style.border = '1.5px dashed #fca5a5';
+      codLabel.style.background = '#fff5f5';
+    }
+    if (codBadge) {
+      codBadge.innerHTML = '🚫 Prepaid Online Only';
+      codBadge.style.background = '#fee2e2';
+      codBadge.style.color = '#dc2626';
+      codBadge.style.border = '1px solid #fca5a5';
+    }
+    if (codDesc) {
+      const pinMsg = currentPin ? `PIN ${currentPin}` : 'this location';
+      codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> COD blocked for ${pinMsg}.</span> Cash on Delivery is dealt <strong>ONLY with PIN 193121</strong> (Pattan Hub). Please pay online.`;
+    }
+  } else {
+    if (codRadio) {
+      codRadio.disabled = false;
+    }
+    if (codLabel) {
+      codLabel.style.opacity = '1';
+      codLabel.style.cursor = 'pointer';
+      const isCodChecked = codRadio ? codRadio.checked : false;
+      if (isCodChecked) {
+        codLabel.classList.add('selected-cod');
+        codLabel.style.border = '2px solid #16a34a';
+        codLabel.style.background = '#fbfdfb';
+      } else {
+        codLabel.classList.remove('selected-cod');
+        codLabel.style.border = '1.5px solid #cbd5e1';
+        codLabel.style.background = '#ffffff';
+      }
+    }
+  }
+
   const methodRadio = document.querySelector('input[name="paymentMethod"]:checked');
-  const isCod = methodRadio ? (methodRadio.value === 'cod') : true;
-  const codFee = Number(deliveryInfo.codFee) || 0;
+  const isCod = codAllowed && methodRadio ? (methodRadio.value === 'cod') : false;
+  const codFee = isCod ? (Number(deliveryInfo.codFee) || 0) : 0;
 
   // Step 3 Total includes COD charges only if the customer chooses Cash on Delivery
   const step3Total = isCod ? (baseOrderAmount + codFee) : baseOrderAmount;
@@ -5716,31 +5822,31 @@ function updateCheckoutInvoiceTotals() {
   }
 
   // Step 3: Update badges and descriptions on COD vs Online payment cards
-  const codBadge = document.getElementById('payMethodCodBadge');
-  const codDesc = document.getElementById('payMethodCodDesc');
   const onlineBadge = document.getElementById('payMethodOnlineBadge');
   const onlineDesc = document.getElementById('payMethodOnlineDesc');
   const noticeLabel = document.getElementById('step3BreakdownLabel');
   const noticeAmount = document.getElementById('step3BreakdownAmount');
 
-  if (codBadge) {
-    if (codFee > 0) {
-      codBadge.innerHTML = `+₹${codFee} COD Fee`;
-      codBadge.style.background = '#fef3c7';
-      codBadge.style.color = '#b45309';
-      codBadge.style.border = '1px solid #fde68a';
-    } else {
-      codBadge.innerHTML = `FREE COD`;
-      codBadge.style.background = '#dcfce7';
-      codBadge.style.color = '#16a34a';
-      codBadge.style.border = 'none';
+  if (codAllowed) {
+    if (codBadge) {
+      if (codFee > 0) {
+        codBadge.innerHTML = `+₹${codFee} COD Fee`;
+        codBadge.style.background = '#fef3c7';
+        codBadge.style.color = '#b45309';
+        codBadge.style.border = '1px solid #fde68a';
+      } else {
+        codBadge.innerHTML = `FREE COD`;
+        codBadge.style.background = '#dcfce7';
+        codBadge.style.color = '#16a34a';
+        codBadge.style.border = 'none';
+      }
     }
-  }
 
-  if (codDesc) {
-    codDesc.innerHTML = (codFee > 0)
-      ? `Doorstep cash collection & handling: <strong style="color:#b45309;">+₹${codFee}</strong> (Inspect parcel at doorstep)`
-      : `Inspect your parcel before paying cash or scanning UPI (₹0 extra)`;
+    if (codDesc) {
+      codDesc.innerHTML = (codFee > 0)
+        ? `Doorstep cash collection & handling: <strong style="color:#b45309;">+₹${codFee}</strong> (Inspect parcel at doorstep)`
+        : `Inspect your parcel before paying cash or scanning UPI (₹0 extra)`;
+    }
   }
 
   if (onlineBadge) {
@@ -5852,6 +5958,20 @@ function validateCheckoutInputs() {
   if ((currentCheckoutPaymentMode === 'cod' && selectedPaymentMethod !== 'cod') ||
       (currentCheckoutPaymentMode === 'prepaid' && selectedPaymentMethod !== 'online')) {
     alert(`This product can only be ordered using ${currentCheckoutPaymentMode === 'cod' ? 'Cash on Delivery' : 'prepaid online payment'}.`);
+    return false;
+  }
+
+  // Strict Policy: ONLY PIN 193121 (Pattan Hub) is dealt with Cash on Delivery (COD)
+  const pinInput = document.getElementById('orderPin');
+  const cleanPin = pinInput ? pinInput.value.trim().replace(/[^0-9]/g, '') : '';
+  if (selectedPaymentMethod === 'cod' && cleanPin !== '193121') {
+    alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nOrders for PIN ${cleanPin || 'other locations'} cannot be placed via COD. Please choose Online Payment (UPI / QR / Cards).`);
+    const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+    if (onlineRadio) {
+      onlineRadio.checked = true;
+      togglePaymentMethod('online');
+    }
+    goToCheckoutStep(3);
     return false;
   }
 
@@ -6090,6 +6210,17 @@ function backToStep2() {
 
 // --- PAYMENT METHOD TOGGLE (ONLINE VS CASH ON DELIVERY) ---
 function togglePaymentMethod(method) {
+  // If attempting to choose COD for any PIN other than 193121, block it immediately
+  if (method === 'cod' && !isCodAllowedForCheckout()) {
+    const pinVal = (document.getElementById('orderPin')?.value || '').trim();
+    alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nOrders for PIN ${pinVal || 'other locations'} cannot be placed via COD. Please proceed with Online Payment (UPI / QR / Cards).`);
+    const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+    if (onlineRadio) onlineRadio.checked = true;
+    const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
+    if (codRadio) codRadio.checked = false;
+    method = 'online';
+  }
+
   const onlineLabel = document.getElementById('payMethodOnlineLabel');
   const codLabel = document.getElementById('payMethodCodLabel');
   const submitBtn = document.getElementById('submitOrderBtn');
@@ -6156,6 +6287,18 @@ function handlePaymentSubmit() {
 }
 
 function processCodOrder(isFromQuick) {
+  if (!isCodAllowedForCheckout()) {
+    const pinVal = (document.getElementById('orderPin')?.value || '').trim();
+    alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nOrders for PIN ${pinVal || 'other areas'} must be paid online via UPI/Card.`);
+    isOrderSubmissionInProgress = false;
+    const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
+    if (onlineRadio) {
+      onlineRadio.checked = true;
+      togglePaymentMethod('online');
+    }
+    return;
+  }
+
   if (!validateCheckoutInputs()) {
     isOrderSubmissionInProgress = false;
     const btn1 = document.querySelector('.btn-1click-cod');

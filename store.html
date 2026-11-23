@@ -7627,6 +7627,9 @@
                   <input type="text" id="orderPin" list="orderPinDatalist" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();">
                   <datalist id="orderPinDatalist"></datalist>
                   <div id="pinVerifiedBadge" style="display:none; margin-top:5px; font-size:11px; padding:3px 6px; border-radius:4px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;"></div>
+                  <div id="codAvailabilityNote" style="font-size: 11px; color: #475569; margin-top: 4px; line-height: 1.35;">
+                    <i class="fa-solid fa-circle-info" style="color: #16a34a;"></i> <strong>Cash on Delivery:</strong> Exclusively for PIN <strong>193121</strong> (Pattan Hub). Other PINs fulfilled via Prepaid Online.
+                  </div>
                 </div>
               </div>
 
@@ -7774,8 +7777,8 @@
                 <i class="fa-solid fa-wallet" style="color: #16a34a;"></i> Select Payment Option:
               </h4>
               
-              <!-- COD Option (Default & Recommended) -->
-              <label class="pay-method-card selected-cod" id="payMethodCodLabel">
+              <!-- COD Option (Default & Recommended for PIN 193121) -->
+              <label class="pay-method-card selected-cod" id="payMethodCodLabel" onclick="handleCodOptionClick(event)">
                 <input type="radio" name="paymentMethod" value="cod" checked onchange="togglePaymentMethod('cod')">
                 <div class="pay-method-info">
                   <strong style="color: #166534;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (Pay at Doorstep)</strong>
@@ -7998,7 +8001,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.7"></script>
+  <script src="store.js?v=92.8"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
