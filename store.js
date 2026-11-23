@@ -11858,7 +11858,138 @@ function renderSchoolCatalogSections() {
     .find(tab => tab.dataset.class === activeSchoolBooksClass) || classMenu.querySelector('[data-class="all"]');
   if (activeTab) filterSchoolClassBooks(activeSchoolBooksClass, activeTab);
 
+  // Render uploaded novels into the Novels Modal collection
+  renderDynamicNovelsInModal(products);
+
   if (typeof initCardSwipes === 'function') initCardSwipes();
+}
+
+// Open & Close Novels Dedicated Modal Window
+function openNovelsModal() {
+  const modal = document.getElementById('novelsCollectionModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    if (typeof initCardSwipes === 'function') initCardSwipes();
+  }
+}
+
+function closeNovelsModal() {
+  const modal = document.getElementById('novelsCollectionModal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+function renderDynamicNovelsInModal(products) {
+  const container = document.getElementById('dynamicUploadedNovelsContainer');
+  if (!container) return;
+
+  const novelCategories = new Set(['novels', 'novel', 'bestseller', 'bestsellers']);
+  const uploadedNovels = (Array.isArray(products) ? products : []).filter(p => {
+    const cat = String(p.category || '').trim().toLowerCase();
+    return novelCategories.has(cat);
+  });
+
+  // Update total badge count
+  const badgeCountEl = document.getElementById('novelsTotalBadgeCount');
+  const countTextEl = document.getElementById('novelsModalCountText');
+  const totalCount = 10 + uploadedNovels.length;
+  if (badgeCountEl) badgeCountEl.textContent = `${totalCount} Books`;
+  if (countTextEl) countTextEl.textContent = `${totalCount} Bestsellers & Novels`;
+
+  if (uploadedNovels.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const cardsHtml = uploadedNovels.map((prod, idx) => {
+    const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
+    const pName = prod.name || prod.title || 'Novel';
+    const safeName = pName.replace(/'/g, "\\'");
+    const rawPrice = Number(prod.price) || 0;
+    const price = getCustomPrice(pName, rawPrice);
+    const rawMrp = Number(prod.mrp) || Math.round(price * 1.35);
+    const mrp = getCustomMrp(pName, rawMrp);
+    const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+    const badgeText = prod.badge || '✨ Bestseller';
+    const safeCarouselId = `carousel-upnovel-${idx}`;
+
+    let trackHtml = '';
+    photos.forEach((ph, pIdx) => {
+      trackHtml += `<img src="${ph}" alt="${safeEscape(pName)} - Photo ${pIdx + 1}" class="carousel-img ${pIdx === 0 ? 'active' : ''}" loading="lazy" decoding="async" onclick="openBookDetailsModal('${safeName}')">`;
+    });
+
+    let dotsHtml = '';
+    if (photos.length > 1) {
+      photos.forEach((_, pIdx) => {
+        dotsHtml += `<span class="carousel-dot ${pIdx === 0 ? 'active' : ''}" onclick="setCardPhoto('${safeCarouselId}', ${pIdx}, event)"></span>`;
+      });
+    }
+
+    const isAmbassadorItem = Boolean(prod.isAmbassadorProduct || (prod.ambassadorEmail && prod.ambassadorEmail.length > 0) || (prod.uploader && prod.uploader.startsWith('ambassador:')));
+    const ambassadorRibbon = isAmbassadorItem ? `
+      <span class="ambassador-curated-ribbon" title="Curated Pick" style="position:absolute; top:10px; left:10px; z-index:10; background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color:#ffffff; font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:20px; box-shadow:0 3px 8px rgba(37,99,235,0.35); display:inline-flex; align-items:center; gap:5px; border:1px solid rgba(255,255,255,0.3);">
+        <i class="fa-solid fa-ribbon" style="color:#fbbf24;"></i> Verified Choice
+      </span>
+    ` : '';
+
+    return `
+      <div class="book-product-card" data-category="novels" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, '${safeName}')"><i class="fa-solid fa-heart"></i></button>
+        ${ambassadorRibbon}
+        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9; ${isAmbassadorItem ? 'top:38px;' : ''}"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badgeText)}</span>
+
+        <div class="swipe-photo-container" id="${safeCarouselId}">
+          ${photos.length > 1 ? `
+            <div class="carousel-arrow prev" onclick="cycleCardPhoto('${safeCarouselId}', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
+            <div class="carousel-arrow next" onclick="cycleCardPhoto('${safeCarouselId}', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
+          ` : ''}
+          <div class="carousel-track">
+            ${trackHtml}
+          </div>
+          ${photos.length > 1 ? `<div class="carousel-dots">${dotsHtml}</div>` : ''}
+          <div class="card-dim-tag" onclick="openBookDetailsModal('${safeName}')" title="Tap to inspect product">
+            <i class="fa-solid fa-images"></i> ${photos.length} Photo${photos.length > 1 ? 's' : ''}
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
+            NOVELS &amp; BESTSELLERS
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('${safeName}')">${safeEscape(pName)}</h3>
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
+            <span class="student-trust-badge">Student Edition</span>
+            <span style="margin-left:auto; background:#dcfce7; color:#166534; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">In stock</span>
+          </div>
+          <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Check delivery options and charges at checkout</div>
+          <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
+            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('${safeName}')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
+            <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('${safeName}', ${price})"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          </div>
+          <p class="product-desc">${safeEscape(prod.desc || prod.description || 'Authentic paperback student edition.')}</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹${price}</span>
+                ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹${mrp}</span>` : ''}
+              </div>
+              ${discount > 0 ? `<span style="color:#10b981; font-size:11.5px; font-weight:800;">Save ${discount}% Today</span>` : ''}
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('${safeName}', ${price}, 'physical', 'novels')">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart('${safeName}', ${price}, 'physical', 'novels')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" onclick="openBookDetailsModal('${safeName}')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = cardsHtml;
 }
 
 // Render Owner Product List in account.html

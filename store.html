@@ -4780,20 +4780,106 @@
       <button onclick="clearStoreSearch()" style="background: #2563eb; color: white; border: none; padding: 9px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">Show All Items</button>
     </div>
 
-    <!-- Bestselling Books & Novels Section -->
+    <!-- Bestselling Books & Novels Section (Compact Showcase Banner) -->
     <div id="section-novels" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 16px; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; flex-wrap:wrap; gap:8px;">
       <div>
-        <h2 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
-          <i class="fa-solid fa-book-open-reader" style="color: #2563eb;"></i> Bestselling Books, Novels &amp; Exam Prep
+        <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-book-open-reader" style="color: #2563eb;"></i> Bestselling Books &amp; Novels Collection
         </h2>
-        <p style="font-size: 14px; color: #64748b; margin: 4px 0 0 0;">Swipe photos to inspect dimensions, page counts, and authentic student editions.</p>
+        <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">Top international paperbacks, self-improvement, finance &amp; literary classics at less than retail rates.</p>
       </div>
-      <span style="background:#eff6ff; color:#2563eb; font-weight:700; font-size:12.5px; padding:6px 14px; border-radius:20px; border:1px solid #bfdbfe;">
-        ⚡ Fast Home Delivery in Pattan
-      </span>
+      <button type="button" onclick="openNovelsModal()" style="background:#eff6ff; color:#2563eb; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; border:1.5px solid #bfdbfe; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;">
+        <i class="fa-solid fa-layer-group"></i> View All Novels (<span id="novelsTotalBadgeCount">10+</span>) &rarr;
+      </button>
     </div>
 
-    <div class="product-grid">
+    <!-- Single Compact Novels Bundle Card (Takes minimal space, opens full collection) -->
+    <div class="novels-showcase-card" onclick="openNovelsModal()" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%); border-radius: 18px; padding: 22px 26px; margin-bottom: 30px; box-shadow: 0 10px 30px -5px rgba(15,23,42,0.25); cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; transition: transform 0.25s ease, box-shadow 0.25s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
+      
+      <div style="display:flex; align-items:center; gap:20px; flex:1; min-width:280px;">
+        <!-- Visual Stack of Novels -->
+        <div style="position:relative; width:95px; height:120px; flex-shrink:0;">
+          <img src="images/books/atomic-habits-1.webp" alt="Atomic Habits" style="position:absolute; left:0; top:12px; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.5); transform:rotate(-8deg); border:1px solid rgba(255,255,255,0.2);">
+          <img src="images/books/psychology-money-1.webp" alt="Psychology of Money" style="position:absolute; left:18px; top:4px; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 6px 16px rgba(0,0,0,0.6); transform:rotate(4deg); border:1px solid rgba(255,255,255,0.3);">
+          <img src="images/books/deep-work-1.webp" alt="Deep Work" style="position:absolute; left:32px; top:0; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 8px 20px rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.4);">
+          <span style="position:absolute; bottom:-6px; right:-6px; background:#f59e0b; color:#0f172a; font-size:10.5px; font-weight:900; padding:2px 7px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.4); z-index:5;">
+            10+ Books
+          </span>
+        </div>
+
+        <div style="color:#ffffff;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+            <span style="background:rgba(37,99,235,0.3); color:#93c5fd; border:1px solid rgba(147,197,253,0.3); font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; text-transform:uppercase;">
+              📚 Dedicated Novels Window
+            </span>
+            <span style="color:#fde047; font-size:11.5px; font-weight:700;">
+              <i class="fa-solid fa-truck-fast"></i> Free Pattan Delivery Available
+            </span>
+          </div>
+          <h3 style="font-size:20px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+            Bestselling Novels, Mindset &amp; Classic Literature
+          </h3>
+          <p style="font-size:12.5px; color:#94a3b8; margin:0; line-height:1.5; max-width:540px;">
+            Explore <em>Atomic Habits</em>, <em>Psychology of Money</em>, <em>Deep Work</em>, <em>The Alchemist</em> &amp; more. Tap to open the full collection window with instant preview, COD and quick cart ordering.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+        <button type="button" onclick="openNovelsModal(); event.stopPropagation();" style="background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:10px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(37,99,235,0.4);">
+          <span>Explore All Novels</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- FULL DEDICATED NOVELS MODAL WINDOW -->
+    <div id="novelsCollectionModal" class="novels-collection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:99999; backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;" onclick="if(event.target===this) closeNovelsModal();">
+      
+      <div class="novels-modal-card" style="background:#f8fafc; border-radius:20px; width:100%; max-width:1200px; max-height:92vh; overflow-y:auto; position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.5); display:flex; flex-direction:column; border:1px solid #cbd5e1;">
+        
+        <!-- Sticky Header of Novels Modal -->
+        <div style="position:sticky; top:0; z-index:20; background:#ffffff; border-bottom:1.5px solid #e2e8f0; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:20px 20px 0 0;">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="width:38px; height:38px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:18px;">
+                <i class="fa-solid fa-book-open-reader"></i>
+              </span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; color:#0f172a; margin:0;">Bestselling Books &amp; Novels Window</h2>
+                <p style="font-size:12px; color:#64748b; margin:2px 0 0;">Student paperbacks, international bestsellers, self-help &amp; literary classics</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="background:#dcfce7; color:#15803d; font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;">
+              🏷️ Less Than Retail MRP
+            </span>
+            <button type="button" onclick="closeNovelsModal()" style="width:38px; height:38px; border-radius:50%; background:#f1f5f9; border:none; font-size:18px; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" title="Close Novels Window">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Body with all novels -->
+        <div style="padding:24px; flex:1;">
+          
+          <!-- Category Filter Bar inside Novels Modal -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;">
+            <div style="font-size:13.5px; font-weight:700; color:#334155;">
+              Showing <span id="novelsModalCountText">All Bestsellers</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <span style="font-size:12px; color:#64748b;"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Doorstep Cash on Delivery (Pattan)</span>
+              <span style="font-size:12px; color:#64748b;">&bull;</span>
+              <span style="font-size:12px; color:#64748b;"><i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> 100% Genuine Print</span>
+            </div>
+          </div>
+
+          <!-- Product Grid for all Novels (base + dynamic catalog uploads) -->
+          <div class="product-grid" id="novelsModalGrid">
+
       <!-- Book Card 1: Atomic Habits -->
       <div class="book-product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Atomic Habits')"><i class="fa-solid fa-heart"></i></button>
@@ -5392,8 +5478,13 @@
         </div>
       </div>
 
+    
+            <!-- Dynamic uploaded novels will also populate here via store.js -->
+            <div id="dynamicUploadedNovelsContainer" style="display:contents;"></div>
+          </div>
+        </div>
+      </div>
     </div>
-
 
 
     <!-- =========================================================================
@@ -7387,7 +7478,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.15"></script>
+  <script src="store.js?v=92.16"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
