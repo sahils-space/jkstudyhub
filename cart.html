@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta name="theme-color" content="#172a22">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=21">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -372,16 +372,13 @@
       }
       .store-nav {
         padding: 8px 12px !important;
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+        overflow: hidden !important;
       }
-      .store-nav-btn span.btn-label {
-        display: none;
-      }
-      .store-nav-btn {
-        padding: 6px 8px;
-        font-size: 14px;
-      }
+      /* On mobile, collapse the full nav links row — bottom nav handles navigation */
       .store-nav-links {
-        gap: 5px;
+        display: none !important;
       }
       .checkout-card {
         width: 96% !important;
@@ -412,6 +409,11 @@
         right: 28px !important;
       }
     }
+    @media (max-width: 480px) {
+      .store-nav .logo span {
+        font-size: 15px !important;
+      }
+    }
   </style>
 
 
@@ -429,7 +431,9 @@
       align-items: center !important;
       box-sizing: border-box !important;
       width: 100% !important;
-      flex-wrap: wrap !important;
+      max-width: 100vw !important;
+      overflow: hidden !important;
+      flex-wrap: nowrap !important;
       gap: 10px !important;
     }
     .store-nav .logo {
@@ -559,7 +563,7 @@
   </aside>
 
   <!-- Main Cart Container -->
-  <div style="max-width: 1200px; margin: 0 auto; padding: 30px 20px 80px;">
+  <div style="max-width: 1200px; margin: 0 auto; padding: clamp(16px, 4vw, 30px) clamp(12px, 4vw, 20px) 90px; box-sizing: border-box;">
     
     <!-- Breadcrumbs -->
     <div style="font-size: 13px; color: #64748b; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">

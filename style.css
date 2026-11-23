@@ -4158,3 +4158,145 @@ body {
     padding: 22px 18px;
   }
 }
+
+/* ==========================================================
+   GLOBAL MOBILE SANITATION — Comprehensive fixes for all pages
+   Ensures zero horizontal overflow across all mobile viewports
+   ========================================================== */
+
+/* Prevent any element from causing horizontal scrollbar */
+img, video, iframe, table, pre, canvas {
+  max-width: 100%;
+}
+
+/* Ensure all standard page wrappers are constrained */
+.container,
+.page-container,
+.section-inner,
+.content-wrapper {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Touch target minimum sizes for interactive elements */
+@media (max-width: 768px) {
+  /* Announcement / promo bars */
+  .free-kashmir-delivery-banner {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    gap: 6px !important;
+    text-align: center !important;
+  }
+
+  /* Ensure all nav bars don't overflow */
+  .store-nav,
+  .zapvi-store-nav,
+  .navbar {
+    max-width: 100vw !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Cards and product cards */
+  .product-card,
+  .book-product-card {
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  /* Form inputs - ensure they don't escape container */
+  input, textarea, select {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure modals never overflow viewport */
+  .checkout-modal,
+  #checkoutModal,
+  #bookDetailsModal,
+  #samplePreviewModal,
+  #districtPincodePickerModal {
+    padding: 0 !important;
+  }
+
+  /* Promo strips horizontal scroll */
+  .store-category-filter-strip,
+  .bundle-products-strip {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  /* Ensure the sticky bottom cart bar doesn't overflow */
+  .sticky-mobile-cart-bar {
+    max-width: calc(100vw - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Floating WhatsApp widget position */
+  .floating-whatsapp-widget {
+    max-width: calc(100vw - 28px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens — compact padding */
+  .container,
+  .page-container {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  /* Section headings scale down */
+  h1 { font-size: clamp(20px, 6vw, 32px); }
+  h2 { font-size: clamp(17px, 5.5vw, 26px); }
+  h3 { font-size: clamp(15px, 5vw, 22px); }
+
+  /* Badges & pills don't wrap oddly */
+  .nav-badge-count {
+    font-size: 9px !important;
+    padding: 1px 4px !important;
+  }
+
+  /* Bottom nav stays within bounds */
+  .mobile-bottom-nav {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* iPhone SE / compact Android — smallest supported */
+  .container,
+  .page-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* Product grid: single column on tiny phones */
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  /* Font sizing for readability */
+  .product-title {
+    font-size: 11.5px !important;
+  }
+
+  /* Stepper on checkout */
+  .checkout-stepper {
+    padding: 0 2px !important;
+  }
+  .step-label {
+    font-size: 9px !important;
+  }
+  .step-circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11px !important;
+  }
+}
