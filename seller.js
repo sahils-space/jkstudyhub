@@ -74,7 +74,7 @@ const AUTHORIZED_OWNER_EMAILS = [
 
 // Authorized Brand Ambassador Emails (Can ONLY access Catalog Uploads):
 const AUTHORIZED_AMBASSADOR_EMAILS = [
-  'jkstudyhub26@gmail.com'
+  'hforh12x@gmail.com'
 ];
 
 function isAmbassadorUser(emailOrId) {
