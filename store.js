@@ -12825,9 +12825,7 @@ function syncShoppableReelsPrices() {
 }
 
 function onStoreReady() {
-  const storeOffers = document.querySelector('.jk-offers');
   const storeCatalog = document.getElementById('hubStoreCatalog');
-  if (storeOffers && storeCatalog) storeOffers.after(storeCatalog);
   if (storeCatalog && !storeCatalog.querySelector('.hub-store-catalog-layout')) {
     const layout = document.createElement('div');
     layout.className = 'hub-store-catalog-layout';
