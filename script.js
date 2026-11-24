@@ -799,6 +799,30 @@ function initMainApp() {
         }
       ],
       pending: 'Sociology, Psychology, Education & Geography model papers are being processed.'
+    },
+    '12-med': {
+      title: 'Class 12th • Medical Science',
+      subtitle: 'Faculty of Science (Medical Stream)',
+      papers: [],
+      pending: 'Class 12th Medical Science (Physics, Chemistry, Biology, General English) official 2026 board model papers are being verified and will be uploaded here.'
+    },
+    '12-nonmed': {
+      title: 'Class 12th • Non-Medical Science',
+      subtitle: 'Faculty of Science (Engineering Stream)',
+      papers: [],
+      pending: 'Class 12th Non-Medical Science (Mathematics, Physics, Chemistry, Computer Science) official 2026 board model papers are being verified and will be uploaded here.'
+    },
+    '12-comm': {
+      title: 'Class 12th • Commerce Stream',
+      subtitle: 'Faculty of Commerce',
+      papers: [],
+      pending: 'Class 12th Commerce (Accountancy, Business Studies, Economics, Entrepreneurship) official 2026 board model papers are being verified and will be uploaded here.'
+    },
+    '12-arts': {
+      title: 'Class 12th • Arts & Humanities',
+      subtitle: 'Faculty of Humanities',
+      papers: [],
+      pending: 'Class 12th Arts & Humanities (Political Science, History, Economics, Sociology) official 2026 board model papers are being verified and will be uploaded here.'
     }
   };
 
@@ -852,6 +876,30 @@ const SYLLABUS_PDF_DATA = {
       { file: 'class-11-philosophy-syllabus.pdf', name: 'Philosophy' },
       { file: 'class-11-urdu-literature-syllabus.pdf', name: 'Urdu Literature' },
       { file: 'class-11-english-literature-syllabus.pdf', name: 'English Literature' }
+    ]},
+    '12-med': { title: 'Class 12th • Medical Stream Syllabus', files: [
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Physics (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Chemistry (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Biology (Botany & Zoology)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th General English' }
+    ]},
+    '12-nonmed': { title: 'Class 12th • Non-Medical Stream Syllabus', files: [
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Mathematics (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Physics (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Chemistry (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Computer Science & General English' }
+    ]},
+    '12-comm': { title: 'Class 12th • Commerce Stream Syllabus', files: [
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Accountancy (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Business Studies' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Economics' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Entrepreneurship' }
+    ]},
+    '12-arts': { title: 'Class 12th • Arts & Humanities Syllabus', files: [
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Political Science (Official JKBOSE Portal)' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th History' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th Economics & Sociology' },
+      { file: 'https://jkbose.jk.gov.in', name: 'Class 12th General English & Literature' }
     ]}
   };
 
@@ -887,7 +935,7 @@ const SYLLABUS_PDF_DATA = {
       const pMod = {
         name: p.name,
         marks: 'Detailed Chapter & Topic Breakdown',
-        file: 'syllabus-papers/' + p.file,
+        file: (p.file && p.file.startsWith('http')) ? p.file : ('syllabus-papers/' + p.file),
         icon: 'fa-file-pdf',
         badge: 'Official Syllabus PDF'
       };
@@ -902,7 +950,8 @@ const SYLLABUS_PDF_DATA = {
   function restoreBodyOverflowIfNoModals() {
     const c10Modal = document.getElementById('class10CollectionModal');
     const c11Modal = document.getElementById('class11CollectionModal');
-    if ((c10Modal && c10Modal.style.display === 'flex') || (c11Modal && c11Modal.style.display === 'flex')) {
+    const c12Modal = document.getElementById('class12CollectionModal');
+    if ((c10Modal && c10Modal.style.display === 'flex') || (c11Modal && c11Modal.style.display === 'flex') || (c12Modal && c12Modal.style.display === 'flex')) {
       document.body.style.overflow = 'hidden';
       return;
     }
@@ -912,6 +961,8 @@ const SYLLABUS_PDF_DATA = {
   window.openClass10Modal = function() {
     const c11 = document.getElementById('class11CollectionModal');
     if (c11) c11.style.display = 'none';
+    const c12 = document.getElementById('class12CollectionModal');
+    if (c12) c12.style.display = 'none';
     const modal = document.getElementById('class10CollectionModal');
     if (modal) {
       modal.style.display = 'flex';
@@ -930,6 +981,8 @@ const SYLLABUS_PDF_DATA = {
   window.openClass11Modal = function() {
     const c10 = document.getElementById('class10CollectionModal');
     if (c10) c10.style.display = 'none';
+    const c12 = document.getElementById('class12CollectionModal');
+    if (c12) c12.style.display = 'none';
     const modal = document.getElementById('class11CollectionModal');
     if (modal) {
       modal.style.display = 'flex';
@@ -939,6 +992,26 @@ const SYLLABUS_PDF_DATA = {
 
   window.closeClass11Modal = function() {
     const modal = document.getElementById('class11CollectionModal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.openClass12Modal = function() {
+    const c10 = document.getElementById('class10CollectionModal');
+    if (c10) c10.style.display = 'none';
+    const c11 = document.getElementById('class11CollectionModal');
+    if (c11) c11.style.display = 'none';
+    const modal = document.getElementById('class12CollectionModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  window.closeClass12Modal = function() {
+    const modal = document.getElementById('class12CollectionModal');
     if (modal) {
       modal.style.display = 'none';
       document.body.style.overflow = '';
@@ -1516,6 +1589,30 @@ const SYLLABUS_PDF_DATA = {
       ],
       notice: 'General English Hornbill chapter summaries are active. Political Science, History & Sociology CYQs are being compiled and will be available shortly.'
     },
+    '12-med': {
+      title: 'Class 12th • Medical Science CYQs',
+      subtitle: 'Crucial Year-End Questions & Board Exam Guess Bank (PCB)',
+      papers: [],
+      notice: 'Class 12th Medical Science (Physics, Chemistry, Botany, Zoology) 2026 CYQs are being finalized for instant download.'
+    },
+    '12-nonmed': {
+      title: 'Class 12th • Non-Medical Science CYQs',
+      subtitle: 'Crucial Year-End Questions & Board Exam Guess Bank (PCM)',
+      papers: [],
+      notice: 'Class 12th Non-Medical Science (Mathematics, Physics, Chemistry, Computer Science) 2026 CYQs are being finalized for instant download.'
+    },
+    '12-comm': {
+      title: 'Class 12th • Commerce Stream CYQs',
+      subtitle: 'Crucial Year-End Questions & Case Studies (Accountancy, BST, Economics)',
+      papers: [],
+      notice: 'Class 12th Commerce 2026 CYQs are being compiled and will be live here soon.'
+    },
+    '12-arts': {
+      title: 'Class 12th • Arts & Humanities CYQs',
+      subtitle: 'Crucial Year-End Questions (Political Science, History, Economics, Sociology)',
+      papers: [],
+      notice: 'Class 12th Arts & Humanities 2026 CYQs are being compiled and will be live here soon.'
+    },
     'c10-sci': {
       title: 'Class 10th • Science CYQs',
       subtitle: 'Crucial Year-End Questions (Physics, Chemistry, Life Processes)',
@@ -2036,6 +2133,30 @@ const SYLLABUS_PDF_DATA = {
       subtitle: 'Official JKBOSE Previous Year Board Examination Papers',
       papers: [],
       notice: 'Class 10th English & Urdu previous year papers will be uploaded shortly.'
+    },
+    '12-med': {
+      title: 'Class 12th • Medical Science PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers (PCB)',
+      papers: [],
+      notice: 'Class 12th Medical Science (Physics, Chemistry, Biology, General English) previous year board papers are being compiled for upload.'
+    },
+    '12-nonmed': {
+      title: 'Class 12th • Non-Medical Science PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers (PCM)',
+      papers: [],
+      notice: 'Class 12th Non-Medical Science (Mathematics, Physics, Chemistry, Computer Science) previous year board papers are being compiled for upload.'
+    },
+    '12-comm': {
+      title: 'Class 12th • Commerce Stream PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers (Commerce)',
+      papers: [],
+      notice: 'Class 12th Commerce (Accountancy, Business Studies, Economics) previous year board papers are being compiled for upload.'
+    },
+    '12-arts': {
+      title: 'Class 12th • Arts & Humanities PYQs',
+      subtitle: 'Official JKBOSE Previous Year Board Examination Papers (Humanities)',
+      papers: [],
+      notice: 'Class 12th Arts & Humanities (Political Science, History, Economics, Sociology) previous year board papers are being compiled for upload.'
     }
   };
 
@@ -2448,6 +2569,7 @@ const SYLLABUS_PDF_DATA = {
     if (e.key === 'Escape') {
       if (typeof closeClass10Modal === 'function') closeClass10Modal();
       if (typeof closeClass11Modal === 'function') closeClass11Modal();
+      if (typeof closeClass12Modal === 'function') closeClass12Modal();
       closeModelModalDirect();
       closeSyllabusModalDirect();
       closeCyqModalDirect();
