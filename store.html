@@ -6675,9 +6675,9 @@
     </section>
 
     <!-- =========================================================================
-         SECTION: COMING SOON (UPCOMING ARRIVALS & PRE-ORDERS)
+         SECTION: COMING SOON (UPCOMING ARRIVALS & PRE-ORDERS) - DYNAMIC CATALOG
          ========================================================================= -->
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+    <div id="section-coming-soon-header" style="display:none; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 class="category-title" id="section-coming-soon" style="margin:0; padding:0; border:none; display:flex; align-items:center; gap:8px;">
           <i class="fa-solid fa-clock-rotate-left" style="color:#eab308;"></i> Coming Soon (Less Than MRP &amp; Book Sellers Price)
@@ -6691,96 +6691,8 @@
       </span>
     </div>
 
-    <div class="product-grid" id="comingSoonGrid">
-
-      <!-- Coming Soon 1: Nursery & KG Interactive Activity & Phonics Kit -->
-      <div class="product-card">
-        <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/spiral-copies.webp" alt="Nursery & KG Phonics Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-hourglass-half"></i> Coming Soon</span>
-          <h3 class="product-title">Nursery &amp; KG Phonics &amp; Drawing Kit</h3>
-          <p class="product-desc">Alphabet Tracing, Number Rhymes, Coloring Pads &amp; Jumbo Crayons set &middot; High quality child-safe print.</p>
-          <div class="product-footer">
-            <div style="display:flex; flex-direction:column;">
-              <span class="product-price" style="color:#64748b; font-size:14px;">Launching Soon</span>
-              <span style="color:#16a34a; font-size:11px; font-weight:800;"><i class="fa-solid fa-check"></i> Less Than MRP &amp; Book Sellers Price</span>
-            </div>
-            <div class="product-actions">
-              <button class="buy-btn" style="flex:1; background:#f59e0b; color:#78350f; font-weight:700;" onclick="preBookViaWhatsApp('Nursery &amp; KG Phonics &amp; Drawing Kit')">
-                <i class="fa-brands fa-whatsapp"></i> Pre-Book
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coming Soon 2: JKBOSE Class 10th & 12th Board Guess Papers 2026 -->
-      <div class="product-card">
-        <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/books/lucent-gk-1.webp" alt="JKBOSE Board 2026 Guess Papers" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          <span class="product-badge" style="background:#fee2e2; color:#991b1b;"><i class="fa-solid fa-fire"></i> High Demand</span>
-          <h3 class="product-title">JKBOSE Board 2026 Super Guess Papers</h3>
-          <p class="product-desc">Prepared by veteran Kashmir lecturers &middot; Most expected board questions with step-by-step model answers.</p>
-          <div class="product-footer">
-            <div style="display:flex; flex-direction:column;">
-              <span class="product-price" style="color:#64748b; font-size:14px;">Launching Soon</span>
-              <span style="color:#16a34a; font-size:11px; font-weight:800;"><i class="fa-solid fa-check"></i> Less Than MRP &amp; Book Sellers Price</span>
-            </div>
-            <div class="product-actions">
-              <button class="buy-btn" style="flex:1; background:#f59e0b; color:#78350f; font-weight:700;" onclick="preBookViaWhatsApp('JKBOSE Board 2026 Super Guess Papers')">
-                <i class="fa-brands fa-whatsapp"></i> Pre-Book
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coming Soon 3: Kashmir University & Cluster University College Starter Pack -->
-      <div class="product-card">
-        <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/spiral-copies.webp" alt="College Starter Register Pack" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          <span class="product-badge" style="background:#e0e7ff; color:#3730a3;"><i class="fa-solid fa-graduation-cap"></i> College &amp; University</span>
-          <h3 class="product-title">College Semester Pack (5 Big Registers + Pens)</h3>
-          <p class="product-desc">5 Hardcover 300-Page Subject Registers + 10 Smooth Gel Pens + Highlighter combo &middot; Student bundle at less than bookshop rates & less than MRP.</p>
-          <div class="product-footer">
-            <div style="display:flex; flex-direction:column;">
-              <span class="product-price" style="color:#64748b; font-size:14px;">Launching Soon</span>
-              <span style="color:#16a34a; font-size:11px; font-weight:800;"><i class="fa-solid fa-check"></i> Less Than MRP &amp; Book Sellers Price</span>
-            </div>
-            <div class="product-actions">
-              <button class="buy-btn" style="flex:1; background:#f59e0b; color:#78350f; font-weight:700;" onclick="preBookViaWhatsApp('College Semester Pack (5 Big Registers + Pens)')">
-                <i class="fa-brands fa-whatsapp"></i> Pre-Book
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coming Soon 4: NEET & JEE Droppers Foundation Formula Charts -->
-      <div class="product-card">
-        <div class="wishlist-icon" style="color:#94a3b8;"><i class="fa-regular fa-bell"></i></div>
-        <img src="images/books/atomic-habits-1.webp" alt="NEET / JEE Formula Handbook" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-atom"></i> Competitive Prep</span>
-          <h3 class="product-title">NEET &amp; JEE All-Formula Pocket Companion</h3>
-          <p class="product-desc">All Physics, Chemistry &amp; Math formulae in high-density laminated pocket handbook for quick revision in exams.</p>
-          <div class="product-footer">
-            <div style="display:flex; flex-direction:column;">
-              <span class="product-price" style="color:#64748b; font-size:14px;">Launching Soon</span>
-              <span style="color:#16a34a; font-size:11px; font-weight:800;"><i class="fa-solid fa-check"></i> Less Than MRP &amp; Book Sellers Price</span>
-            </div>
-            <div class="product-actions">
-              <button class="buy-btn" style="flex:1; background:#f59e0b; color:#78350f; font-weight:700;" onclick="preBookViaWhatsApp('NEET &amp; JEE All-Formula Pocket Companion')">
-                <i class="fa-brands fa-whatsapp"></i> Pre-Book
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div class="product-grid" id="comingSoonGrid" style="display:none;">
+      <!-- Dynamically rendered from Catalog when products with category 'coming-soon' are uploaded -->
     </div>
 
 
@@ -7407,7 +7319,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.20"></script>
+  <script src="store.js?v=92.21"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">

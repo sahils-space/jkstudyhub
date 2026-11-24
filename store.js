@@ -11695,6 +11695,53 @@ function matchesSchoolBooksClass(card, cls = activeSchoolBooksClass) {
     text.includes(String(cls).toLowerCase() + ' stream');
 }
 
+function renderComingSoonCatalogProductCard(product) {
+  const productName = String(product.name || product.title || 'Upcoming Product');
+  const safeInlineName = productName
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/[\r\n]/g, ' ');
+  const photos = Array.isArray(product.photos) && product.photos.length
+    ? product.photos
+    : [product.image || 'images/logo-app.png'];
+  const image = safeEscape(photos[0] || 'images/logo-app.png');
+  const rawPrice = Number(product.price) || 0;
+  const price = getCustomPrice(productName, rawPrice);
+  const rawMrp = Number(product.mrp) || Math.round(price * 1.35);
+  const mrp = getCustomMrp(productName, rawMrp);
+  const badge = product.badge || '⏳ Coming Soon';
+  const waHandler = safeEscape(`preBookViaWhatsApp('${safeInlineName}')`);
+  const favoriteHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
+  const detailsHandler = safeEscape(`openBookDetailsModal('${safeInlineName}')`);
+
+  return `
+    <div class="product-card" data-category="coming-soon">
+      <button class="wishlist-icon" onclick="${favoriteHandler}" aria-label="Wishlist"><i class="fa-solid fa-heart"></i></button>
+      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
+      <div class="product-info">
+        <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-hourglass-half"></i> ${safeEscape(badge)}</span>
+        <h3 class="product-title" style="cursor:pointer;" onclick="${detailsHandler}">${safeEscape(productName)}</h3>
+        <p class="product-desc">${safeEscape(product.desc || product.description || '')}</p>
+        <div class="product-footer">
+          <div style="display:flex; flex-direction:column;">
+            <div style="display:flex; align-items:baseline; gap:6px;">
+              <span class="product-price" style="color:#64748b; font-size:14px;">${price > 0 ? `₹${price}` : 'Launching Soon'}</span>
+              ${mrp > price && price > 0 ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:12px; font-weight:600;">₹${mrp}</span>` : ''}
+            </div>
+            <span style="color:#16a34a; font-size:11px; font-weight:800;"><i class="fa-solid fa-check"></i> Less Than MRP &amp; Book Sellers Price</span>
+          </div>
+          <div class="product-actions" style="gap:6px;">
+            <button class="buy-btn" style="flex:1; background:#f59e0b; color:#78350f; font-weight:700; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;" onclick="${waHandler}">
+              <i class="fa-brands fa-whatsapp"></i> Pre-Book
+            </button>
+            ${price > 0 ? `<button class="buy-btn" style="background:#2563eb; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;" onclick="openCheckout('${safeInlineName}', ${price}, 'physical', 'coming-soon')"><i class="fa-solid fa-bolt"></i> Order</button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderSchoolCatalogProductCard(product, sectionType) {
   const productName = String(product.name || product.title || 'Product');
   const category = sectionType === 'books' ? 'school-books' : 'school-copies';
@@ -11860,6 +11907,23 @@ function renderSchoolCatalogSections() {
 
   // Render uploaded novels into the Novels Modal collection
   renderDynamicNovelsInModal(products);
+
+  // Render dynamic Coming Soon / Pre-Orders section
+  const comingSoonCategories = new Set(['coming-soon', 'comingsoon', 'pre-order', 'preorder', 'upcoming']);
+  const comingSoonProducts = products.filter(product => comingSoonCategories.has(String(product.category || '').trim().toLowerCase()));
+  const comingSoonHeader = document.getElementById('section-coming-soon-header');
+  const comingSoonGrid = document.getElementById('comingSoonGrid');
+  if (comingSoonGrid) {
+    if (comingSoonProducts.length > 0) {
+      if (comingSoonHeader) comingSoonHeader.style.display = 'flex';
+      comingSoonGrid.style.display = '';
+      comingSoonGrid.innerHTML = comingSoonProducts.map(p => renderComingSoonCatalogProductCard(p)).join('');
+    } else {
+      if (comingSoonHeader) comingSoonHeader.style.display = 'none';
+      comingSoonGrid.style.display = 'none';
+      comingSoonGrid.innerHTML = '';
+    }
+  }
 
   if (typeof initCardSwipes === 'function') initCardSwipes();
 }
@@ -12253,6 +12317,8 @@ function openStoreCategorySection(catName, specificQuery) {
       target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
     } else if (catName === 'digital') {
       target = document.getElementById('section-digital') || document.getElementById('storeSearchContainer');
+    } else if (catName === 'coming-soon') {
+      target = document.getElementById('section-coming-soon') || document.getElementById('storeSearchContainer');
     } else {
       target = document.getElementById('storeSearchContainer');
     }
