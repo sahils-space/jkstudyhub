@@ -24,7 +24,15 @@ async function fetchWithRetry(url, options = {}, retries = 2, delayMs = 1500) {
   }
 }
 
-const PERMANENTLY_HIDDEN_CATALOG_NAMES = new Set(['jk study hub']);
+const PERMANENTLY_HIDDEN_CATALOG_NAMES = new Set([
+  'jk study hub',
+  'ergonomic student backpack school college',
+  'smart temperature led water bottle custom laser engraved',
+  'customized acrylic wooden memory photo frame',
+  'prd gear backpack 01',
+  'prd custom led bottle 01',
+  'prd custom photo frame 01'
+]);
 
 function normalizeCatalogIdentity(value) {
   return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -1489,56 +1497,6 @@ const PRODUCT_CATALOG = {
     mrp: 799,
     category: "notes",
     image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500"
-  },
-  "Ergonomic Student Backpack (School & College)": {
-    author: "JK Study Hub Gear",
-    mrp: 1299,
-    price: 699,
-    category: "gear",
-    badge: "🎒 Premium Gear",
-    image: "images/products/ergonomic-student-backpack.jpg",
-    images: ["images/products/ergonomic-student-backpack.jpg"],
-    desc: "Durable water-resistant school and college backpack with multi-tier book compartments, padded 15.6-inch laptop sleeve, ergonomic spine-support shoulder straps, and heavy-duty zipper tracks.",
-    specs: {
-      capacity: "32 Liters",
-      material: "High-Density Polyester Fabric (Water Repellent)",
-      compartments: "3 Main Zipped Compartments + Side Bottle Pockets",
-      laptop: "Up to 15.6 inch padded sleeve",
-      straps: "Ergonomic S-curve breathable mesh shoulder straps"
-    }
-  },
-  "Smart Temperature LED Water Bottle (Custom Laser Engraved)": {
-    author: "JK Study Hub Personalization Studio",
-    mrp: 799,
-    price: 449,
-    category: "custom",
-    badge: "✨ Custom Engraved",
-    image: "images/products/smart-led-temperature-bottle.jpg",
-    images: ["images/products/smart-led-temperature-bottle.jpg"],
-    desc: "Double-wall vacuum insulated 500ml food-grade stainless steel thermal flask with smart digital LED touch temperature display. Laser-engraved with your custom name, calligraphy, or student roll number.",
-    specs: {
-      capacity: "500 ml",
-      material: "304 Food-Grade Stainless Steel",
-      insulation: "Double-Wall Vacuum Insulation (Hot/Cold up to 12 Hours)",
-      display: "Cap Touch LED Digital Temperature Display (No charging required)",
-      personalization: "Precision permanent laser engraving included"
-    }
-  },
-  "Customized Acrylic / Wooden Memory Photo Frame": {
-    author: "JK Study Hub Personalization Studio",
-    mrp: 699,
-    price: 399,
-    category: "custom",
-    badge: "🖼️ Personalized Gift",
-    image: "images/products/custom-photo-memory-frame.jpg",
-    images: ["images/products/custom-photo-memory-frame.jpg"],
-    desc: "High-clarity customized memory photo frame with crystal acrylic or natural wooden finish. Send your student portrait, graduation memory, family photo or custom quote via WhatsApp for studio-grade HD printing and mounting.",
-    specs: {
-      size: "6 x 8 inches / Tabletop & Wall Mount",
-      finish: "Anti-Scratch Crystal Acrylic / Premium Natural Wood",
-      printQuality: "High-Definition 300 DPI Studio Thermal Printing",
-      packaging: "Bubble-wrapped shockproof gift box packaging"
-    }
   },
   "Spectra paper A4": {
     mrp: 349,
@@ -10401,13 +10359,8 @@ function handleStoreLiveSearch(query) {
       const hasVisibleSchoolBooks = Array.from(document.querySelectorAll('#schoolBooksGrid .product-card')).some(c => c.style.display !== 'none');
       if (parentHeading) parentHeading.style.display = hasVisibleSchoolBooks ? 'flex' : 'none';
     }
-    const secDynamic = document.getElementById('dynamicProductsSection');
-    if (secDynamic) {
-      const hasVisibleDynamic = Array.from(document.querySelectorAll('#dynamicProductsGrid .book-product-card, #dynamicProductsGrid .product-card')).some(c => c.style.display !== 'none');
-      secDynamic.style.display = hasVisibleDynamic ? 'block' : 'none';
-    }
     if (secNovels) {
-      const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).filter(c => !c.closest('#dynamicProductsSection')).some(c => c.style.display !== 'none');
+      const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).some(c => c.style.display !== 'none');
       secNovels.style.display = hasVisibleNovels ? 'flex' : 'none';
     }
     if (secAcademic) {
@@ -10525,8 +10478,6 @@ function handleStoreLiveSearch(query) {
 
   // Hide all original cards and standard section headings during search to avoid duplication and clutter
   allCards.forEach(c => c.style.display = 'none');
-  const secDynamic = document.getElementById('dynamicProductsSection');
-  if (secDynamic) secDynamic.style.display = 'none';
   if (secNovels) secNovels.style.display = 'none';
   const copiesHeader = document.getElementById('school-copies-header');
   if (copiesHeader) copiesHeader.style.display = 'none';
@@ -10689,48 +10640,6 @@ window.addEventListener('hashchange', handleUrlCategoryHash);
 // =========================================================
 
 const DEFAULT_PUBLISHED_PRODUCTS = [
-  {
-    "id": "PRD-GEAR-BACKPACK-01",
-    "name": "Ergonomic Student Backpack (School & College)",
-    "title": "Ergonomic Student Backpack (School & College)",
-    "category": "gear",
-    "price": 699,
-    "mrp": 1299,
-    "badge": "🎒 Premium Gear",
-    "desc": "Durable water-resistant school and college backpack with padded 15.6-inch laptop sleeve, multi-tier compartments, ergonomic spine-support shoulder straps, and heavy-duty zipper tracks.",
-    "photos": [
-      "images/products/ergonomic-student-backpack.jpg"
-    ],
-    "image": "images/products/ergonomic-student-backpack.jpg"
-  },
-  {
-    "id": "PRD-CUSTOM-LED-BOTTLE-01",
-    "name": "Smart Temperature LED Water Bottle (Custom Laser Engraved)",
-    "title": "Smart Temperature LED Water Bottle (Custom Laser Engraved)",
-    "category": "custom",
-    "price": 449,
-    "mrp": 799,
-    "badge": "✨ Custom Engraved",
-    "desc": "Double-wall vacuum insulated 500ml food-grade stainless steel thermal flask with smart digital LED touch temperature display. Laser-engraved with your custom name, calligraphy, or student roll number.",
-    "photos": [
-      "images/products/smart-led-temperature-bottle.jpg"
-    ],
-    "image": "images/products/smart-led-temperature-bottle.jpg"
-  },
-  {
-    "id": "PRD-CUSTOM-PHOTO-FRAME-01",
-    "name": "Customized Acrylic / Wooden Memory Photo Frame",
-    "title": "Customized Acrylic / Wooden Memory Photo Frame",
-    "category": "custom",
-    "price": 399,
-    "mrp": 699,
-    "badge": "🖼️ Personalized Gift",
-    "desc": "High-clarity customized memory photo frame with crystal acrylic or natural wooden finish. Send your portrait, graduation photo, or custom quote via WhatsApp for studio-grade HD printing and mounting.",
-    "photos": [
-      "images/products/custom-photo-memory-frame.jpg"
-    ],
-    "image": "images/products/custom-photo-memory-frame.jpg"
-  },
   {
     "id": "PRD-1792043438782",
     "name": "Spectra paper A4",
@@ -11673,135 +11582,84 @@ function mergeAndRenderLiveProducts(incoming) {
   }
 }
 
-// Render dynamic products on Storefront (Fresh Stock grid)
+// Render dynamic products on Storefront (School catalogs & dynamic stationery)
 function renderDynamicStoreProducts() {
   renderSchoolCatalogSections();
-  const container = document.getElementById('dynamicProductsGrid');
-  const section = document.getElementById('dynamicProductsSection');
-  if (!container || !section) return;
+  renderDynamicStationeryProducts();
+}
 
-  if (!CUSTOM_PRODUCTS || CUSTOM_PRODUCTS.length === 0) {
-    section.style.display = 'none';
+function renderDynamicStationeryProducts() {
+  const stationeryGrid = document.getElementById('academicStationeryGrid');
+  if (!stationeryGrid) return;
+
+  let dynamicWrap = document.getElementById('dynamicStationeryContainer');
+  if (!dynamicWrap) {
+    dynamicWrap = document.createElement('div');
+    dynamicWrap.id = 'dynamicStationeryContainer';
+    dynamicWrap.style.display = 'contents';
+    stationeryGrid.appendChild(dynamicWrap);
+  }
+
+  const nonStationeryCats = new Set([
+    'school-books', 'school', 'textbooks',
+    'school-copies', 'copies', 'copy', 'registers',
+    'exam-kits', 'exam-kit', 'master-kits', 'master-kit',
+    'novels', 'novel',
+    'coming-soon', 'comingsoon', 'pre-order',
+    'resin'
+  ]);
+
+  const stationeryProducts = (Array.isArray(CUSTOM_PRODUCTS) ? CUSTOM_PRODUCTS : []).filter(p => {
+    if (!p || isDeletedCatalogProduct(p) || isGeneralAcademicPhysicalEducationProduct(p)) return false;
+    const cat = String(p.category || '').trim().toLowerCase();
+    return !nonStationeryCats.has(cat);
+  });
+
+  if (stationeryProducts.length === 0) {
+    dynamicWrap.innerHTML = '';
     return;
   }
 
-  section.style.display = 'block';
+  dynamicWrap.innerHTML = stationeryProducts.map(p => {
+    const pName = p.name || p.title || 'Product';
+    const safeInlineName = pName.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\r\n]/g, ' ');
+    const photos = Array.isArray(p.photos) && p.photos.length ? p.photos : [p.image || 'images/logo-app.png'];
+    const image = safeEscape(photos[0] || 'images/logo-app.png');
+    const price = getCustomPrice(pName, Number(p.price) || 0);
+    const mrp = getCustomMrp(pName, Number(p.mrp) || Math.round(price * 1.35));
+    const badge = p.badge || '✨ Fresh Stock';
+    const cat = p.category || 'stationery';
+    const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', '${cat}')`);
+    const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', '${cat}')`);
+    const waHandler = safeEscape(`orderViaWhatsApp('${safeInlineName}', ${price}, '${cat}')`);
+    const detailsHandler = safeEscape(`openBookDetailsModal('${safeInlineName}')`);
+    const favHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
 
-  const visibleProducts = CUSTOM_PRODUCTS.filter(prod => !isGeneralAcademicPhysicalEducationProduct(prod));
-  if (visibleProducts.length === 0) {
-    section.style.display = 'none';
-    return;
-  }
-
-  let html = '';
-  visibleProducts.forEach((prod, index) => {
-    const photos = (prod.photos && prod.photos.length > 0) ? prod.photos : [prod.image || 'images/logo-app.png'];
-    const safeCarouselId = `carousel-dyn-${index}`;
-    const pName = prod.name || prod.title || 'Product';
-    const safeName = pName.replace(/'/g, "\\'");
-    const rawPrice = Number(prod.price) || 0;
-    const price = getCustomPrice(pName, rawPrice);
-    const rawMrp = Number(prod.mrp) || Math.round(price * 1.35);
-    const mrp = getCustomMrp(pName, rawMrp);
-    const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
-    const badgeText = prod.badge || '✨ Fresh Stock';
-    const safeClassLevel = /^[0-9]{1,2}$/.test(String(prod.classLevel || '')) ? String(prod.classLevel) : '';
-    const safeBoard = ['JKBOSE', 'NCERT / CBSE'].includes(prod.board) ? prod.board : '';
-    const stock = getProductStock(pName);
-    const isOutOfStock = stock.status === 'out_of_stock' || Number(stock.qty) <= 0;
-    const isLowStock = !isOutOfStock && (stock.status === 'low_stock' || (Number(stock.qty) > 0 && Number(stock.qty) <= 5));
-    const stockLabel = isOutOfStock ? 'Out of stock' : (isLowStock ? `Only ${Number(stock.qty)} left` : 'In stock');
-
-    // Photos track
-    let trackHtml = '';
-    photos.forEach((ph, pIdx) => {
-      trackHtml += `<img src="${ph}" alt="${safeEscape(pName)} - Photo ${pIdx + 1}" class="carousel-img ${pIdx === 0 ? 'active' : ''}" loading="lazy" decoding="async" onclick="openBookDetailsModal('${safeName}')">`;
-    });
-
-    // Carousel dots
-    let dotsHtml = '';
-    if (photos.length > 1) {
-      photos.forEach((_, pIdx) => {
-        dotsHtml += `<span class="carousel-dot ${pIdx === 0 ? 'active' : ''}" onclick="setCardPhoto('${safeCarouselId}', ${pIdx}, event)"></span>`;
-      });
-    }
-
-    // Ambassador Ribbon Tag:
-    const isAmbassadorItem = Boolean(prod.isAmbassadorProduct || (prod.ambassadorEmail && prod.ambassadorEmail.length > 0) || (prod.uploader && prod.uploader.startsWith('ambassador:')));
-    const ambassadorRibbonHtml = isAmbassadorItem ? `
-      <span class="ambassador-curated-ribbon" title="Curated Pick" style="position:absolute; top:10px; left:10px; z-index:10; background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color:#ffffff; font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:20px; box-shadow:0 3px 8px rgba(37,99,235,0.35); display:inline-flex; align-items:center; gap:5px; border:1px solid rgba(255,255,255,0.3); letter-spacing:0.3px;">
-        <i class="fa-solid fa-ribbon" style="color:#fbbf24;"></i> Verified Choice
-      </span>
-    ` : '';
-
-    html += `
-      <div class="book-product-card" data-category="${safeEscape(prod.category || 'books')}" data-class-level="${safeClassLevel}" data-board="${safeEscape(safeBoard)}" data-subject="${safeEscape(prod.subject || '')}" data-stock-status="${isOutOfStock ? 'out_of_stock' : (isLowStock ? 'low_stock' : 'in_stock')}">
-        <button class="wishlist-icon" onclick="toggleFavorite(this, '${safeName}')"><i class="fa-solid fa-heart"></i></button>
-        ${ambassadorRibbonHtml}
-        <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9; ${isAmbassadorItem ? 'top: 38px;' : ''}"><i class="fa-solid fa-sparkles"></i> ${badgeText}</span>
-        
-        <!-- Multi-Photo Swipeable Container -->
-        <div class="swipe-photo-container" id="${safeCarouselId}">
-          ${photos.length > 1 ? `
-            <div class="carousel-arrow prev" onclick="cycleCardPhoto('${safeCarouselId}', -1, event)"><i class="fa-solid fa-chevron-left"></i></div>
-            <div class="carousel-arrow next" onclick="cycleCardPhoto('${safeCarouselId}', 1, event)"><i class="fa-solid fa-chevron-right"></i></div>
-          ` : ''}
-          
-          <div class="carousel-track">
-            ${trackHtml}
-          </div>
-
-          ${photos.length > 1 ? `<div class="carousel-dots">${dotsHtml}</div>` : ''}
-
-          <div class="card-dim-tag" onclick="openBookDetailsModal('${safeName}')" title="Tap to inspect product">
-            <i class="fa-solid fa-images"></i> ${photos.length} Photo${photos.length > 1 ? 's' : ''}
-          </div>
-        </div>
-
+    return `
+      <div class="product-card" data-category="${safeEscape(cat)}">
+        <button class="wishlist-icon" onclick="${favHandler}" aria-label="Save ${safeEscape(pName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
         <div class="product-info">
-          <div style="font-size:12px; color:#2563eb; font-weight:700; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px;">
-            ${safeEscape(prod.category || 'books')}${safeClassLevel ? ` · Class ${safeClassLevel}` : ''}${safeBoard ? ` · ${safeEscape(safeBoard)}` : ''}${prod.subject ? ` · ${safeEscape(prod.subject)}` : ''}
-          </div>
-          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal('${safeName}')">${safeEscape(pName)}</h3>
-          
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px;">
-            <span class="student-trust-badge">${safeClassLevel || safeBoard ? 'Catalog details' : 'Seller listing'}</span>
-            <span style="margin-left:auto; background:${isOutOfStock ? '#fef2f2' : (isLowStock ? '#fffbeb' : '#f0fdf4')}; color:${isOutOfStock ? '#b91c1c' : (isLowStock ? '#b45309' : '#166534')}; padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px;">${stockLabel}</span>
-          </div>
-
-          <div class="delivery-estimate-badge"><i class="fa-solid fa-truck-fast"></i> Check delivery options and charges at checkout</div>
-
-          <div style="display:flex; gap:6px; margin: 6px 0 10px; flex-wrap:wrap;">
-            <button type="button" class="btn-look-inside" onclick="openSamplePreviewModal('${safeName}')"><i class="fa-solid fa-book-open-reader"></i> Look Inside</button>
-            <button type="button" class="btn-whatsapp-direct" style="padding:4px 9px; font-size:11.5px;" onclick="orderBookViaWhatsApp('${safeName}', ${price})"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
-          </div>
-
-          <p class="product-desc">${safeEscape(prod.desc || prod.description || 'Product description not provided in the listing.')}</p>
-          
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
+          <h3 class="product-title" onclick="${detailsHandler}" style="cursor:pointer;">${safeEscape(pName)}</h3>
+          <p class="product-desc">${safeEscape(p.desc || p.description || '')}</p>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
                 <span class="product-price">₹${price}</span>
-                ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹${mrp}</span>` : ''}
+                ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹${mrp}</span>` : ''}
               </div>
-              ${discount > 0 ? `<span style="color:#10b981; font-size:11.5px; font-weight:800;">Save ${discount}% Today</span>` : ''}
             </div>
-
             <div class="product-actions" style="gap:6px;">
-              <button class="buy-btn" style="padding:8px 14px; font-size:13px;" onclick="openCheckout('${safeName}', ${price}, 'physical', '${prod.category || 'books'}')">Buy Now</button>
-              <button class="btn-icon" onclick="addToCart('${safeName}', ${price}, 'physical', '${prod.category || 'books'}')" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
-              <button class="btn-icon" onclick="openBookDetailsModal('${safeName}')" title="Inspect Photos & Details" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-eye"></i></button>
+              <button class="buy-btn" style="flex:1;" onclick="${checkoutHandler}">Buy Now</button>
+              <button class="btn-icon" onclick="${cartHandler}" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="${waHandler}" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
             </div>
           </div>
         </div>
       </div>
     `;
-  });
-
-  container.innerHTML = html;
-  if (typeof initCardSwipes === 'function') {
-    initCardSwipes();
-  }
+  }).join('');
 }
 
 function getSchoolCatalogClassLevel(value) {
@@ -12440,10 +12298,8 @@ function openStoreCategorySection(catName, specificQuery) {
       target = document.getElementById('section-novels') || document.getElementById('storeSearchContainer');
     } else if (catName === 'academic') {
       target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
-    } else if (catName === 'gear' || catName === 'backpack' || catName === 'backpacks' || catName === 'custom' || catName === 'resin' || catName === 'gifts') {
-      target = document.getElementById('dynamicProductsSection') || document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
-    } else if (catName === 'stationery') {
-      target = document.getElementById('dynamicProductsSection') || document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
+    } else if (catName === 'gear' || catName === 'backpack' || catName === 'backpacks' || catName === 'custom' || catName === 'resin' || catName === 'gifts' || catName === 'stationery') {
+      target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
     } else if (catName === 'digital') {
       target = document.getElementById('section-digital') || document.getElementById('storeSearchContainer');
     } else if (catName === 'coming-soon') {
