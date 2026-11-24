@@ -29,7 +29,7 @@
       price: 349,
       mrp: 599,
       stock: 5,
-      image: 'images/resin/resin-bookmark.jpg?v=5.0',
+      image: 'images/resin/resin-bookmark.webp?v=6.0',
       description: 'Sacred Bismillah calligraphy in reflective gold, encased in optical-grade crystal clear resin with shimmering 24K gold foil flakes at the top and base. Finished with a luxury champagne gold braided silk tassel.',
       specs: ['Dimensions: 14cm x 3cm', 'Thickness: 3.5mm shatterproof crystal', 'Calligraphy: Reflective gold Bismillah', 'Tassel: Pure Braided Silk Tassel included']
     },
@@ -42,7 +42,7 @@
       price: 249,
       mrp: 450,
       stock: 8,
-      image: 'images/resin/resin-keychain.jpg?v=5.0',
+      image: 'images/resin/resin-keychain.webp?v=6.0',
       description: 'Handcrafted circular resin keychains in deep glossy obsidian black with floating 24K gold foil flakes and bold gold lettering (HOPE, LIFE, JOY, DREAM, or your custom name/initial). Fitted with heavy-duty anti-tarnish gold hardware.',
       specs: ['Diameter: 4.5cm circular charm', 'Available words: HOPE, LIFE, JOY, DREAM or Custom Name', 'Anti-tarnish reinforced steel keyring', 'Scratch-resistant glass finish']
     },
@@ -55,7 +55,7 @@
       price: 1599,
       mrp: 2799,
       stock: 3,
-      image: 'images/resin/resin-quran-stand.jpg?v=5.0',
+      image: 'images/resin/resin-quran-stand.webp?v=6.0',
       description: 'Exquisite two-piece interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral accents, floating gold leaf, and sacred Arabic calligraphy ("Wa khalaqnakum azwaja"). Includes matching floral bookmark and gold silk tassel.',
       specs: ['Detachable 2-piece folding X-shape rehal', 'Dimensions: 12 x 8 inches per wing', 'Calligraphy: "Wa Khalaqnakum Azwaja" + Bismillah', 'Free matching floral bookmark with gold tassel']
     },
@@ -68,7 +68,7 @@
       price: 1899,
       mrp: 3200,
       stock: 2,
-      image: 'images/resin/resin-clock.jpg?v=5.0',
+      image: 'images/resin/resin-clock.webp?v=6.0',
       description: 'A breathtaking 3-layered ocean pour inspired by the serene waters of Kashmir. Crafted with real crushed white quartz crystals, authentic beach sand, and multi-layered cellular ocean foam. Fitted with a high-torque silent sweep quartz clock mechanism.',
       specs: ['Diameter: 12 inches (30 cm)', 'Base: Heavy moisture-resistant engineered wood', 'Movement: Sweep Silent Quartz (No ticking sound)', 'Gold teardrop clock hands']
     },
@@ -81,7 +81,7 @@
       price: 699,
       mrp: 1199,
       stock: 5,
-      image: 'images/resin/resin-coasters.jpg?v=5.0',
+      image: 'images/resin/resin-coasters.webp?v=6.0',
       description: 'Inspired by natural raw emerald geodes. Translucent jewel-toned green and pearlescent white resin swirls with genuine natural crackle texture. Each coaster rim is individually hand-gilded with metallic gold leaf paint.',
       specs: ['Set of 4 Coasters (approx 10cm each)', 'Heat resistant up to 90°C (ideal for hot tea/coffee)', 'Silicone anti-slip bumpers on bottom', 'Waterproof & wipe-clean']
     },
@@ -94,7 +94,7 @@
       price: 1299,
       mrp: 2199,
       stock: 3,
-      image: 'images/resin/resin-ayat-frame.jpg?v=5.0',
+      image: 'images/resin/resin-ayat-frame.webp?v=6.0',
       description: 'Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror acrylic, seamlessly cast within a pearl white and gold marble resin slab. The perfect spiritual gift for housewarmings, weddings, or personal study desks.',
       specs: ['Size: 8 x 10 inches', 'Display: Comes with luxury clear acrylic table stand', '3D gold mirror reflection script', 'Fade-proof epoxy seal']
     },
@@ -108,7 +108,7 @@
       price: 2499,
       mrp: 4000,
       stock: 3,
-      image: 'images/resin/resin-wedding-cube.jpg?v=5.0',
+      image: 'images/resin/resin-wedding-cube.webp?v=6.0',
       description: 'Preserve the real fresh roses, jasmine, and petals from your Nikah or wedding garland forever. Cast in an optical-grade solid crystal resin cube with couple names and wedding date engraved in gold.',
       specs: ['Dimensions: 10cm x 10cm x 10cm solid block', 'Custom Name & Date inclusion', 'Dry-flower preservation guidance provided', 'Luxe satin-lined keepsake gift box']
     },
@@ -121,7 +121,7 @@
       price: 549,
       mrp: 899,
       stock: 6,
-      image: 'images/resin/resin-tray.jpg?v=5.0',
+      image: 'images/resin/resin-tray.webp?v=6.0',
       description: 'Organic leaf silhouette tray for rings, earrings, watches, and bedside trinkets. Hand-poured with semi-opaque milky white resin, deep amber accents, and gold leaf veins.',
       specs: ['Length: 18cm | Width: 11cm', 'Curved lip prevents jewelry from sliding', 'Food-safe certified resin topcoat', 'Glossy ceramic-like crystal weight']
     },
@@ -134,7 +134,7 @@
       price: 499,
       mrp: 799,
       stock: 5,
-      image: 'images/resin/resin-pen-stand.jpg?v=5.0',
+      image: 'images/resin/resin-pen-stand.webp?v=6.0',
       description: 'Heavyweight cylindrical & square desk vessels cast with crystal-clear resin, real embedded wildflower sprigs, floating bubbles, and ocean blue gradient bases. Perfect for holding study pens, makeup brushes, or desk scissors.',
       specs: ['Height: 10cm | Width: 7.5cm', 'Cast with real dried alpine wildflowers', 'Heavy non-toppling crystal base', 'Smooth rounded lip']
     }
@@ -307,7 +307,7 @@
     if (!canvas) return;
 
     if (photoEl && !state.customPhotoData) {
-      photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.jpg')";
+      photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.webp')";
     }
 
     if (input) {
@@ -387,7 +387,7 @@
 
       // Update demo photo if no custom photo uploaded
       if (photoEl && !state.customPhotoData) {
-        photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.jpg')";
+        photoEl.style.backgroundImage = "url('images/resin/demo-heart-keychain.webp')";
       }
     } else {
       if (btnHeart) btnHeart.classList.remove('active');
@@ -405,7 +405,7 @@
       if (savePill) savePill.textContent = 'Save 50%';
       // Update demo photo if no custom photo uploaded
       if (photoEl && !state.customPhotoData) {
-        photoEl.style.backgroundImage = "url('images/resin/demo-round-keychain.jpg')";
+        photoEl.style.backgroundImage = "url('images/resin/demo-round-keychain.webp')";
       }
     }
   }
@@ -793,7 +793,7 @@ ${itemsFormatted}─────────────────────
       obsidian: 'Midnight Obsidian Black + Gold Leaf'
     };
     const trimLabel = trimNames[state.customTrim] || '24K Gold Foil Flakes';
-    const demoImg = isHeart ? 'images/resin/demo-heart-keychain.jpg' : 'images/resin/demo-round-keychain.jpg';
+    const demoImg = isHeart ? 'images/resin/demo-heart-keychain.webp' : 'images/resin/demo-round-keychain.webp';
     const showcaseUrl = `${DOMAIN_URL}/${demoImg}`;
 
     const msg = 
@@ -824,7 +824,7 @@ ${showcaseUrl}
   function buySimulatorPieceOnline() {
     const isHeart = state.customCraftShape === 'heart';
     const isGrand = isHeart && state.customHeartSize === '6';
-    const defaultImg = isHeart ? 'images/resin/demo-heart-keychain.jpg' : 'images/resin/demo-round-keychain.jpg';
+    const defaultImg = isHeart ? 'images/resin/demo-heart-keychain.webp' : 'images/resin/demo-round-keychain.webp';
     const customItem = {
       id: 'custom-' + Date.now(),
       title: isHeart 
@@ -929,7 +929,7 @@ ${showcaseUrl}
       currency: "INR",
       name: "Aura Resin Atelier",
       description: `Prepaid Bespoke Resin Order (${items.length} items)`,
-      image: `${DOMAIN_URL}/images/resin/resin-quran-stand.jpg`,
+      image: `${DOMAIN_URL}/images/resin/resin-quran-stand.webp`,
       handler: function(response) {
         onRazorpayPaymentSuccess(response, {
           items,

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v189';
+const CACHE_NAME = 'jk-study-hub-v190';
 const urlsToCache = [
   './',
   './index.html',
@@ -50,7 +50,7 @@ const urlsToCache = [
   './images/products/exam-survival-kit.webp',
   './images/products/premium-pen-set.webp',
   './images/products/school-bookset-bundle.webp',
-  './images/products/physical-education-notes-cover.png',
+  './images/products/physical-education-notes-cover.webp',
   './images/products/spectra-paper-a4-1.jpg',
   './images/products/doms-colour-pencils-1.jpg',
   './images/products/doms-small-colour-pencils-1.jpg',
@@ -59,15 +59,15 @@ const urlsToCache = [
   './images/products/doms-glue-stick-10-pcs-1.jpg',
   './images/products/nixon-doms-pen-bundle-1.jpg',
   './images/products/pencils-1.jpg',
-  './images/resin/resin-bookmark.jpg',
-  './images/resin/resin-keychain.jpg',
-  './images/resin/resin-quran-stand.jpg',
-  './images/resin/resin-clock.jpg',
-  './images/resin/resin-coasters.jpg',
-  './images/resin/resin-ayat-frame.jpg',
-  './images/resin/resin-wedding-cube.jpg',
-  './images/resin/resin-tray.jpg',
-  './images/resin/resin-pen-stand.jpg'
+  './images/resin/resin-bookmark.webp',
+  './images/resin/resin-keychain.webp',
+  './images/resin/resin-quran-stand.webp',
+  './images/resin/resin-clock.webp',
+  './images/resin/resin-coasters.webp',
+  './images/resin/resin-ayat-frame.webp',
+  './images/resin/resin-wedding-cube.webp',
+  './images/resin/resin-tray.webp',
+  './images/resin/resin-pen-stand.webp'
 ];
 
 self.addEventListener('install', event => {

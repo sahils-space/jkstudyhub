@@ -1190,10 +1190,10 @@ const PRODUCT_CATALOG = {
     price: 249,
     category: "academic",
     badge: "JKBOSE • Classes 11 & 12",
-    image: "images/products/physical-education-notes-cover.png",
+    image: "images/products/physical-education-notes-cover.webp",
     images: [
-      "images/products/physical-education-notes-cover.png",
-      "images/products/physical-education-notes-cover-white.png"
+      "images/products/physical-education-notes-cover.webp",
+      "images/products/physical-education-notes-cover-white.webp"
     ],
     desc: "JKBOSE-aligned Physical Education theory and exam notes for Classes 11 and 12, with solved previous-year questions, practical-file guidance, sports rules, viva answers, and model answers.",
     edition: "2026 JKBOSE edition",
