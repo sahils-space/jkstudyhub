@@ -33,7 +33,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="style.css?v=27">
   <link rel="stylesheet" href="premium-theme.css?v=1">
   <link rel="stylesheet" href="brand-theme.css?v=2">
 </head>
@@ -391,83 +391,146 @@
         </div>
       </div>
 
-      <!-- Class 11th Stream Portals -->
-      <div class="portal-group" style="margin-top: 50px;">
-        <div class="portal-group-header">
-          <div class="group-badge">Class 11th Streams Hub</div>
-          <h3 class="group-title">Senior Secondary Disciplines</h3>
+      <!-- Class 11th Showcase Banner Card (Dedicated Pop-up Window) -->
+      <div class="class11-showcase-card" id="class11" onclick="openClass11Modal()" style="background: linear-gradient(135deg, #090e1a 0%, #171c38 50%, #1e1136 100%); border: 1.5px solid rgba(168, 85, 247, 0.4); border-radius: 20px; padding: 24px 28px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; cursor: pointer; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);">
+        <div style="display:flex; align-items:center; gap:20px; flex:1; min-width:280px;">
+          <div style="position:relative; width:75px; height:75px; border-radius:16px; background:linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px; box-shadow:0 8px 20px rgba(124, 58, 237, 0.4); flex-shrink:0;">
+            <i class="fa-solid fa-compass-drafting"></i>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <span style="background:rgba(124,58,237,0.25); color:#c4b5fd; border:1px solid rgba(196,181,253,0.3); font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:20px;">
+                Class 11th Streams Hub
+              </span>
+              <span style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(74,222,128,0.3); font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:20px;">
+                4 Streams
+              </span>
+              <span style="color:#fde047; font-size:12px; font-weight:700;">
+                <i class="fa-solid fa-certificate"></i> Official JKBOSE Syllabus
+              </span>
+            </div>
+            <h3 style="font-size:21px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+              Class 11th Senior Secondary Streams &amp; Disciplines
+            </h3>
+            <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">
+              Medical Science, Non-Medical (PCM), Commerce &amp; Arts &bull; Syllabi, Solved PYQs, CYQs &amp; Model Papers
+            </p>
+          </div>
         </div>
 
-        <div class="cards-grid">
-          <div class="study-card stream-card">
-            <div class="card-badge">Medical</div>
-            <div class="card-icon med-color"><i class="fa-solid fa-dna"></i></div>
-            <h3 class="card-title">Medical Science</h3>
-            <p class="card-desc">Botany (35m), Zoology (35m), Physics (70m), Chemistry (70m), and General English (80m) comprehensive modules.</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Plant &amp; Human Physiology</li>
-              <li><i class="fa-regular fa-circle-check"></i> Cell Biology, Genetics &amp; Ecology</li>
-              <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('11-med');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('11-med');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+          <button type="button" onclick="openClass11Modal(); event.stopPropagation();" style="background:linear-gradient(135deg, #7c3aed, #a855f7); color:#ffffff; border:none; padding:12px 24px; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(124,58,237,0.4); transition:all 0.2s;">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Explore 11th Streams</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- FULL DEDICATED CLASS 11TH STREAMS MODAL WINDOW -->
+      <div id="class11CollectionModal" class="novels-collection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:10000; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;" onclick="if(event.target===this) closeClass11Modal();">
+        <div class="novels-modal-card" style="background:#f8fafc; border-radius:20px; width:100%; max-width:1150px; max-height:92vh; overflow-y:auto; position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.5); display:flex; flex-direction:column; border:1px solid #cbd5e1;">
+
+          <!-- Sticky Header of Class 11th Modal -->
+          <div style="position:sticky; top:0; z-index:20; background:#ffffff; border-bottom:1.5px solid #e2e8f0; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:20px 20px 0 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:40px; height:40px; border-radius:10px; background:#f3e8ff; color:#7c3aed; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-compass-drafting"></i>
+              </span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; color:#0f172a; margin:0;">Class 11th Senior Secondary Streams</h2>
+                <p style="font-size:12.5px; color:#64748b; margin:2px 0 0;">Select your stream: Medical, Non-Medical Science, Commerce, or Arts &amp; Humanities</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="background:#ede9fe; color:#6d28d9; font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;">
+                4 Streams
+              </span>
+              <button type="button" onclick="closeClass11Modal()" style="width:38px; height:38px; border-radius:50%; background:#f1f5f9; border:none; font-size:18px; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" title="Close Window">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
             </div>
           </div>
 
-          <div class="study-card stream-card">
-            <div class="card-badge">Engineering</div>
-            <div class="card-icon nonmed-color"><i class="fa-solid fa-compass-drafting"></i></div>
-            <h3 class="card-title">Non-Medical Science</h3>
-            <p class="card-desc">Mathematics (80m), Physics (70m), Chemistry (70m), and Computer Science Python (70m) structured curriculum.</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Calculus, Algebra &amp; Coordinate Geometry</li>
-              <li><i class="fa-regular fa-circle-check"></i> Mechanics, Waves &amp; Thermodynamics</li>
-              <li><i class="fa-regular fa-circle-check"></i> Python Programming &amp; Logic Design</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('11-nonmed');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
-            </div>
-          </div>
+          <!-- Modal Body with 4 Stream Cards -->
+          <div style="padding:24px; flex:1;">
+            <div class="cards-grid">
+              <!-- Medical Science -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Medical</div>
+                <div class="card-icon med-color"><i class="fa-solid fa-dna"></i></div>
+                <h3 class="card-title">Medical Science</h3>
+                <p class="card-desc">Botany (35m), Zoology (35m), Physics (70m), Chemistry (70m), and General English (80m) comprehensive modules.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Plant &amp; Human Physiology</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Cell Biology, Genetics &amp; Ecology</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-med');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-med');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
 
-          <div class="study-card stream-card">
-            <div class="card-badge">Business &amp; Finance</div>
-            <div class="card-icon comm-color"><i class="fa-solid fa-chart-line"></i></div>
-            <h3 class="card-title">Commerce</h3>
-            <p class="card-desc">Accountancy (80m), Business Studies (80m), Economics (80m), Entrepreneurship (80m), and Business Math (80m).</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Financial Statements of Sole Proprietorship</li>
-              <li><i class="fa-regular fa-circle-check"></i> Business Finance &amp; E-Commerce</li>
-              <li><i class="fa-regular fa-circle-check"></i> Statistical Tools &amp; Indian Economic Development</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('11-comm');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
-            </div>
-          </div>
+              <!-- Non-Medical Science -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Engineering</div>
+                <div class="card-icon nonmed-color"><i class="fa-solid fa-compass-drafting"></i></div>
+                <h3 class="card-title">Non-Medical Science</h3>
+                <p class="card-desc">Mathematics (80m), Physics (70m), Chemistry (70m), and Computer Science Python (70m) structured curriculum.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Calculus, Algebra &amp; Coordinate Geometry</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Mechanics, Waves &amp; Thermodynamics</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Python Programming &amp; Logic Design</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-nonmed');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
 
-          <div class="study-card stream-card">
-            <div class="card-badge">Humanities</div>
-            <div class="card-icon arts-color"><i class="fa-solid fa-landmark"></i></div>
-            <h3 class="card-title">Arts &amp; Humanities</h3>
-            <p class="card-desc">Political Science (80m), History (80m), Sociology (80m), Psychology (70m), Geography (70m), and Education (80m).</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Indian Constitution &amp; Political Theory</li>
-              <li><i class="fa-regular fa-circle-check"></i> World History (Mesopotamia, Rome, Mongols)</li>
-              <li><i class="fa-regular fa-circle-check"></i> Classical Sociological &amp; Psychological Thought</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('11-arts');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+              <!-- Commerce -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Business &amp; Finance</div>
+                <div class="card-icon comm-color"><i class="fa-solid fa-chart-line"></i></div>
+                <h3 class="card-title">Commerce</h3>
+                <p class="card-desc">Accountancy (80m), Business Studies (80m), Economics (80m), Entrepreneurship (80m), and Business Math (80m).</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Financial Statements of Sole Proprietorship</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Business Finance &amp; E-Commerce</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Statistical Tools &amp; Indian Economic Development</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-comm');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Arts & Humanities -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Humanities</div>
+                <div class="card-icon arts-color"><i class="fa-solid fa-landmark"></i></div>
+                <h3 class="card-title">Arts &amp; Humanities</h3>
+                <p class="card-desc">Political Science (80m), History (80m), Sociology (80m), Psychology (70m), Geography (70m), and Education (80m).</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Indian Constitution &amp; Political Theory</li>
+                  <li><i class="fa-regular fa-circle-check"></i> World History (Mesopotamia, Rome, Mongols)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Classical Sociological &amp; Psychological Thought</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-arts');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -866,7 +929,7 @@
   <script src="analytics.js?v=1"></script>
 
   <!-- Syllabus Dataset & Main JavaScript File -->
-  <script src="script.js?v=48"></script>
+  <script src="script.js?v=49"></script>
 
   <!-- Floating Store Button (Right Side on Both Mobile & Laptop) -->
   <a href="store.html" class="floating-store-btn" aria-label="Visit Book &amp; Stationery Store">
@@ -945,6 +1008,22 @@
 
     function closeClass10Modal() {
       const modal = document.getElementById('class10CollectionModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openClass11Modal() {
+      const modal = document.getElementById('class11CollectionModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeClass11Modal() {
+      const modal = document.getElementById('class11CollectionModal');
       if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';

@@ -4312,24 +4312,35 @@ img, video, iframe, table, pre, canvas {
 }
 
 /* ===================================================
-   CLASS 10TH SHOWCASE CARD & POPUP WINDOW RESPONSIVENESS
+   CLASS 10TH & 11TH SHOWCASE CARDS & POPUP WINDOW RESPONSIVENESS
    =================================================== */
-.class10-showcase-card {
+.class10-showcase-card,
+.class11-showcase-card {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+.class10-showcase-card:hover,
+.class11-showcase-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.45) !important;
+}
+
 @media (max-width: 768px) {
-  .class10-showcase-card {
+  .class10-showcase-card,
+  .class11-showcase-card {
     padding: 18px 18px !important;
     gap: 16px !important;
   }
-  .class10-showcase-card > div:first-child {
+  .class10-showcase-card > div:first-child,
+  .class11-showcase-card > div:first-child {
     gap: 14px !important;
   }
-  .class10-showcase-card h3 {
+  .class10-showcase-card h3,
+  .class11-showcase-card h3 {
     font-size: 18px !important;
   }
-  .class10-showcase-card button {
+  .class10-showcase-card button,
+  .class11-showcase-card button {
     width: 100% !important;
     justify-content: center !important;
   }

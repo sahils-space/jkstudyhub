@@ -901,7 +901,8 @@ const SYLLABUS_PDF_DATA = {
 
   function restoreBodyOverflowIfNoModals() {
     const c10Modal = document.getElementById('class10CollectionModal');
-    if (c10Modal && c10Modal.style.display === 'flex') {
+    const c11Modal = document.getElementById('class11CollectionModal');
+    if ((c10Modal && c10Modal.style.display === 'flex') || (c11Modal && c11Modal.style.display === 'flex')) {
       document.body.style.overflow = 'hidden';
       return;
     }
@@ -918,6 +919,22 @@ const SYLLABUS_PDF_DATA = {
 
   window.closeClass10Modal = function() {
     const modal = document.getElementById('class10CollectionModal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.openClass11Modal = function() {
+    const modal = document.getElementById('class11CollectionModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  window.closeClass11Modal = function() {
+    const modal = document.getElementById('class11CollectionModal');
     if (modal) {
       modal.style.display = 'none';
       document.body.style.overflow = '';
@@ -2433,6 +2450,7 @@ const SYLLABUS_PDF_DATA = {
       window.toggleUserDropdown(false);
       if (typeof closePromoModal === 'function') closePromoModal();
       if (typeof closeClass10Modal === 'function') closeClass10Modal();
+      if (typeof closeClass11Modal === 'function') closeClass11Modal();
     }
   });
 
