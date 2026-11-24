@@ -4241,10 +4241,233 @@ const DEFAULT_SELLER_PRODUCTS = [
       "images/products/pencils-1.jpg"
     ],
     "image": "images/products/pencils-1.jpg"
+  },
+  {
+    "id": "PRD-1795461871490",
+    "name": "Wesley Milestone Backpack (Grey & Black)",
+    "title": "Wesley Milestone Backpack (Grey & Black)",
+    "category": "stationery",
+    "price": 899,
+    "mrp": 1499,
+    "badge": "✨ Fresh Stock",
+    "desc": "PREMIUM BACKPACK FOR SCHOOL AND LAPTOP",
+    "photos": [
+      "images/products/wesley-milestone-backpack.jpg"
+    ],
+    "image": "images/products/wesley-milestone-backpack.jpg"
+  },
+  {
+    "id": "PRD-1795462446020",
+    "name": "Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)",
+    "title": "Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)",
+    "category": "stationery",
+    "price": 379,
+    "mrp": 599,
+    "badge": "⚡ Fast Dispatch",
+    "desc": "Customisable Name LED Temperature Display Insulated Water Bottle (500ml, Matte Black). Personalised with permanent laser engraving — ideal for students, office use, coaching, and gifting!",
+    "photos": [
+      "images/products/customisable-led-water-bottle.jpg"
+    ],
+    "image": "images/products/customisable-led-water-bottle.jpg"
+  },
+  {
+    "id": "PRD-1795529389552",
+    "name": "SPIRAL COPIES SET OF 6 (302-PAGES)",
+    "title": "SPIRAL COPIES SET OF 6 (302-PAGES)",
+    "category": "school-copies",
+    "price": 929,
+    "mrp": 990,
+    "classLevel": "",
+    "badge": "🔥 Bestseller",
+    "desc": "SET OF 6 SPIRAL COPIES 300+ PAGES",
+    "photos": [
+      "images/products/spiral-copies-set-of-6.jpg"
+    ],
+    "image": "images/products/spiral-copies-set-of-6.jpg"
+  },
+  {
+    "id": "PRD-1795537224571",
+    "name": "SPIRAL BUNDLE FOR CLASS 10TH",
+    "title": "SPIRAL BUNDLE FOR CLASS 10TH",
+    "category": "school-copies",
+    "price": 1199,
+    "mrp": 1599,
+    "classLevel": "10",
+    "badge": "🔥 Bestseller",
+    "desc": "PREMIUM SPIRAL BUNDLE FOR CLASS 10TH NOTES MAKING",
+    "photos": [
+      "images/products/spiral-bundle-class-10th.jpg"
+    ],
+    "image": "images/products/spiral-bundle-class-10th.jpg"
+  },
+  {
+    "id": "PRD-1795444930762",
+    "name": "CLASS 10TH BOOK SET",
+    "title": "CLASS 10TH BOOK SET",
+    "category": "school-books",
+    "price": 1150,
+    "mrp": 1999,
+    "classLevel": "10",
+    "badge": "🔥 Bestseller",
+    "desc": "Complete JKBOSE Class 10th Textbook Set – 2027 Edition",
+    "photos": [
+      "images/products/class-10th-book-set.jpg"
+    ],
+    "image": "images/products/class-10th-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795446625545",
+    "name": "CLASS 11TH-MED BOOK SET",
+    "title": "CLASS 11TH-MED BOOK SET",
+    "category": "school-books",
+    "price": 750,
+    "mrp": 1499,
+    "classLevel": "11",
+    "badge": "⚡ Fast Dispatch",
+    "desc": "JKBOSE class 11th medical stream book set",
+    "photos": [
+      "images/products/class-11th-med-book-set.jpg"
+    ],
+    "image": "images/products/class-11th-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795447526751",
+    "name": "CLASS 12TH-MED BOOK SET",
+    "title": "CLASS 12TH-MED BOOK SET",
+    "category": "school-books",
+    "price": 750,
+    "mrp": 1499,
+    "classLevel": "12",
+    "badge": "🔥 Bestseller",
+    "desc": "JKBOSE class 12th medical stream book set",
+    "photos": [
+      "images/products/class-12th-med-book-set.jpg"
+    ],
+    "image": "images/products/class-12th-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795449320075",
+    "name": "CLASS 11TH NON-MED BOOK SET",
+    "title": "CLASS 11TH NON-MED BOOK SET",
+    "category": "school-books",
+    "price": 1000,
+    "mrp": 1999,
+    "classLevel": "11",
+    "badge": "🔥 Bestseller",
+    "desc": "JKBOSE CLASS 11th NON-MEDICAL BOOK SET",
+    "photos": [
+      "images/products/class-11th-non-med-book-set.jpg"
+    ],
+    "image": "images/products/class-11th-non-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795449535662",
+    "name": "CLASS 12TH NON-MED BOOK SET",
+    "title": "CLASS 12TH NON-MED BOOK SET",
+    "category": "school-books",
+    "price": 1000,
+    "mrp": 1999,
+    "classLevel": "12",
+    "badge": "✨ Featured",
+    "desc": "JKBOSE CLASS 12TH NON-MEDICAL BOOK SET",
+    "photos": [
+      "images/products/class-12th-non-med-book-set.jpg"
+    ],
+    "image": "images/products/class-12th-non-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795450473067",
+    "name": "CLASS 9TH BOOK SET",
+    "title": "CLASS 9TH BOOK SET",
+    "category": "school-books",
+    "price": 1019,
+    "mrp": 1499,
+    "classLevel": "9",
+    "badge": "📚 Board Exam 2026",
+    "desc": "JKBOSE CLASS 9TH COMPLETE BOOK SET 2027",
+    "photos": [
+      "images/products/class-9th-book-set.jpg"
+    ],
+    "image": "images/products/class-9th-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795450742606",
+    "name": "CLASS 11TH-HUMANITIES BOOK SET",
+    "title": "CLASS 11TH-HUMANITIES BOOK SET",
+    "category": "school-books",
+    "price": 1199,
+    "mrp": 1999,
+    "classLevel": "11",
+    "badge": "✨ Featured",
+    "desc": "JKBOSE CLASS 11TH HUMANITIES BOOK SET",
+    "photos": [
+      "images/products/class-11th-humanities-book-set.jpg"
+    ],
+    "image": "images/products/class-11th-humanities-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795450948664",
+    "name": "CLASS 12TH-HUMANITIES BOOK SET",
+    "title": "CLASS 12TH-HUMANITIES BOOK SET",
+    "category": "school-books",
+    "price": 1199,
+    "mrp": 1999,
+    "classLevel": "12",
+    "badge": "🔥 Bestseller",
+    "desc": "JKBOSE CLASS 12TH HUMANITIES STREAM COMPLETE BOOK SET",
+    "photos": [
+      "images/products/class-12th-humanities-book-set.jpg"
+    ],
+    "image": "images/products/class-12th-humanities-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795519089371",
+    "name": "FOUNDATION COURSE CLASS 10TH",
+    "title": "FOUNDATION COURSE CLASS 10TH",
+    "category": "school-books",
+    "price": 349,
+    "mrp": 400,
+    "classLevel": "10",
+    "badge": "🔥 Bestseller",
+    "desc": "FOUNDATION COURSE CLASS 10TH",
+    "photos": [
+      "images/products/foundation-course-physics-10th.jpg"
+    ],
+    "image": "images/products/foundation-course-physics-10th.jpg"
+  },
+  {
+    "id": "PRD-1795519287298",
+    "name": "CLASS 10TH-BIO FOUNDATION COURSE",
+    "title": "CLASS 10TH-BIO FOUNDATION COURSE",
+    "category": "school-books",
+    "price": 499,
+    "mrp": 600,
+    "classLevel": "10",
+    "badge": "🔥 Bestseller",
+    "desc": "CLASS 1OTH-BIO FOUNDATION COURSE",
+    "photos": [
+      "images/products/foundation-course-bio-10th.jpg"
+    ],
+    "image": "images/products/foundation-course-bio-10th.jpg"
+  },
+  {
+    "id": "PRD-1795519561610",
+    "name": "CHEMISTRY MTG BOOK FOUNDATION COURSE",
+    "title": "CHEMISTRY MTG BOOK FOUNDATION COURSE",
+    "category": "exam-kits",
+    "price": 499,
+    "mrp": 550,
+    "classLevel": "10",
+    "badge": "🔥 Bestseller",
+    "desc": "CHEMISTRY MTG BOOK FOUNDATION COURSE CLASS 10TH",
+    "photos": [
+      "images/products/foundation-course-chem-10th.jpg"
+    ],
+    "image": "images/products/foundation-course-chem-10th.jpg"
   }
 ];
 
-// Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
+// Get all published catalog products// Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
 function getSellerAllPublishedProducts() {
   const userRole = getSellerUserRole();
   const isAmbassador = (userRole === 'ambassador');

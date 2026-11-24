@@ -5283,7 +5283,7 @@
     <!-- =========================================================================
          SECTION: SCHOOL COPIES & REGISTERS (NURSERY TO COLLEGE & GRADUATION)
          ========================================================================= -->
-    <div id="school-copies-header" style="display:none; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+    <div id="school-copies-header" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 class="category-title" id="section-copies" style="margin:0; padding:0; border:none;">
           <i class="fa-solid fa-book" style="color:#2563eb;"></i> School Copies &amp; Registers (Less Than Bookshop Rates &amp; Less Than MRP)
@@ -5294,206 +5294,63 @@
       </div>
     </div>
 
-    <div class="product-grid" id="copiesGrid" style="display:none;">
-      
-      <!-- Copy 1: Single-Line Student Exercise Notebook (Pack of 6) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Single-Line Exercise Notebooks" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+    <div class="product-grid" id="copiesGrid">
+      <div class="product-card school-catalog-product-card" data-category="school-copies" data-class-level="" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;SPIRAL COPIES SET OF 6 (302-PAGES)&#39;)" aria-label="Add SPIRAL COPIES SET OF 6 (302-PAGES) to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/spiral-copies-set-of-6.jpg" alt="SPIRAL COPIES SET OF 6 (302-PAGES)" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Single-Line Exercise Copies (Pack of 6)</h3>
-          <p class="product-desc">172 Pages each &middot; 70 GSM Premium White Paper &middot; Laminated protective cover &middot; Standard for Class 1st to 10th &amp; College notes.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Copies & Registers
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;SPIRAL COPIES SET OF 6 (302-PAGES)&#39;)">SPIRAL COPIES SET OF 6 (302-PAGES)</h3>
+          <p class="product-desc">SET OF 6 SPIRAL COPIES 300+ PAGES</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹929</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹990</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Single-Line Exercise Copies (Pack of 6)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;SPIRAL COPIES SET OF 6 (302-PAGES)&#39;, 929, &#39;physical&#39;, &#39;school-copies&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;SPIRAL COPIES SET OF 6 (302-PAGES)&#39;, 929, &#39;physical&#39;, &#39;school-copies&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;SPIRAL COPIES SET OF 6 (302-PAGES)&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Copy 2: Single-Line Exercise Notebooks Mega Bundle (Pack of 12) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Single-Line Exercise Copies Mega Pack of 12" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-copies" data-class-level="10" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;SPIRAL BUNDLE FOR CLASS 10TH&#39;)" aria-label="Add SPIRAL BUNDLE FOR CLASS 10TH to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/spiral-bundle-class-10th.jpg" alt="SPIRAL BUNDLE FOR CLASS 10TH" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Single-Line Copies (Pack of 12 Mega Pack)</h3>
-          <p class="product-desc">12 Full Exercise Notebooks (172 pgs) &middot; Full semester stock at less than bookshop rates & less than MRP &middot; High opacity, zero ink bleed.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Copies & Registers · Class 10th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;SPIRAL BUNDLE FOR CLASS 10TH&#39;)">SPIRAL BUNDLE FOR CLASS 10TH</h3>
+          <p class="product-desc">PREMIUM SPIRAL BUNDLE FOR CLASS 10TH NOTES MAKING</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1199</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1599</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Single-Line Copies (Pack of 12 Mega Pack)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;SPIRAL BUNDLE FOR CLASS 10TH&#39;, 1199, &#39;physical&#39;, &#39;school-copies&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;SPIRAL BUNDLE FOR CLASS 10TH&#39;, 1199, &#39;physical&#39;, &#39;school-copies&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;SPIRAL BUNDLE FOR CLASS 10TH&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Copy 3: Four-Line English Notebooks (Pack of 6) for Primary / Nursery -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Four-Line English Copies" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Four-Line English Copies (Pack of 6)</h3>
-          <p class="product-desc">Precision red &amp; blue ruled guidelines &middot; Essential for Nursery, LKG, UKG &amp; Class 1st to 3rd handwriting perfection.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Four-Line English Copies (Pack of 6)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Copy 4: Two-Line Urdu & Kashmiri Notebooks (Pack of 6) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Two-Line Urdu Copies" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Two-Line Urdu Copies (Pack of 6)</h3>
-          <p class="product-desc">Authentic double-line spacing designed for Urdu Khushkhati (calligraphy) &amp; Kashmiri curriculum across all schools.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Two-Line Urdu Copies (Pack of 6)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Copy 5: Math Square Grid Notebooks (Pack of 6) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Math Square Grid Copies" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Math Square Grid Copies (Pack of 6)</h3>
-          <p class="product-desc">Crisp square boxes for numbers, geometry &amp; arithmetic tables &middot; Class 1st to 8th primary &amp; middle school standard.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Math Square Grid Copies (Pack of 6)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Copy 6: Practical / Science Interleaf Lab Notebook -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Science Practical Lab Notebook" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Science Practical Lab Copy (Hardbound)</h3>
-          <p class="product-desc">One side ruled, one side blank plain for biological &amp; physical diagrams &middot; Class 9th to 12th Board Practical standard.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Science Practical Lab Copy (Hardbound)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Copy 7: Premium Spiral College Register (240 Pages) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Premium Spiral College Register" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Spiral College Register (240 Pages)</h3>
-          <p class="product-desc">Heavy duty metallic spiral binding with poly-cover &middot; 80 GSM ultra-smooth paper for coaching &amp; college lectures.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Spiral College Register (240 Pages)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Copy 8: Hardcover Office & College Register (320 Pages) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/premium-spiral-copies.webp" alt="Hardcover College Register" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Hardcover Register (320 Pages Bound)</h3>
-          <p class="product-desc">Rigid bound cardboard spine &middot; Ideal for graduation, engineering, accountancy &amp; long-term academic archives.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Hardcover Register (320 Pages Bound)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <!-- =========================================================
          SECTION: SCHOOL BOOKS (CLASS 1ST TO CLASS 12TH)
          ========================================================= -->
-    <div id="school-books-header" style="display:none; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+    <div id="school-books-header" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
       <div>
         <h2 class="category-title" id="section-school-books" style="margin:0; padding:0; border:none;">
           <i class="fa-solid fa-graduation-cap" style="color:#2563eb;"></i> School Books (Class 1st to 12th)
@@ -5506,7 +5363,7 @@
 
     
     <!-- School Books Class Selection Menu Strip -->
-    <div class="school-class-menu-strip" id="schoolClassMenu" style="display:none; gap:8px; overflow-x:auto; padding:6px 0 16px; margin-bottom:12px; scrollbar-width:thin;">
+    <div class="school-class-menu-strip" id="schoolClassMenu" style="display:flex; gap:8px; overflow-x:auto; padding:6px 0 16px; margin-bottom:12px; scrollbar-width:thin;">
       <button type="button" class="school-class-tab active" data-class="all" onclick="filterSchoolClassBooks('all', this)" style="padding:7px 16px; font-size:12px; font-weight:700; border-radius:20px; border:1px solid #1e3a8a; background:#1e3a8a; color:white; cursor:pointer; white-space:nowrap; transition:all 0.2s;">
         All Classes
       </button>
@@ -5548,435 +5405,253 @@
       </button>
     </div>
 
-    <div class="product-grid" id="schoolBooksGrid" style="display:none;">
-
-      <!-- Book Set 1: Class 1st Complete Book Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 1st Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+    <div class="product-grid" id="schoolBooksGrid">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="10" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 10TH BOOK SET&#39;)" aria-label="Add CLASS 10TH BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-10th-book-set.jpg" alt="CLASS 10TH BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 1st Complete Book Set</h3>
-          <p class="product-desc">Full 6-Book Curriculum: English, Mathematics, EVS, Urdu, Hindi &amp; Art. Please confirm the applicable school syllabus with support before ordering.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 10th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 10TH BOOK SET&#39;)">CLASS 10TH BOOK SET</h3>
+          <p class="product-desc">Complete JKBOSE Class 10th Textbook Set – 2027 Edition</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1150</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1999</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 1st Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 10TH BOOK SET&#39;, 1150, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 10TH BOOK SET&#39;, 1150, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 10TH BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 2: Class 2nd Complete Book Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 2nd Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="11" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH-MED BOOK SET&#39;)" aria-label="Add CLASS 11TH-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-11th-med-book-set.jpg" alt="CLASS 11TH-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 2nd Complete Book Set</h3>
-          <p class="product-desc">Full textbook set: English Reader, Math Magic, Environmental Science, Urdu Qayida &amp; Hindi. Dispatched based on your school name.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 11th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 11TH-MED BOOK SET&#39;)">CLASS 11TH-MED BOOK SET</h3>
+          <p class="product-desc">JKBOSE class 11th medical stream book set</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹750</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1499</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 2nd Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 11TH-MED BOOK SET&#39;, 750, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 11TH-MED BOOK SET&#39;, 750, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 11TH-MED BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 3: Class 3rd Complete Book Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 3rd Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="12" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH-MED BOOK SET&#39;)" aria-label="Add CLASS 12TH-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-12th-med-book-set.jpg" alt="CLASS 12TH-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 3rd Complete Book Set</h3>
-          <p class="product-desc">Complete set covering English, Math, Science/EVS, Social Studies, Urdu &amp; Grammar. Packaged according to your school's syllabus.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 12th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 12TH-MED BOOK SET&#39;)">CLASS 12TH-MED BOOK SET</h3>
+          <p class="product-desc">JKBOSE class 12th medical stream book set</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹750</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1499</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 3rd Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 12TH-MED BOOK SET&#39;, 750, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 12TH-MED BOOK SET&#39;, 750, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 12TH-MED BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 4: Class 4th Complete Book Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 4th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="11" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH NON-MED BOOK SET&#39;)" aria-label="Add CLASS 11TH NON-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-11th-non-med-book-set.jpg" alt="CLASS 11TH NON-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 4th Complete Book Set</h3>
-          <p class="product-desc">Complete textbooks set with workbooks. High-definition color illustrations. Prescribed for top private &amp; govt institutions.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 11th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 11TH NON-MED BOOK SET&#39;)">CLASS 11TH NON-MED BOOK SET</h3>
+          <p class="product-desc">JKBOSE CLASS 11th NON-MEDICAL BOOK SET</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1000</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1999</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 4th Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 11TH NON-MED BOOK SET&#39;, 1000, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 11TH NON-MED BOOK SET&#39;, 1000, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 11TH NON-MED BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 5: Class 5th Complete Book Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 5th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="12" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH NON-MED BOOK SET&#39;)" aria-label="Add CLASS 12TH NON-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-12th-non-med-book-set.jpg" alt="CLASS 12TH NON-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 5th Complete Book Set</h3>
-          <p class="product-desc">Full 7-book bundle for 5th Grade. English, Mathematics, General Science, Social Science, Urdu, Hindi &amp; Computers.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 12th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 12TH NON-MED BOOK SET&#39;)">CLASS 12TH NON-MED BOOK SET</h3>
+          <p class="product-desc">JKBOSE CLASS 12TH NON-MEDICAL BOOK SET</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1000</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1999</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 5th Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 12TH NON-MED BOOK SET&#39;, 1000, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 12TH NON-MED BOOK SET&#39;, 1000, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 12TH NON-MED BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 6: Class 6th Complete Middle School Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 6th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="9" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 9TH BOOK SET&#39;)" aria-label="Add CLASS 9TH BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-9th-book-set.jpg" alt="CLASS 9TH BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 6th Complete Book Set</h3>
-          <p class="product-desc">Complete NCERT &amp; Private School Curricula: Science, Mathematics, History, Civics, Geography, English Honeycomb &amp; Urdu.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 9th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 9TH BOOK SET&#39;)">CLASS 9TH BOOK SET</h3>
+          <p class="product-desc">JKBOSE CLASS 9TH COMPLETE BOOK SET 2027</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1019</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1499</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 6th Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 9TH BOOK SET&#39;, 1019, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 9TH BOOK SET&#39;, 1019, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 9TH BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 7: Class 7th Complete Middle School Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 7th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="11" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH-HUMANITIES BOOK SET&#39;)" aria-label="Add CLASS 11TH-HUMANITIES BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-11th-humanities-book-set.jpg" alt="CLASS 11TH-HUMANITIES BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 7th Complete Book Set</h3>
-          <p class="product-desc">Full 7th Class academic bundle. All core textbooks matching your school's designated publisher and syllabus.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 11th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 11TH-HUMANITIES BOOK SET&#39;)">CLASS 11TH-HUMANITIES BOOK SET</h3>
+          <p class="product-desc">JKBOSE CLASS 11TH HUMANITIES BOOK SET</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1199</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1999</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 7th Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 11TH-HUMANITIES BOOK SET&#39;, 1199, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 11TH-HUMANITIES BOOK SET&#39;, 1199, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 11TH-HUMANITIES BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 8: Class 8th Board Preparation Complete Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 8th Complete Book Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="12" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH-HUMANITIES BOOK SET&#39;)" aria-label="Add CLASS 12TH-HUMANITIES BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/class-12th-humanities-book-set.jpg" alt="CLASS 12TH-HUMANITIES BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 8th Complete Book Set</h3>
-          <p class="product-desc">Critical 8th Class board exam curriculum: Mathematics, Science, Social Sciences, English &amp; Urdu with board model question blueprints.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 12th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 12TH-HUMANITIES BOOK SET&#39;)">CLASS 12TH-HUMANITIES BOOK SET</h3>
+          <p class="product-desc">JKBOSE CLASS 12TH HUMANITIES STREAM COMPLETE BOOK SET</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹1199</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹1999</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 8th Complete Book Set')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 12TH-HUMANITIES BOOK SET&#39;, 1199, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 12TH-HUMANITIES BOOK SET&#39;, 1199, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 12TH-HUMANITIES BOOK SET&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 9: Class 9th High School Set (JKBOSE & NCERT) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 9th Textbooks Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="10" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;FOUNDATION COURSE CLASS 10TH&#39;)" aria-label="Add FOUNDATION COURSE CLASS 10TH to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/foundation-course-physics-10th.jpg" alt="FOUNDATION COURSE CLASS 10TH" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 9th Textbooks Set (NCERT/JKBOSE)</h3>
-          <p class="product-desc">Full 5-Subject Foundation: Physics, Chemistry, Biology, Mathematics, Social Science &amp; English Beehive. Doorstep Kashmir delivery.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 10th
+          </div>
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;FOUNDATION COURSE CLASS 10TH&#39;)">FOUNDATION COURSE CLASS 10TH</h3>
+          <p class="product-desc">FOUNDATION COURSE CLASS 10TH</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹349</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹400</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 9th Textbooks Set (NCERT/JKBOSE)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;FOUNDATION COURSE CLASS 10TH&#39;, 349, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;FOUNDATION COURSE CLASS 10TH&#39;, 349, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;FOUNDATION COURSE CLASS 10TH&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Book Set 10: Class 10th Board Complete Textbooks Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 10th Board Textbooks Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="10" data-stock-status="in_stock">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 10TH-BIO FOUNDATION COURSE&#39;)" aria-label="Add CLASS 10TH-BIO FOUNDATION COURSE to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/foundation-course-bio-10th.jpg" alt="CLASS 10TH-BIO FOUNDATION COURSE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
-          
-          <h3 class="product-title">Class 10th Board Set (All 5 Subjects)</h3>
-          <p class="product-desc">Complete JKBOSE Class 10th Board bundle: Science, Math, Democratic Politics, Geography, History, Economics &amp; First Flight.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 10th Board Set (All 5 Subjects)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
+          <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
+            School Books · Class 10th
           </div>
-        </div>
-      </div>
-
-      <!-- Book Set 11: Class 11th Medical Stream Set (PCB) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 11th Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 11th Medical Set (Physics, Chem, Bio)</h3>
-          <p class="product-desc">Complete NCERT Textbooks (Physics Vol 1 &amp; 2, Chemistry Vol 1 &amp; 2, Biology) &middot; Official JKBOSE &amp; NEET aligned curriculum.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
+          <h3 class="product-title" style="cursor:pointer;" onclick="openBookDetailsModal(&#39;CLASS 10TH-BIO FOUNDATION COURSE&#39;)">CLASS 10TH-BIO FOUNDATION COURSE</h3>
+          <p class="product-desc">CLASS 1OTH-BIO FOUNDATION COURSE</p>
+          <div style="font-size:11px; color:#166534; font-weight:700; margin-bottom:6px;">In stock</div>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹499</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹600</span>
+              </div>
             </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 11th Medical Set (Physics, Chem, Bio)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 12: Class 11th Non-Medical Stream Set (PCM) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 11th Non-Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 11th Non-Med Set (Physics, Chem, Math)</h3>
-          <p class="product-desc">Complete NCERT Volumes: Physics Part 1 &amp; 2, Chemistry Part 1 &amp; 2, Mathematics Part 1 &amp; 2 &middot; Engineering &amp; JKBOSE standard.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 11th Non-Med Set (Physics, Chem, Math)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 13: Class 11th Commerce Stream Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 11th Commerce Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 11th Commerce Set (Accounts, BST, Eco)</h3>
-          <p class="product-desc">Financial Accounting Vol 1 &amp; 2, Business Studies, Microeconomics &amp; Statistics for Economics &middot; Complete JKBOSE pack.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 11th Commerce Set (Accounts, BST, Eco)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 14: Class 11th Arts / Humanities Stream Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 11th Arts Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 11th Arts Set (Pol Sci, History, Soc)</h3>
-          <p class="product-desc">Indian Constitution at Work, Political Theory, Themes in World History, Introducing Sociology &amp; Economics textbooks bundle.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 11th Arts Set (Pol Sci, History, Soc)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 15: Class 12th Medical Stream Set (PCB) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 12th Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 12th Medical Set (Physics, Chem, Bio)</h3>
-          <p class="product-desc">Complete Class 12th Board Bundle: Physics 1 &amp; 2, Chemistry 1 &amp; 2, Biology Part 1 &amp; 2 &middot; 100% Board &amp; NEET syllabus coverage.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 12th Medical Set (Physics, Chem, Bio)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 16: Class 12th Non-Medical Stream Set (PCM) -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 12th Non-Medical Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 12th Non-Med Set (Physics, Chem, Math)</h3>
-          <p class="product-desc">Physics Vol 1 &amp; 2, Chemistry Vol 1 &amp; 2, Mathematics Vol 1 &amp; 2 &middot; Official Board Edition delivered to your doorstep.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 12th Non-Med Set (Physics, Chem, Math)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 17: Class 12th Commerce Stream Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 12th Commerce Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 12th Commerce Set (Accounts, BST, Eco)</h3>
-          <p class="product-desc">Partnership &amp; Company Accounts, Business Studies Principles, Macroeconomics &amp; Indian Economic Development bundle.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 12th Commerce Set (Accounts, BST, Eco)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Book Set 18: Class 12th Arts / Humanities Stream Set -->
-      <div class="product-card">
-        <span class="corner-coming-soon" style="position:absolute; top:10px; right:10px; z-index:10; background:#fef08a; color:#854d0e; border:1.5px solid #fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-clock"></i> Coming Soon
-        </span>
-        
-        <img src="images/products/school-bookset-bundle.webp" alt="Class 12th Arts Set" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
-        <div class="product-info">
-          
-          <h3 class="product-title">Class 12th Arts Set (Pol Sci, History, Soc)</h3>
-          <p class="product-desc">Contemporary World Politics, Politics in India Since Independence, Themes in Indian History Parts 1, 2, 3 &amp; Social Change in India.</p>
-          <div class="product-footer" style="flex-direction:column; align-items:stretch; gap:8px;">
-            <div style="font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-tag"></i> Less Than Retail &amp; Book Shop Price
-            </div>
-            <div class="product-actions" style="width:100%;">
-              <button class="buy-btn" style="width:100%; background:#2563eb; color:white; padding:10px 14px; font-size:13px; font-weight:700; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;" onclick="preBookViaWhatsApp('Class 12th Arts Set (Pol Sci, History, Soc)')">
-                <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> Coming Soon &bull; Notify Me
-              </button>
+            <div class="product-actions" style="gap:6px;">
+              <button type="button" class="buy-btn" onclick="openCheckout(&#39;CLASS 10TH-BIO FOUNDATION COURSE&#39;, 499, &#39;physical&#39;, &#39;school-books&#39;)">Buy Now</button>
+              <button type="button" class="btn-icon" onclick="addToCart(&#39;CLASS 10TH-BIO FOUNDATION COURSE&#39;, 499, &#39;physical&#39;, &#39;school-books&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button type="button" class="btn-icon" onclick="openBookDetailsModal(&#39;CLASS 10TH-BIO FOUNDATION COURSE&#39;)" title="1 product photo"><i class="fa-solid fa-eye"></i></button>
             </div>
           </div>
         </div>
@@ -5994,6 +5669,45 @@
     </div>
 
     <div class="product-grid" id="examKitsGrid" style="margin-bottom: 30px;">
+<div id="dynamicExamKitsContainer" style="display:contents;">
+        <div class="product-card" style="border: 2px solid #ea580c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);" data-category="exam-kits">
+          <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CHEMISTRY MTG BOOK FOUNDATION COURSE&#39;)"><i class="fa-solid fa-heart"></i></button>
+          <div style="position:relative;">
+            <img src="images/products/foundation-course-chem-10th.jpg" alt="CHEMISTRY MTG BOOK FOUNDATION COURSE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+            <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
+              <i class="fa-solid fa-fire"></i> 🔥 Bestseller
+            </span>
+          </div>
+          <div class="product-info">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+              <span style="background:#ffedd5; color:#9a3412; font-size:11px; font-weight:800; padding:2px 8px; border-radius:4px;">CLASS 10TH JKBOSE</span>
+              <span style="color:#f59e0b; font-weight:800; font-size:12px;"><i class="fa-solid fa-star"></i> Master Kit Collection</span>
+            </div>
+            <h3 class="product-title" style="font-size:17px; font-weight:800; color:#0f172a;">CHEMISTRY MTG BOOK FOUNDATION COURSE</h3>
+            <p class="product-desc" style="color:#475569; font-size:12.5px; line-height:1.5;">CHEMISTRY MTG BOOK FOUNDATION COURSE CLASS 10TH</p>
+            <div class="product-footer" style="margin-top:10px;">
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span class="product-price" style="font-size:22px; color:#ea580c;">₹499</span>
+                  <span style="text-decoration:line-through; color:#94a3b8; font-size:13px; font-weight:600;">₹550</span>
+                </div>
+                <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹51 • Free Pattan Delivery</span>
+              </div>
+              <div class="product-actions" style="gap:6px;">
+                <button class="buy-btn" style="flex:1; background:#ea580c; border:none; padding:9px 12px;" onclick="openCheckout(&#39;CHEMISTRY MTG BOOK FOUNDATION COURSE&#39;, 499, &#39;physical&#39;, &#39;notes&#39;)">
+                  <i class="fa-solid fa-bolt"></i> Buy Now
+                </button>
+                <button class="btn-icon" onclick="addToCart(&#39;CHEMISTRY MTG BOOK FOUNDATION COURSE&#39;, 499, &#39;physical&#39;, &#39;notes&#39;)" title="Add to Cart">
+                  <i class="fa-solid fa-cart-plus"></i>
+                </button>
+                <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;CHEMISTRY MTG BOOK FOUNDATION COURSE&#39;, 499, &#39;notes&#39;)" title="Order on WhatsApp">
+                  <i class="fa-brands fa-whatsapp"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
       <!-- Master Kit 1: Class 10th -->
       <div class="product-card" style="border: 2px solid #fb923c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)')"><i class="fa-solid fa-heart"></i></button>
@@ -6086,7 +5800,7 @@
 
     <h2 class="category-title" id="section-academic"><i class="fa-solid fa-box"></i> Physical Study Materials &amp; Stationery</h2>
     <div class="product-grid" id="academicStationeryGrid">
-    <div id="dynamicStationeryContainer" style="display:contents;">
+<div id="dynamicStationeryContainer" style="display:contents;">
       <div class="product-card" data-product-id="PRD-1792043438782" data-render-signature="[&quot;PRD-1792043438782&quot;,&quot;Spectra paper A4&quot;,&quot;images/products/spectra-paper-a4-1.jpg&quot;,249,349,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;Premium A4 sheets, best for printing notes and documents&quot;,0]" data-category="stationery" style="--product-load-order:0">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Spectra paper A4&#39;)" aria-label="Save Spectra paper A4 to wishlist"><i class="fa-solid fa-heart"></i></button>
         <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Spectra paper A4&#39;)" style="cursor:pointer;">
@@ -6271,7 +5985,53 @@
           </div>
         </div>
       </div>
-    </div>
+      <div class="product-card" data-product-id="PRD-1795461871490" data-render-signature="[&quot;PRD-1795461871490&quot;,&quot;Wesley Milestone Backpack (Grey &amp; Black)&quot;,&quot;images/products/wesley-milestone-backpack.jpg&quot;,899,1499,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;PREMIUM BACKPACK FOR SCHOOL AND LAPTOP&quot;,8]" data-category="stationery" style="--product-load-order:8">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" aria-label="Save Wesley Milestone Backpack (Grey &amp; Black) to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/wesley-milestone-backpack.jpg" alt="Wesley Milestone Backpack (Grey &amp; Black)" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" style="cursor:pointer;">Wesley Milestone Backpack (Grey &amp; Black)</h3>
+          <p class="product-desc">PREMIUM BACKPACK FOR SCHOOL AND LAPTOP</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹899</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹1499</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹600 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;, 899, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;, 899, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;, 899, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1795462446020" data-render-signature="[&quot;PRD-1795462446020&quot;,&quot;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&quot;,&quot;images/products/customisable-led-water-bottle.jpg&quot;,379,599,&quot;⚡ Fast Dispatch&quot;,&quot;stationery&quot;,&quot;Customisable Name LED Temperature Display Insulated Water Bottle (500ml, Matte Black). Personalised with permanent laser engraving — ideal for students, office use, coaching, and gifting!&quot;,9]" data-category="stationery" style="--product-load-order:8">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" aria-label="Save Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black) to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/customisable-led-water-bottle.jpg" alt="Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ⚡ Fast Dispatch</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" style="cursor:pointer;">Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)</h3>
+          <p class="product-desc">Customisable Name LED Temperature Display Insulated Water Bottle (500ml, Matte Black). Personalised with permanent laser engraving — ideal for students, office use, coaching, and gifting!</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹379</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹599</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹220 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;, 379, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;, 379, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;, 379, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
       
       <div class="product-card" data-category="academic">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Physical Education Master Notes')" aria-label="Save Physical Education Master Notes to wishlist"><i class="fa-solid fa-heart"></i></button>
@@ -7239,7 +6999,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.33"></script>
+  <script src="store.js?v=92.36"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">

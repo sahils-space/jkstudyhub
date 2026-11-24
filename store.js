@@ -10672,7 +10672,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 249,
     "mrp": 349,
-    "badge": "✨ Fresh Stock",
+    "badge": "\u2728 Fresh Stock",
     "desc": "Premium A4 sheets, best for printing notes and documents",
     "photos": [
       "images/products/spectra-paper-a4-1.jpg",
@@ -10687,7 +10687,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 39,
     "mrp": 59,
-    "badge": "🔥 Bestseller",
+    "badge": "\ud83d\udd25 Bestseller",
     "desc": "Doms colour pencils For Good drawing Unbreakable,premium, original.",
     "photos": [
       "images/products/doms-colour-pencils-1.jpg"
@@ -10701,7 +10701,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 26,
     "mrp": 39,
-    "badge": "🔥 Bestseller",
+    "badge": "\ud83d\udd25 Bestseller",
     "desc": "DOMS highly demanded Small Pencil colours, Original high Quality Colour.",
     "photos": [
       "images/products/doms-small-colour-pencils-1.jpg"
@@ -10715,7 +10715,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 185,
     "mrp": 200,
-    "badge": "✨ Featured",
+    "badge": "\u2728 Featured",
     "desc": "CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.",
     "photos": [
       "images/products/classmate-geometry-box-1.jpg"
@@ -10729,7 +10729,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 59,
     "mrp": 70,
-    "badge": "✨ Fresh Stock",
+    "badge": "\u2728 Fresh Stock",
     "desc": "Water colours Doms, For water drawing painting and diagrams...",
     "photos": [
       "images/products/water-colours-doms-1.jpg"
@@ -10743,7 +10743,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 110,
     "mrp": 149,
-    "badge": "🔥 Bestseller",
+    "badge": "\ud83d\udd25 Bestseller",
     "desc": "Newly launched,good quality Glue For sticking the notes diagrams and photographs",
     "photos": [
       "images/products/doms-glue-stick-10-pcs-1.jpg"
@@ -10757,7 +10757,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 112,
     "mrp": 149,
-    "badge": "✨ Fresh Stock",
+    "badge": "\u2728 Fresh Stock",
     "desc": "SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS",
     "photos": [
       "images/products/nixon-doms-pen-bundle-1.jpg"
@@ -10771,12 +10771,235 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "category": "stationery",
     "price": 79,
     "mrp": 99,
-    "badge": "✨ Fresh Stock",
+    "badge": "\u2728 Fresh Stock",
     "desc": "DOMS PENCILS PACK, Dark and neat handwriting pencils for students",
     "photos": [
       "images/products/pencils-1.jpg"
     ],
     "image": "images/products/pencils-1.jpg"
+  },
+  {
+    "id": "PRD-1795461871490",
+    "name": "Wesley Milestone Backpack (Grey & Black)",
+    "title": "Wesley Milestone Backpack (Grey & Black)",
+    "category": "stationery",
+    "price": 899,
+    "mrp": 1499,
+    "badge": "\u2728 Fresh Stock",
+    "desc": "PREMIUM BACKPACK FOR SCHOOL AND LAPTOP",
+    "photos": [
+      "images/products/wesley-milestone-backpack.jpg"
+    ],
+    "image": "images/products/wesley-milestone-backpack.jpg"
+  },
+  {
+    "id": "PRD-1795462446020",
+    "name": "Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)",
+    "title": "Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)",
+    "category": "stationery",
+    "price": 379,
+    "mrp": 599,
+    "badge": "\u26a1 Fast Dispatch",
+    "desc": "Customisable Name LED Temperature Display Insulated Water Bottle (500ml, Matte Black). Personalised with permanent laser engraving \u2014 ideal for students, office use, coaching, and gifting!",
+    "photos": [
+      "images/products/customisable-led-water-bottle.jpg"
+    ],
+    "image": "images/products/customisable-led-water-bottle.jpg"
+  },
+  {
+    "id": "PRD-1795529389552",
+    "name": "SPIRAL COPIES SET OF 6 (302-PAGES)",
+    "title": "SPIRAL COPIES SET OF 6 (302-PAGES)",
+    "category": "school-copies",
+    "price": 929,
+    "mrp": 990,
+    "classLevel": "",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "SET OF 6 SPIRAL COPIES 300+ PAGES",
+    "photos": [
+      "images/products/spiral-copies-set-of-6.jpg"
+    ],
+    "image": "images/products/spiral-copies-set-of-6.jpg"
+  },
+  {
+    "id": "PRD-1795537224571",
+    "name": "SPIRAL BUNDLE FOR CLASS 10TH",
+    "title": "SPIRAL BUNDLE FOR CLASS 10TH",
+    "category": "school-copies",
+    "price": 1199,
+    "mrp": 1599,
+    "classLevel": "10",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "PREMIUM SPIRAL BUNDLE FOR CLASS 10TH NOTES MAKING",
+    "photos": [
+      "images/products/spiral-bundle-class-10th.jpg"
+    ],
+    "image": "images/products/spiral-bundle-class-10th.jpg"
+  },
+  {
+    "id": "PRD-1795444930762",
+    "name": "CLASS 10TH BOOK SET",
+    "title": "CLASS 10TH BOOK SET",
+    "category": "school-books",
+    "price": 1150,
+    "mrp": 1999,
+    "classLevel": "10",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "Complete JKBOSE Class 10th Textbook Set \u2013 2027 Edition",
+    "photos": [
+      "images/products/class-10th-book-set.jpg"
+    ],
+    "image": "images/products/class-10th-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795446625545",
+    "name": "CLASS 11TH-MED BOOK SET",
+    "title": "CLASS 11TH-MED BOOK SET",
+    "category": "school-books",
+    "price": 750,
+    "mrp": 1499,
+    "classLevel": "11",
+    "badge": "\u26a1 Fast Dispatch",
+    "desc": "JKBOSE class 11th medical stream book set",
+    "photos": [
+      "images/products/class-11th-med-book-set.jpg"
+    ],
+    "image": "images/products/class-11th-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795447526751",
+    "name": "CLASS 12TH-MED BOOK SET",
+    "title": "CLASS 12TH-MED BOOK SET",
+    "category": "school-books",
+    "price": 750,
+    "mrp": 1499,
+    "classLevel": "12",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "JKBOSE class 12th medical stream book set",
+    "photos": [
+      "images/products/class-12th-med-book-set.jpg"
+    ],
+    "image": "images/products/class-12th-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795449320075",
+    "name": "CLASS 11TH NON-MED BOOK SET",
+    "title": "CLASS 11TH NON-MED BOOK SET",
+    "category": "school-books",
+    "price": 1000,
+    "mrp": 1999,
+    "classLevel": "11",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "JKBOSE CLASS 11th NON-MEDICAL BOOK SET",
+    "photos": [
+      "images/products/class-11th-non-med-book-set.jpg"
+    ],
+    "image": "images/products/class-11th-non-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795449535662",
+    "name": "CLASS 12TH NON-MED BOOK SET",
+    "title": "CLASS 12TH NON-MED BOOK SET",
+    "category": "school-books",
+    "price": 1000,
+    "mrp": 1999,
+    "classLevel": "12",
+    "badge": "\u2728 Featured",
+    "desc": "JKBOSE CLASS 12TH NON-MEDICAL BOOK SET",
+    "photos": [
+      "images/products/class-12th-non-med-book-set.jpg"
+    ],
+    "image": "images/products/class-12th-non-med-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795450473067",
+    "name": "CLASS 9TH BOOK SET",
+    "title": "CLASS 9TH BOOK SET",
+    "category": "school-books",
+    "price": 1019,
+    "mrp": 1499,
+    "classLevel": "9",
+    "badge": "\ud83d\udcda Board Exam 2026",
+    "desc": "JKBOSE CLASS 9TH COMPLETE BOOK SET 2027",
+    "photos": [
+      "images/products/class-9th-book-set.jpg"
+    ],
+    "image": "images/products/class-9th-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795450742606",
+    "name": "CLASS 11TH-HUMANITIES BOOK SET",
+    "title": "CLASS 11TH-HUMANITIES BOOK SET",
+    "category": "school-books",
+    "price": 1199,
+    "mrp": 1999,
+    "classLevel": "11",
+    "badge": "\u2728 Featured",
+    "desc": "JKBOSE CLASS 11TH HUMANITIES BOOK SET",
+    "photos": [
+      "images/products/class-11th-humanities-book-set.jpg"
+    ],
+    "image": "images/products/class-11th-humanities-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795450948664",
+    "name": "CLASS 12TH-HUMANITIES BOOK SET",
+    "title": "CLASS 12TH-HUMANITIES BOOK SET",
+    "category": "school-books",
+    "price": 1199,
+    "mrp": 1999,
+    "classLevel": "12",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "JKBOSE CLASS 12TH HUMANITIES STREAM COMPLETE BOOK SET",
+    "photos": [
+      "images/products/class-12th-humanities-book-set.jpg"
+    ],
+    "image": "images/products/class-12th-humanities-book-set.jpg"
+  },
+  {
+    "id": "PRD-1795519089371",
+    "name": "FOUNDATION COURSE CLASS 10TH",
+    "title": "FOUNDATION COURSE CLASS 10TH",
+    "category": "school-books",
+    "price": 349,
+    "mrp": 400,
+    "classLevel": "10",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "FOUNDATION COURSE CLASS 10TH",
+    "photos": [
+      "images/products/foundation-course-physics-10th.jpg"
+    ],
+    "image": "images/products/foundation-course-physics-10th.jpg"
+  },
+  {
+    "id": "PRD-1795519287298",
+    "name": "CLASS 10TH-BIO FOUNDATION COURSE",
+    "title": "CLASS 10TH-BIO FOUNDATION COURSE",
+    "category": "school-books",
+    "price": 499,
+    "mrp": 600,
+    "classLevel": "10",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "CLASS 1OTH-BIO FOUNDATION COURSE",
+    "photos": [
+      "images/products/foundation-course-bio-10th.jpg"
+    ],
+    "image": "images/products/foundation-course-bio-10th.jpg"
+  },
+  {
+    "id": "PRD-1795519561610",
+    "name": "CHEMISTRY MTG BOOK FOUNDATION COURSE",
+    "title": "CHEMISTRY MTG BOOK FOUNDATION COURSE",
+    "category": "exam-kits",
+    "price": 499,
+    "mrp": 550,
+    "classLevel": "10",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "CHEMISTRY MTG BOOK FOUNDATION COURSE CLASS 10TH",
+    "photos": [
+      "images/products/foundation-course-chem-10th.jpg"
+    ],
+    "image": "images/products/foundation-course-chem-10th.jpg"
   }
 ];
 
@@ -11458,7 +11681,7 @@ async function syncCustomProductsWithSheet() {
             contents: sp.contents || existing.contents || ''
           };
           // If existing already has clean images/ path, preserve it!
-          if (existing.image && existing.image.startsWith('images/') && !sp.image && (!Array.isArray(sp.photos) || sp.photos.length === 0)) {
+          if (existing.image && existing.image.startsWith('images/') && (!sp.image || sp.image.startsWith('data:image'))) {
             mergedMap.set(sp.id, { ...merged, photos: existing.photos, image: existing.image, allImages: existing.photos });
           } else {
             mergedMap.set(sp.id, merged);
@@ -11583,7 +11806,7 @@ function mergeAndRenderLiveProducts(incoming) {
       mergedMap.set(key, sp);
     } else {
       const existing = mergedMap.get(key);
-      if (existing.image && existing.image.startsWith('images/') && !sp.image && (!Array.isArray(sp.photos) || sp.photos.length === 0)) {
+      if (existing.image && existing.image.startsWith('images/') && (!sp.image || sp.image.startsWith('data:image'))) {
         mergedMap.set(key, { ...sp, photos: existing.photos, image: existing.image, allImages: existing.photos });
       } else {
         mergedMap.set(key, sp);
@@ -11916,14 +12139,16 @@ function renderSchoolCatalogSections() {
 
     // Append dynamic kits if any exist
     const dynamicContainer = document.getElementById('dynamicExamKitsContainer');
-    if (!dynamicContainer) {
+    if (dynamicContainer) {
+      if (dynamicContainer.children.length === 0 || dynamicContainer.innerHTML.trim() !== dynamicKitCards.trim()) {
+        dynamicContainer.innerHTML = dynamicKitCards;
+      }
+    } else {
       const dynWrap = document.createElement('div');
       dynWrap.id = 'dynamicExamKitsContainer';
       dynWrap.style.display = 'contents';
       dynWrap.innerHTML = dynamicKitCards;
       examKitsGrid.appendChild(dynWrap);
-    } else {
-      dynamicContainer.innerHTML = dynamicKitCards;
     }
   }
 
@@ -11931,7 +12156,10 @@ function renderSchoolCatalogSections() {
   copiesGrid.style.display = copies.length ? '' : 'none';
   if (copiesCategoryCard) copiesCategoryCard.style.display = copies.length ? '' : 'none';
   if (copies.length) {
-    copiesGrid.innerHTML = copies.map(product => renderSchoolCatalogProductCard(product, 'copies')).join('');
+    const nextCopiesHtml = copies.map(product => renderSchoolCatalogProductCard(product, 'copies')).join('');
+    if (copiesGrid.children.length === 0 || copiesGrid.innerHTML.trim() !== nextCopiesHtml.trim()) {
+      copiesGrid.innerHTML = nextCopiesHtml;
+    }
   } else if (copiesGrid.childElementCount) {
     copiesGrid.replaceChildren();
   }
@@ -11940,7 +12168,10 @@ function renderSchoolCatalogSections() {
   booksGrid.style.display = books.length ? '' : 'none';
   if (booksCategoryCard) booksCategoryCard.style.display = books.length ? '' : 'none';
   if (books.length) {
-    booksGrid.innerHTML = books.map(product => renderSchoolCatalogProductCard(product, 'books')).join('');
+    const nextBooksHtml = books.map(product => renderSchoolCatalogProductCard(product, 'books')).join('');
+    if (booksGrid.children.length === 0 || booksGrid.innerHTML.trim() !== nextBooksHtml.trim()) {
+      booksGrid.innerHTML = nextBooksHtml;
+    }
   } else if (booksGrid.childElementCount) {
     booksGrid.replaceChildren();
   }
