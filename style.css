@@ -2356,6 +2356,7 @@ body {
 
 .subject-portals-section {
   background: var(--bg-slate);
+  padding: 40px 0 70px 0;
 }
 
 .portal-group {
