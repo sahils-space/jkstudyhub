@@ -1419,27 +1419,27 @@ const PRODUCT_CATALOG = {
   "Printed PYQs & Syllabus": {
     price: 49,
     category: "notes",
-    image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/printed-pyqs-syllabus.webp"
   },
   "Instant Notes (Per Subject)": {
     price: 150,
     category: "notes",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/instant-notes.webp"
   },
   "Instant Notes": {
     price: 150,
     category: "notes",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/instant-notes.webp"
   },
   "Exam Survival Kit": {
     price: 299,
     category: "standard",
-    image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/exam-survival-kit.webp"
   },
   "Premium Spiral Copies (Set of 2)": {
     price: 149,
     category: "standard",
-    image: "images/spiral-copies.webp"
+    image: "images/products/premium-spiral-copies.webp"
   },
   "Geometry Box Pro": {
     price: 170,
@@ -1459,7 +1459,7 @@ const PRODUCT_CATALOG = {
   "Premium Pen Set": {
     price: 99,
     category: "standard",
-    image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/premium-pen-set.webp"
   },
   "Desk Pen Stand": {
     price: 149,
@@ -1474,7 +1474,7 @@ const PRODUCT_CATALOG = {
   "LED Study Table Lamp": {
     price: 299,
     category: "standard",
-    image: "https://image.pollinations.ai/prompt/A_simple_modern_LED_study_table_lamp_product_photography_on_white_background?width=600&height=400&nologo=true"
+    image: "images/products/led-study-lamp.webp"
   },
   "Professional Form Filling": {
     price: 99,
@@ -1490,13 +1490,31 @@ const PRODUCT_CATALOG = {
     price: 349,
     mrp: 650,
     category: "notes",
-    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/jkbose-class10-master-kit.webp"
   },
   "JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)": {
     price: 399,
     mrp: 799,
     category: "notes",
-    image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500"
+    image: "images/products/jkbose-class12-master-kit.webp"
+  },
+  "JKBOSE Board Solved Papers & Guide": {
+    price: 199,
+    mrp: 350,
+    category: "notes",
+    image: "images/products/jkbose-solved-papers.webp"
+  },
+  "Board Exam Stationery Combo": {
+    price: 249,
+    mrp: 450,
+    category: "stationery",
+    image: "images/products/board-exam-stationery-combo.webp"
+  },
+  "PDF Printing & Spiral Binding": {
+    price: 99,
+    mrp: 160,
+    category: "notes",
+    image: "images/products/pdf-printing-spiral.webp"
   },
   "Spectra paper A4": {
     mrp: 349,

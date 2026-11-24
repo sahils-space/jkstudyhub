@@ -5092,14 +5092,14 @@ function verifyCodOrderViaWhatsApp(orderId) {
 
 const SELLER_MANAGED_PRODUCTS = [
   // Board Exam Kits
-  { name: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)", category: "exam-kits", categoryLabel: "Board Exam Kits", mrp: 650, defaultPrice: 349, image: "images/school-bookset.webp" },
-  { name: "JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)", category: "exam-kits", categoryLabel: "Board Exam Kits", mrp: 799, defaultPrice: 399, image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" },
-  { name: "JKBOSE Board Solved Papers & Guide", category: "notes", categoryLabel: "Notes & PYQs", mrp: 350, defaultPrice: 199, image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=500" },
-  { name: "Board Exam Stationery Combo", category: "stationery", categoryLabel: "Stationery", mrp: 450, defaultPrice: 249, image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&q=80&w=500" },
-  { name: "PDF Printing & Spiral Binding", category: "notes", categoryLabel: "Print on Demand", mrp: 160, defaultPrice: 99, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=500" },
-  { name: "Printed PYQs & Syllabus", category: "notes", categoryLabel: "Notes & PYQs", mrp: 99, defaultPrice: 49, image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=500" },
-  { name: "Instant Notes", category: "notes", categoryLabel: "Notes & PYQs", mrp: 250, defaultPrice: 149, image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=500" },
-  { name: "Exam Survival Kit", category: "stationery", categoryLabel: "Stationery", mrp: 499, defaultPrice: 299, image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500" },
+  { name: "JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)", category: "exam-kits", categoryLabel: "Board Exam Kits", mrp: 650, defaultPrice: 349, image: "images/products/jkbose-class10-master-kit.webp" },
+  { name: "JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)", category: "exam-kits", categoryLabel: "Board Exam Kits", mrp: 799, defaultPrice: 399, image: "images/products/jkbose-class12-master-kit.webp" },
+  { name: "JKBOSE Board Solved Papers & Guide", category: "notes", categoryLabel: "Notes & PYQs", mrp: 350, defaultPrice: 199, image: "images/products/jkbose-solved-papers.webp" },
+  { name: "Board Exam Stationery Combo", category: "stationery", categoryLabel: "Stationery", mrp: 450, defaultPrice: 249, image: "images/products/board-exam-stationery-combo.webp" },
+  { name: "PDF Printing & Spiral Binding", category: "notes", categoryLabel: "Print on Demand", mrp: 160, defaultPrice: 99, image: "images/products/pdf-printing-spiral.webp" },
+  { name: "Printed PYQs & Syllabus", category: "notes", categoryLabel: "Notes & PYQs", mrp: 99, defaultPrice: 49, image: "images/products/printed-pyqs-syllabus.webp" },
+  { name: "Instant Notes", category: "notes", categoryLabel: "Notes & PYQs", mrp: 250, defaultPrice: 149, image: "images/products/instant-notes.webp" },
+  { name: "Exam Survival Kit", category: "stationery", categoryLabel: "Stationery", mrp: 499, defaultPrice: 299, image: "images/products/exam-survival-kit.webp" },
 
   // Novels & Bestsellers
   { name: "Atomic Habits", category: "books", categoryLabel: "Novels & Bestsellers", mrp: 499, defaultPrice: 249, image: "images/books/atomic-habits-1.webp" },
@@ -5115,31 +5115,31 @@ const SELLER_MANAGED_PRODUCTS = [
   { name: "Wren & Martin English Grammar", category: "books", categoryLabel: "Grammar & English", mrp: 450, defaultPrice: 290, image: "images/books/wren-martin-1.webp" },
 
   // Stationery & Study Supplies
-  { name: "Premium Spiral Copies (Set of 2)", category: "stationery", categoryLabel: "Copies & Registers", mrp: 250, defaultPrice: 149, image: "images/spiral-copies.webp" },
+  { name: "Premium Spiral Copies (Set of 2)", category: "stationery", categoryLabel: "Copies & Registers", mrp: 250, defaultPrice: 149, image: "images/products/premium-spiral-copies.webp" },
   { name: "Geometry Box Pro", category: "stationery", categoryLabel: "Stationery", mrp: 260, defaultPrice: 170, image: "images/geometry-box.webp" },
   { name: "The Holy Quran", category: "stationery", categoryLabel: "Islamic & Spiritual", mrp: 300, defaultPrice: 200, image: "images/quran.webp" },
   { name: "Beautiful Gift Diary", category: "stationery", categoryLabel: "Stationery", mrp: 180, defaultPrice: 99, image: "images/diary.webp" },
-  { name: "Premium Pen Set", category: "stationery", categoryLabel: "Stationery", mrp: 180, defaultPrice: 99, image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=500" },
+  { name: "Premium Pen Set", category: "stationery", categoryLabel: "Stationery", mrp: 180, defaultPrice: 99, image: "images/products/premium-pen-set.webp" },
   { name: "Desk Pen Stand", category: "stationery", categoryLabel: "Stationery", mrp: 250, defaultPrice: 149, image: "images/pen-stand.webp" },
   { name: "Folding Study Table", category: "stationery", categoryLabel: "Study Essentials", mrp: 799, defaultPrice: 490, image: "images/study-table.webp" },
-  { name: "LED Study Table Lamp", category: "stationery", categoryLabel: "Study Essentials", mrp: 499, defaultPrice: 299, image: "https://image.pollinations.ai/prompt/A_simple_modern_LED_study_table_lamp_product_photography_on_white_background?width=600&height=400&nologo=true" },
+  { name: "LED Study Table Lamp", category: "stationery", categoryLabel: "Study Essentials", mrp: 499, defaultPrice: 299, image: "images/products/led-study-lamp.webp" },
   { name: "Form Filling Service", category: "digital", categoryLabel: "Digital Services", mrp: 150, defaultPrice: 99, image: "images/icon.svg" },
 
   // School Book Sets (Class 1st–12th)
-  { name: "Class 1st Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1200, defaultPrice: 850, image: "images/school-bookset.webp" },
-  { name: "Class 2nd Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1350, defaultPrice: 950, image: "images/school-bookset.webp" },
-  { name: "Class 3rd Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1500, defaultPrice: 1050, image: "images/school-bookset.webp" },
-  { name: "Class 4th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1650, defaultPrice: 1150, image: "images/school-bookset.webp" },
-  { name: "Class 5th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1800, defaultPrice: 1250, image: "images/school-bookset.webp" },
-  { name: "Class 6th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1950, defaultPrice: 1350, image: "images/school-bookset.webp" },
-  { name: "Class 7th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2100, defaultPrice: 1450, image: "images/school-bookset.webp" },
-  { name: "Class 8th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2300, defaultPrice: 1550, image: "images/school-bookset.webp" },
-  { name: "Class 9th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2500, defaultPrice: 1750, image: "images/school-bookset.webp" },
-  { name: "Class 10th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2800, defaultPrice: 1950, image: "images/school-bookset.webp" },
-  { name: "Class 11th Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3200, defaultPrice: 2250, image: "images/school-bookset.webp" },
-  { name: "Class 11th Non-Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3100, defaultPrice: 2150, image: "images/school-bookset.webp" },
-  { name: "Class 12th Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3500, defaultPrice: 2450, image: "images/school-bookset.webp" },
-  { name: "Class 12th Non-Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3400, defaultPrice: 2350, image: "images/school-bookset.webp" }
+  { name: "Class 1st Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1200, defaultPrice: 850, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 2nd Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1350, defaultPrice: 950, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 3rd Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1500, defaultPrice: 1050, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 4th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1650, defaultPrice: 1150, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 5th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1800, defaultPrice: 1250, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 6th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 1950, defaultPrice: 1350, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 7th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2100, defaultPrice: 1450, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 8th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2300, defaultPrice: 1550, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 9th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2500, defaultPrice: 1750, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 10th Book Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 2800, defaultPrice: 1950, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 11th Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3200, defaultPrice: 2250, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 11th Non-Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3100, defaultPrice: 2150, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 12th Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3500, defaultPrice: 2450, image: "images/products/school-bookset-bundle.webp" },
+  { name: "Class 12th Non-Medical Set", category: "school-books", categoryLabel: "School Books (1st-12th)", mrp: 3400, defaultPrice: 2350, image: "images/products/school-bookset-bundle.webp" }
 ];
 
 function getAllSellerPricingProducts() {
