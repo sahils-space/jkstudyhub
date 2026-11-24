@@ -4372,145 +4372,6 @@
 </head>
 <body>
 
-  <!-- Top Resin Art Boutique Pop-up Banner -->
-  <style>
-    .art-top-popup-bar {
-      background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #1c1917 100%);
-      border-bottom: 1.5px solid #d97706;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      position: relative;
-      z-index: 9999;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-      animation: artPopupSlide 0.35s ease-out;
-    }
-    @keyframes artPopupSlide {
-      from { transform: translateY(-100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .art-top-popup-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 7px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .art-top-popup-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      overflow: hidden;
-    }
-    .art-top-popup-pill {
-      background: linear-gradient(135deg, #b45309, #f59e0b);
-      color: #ffffff;
-      font-size: 9.5px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 999px;
-      letter-spacing: 0.5px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    .art-top-popup-text {
-      font-size: 12.5px;
-      font-weight: 600;
-      color: #f4f4f5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .art-top-popup-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .art-top-popup-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #ffffff !important;
-      text-decoration: none !important;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 13px;
-      border-radius: 999px;
-      box-shadow: 0 2px 8px rgba(217,119,6,0.35);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      white-space: nowrap;
-    }
-    .art-top-popup-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(217,119,6,0.5);
-    }
-    .art-top-popup-close {
-      background: none;
-      border: none;
-      color: #a1a1aa;
-      font-size: 18px;
-      line-height: 1;
-      cursor: pointer;
-      padding: 2px 6px;
-      border-radius: 4px;
-      transition: color 0.15s ease;
-    }
-    .art-top-popup-close:hover {
-      color: #ffffff;
-    }
-    @media (max-width: 600px) {
-      .art-top-popup-inner {
-        padding: 6px 10px;
-        gap: 8px;
-      }
-      .art-top-popup-text {
-        font-size: 11px;
-      }
-      .art-top-popup-btn {
-        font-size: 11px;
-        padding: 4px 10px;
-      }
-    }
-  </style>
-
-  <div id="artTopPopup" class="art-top-popup-bar" role="alert">
-    <div class="art-top-popup-inner">
-      <div class="art-top-popup-left">
-        <span class="art-top-popup-pill"><i class="fa-solid fa-wand-magic-sparkles"></i> NEW</span>
-        <span class="art-top-popup-text">Handcrafted Resin Art, Quran Stands &amp; Keepsakes</span>
-      </div>
-      <div class="art-top-popup-right">
-        <a href="https://art.jkstudyhub.online" target="_blank" class="art-top-popup-btn">
-          <span>View In Store</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </a>
-        <button type="button" class="art-top-popup-close" onclick="dismissArtTopPopup()" title="Close">&times;</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function dismissArtTopPopup() {
-      const el = document.getElementById('artTopPopup');
-      if (el) {
-        el.style.display = 'none';
-        try { sessionStorage.setItem('dismiss_art_top_popup', '1'); } catch(e) {}
-      }
-    }
-    (function checkArtTopPopup() {
-      try {
-        if (sessionStorage.getItem('dismiss_art_top_popup') === '1') {
-          const el = document.getElementById('artTopPopup');
-          if (el) el.style.display = 'none';
-        }
-      } catch(e) {}
-    })();
-  </script>
 
   <!-- 1. Zapvi Top Announcement Bar (Deep Sapphire & Amber Accent) -->
   <div class="zapvi-top-bar">
@@ -4722,12 +4583,9 @@
               Up to 50% OFF &bull; From ₹179
             </span>
           </div>
-          <h3 style="font-size:20px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+          <h3 style="font-size:20px; font-weight:800; margin:0; color:#ffffff; letter-spacing:0.3px;">
             Bestselling Novels, Mindset &amp; Classic Literature
           </h3>
-          <p style="font-size:12.5px; color:#94a3b8; margin:0; line-height:1.5; max-width:540px;">
-            Explore <em>Atomic Habits</em>, <em>Psychology of Money</em>, <em>Deep Work</em>, <em>The Alchemist</em> &amp; more. Instant checkout, Cash on Delivery (COD) &amp; free sample previews.
-          </p>
         </div>
       </div>
 
@@ -5645,9 +5503,6 @@
         <h2 class="category-title" id="section-school-books" style="margin:0; padding:0; border:none;">
           <i class="fa-solid fa-graduation-cap" style="color:#2563eb;"></i> School Books (Class 1st to 12th)
         </h2>
-        <p style="font-size:13px; color:#64748b; margin:4px 0 0;">
-          All Private &amp; Govt Schools across Kashmir &middot; Priced Less Than MRP &amp; Book Sellers Price &middot; Verified School Syllabus Dispatch
-        </p>
       </div>
       <div style="display:none; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; font-size:12px; font-weight:700; padding:5px 12px; border-radius:6px;">
         ⏳ Coming Soon &middot; Pre-Book via WhatsApp at Less Than Retail Price
@@ -6141,9 +5996,6 @@
         </h2>
         <p style="font-size: 14px; color: #64748b; margin: 4px 0 0 0;">All-in-one exam revision arsenal: 5-Yr Solved Papers, High-Yield Guess Questions, Formula Cheat Sheets &amp; Exam Stationery.</p>
       </div>
-      <span style="background:#fff7ed; color:#c2410c; font-weight:800; font-size:12.5px; padding:6px 14px; border-radius:20px; border:1px solid #ffedd5;">
-        🔥 Guaranteed Less Than Market Rates • Free Pattan Delivery
-      </span>
     </div>
 
     <div class="product-grid" id="examKitsGrid" style="margin-bottom: 30px;">
@@ -6545,40 +6397,7 @@
 
     </div>
 
-    <!-- =========================================================================
-         SECTION: SHOPPABLE VIDEO REELS & VIDEO ADS (Instagram/TikTok Video Commerce)
-         ========================================================================= -->
-    <section class="shoppable-reels-section" id="shoppableReelsSection">
-      <div class="reels-header-wrap">
-        <div>
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-            <span style="background:#fee2e2; color:#dc2626; font-size:11px; font-weight:800; padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:4px;">
-              <i class="fa-solid fa-circle" style="font-size:7px; color:#ef4444; animation:pulse 1.5s infinite;"></i> VIDEO ADS
-            </span>
-            <span style="font-size:12px; font-weight:700; color:#2563eb;">⚡ Watch product videos</span>
-          </div>
-          <h2 style="font-size:24px; font-weight:800; color:#0f172a; margin:0; display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> Product Video Ads
-          </h2>
-          <p style="font-size:13px; color:#64748b; margin:4px 0 0;">
-            Tap a video to watch with sound. Use <strong>Shop now</strong> to order.
-          </p>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <button type="button" onclick="scrollReelsTrack(-1)" class="btn-icon" style="background:#ffffff; border:1px solid #cbd5e1; width:36px; height:36px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.06); cursor:pointer;" title="Previous Reels">
-            <i class="fa-solid fa-chevron-left" style="font-size:12px; color:#334155;"></i>
-          </button>
-          <button type="button" onclick="scrollReelsTrack(1)" class="btn-icon" style="background:#ffffff; border:1px solid #cbd5e1; width:36px; height:36px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.06); cursor:pointer;" title="Next Reels">
-            <i class="fa-solid fa-chevron-right" style="font-size:12px; color:#334155;"></i>
-          </button>
-        </div>
-      </div>
 
-      <!-- Horizontal Reels Track -->
-      <div class="reels-scroll-track" id="shoppableReelsTrack">
-        <!-- Rendered dynamically by store.js -->
-      </div>
-    </section>
 
     <!-- =========================================================================
          SECTION: COMING SOON (UPCOMING ARRIVALS & PRE-ORDERS) - DYNAMIC CATALOG
@@ -7235,7 +7054,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.28"></script>
+  <script src="store.js?v=92.29"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
