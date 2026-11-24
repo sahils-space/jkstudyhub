@@ -10258,10 +10258,12 @@ const SEARCH_SYNONYMS = {
   'sheet': ['spectra paper a4', 'a4 sheet paper'],
   'sheets': ['spectra paper a4', 'a4 sheet paper'],
   'spectra': ['spectra paper a4', 'a4 sheet paper', 'copier paper'],
-  'copy': ['copies', 'register', 'exercise copy', 'notebook'],
-  'copies': ['exercise copies', 'college register', 'practical lab copy'],
-  'notebook': ['exercise copies', 'college register', 'practical lab copy', 'diary'],
-  'register': ['college register', 'hardcover register'],
+  'copy': ['copies', 'register', 'registers', 'spiral copies', 'spiral bundle', 'spiral', 'exercise copy', 'notebook'],
+  'copies': ['copies', 'register', 'registers', 'spiral copies', 'spiral bundle', 'spiral', 'exercise copies', 'college register', 'practical lab copy'],
+  'notebook': ['exercise copies', 'college register', 'practical lab copy', 'diary', 'spiral copies', 'registers'],
+  'register': ['register', 'registers', 'spiral copies', 'spiral bundle', 'spiral copies set of 6', 'college register', 'hardcover register', 'copies'],
+  'registers': ['register', 'registers', 'spiral copies', 'spiral bundle', 'spiral copies set of 6', 'college register', 'hardcover register', 'copies'],
+  'spiral': ['spiral copies', 'spiral bundle', 'spiral copies set of 6', 'spiral', 'copies', 'register', 'registers'],
   'pyq': ['pyqs', 'previous year question papers', 'solved papers', 'printed pyqs & syllabus', 'jkbose board solved papers & guide'],
   'pyqs': ['pyqs', 'previous year question papers', 'solved papers', 'printed pyqs & syllabus', 'jkbose board solved papers & guide'],
   'solved': ['jkbose board solved papers & guide', 'pyqs', 'solved papers'],
@@ -10388,6 +10390,8 @@ function handleStoreLiveSearch(query) {
       const hasVisibleNovels = Array.from(document.querySelectorAll('.book-product-card')).some(c => c.style.display !== 'none');
       secNovels.style.display = hasVisibleNovels ? 'flex' : 'none';
     }
+    const novelsCard = document.querySelector('.novels-showcase-card');
+    if (novelsCard) novelsCard.style.display = 'flex';
     if (secAcademic) {
       const hasVisibleAcademic = Array.from(document.querySelectorAll('.product-card')).some(c => {
         const cat = getCardCategoryType(c);
@@ -10433,7 +10437,7 @@ function handleStoreLiveSearch(query) {
 
     const titleLower = title.toLowerCase();
     const descLower = desc.toLowerCase();
-    const fullText = (titleLower + ' ' + descLower + ' ' + cardCat);
+    const fullText = (titleLower + ' ' + descLower + ' ' + cardCat + ' ' + (card.dataset.category || '') + ' ' + (card.textContent || '').toLowerCase());
 
     let score = 0;
 
@@ -10504,6 +10508,8 @@ function handleStoreLiveSearch(query) {
   // Hide all original cards and standard section headings during search to avoid duplication and clutter
   allCards.forEach(c => c.style.display = 'none');
   if (secNovels) secNovels.style.display = 'none';
+  const novelsCard = document.querySelector('.novels-showcase-card');
+  if (novelsCard) novelsCard.style.display = 'none';
   const copiesHeader = document.getElementById('school-copies-header');
   if (copiesHeader) copiesHeader.style.display = 'none';
   const schoolBooksHeader = document.getElementById('school-books-header');
@@ -10539,10 +10545,10 @@ function handleStoreLiveSearch(query) {
           <div class="search-sugg-item" onclick="selectSearchSuggestion('${safeTitle}')">
             <img src="${item.img || 'images/favicon.png'}" class="search-sugg-thumb" alt="${safeTitle}" onerror="this.src='images/favicon.png'">
             <div style="flex: 1; min-width: 0;">
-              <div style="font-weight: 700; font-size: 14px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title}</div>
+              <div class="sugg-title" style="font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title}</div>
               <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; margin-top: 2px;">
                 <span style="font-weight: 800; color: #16a34a;">${item.price}</span>
-                <span style="background: #eff6ff; color: #2563eb; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: capitalize;">${item.cardCat}</span>
+                <span class="sugg-cat" style="background: #eff6ff; color: #2563eb; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: capitalize;">${item.cardCat}</span>
               </div>
             </div>
             <i class="fa-solid fa-arrow-right" style="color: #94a3b8; font-size: 12px;"></i>

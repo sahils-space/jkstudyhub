@@ -910,6 +910,8 @@ const SYLLABUS_PDF_DATA = {
   }
 
   window.openClass10Modal = function() {
+    const c11 = document.getElementById('class11CollectionModal');
+    if (c11) c11.style.display = 'none';
     const modal = document.getElementById('class10CollectionModal');
     if (modal) {
       modal.style.display = 'flex';
@@ -926,6 +928,8 @@ const SYLLABUS_PDF_DATA = {
   };
 
   window.openClass11Modal = function() {
+    const c10 = document.getElementById('class10CollectionModal');
+    if (c10) c10.style.display = 'none';
     const modal = document.getElementById('class11CollectionModal');
     if (modal) {
       modal.style.display = 'flex';
@@ -2442,15 +2446,16 @@ const SYLLABUS_PDF_DATA = {
   // Close modals on Escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
+      if (typeof closeClass10Modal === 'function') closeClass10Modal();
+      if (typeof closeClass11Modal === 'function') closeClass11Modal();
       closeModelModalDirect();
       closeSyllabusModalDirect();
       closeCyqModalDirect();
       closePyqModalDirect();
       closeLibraryModalDirect();
-      window.toggleUserDropdown(false);
+      if (typeof window.toggleUserDropdown === 'function') window.toggleUserDropdown(false);
       if (typeof closePromoModal === 'function') closePromoModal();
-      if (typeof closeClass10Modal === 'function') closeClass10Modal();
-      if (typeof closeClass11Modal === 'function') closeClass11Modal();
+      document.body.style.overflow = '';
     }
   });
 

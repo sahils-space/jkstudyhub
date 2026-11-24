@@ -270,11 +270,12 @@
     /* P3: Floating Sticky Mobile Cart Bar */
     .sticky-mobile-cart-bar {
       position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 32px);
+      bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+      left: 16px;
+      right: 16px;
+      margin: 0 auto;
       max-width: 520px;
+      width: auto;
       background: #0f172a;
       color: #ffffff;
       border-radius: 16px;
@@ -288,8 +289,13 @@
       animation: slideUpCart 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes slideUpCart {
-      from { transform: translate(-50%, 60px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @media (min-width: 769px) {
+      .sticky-mobile-cart-bar {
+        bottom: 24px;
+      }
     }
     .sticky-cart-left {
       display: flex;
@@ -705,6 +711,94 @@
       text-decoration: underline;
     }
 
+    /* High-contrast styles for cart drawer (Day & Night themes) */
+    body:not(.dark-mode) .cart-drawer {
+      background: #ffffff !important;
+      color: #0f172a !important;
+    }
+    body:not(.dark-mode) .cart-drawer-header h2,
+    body:not(.dark-mode) #cartDrawerTitle {
+      color: #0f172a !important;
+    }
+    body:not(.dark-mode) .cart-drawer-item-name {
+      color: #0f172a !important;
+    }
+    body:not(.dark-mode) .cart-drawer-item-price {
+      color: #334155 !important;
+    }
+    body:not(.dark-mode) .cart-drawer-quantity {
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    body:not(.dark-mode) .cart-drawer-quantity span,
+    body:not(.dark-mode) .cart-drawer-quantity button {
+      color: #0f172a !important;
+    }
+    body:not(.dark-mode) .cart-drawer-total,
+    body:not(.dark-mode) .cart-drawer-total strong {
+      color: #0f172a !important;
+    }
+
+    body.dark-mode .cart-drawer {
+      background: #111827 !important;
+      color: #f8fafc !important;
+      box-shadow: -18px 0 50px rgba(0, 0, 0, 0.5) !important;
+    }
+    body.dark-mode .cart-drawer-header {
+      background: #111827 !important;
+      border-bottom-color: #1f2937 !important;
+    }
+    body.dark-mode .cart-drawer-header h2,
+    body.dark-mode #cartDrawerTitle {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .cart-drawer-close {
+      background: #1f2937 !important;
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .cart-drawer-progress {
+      background: #1f2937 !important;
+      border-bottom-color: #374151 !important;
+    }
+    body.dark-mode .cart-drawer-progress p {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .cart-drawer-item {
+      border-bottom-color: #1f2937 !important;
+    }
+    body.dark-mode .cart-drawer-item img {
+      background: #1f2937 !important;
+    }
+    body.dark-mode .cart-drawer-item-name {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .cart-drawer-item-price {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .cart-drawer-quantity {
+      border-color: #374151 !important;
+      background: #1f2937 !important;
+      color: #f8fafc !important;
+    }
+    body.dark-mode .cart-drawer-quantity span,
+    body.dark-mode .cart-drawer-quantity button {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .cart-drawer-footer {
+      background: #111827 !important;
+      border-top-color: #1f2937 !important;
+    }
+    body.dark-mode .cart-drawer-total,
+    body.dark-mode .cart-drawer-total strong {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .cart-drawer-delivery-note {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .cart-drawer-view-cart {
+      color: #6ee7b7 !important;
+    }
+
     .checkout-page-active body > :not(#checkoutModal):not(#districtPincodePickerModal):not(#orderSuccessModal):not([class*="razorpay"]):not([id*="razorpay"]):not(iframe) {
       display: none !important;
     }
@@ -759,6 +853,8 @@
       border-left: 1px solid #e7e9e2;
       border-radius: 0 0 20px 0;
       background: #fafaf7;
+      position: sticky;
+      top: 20px;
     }
     .checkout-page-active .checkout-page-summary {
       display: block;
@@ -1091,6 +1187,28 @@
       color: #1e293b;
     }
 
+    /* Universal Form & Checkout Contrast */
+    .form-label {
+      color: #1e293b !important;
+      font-weight: 700 !important;
+    }
+    .form-input {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border: 1.5px solid #cbd5e1 !important;
+    }
+    .form-input::placeholder {
+      color: #94a3b8 !important;
+    }
+    .checkout-card {
+      background: #ffffff !important;
+      color: #0f172a !important;
+    }
+    .checkout-header h3,
+    #checkoutTitle {
+      color: #0f172a !important;
+    }
+
     body.dark-mode .step-circle {
       background: #1e293b;
       color: #94a3b8;
@@ -1118,6 +1236,136 @@
       background: #1e3a8a;
       color: #93c5fd;
       border-color: #3b82f6;
+    }
+    body.dark-mode .checkout-card {
+      background: #0f172a !important;
+      color: #f8fafc !important;
+      border: 1px solid #334155 !important;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7) !important;
+    }
+    body.dark-mode .checkout-header {
+      background: #0f172a !important;
+      border-bottom-color: #334155 !important;
+    }
+    body.dark-mode .checkout-header h3,
+    body.dark-mode #checkoutTitle {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .form-label {
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .form-input {
+      background: #1e293b !important;
+      color: #f8fafc !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode .form-input::placeholder {
+      color: #64748b !important;
+    }
+    body.dark-mode #schoolBooksSpecificFields {
+      background: #422006 !important;
+      border-color: #854d0e !important;
+    }
+    body.dark-mode #schoolBooksSpecificFields h4 {
+      color: #fef08a !important;
+    }
+    body.dark-mode #schoolBooksSpecificFields p {
+      color: #fde047 !important;
+    }
+    body.dark-mode #schoolBooksSpecificFields label {
+      color: #fef08a !important;
+    }
+    body.dark-mode .pay-method-card {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    body.dark-mode .pay-method-card.selected-cod {
+      border-color: #22c55e !important;
+      background: #052e16 !important;
+    }
+    body.dark-mode .pay-method-card.selected-online {
+      border-color: #3b82f6 !important;
+      background: #172554 !important;
+    }
+    body.dark-mode .pay-method-card .pay-method-info strong {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .pay-method-card .pay-method-info p {
+      color: #94a3b8 !important;
+    }
+
+    /* Fix checkout address box & order summary contrast in both Day & Night modes */
+    .checkout-address-box {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+    }
+    body:not(.dark-mode) .checkout-address-box {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    body:not(.dark-mode) .checkout-address-box .form-label {
+      color: #0f172a !important;
+    }
+    body:not(.dark-mode) .checkout-page-summary {
+      background: #f8fafc !important;
+    }
+    body:not(.dark-mode) .checkout-page-summary h4,
+    body:not(.dark-mode) #checkoutPageSummaryTitle {
+      color: #0f172a !important;
+    }
+
+    body.dark-mode .checkout-address-box {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode .checkout-address-box .form-label {
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .checkout-page-summary {
+      background: #0f172a !important;
+      border-left-color: #334155 !important;
+    }
+    body.dark-mode .checkout-page-summary h4,
+    body.dark-mode #checkoutPageSummaryTitle {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .checkout-page-summary-item {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .checkout-page-summary-item strong {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .checkout-page-offer {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #86efac !important;
+    }
+    body.dark-mode .checkout-page-totals {
+      border-top-color: #334155 !important;
+    }
+    body.dark-mode .checkout-page-total-row {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .checkout-page-total-row strong {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .checkout-page-grand-total {
+      border-top-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    body.dark-mode .checkout-page-secure-note {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode #codAvailabilityNote {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode #quickDistrictTownPills span,
+    body.dark-mode #quickDistrictTownPills button {
+      color: #e2e8f0 !important;
     }
   
     /* =========================================================================
@@ -2406,6 +2654,11 @@
       z-index: 9999;
       padding: 6px 0;
     }
+    body.dark-mode .search-suggestions-dropdown {
+      background: #1e293b !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+    }
     .search-sugg-item {
       display: flex;
       align-items: center;
@@ -2415,13 +2668,27 @@
       transition: background 0.15s ease;
       border-bottom: 1px solid #f1f5f9;
       text-decoration: none;
-      color: inherit;
+      color: #0f172a !important;
     }
     .search-sugg-item:last-child {
       border-bottom: none;
     }
     .search-sugg-item:hover {
       background: #eff6ff;
+    }
+    body.dark-mode .search-sugg-item {
+      color: #f8fafc !important;
+      border-bottom-color: #334155 !important;
+    }
+    body.dark-mode .search-sugg-item:hover {
+      background: #334155 !important;
+    }
+    body.dark-mode .search-sugg-item .sugg-title {
+      color: #f8fafc !important;
+    }
+    body.dark-mode .search-sugg-item .sugg-cat {
+      background: #1e3a8a !important;
+      color: #93c5fd !important;
     }
     .search-sugg-thumb {
       width: 44px;
@@ -6569,7 +6836,7 @@
             </div>
 
             <!-- Physical Delivery Address -->
-            <div id="addressFields" style="display:none; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
+            <div id="addressFields" class="checkout-address-box" style="display:none;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11.5px; font-weight: 700; padding: 6px 10px; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                 <i class="fa-solid fa-gift" style="color:#10b981; font-size:14px;"></i>
                 <span><strong>Delivery cost:</strong> Calculated from your PIN. Orders ₹999+ qualify for free delivery across Jammu &amp; Kashmir.</span>
@@ -6999,7 +7266,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.36"></script>
+  <script src="store.js?v=92.39"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
