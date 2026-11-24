@@ -33,7 +33,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=25">
+  <link rel="stylesheet" href="style.css?v=26">
   <link rel="stylesheet" href="premium-theme.css?v=1">
   <link rel="stylesheet" href="brand-theme.css?v=2">
 </head>
@@ -113,7 +113,7 @@
         </button>
         <ul class="nav-links" id="navLinks">
           <li><a href="#home" class="nav-item active">Home</a></li>
-          <li><a href="#community-hub" class="nav-item"><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> WhatsApp Channel</a></li>
+          <li><a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" class="nav-item"><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> WhatsApp Channel</a></li>
           <li><a href="#subjects" class="nav-item">Subject Portals</a></li>
           <li><a href="#contact" class="nav-item">Contact Us</a></li>
           <li><a href="https://jkbose.jk.gov.in" target="_blank" rel="noopener" class="nav-item jkbose-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> JKBOSE Official</a></li>
@@ -238,113 +238,6 @@
 
 
 
-  <!-- 1.5 JKBOSE STUDENT COMMUNITY & WHATSAPP CHANNEL HUB -->
-  <section class="section community-hub-section" id="community-hub">
-    <div class="container">
-      <div class="section-header text-center">
-        <span class="section-tag" style="background: rgba(34, 197, 94, 0.12); color: #16a34a; border-color: rgba(34, 197, 94, 0.25);">
-          <i class="fa-brands fa-whatsapp"></i> Live Official Alerts
-        </span>
-        <h2 class="section-title">JKBOSE Student Community &amp; Alerts</h2>
-        <div class="title-underline" style="background: linear-gradient(90deg, #22c55e, #10b981);"></div>
-        <p class="section-subtitle">
-          Stay ahead of board examinations. Follow our verified WhatsApp Channel for instant Date Sheets, Center Notices, Model Papers &amp; Results.
-        </p>
-      </div>
-
-      <div class="community-grid">
-        <!-- Card 1: Official Channel -->
-        <div class="community-card community-channel-card">
-          <div class="card-badge-verified">
-            <i class="fa-solid fa-circle-check"></i> Official Channel
-          </div>
-          <div class="community-card-icon wa-bg">
-            <i class="fa-brands fa-whatsapp"></i>
-          </div>
-          <h3 class="community-card-title">JK STUDY HUB Channel</h3>
-          <p class="community-card-desc">
-            Direct from JKBOSE — Real-time notifications, official date sheets, exam circulars, and instant board result links directly in your WhatsApp updates.
-          </p>
-          <ul class="community-benefits-list">
-            <li><i class="fa-solid fa-bolt" style="color: #eab308;"></i> <span>Instant Date Sheet &amp; Exam Notifications</span></li>
-            <li><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> <span>Verified CYQ Guess Papers &amp; Summaries</span></li>
-            <li><i class="fa-solid fa-trophy" style="color: #10b981;"></i> <span>Direct Board Result Links &amp; Scorecards</span></li>
-          </ul>
-          <a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" class="btn-community-action btn-wa-channel">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>Follow Channel on WhatsApp</span>
-            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px;"></i>
-          </a>
-        </div>
-
-        <!-- Card 2: 1-Tap Class Group Viral Share -->
-        <div class="community-card community-share-card">
-          <div class="card-badge-action">
-            <i class="fa-solid fa-share-nodes"></i> Spread the Word
-          </div>
-          <div class="community-card-icon share-bg">
-            <i class="fa-solid fa-bullhorn"></i>
-          </div>
-          <h3 class="community-card-title">Share with Classmates</h3>
-          <p class="community-card-desc">
-            Help your friends and school tuition groups prepare. 1-tap sharing with formatted exam links tailored for your class:
-          </p>
-          <div class="share-class-buttons">
-            <button type="button" class="btn-class-share share-c10" onclick="shareBoosterToWhatsApp(10)">
-              <span class="class-pill">Class 10th</span>
-              <span class="share-text"><i class="fa-brands fa-whatsapp"></i> Share 10th Hub</span>
-            </button>
-            <button type="button" class="btn-class-share share-c11" onclick="shareBoosterToWhatsApp(11)">
-              <span class="class-pill">Class 11th</span>
-              <span class="share-text"><i class="fa-brands fa-whatsapp"></i> Share 11th Hub</span>
-            </button>
-            <button type="button" class="btn-class-share share-c12" onclick="shareBoosterToWhatsApp(12)">
-              <span class="class-pill">Class 12th</span>
-              <span class="share-text"><i class="fa-brands fa-whatsapp"></i> Share 12th Hub</span>
-            </button>
-          </div>
-          <p class="share-footer-hint"><i class="fa-solid fa-users"></i> Instant share to WhatsApp groups &amp; chats</p>
-        </div>
-
-        <!-- Card 3: Priority Notification Alert Signup -->
-        <div class="community-card community-alert-card">
-          <div class="card-badge-alert">
-            <i class="fa-solid fa-bell"></i> Priority Alerts
-          </div>
-          <div class="community-card-icon bell-bg">
-            <i class="fa-solid fa-bell-concierge"></i>
-          </div>
-          <h3 class="community-card-title">Get Personal Alerts</h3>
-          <p class="community-card-desc">
-            Want personal notifications when your class date sheet or results come out? Send a quick alert request to our team:
-          </p>
-          <form class="community-alert-form" onsubmit="requestBoardAlertsOnWhatsApp(event)">
-            <div class="form-row">
-              <label for="alertStudentClass">Your Class</label>
-              <select id="alertStudentClass" class="alert-input">
-                <option value="Class 10th">Class 10th</option>
-                <option value="Class 11th" selected>Class 11th</option>
-                <option value="Class 12th">Class 12th</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label for="alertStudentName">Your Name</label>
-              <input type="text" id="alertStudentName" class="alert-input" placeholder="e.g. Faizan Ahmad" required>
-            </div>
-            <div class="form-row">
-              <label for="alertStudentRoll">Roll No. / Stream (Optional)</label>
-              <input type="text" id="alertStudentRoll" class="alert-input" placeholder="e.g. Medical / Non-Med or Roll No.">
-            </div>
-            <button type="submit" class="btn-community-action btn-wa-alert">
-              <i class="fa-brands fa-whatsapp"></i>
-              <span>Register for WhatsApp Alerts</span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- 2. SUBJECT STUDY CENTERS & LEARNING RESOURCES -->
   <section class="section subject-portals-section" id="subjects">
     <div class="container">
@@ -357,79 +250,142 @@
         </p>
       </div>
 
-      <!-- Class 10th Subject Portals -->
-      <div class="portal-group">
-        <div class="portal-group-header">
-          <div class="group-badge">Class 10th Board Hub</div>
-          <h3 class="group-title">Core Academic Subjects</h3>
+      <!-- Class 10th Showcase Banner Card (Dedicated Pop-up Window) -->
+      <div class="class10-showcase-card" id="class10" onclick="openClass10Modal()" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e40af 100%); border-radius: 18px; padding: 22px 26px; margin-bottom: 35px; box-shadow: 0 10px 30px -5px rgba(15,23,42,0.25); cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; transition: transform 0.25s ease, box-shadow 0.25s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
+        <div style="display:flex; align-items:center; gap:20px; flex:1; min-width:280px;">
+          <div style="position:relative; width:75px; height:75px; border-radius:16px; background:linear-gradient(135deg, #2563eb, #1d4ed8); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:34px; box-shadow:0 8px 24px rgba(37,99,235,0.45); flex-shrink:0; border:1px solid rgba(255,255,255,0.2);">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <span style="background:rgba(37,99,235,0.25); color:#93c5fd; border:1px solid rgba(147,197,253,0.3); font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; text-transform:uppercase;">
+                Class 10th Board Hub
+              </span>
+              <span style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(74,222,128,0.3); font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; text-transform:uppercase;">
+                4 Core Portals
+              </span>
+              <span style="color:#fde047; font-size:12px; font-weight:700;">
+                <i class="fa-solid fa-certificate"></i> Official JKBOSE &amp; NCERT
+              </span>
+            </div>
+            <h3 style="font-size:21px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+              Class 10th Core Academic Subjects &amp; Study Center
+            </h3>
+            <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">
+              Science, Mathematics, Social Science, English &amp; Urdu &bull; Syllabus, PYQs, CYQs &amp; Model Papers.
+            </p>
+          </div>
         </div>
 
-        <div class="cards-grid">
-          <div class="study-card">
-            <div class="card-icon science-color"><i class="fa-solid fa-atom"></i></div>
-            <h3 class="card-title">Science</h3>
-            <p class="card-desc">Physics, Chemistry, and Biology modules with NCERT question walkthroughs, chemical formulas, and diagram practice.</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Light, Electricity &amp; Magnetism</li>
-              <li><i class="fa-regular fa-circle-check"></i> Reactions, Carbon Compounds</li>
-              <li><i class="fa-regular fa-circle-check"></i> Life Processes &amp; Reproduction</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sci');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+          <button type="button" onclick="openClass10Modal(); event.stopPropagation();" style="background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color:#ffffff; font-weight:800; font-size:14px; padding:12px 24px; border-radius:10px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(37,99,235,0.4); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Explore 10th Subjects</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- FULL DEDICATED CLASS 10TH SUBJECTS MODAL WINDOW -->
+      <div id="class10CollectionModal" class="novels-collection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:10000; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;" onclick="if(event.target===this) closeClass10Modal();">
+        <div class="novels-modal-card" style="background:#f8fafc; border-radius:20px; width:100%; max-width:1150px; max-height:92vh; overflow-y:auto; position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.5); display:flex; flex-direction:column; border:1px solid #cbd5e1;">
+          
+          <!-- Sticky Header of Class 10th Modal -->
+          <div style="position:sticky; top:0; z-index:20; background:#ffffff; border-bottom:1.5px solid #e2e8f0; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:20px 20px 0 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:40px; height:40px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; color:#0f172a; margin:0;">Class 10th Core Academic Subjects</h2>
+                <p style="font-size:12.5px; color:#64748b; margin:2px 0 0;">NCERT &amp; JKBOSE Syllabus, PYQs, CYQs, and Official Model Papers</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="background:#dbeafe; color:#1e40af; font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;">
+                4 Core Portals
+              </span>
+              <button type="button" onclick="closeClass10Modal()" style="width:38px; height:38px; border-radius:50%; background:#f1f5f9; border:none; font-size:18px; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" title="Close Window">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
             </div>
           </div>
 
-          <div class="study-card">
-            <div class="card-icon math-color"><i class="fa-solid fa-calculator"></i></div>
-            <h3 class="card-title">Mathematics</h3>
-            <p class="card-desc">Step-by-step theorem proofs (BPT), quadratic formula applications, trigonometry tables, and statistics calculators.</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Real Numbers &amp; Algebra (20m)</li>
-              <li><i class="fa-regular fa-circle-check"></i> Geometry &amp; Trigonometry (27m)</li>
-              <li><i class="fa-regular fa-circle-check"></i> Mensuration &amp; Statistics (21m)</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-math');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
-            </div>
-          </div>
+          <!-- Modal Body with 4 Subject Cards -->
+          <div style="padding:24px; flex:1;">
+            <div class="cards-grid">
+              <!-- Science -->
+              <div class="study-card">
+                <div class="card-icon science-color"><i class="fa-solid fa-atom"></i></div>
+                <h3 class="card-title">Science</h3>
+                <p class="card-desc">Physics, Chemistry, and Biology modules with NCERT question walkthroughs, chemical formulas, and diagram practice.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Light, Electricity &amp; Magnetism</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Reactions, Carbon Compounds</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Life Processes &amp; Reproduction</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sci');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
 
-          <div class="study-card">
-            <div class="card-icon sst-color"><i class="fa-solid fa-earth-americas"></i></div>
-            <h3 class="card-title">Social Science</h3>
-            <p class="card-desc">History, Geography, Political Science, Economics, J&amp;K Modernisation (1947-82), and Disaster Management modules.</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Nationalism in Europe &amp; India</li>
-              <li><i class="fa-regular fa-circle-check"></i> J&amp;K Economy &amp; Reorganization Act</li>
-              <li><i class="fa-regular fa-circle-check"></i> Disaster Survival &amp; Map Practice</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sst');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
-            </div>
-          </div>
+              <!-- Mathematics -->
+              <div class="study-card">
+                <div class="card-icon math-color"><i class="fa-solid fa-calculator"></i></div>
+                <h3 class="card-title">Mathematics</h3>
+                <p class="card-desc">Step-by-step theorem proofs (BPT), quadratic formula applications, trigonometry tables, and statistics calculators.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Real Numbers &amp; Algebra (20m)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Geometry &amp; Trigonometry (27m)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Mensuration &amp; Statistics (21m)</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-math');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
 
-          <div class="study-card">
-            <div class="card-icon lang-color"><i class="fa-solid fa-book-open"></i></div>
-            <h3 class="card-title">English &amp; Urdu</h3>
-            <p class="card-desc">Tulip Series Book X prose, poetry, and play 'The Proposal' alongside Baharistan-e-Urdu literature and grammar.</p>
-            <ul class="resource-list">
-              <li><i class="fa-regular fa-circle-check"></i> Reading &amp; Dialogue Writing</li>
-              <li><i class="fa-regular fa-circle-check"></i> Formal Letters &amp; Creative Stories</li>
-              <li><i class="fa-regular fa-circle-check"></i> Urdu Ghazals &amp; Takhleeqi Mazmoon</li>
-            </ul>
-            <a href="javascript:void(0)" onclick="openSyllabusModal('c10-eng');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
-            <div class="card-action-grid">
-              <a href="javascript:void(0)" onclick="openPyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
-              <a href="javascript:void(0)" onclick="openCyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
-              <a href="javascript:void(0)" onclick="openModelModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+              <!-- Social Science -->
+              <div class="study-card">
+                <div class="card-icon sst-color"><i class="fa-solid fa-earth-americas"></i></div>
+                <h3 class="card-title">Social Science</h3>
+                <p class="card-desc">History, Geography, Political Science, Economics, J&amp;K Modernisation (1947-82), and Disaster Management modules.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Nationalism in Europe &amp; India</li>
+                  <li><i class="fa-regular fa-circle-check"></i> J&amp;K Economy &amp; Reorganization Act</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Disaster Survival &amp; Map Practice</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sst');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- English & Urdu -->
+              <div class="study-card">
+                <div class="card-icon lang-color"><i class="fa-solid fa-book-open"></i></div>
+                <h3 class="card-title">English &amp; Urdu</h3>
+                <p class="card-desc">Tulip Series Book X prose, poetry, and play 'The Proposal' alongside Baharistan-e-Urdu literature and grammar.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Reading &amp; Dialogue Writing</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Formal Letters &amp; Creative Stories</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Urdu Ghazals &amp; Takhleeqi Mazmoon</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-eng');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -797,7 +753,7 @@
           <h4>Quick Navigation</h4>
           <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="#community-hub" style="color: #22c55e; font-weight: 700;"><i class="fa-brands fa-whatsapp"></i> WhatsApp Channel</a></li>
+            <li><a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" style="color: #22c55e; font-weight: 700;"><i class="fa-brands fa-whatsapp"></i> WhatsApp Channel</a></li>
             <li><a href="#class10">Class 10th Modules</a></li>
             <li><a href="#class11">Class 11th Streams</a></li>
             <li><a href="store.html">Official Store</a></li>
@@ -910,7 +866,7 @@
   <script src="analytics.js?v=1"></script>
 
   <!-- Syllabus Dataset & Main JavaScript File -->
-  <script src="script.js?v=47"></script>
+  <script src="script.js?v=48"></script>
 
   <!-- Floating Store Button (Right Side on Both Mobile & Laptop) -->
   <a href="store.html" class="floating-store-btn" aria-label="Visit Book &amp; Stationery Store">
@@ -977,6 +933,22 @@
       text += `\nPlease notify me when Date Sheets, Model Papers, or Results are published!`;
 
       window.open(`https://wa.me/919622605714?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function openClass10Modal() {
+      const modal = document.getElementById('class10CollectionModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeClass10Modal() {
+      const modal = document.getElementById('class10CollectionModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
     }
 
     function openAppInstallModal() {

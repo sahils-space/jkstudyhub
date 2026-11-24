@@ -2609,7 +2609,7 @@ body {
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 9999;
+  z-index: 20000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4308,5 +4308,29 @@ img, video, iframe, table, pre, canvas {
     width: 28px !important;
     height: 28px !important;
     font-size: 11px !important;
+  }
+}
+
+/* ===================================================
+   CLASS 10TH SHOWCASE CARD & POPUP WINDOW RESPONSIVENESS
+   =================================================== */
+.class10-showcase-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (max-width: 768px) {
+  .class10-showcase-card {
+    padding: 18px 18px !important;
+    gap: 16px !important;
+  }
+  .class10-showcase-card > div:first-child {
+    gap: 14px !important;
+  }
+  .class10-showcase-card h3 {
+    font-size: 18px !important;
+  }
+  .class10-showcase-card button {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }

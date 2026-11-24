@@ -899,10 +899,35 @@ const SYLLABUS_PDF_DATA = {
     document.body.style.overflow = 'hidden';
   };
 
+  function restoreBodyOverflowIfNoModals() {
+    const c10Modal = document.getElementById('class10CollectionModal');
+    if (c10Modal && c10Modal.style.display === 'flex') {
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+    document.body.style.overflow = '';
+  }
+
+  window.openClass10Modal = function() {
+    const modal = document.getElementById('class10CollectionModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  window.closeClass10Modal = function() {
+    const modal = document.getElementById('class10CollectionModal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  };
+
   window.closeSyllabusModalDirect = function() {
     if (syllabusModalOverlay) {
       syllabusModalOverlay.classList.remove('active');
-      document.body.style.overflow = '';
+      restoreBodyOverflowIfNoModals();
     }
   };
 
@@ -1143,7 +1168,7 @@ const SYLLABUS_PDF_DATA = {
   window.closeModelModalDirect = function() {
     if (modelModalOverlay) {
       modelModalOverlay.classList.remove('active');
-      document.body.style.overflow = '';
+      restoreBodyOverflowIfNoModals();
     }
   };
 
@@ -1528,7 +1553,7 @@ const SYLLABUS_PDF_DATA = {
   window.closeCyqModalDirect = function() {
     if (cyqModalOverlay) {
       cyqModalOverlay.classList.remove('active');
-      document.body.style.overflow = '';
+      restoreBodyOverflowIfNoModals();
     }
   };
 
@@ -2024,7 +2049,7 @@ const SYLLABUS_PDF_DATA = {
   window.closePyqModalDirect = function() {
     if (pyqModalOverlay) {
       pyqModalOverlay.classList.remove('active');
-      document.body.style.overflow = '';
+      restoreBodyOverflowIfNoModals();
     }
   };
 
@@ -2407,6 +2432,7 @@ const SYLLABUS_PDF_DATA = {
       closeLibraryModalDirect();
       window.toggleUserDropdown(false);
       if (typeof closePromoModal === 'function') closePromoModal();
+      if (typeof closeClass10Modal === 'function') closeClass10Modal();
     }
   });
 
