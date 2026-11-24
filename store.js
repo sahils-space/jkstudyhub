@@ -34,6 +34,13 @@ const PERMANENTLY_HIDDEN_CATALOG_NAMES = new Set([
   'prd custom photo frame 01'
 ]);
 
+const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
+  'PRD-1794728727207', // Test ₹2 Physical Education listing
+  'PRD-1795546548217', // Duplicate Glue Gun entry in exam-kits (replaced by PRD-1795546693982 in stationery)
+  'PRD-1795463077415', // Resin photo frame belonging to art boutique
+  'OD1792945161265833' // Legacy cancelled order mis-tagged as CATALOG_PRODUCT
+]);
+
 function normalizeCatalogIdentity(value) {
   return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -50,6 +57,9 @@ function getDeletedCatalogIdentities() {
 
 function isDeletedCatalogProduct(product) {
   if (!product) return false;
+  const rawId = String(product.id || product.productId || '').trim();
+  if (PERMANENTLY_HIDDEN_CATALOG_IDS.has(rawId) || /^OD\d+/i.test(rawId)) return true;
+
   const name = normalizeCatalogIdentity(product.name || product.title);
   if (PERMANENTLY_HIDDEN_CATALOG_NAMES.has(name)) return true;
 
@@ -5389,6 +5399,10 @@ function setupCheckoutModal(name, price, category, paymentMode) {
   }
 
   modal.classList.add('active');
+  modal.scrollTop = 0;
+  const detailsCard = modal.querySelector('.book-details-card');
+  if (detailsCard) detailsCard.scrollTop = 0;
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // Mutex lock to strictly prevent duplicate / triple orders
@@ -6945,8 +6959,22 @@ function initShop() {
     renderDynamicStoreProducts();
   }
 
+  // Silently pre-decode visible eager product photos so scrolling has zero blank flash
+  document.querySelectorAll('.product-grid img[loading="eager"]').forEach(img => {
+    if (typeof img.decode === 'function') {
+      img.decode().catch(() => {});
+    }
+  });
+
   if (typeof syncCustomProductsWithSheet === 'function') {
-    syncCustomProductsWithSheet();
+    const scheduleBackgroundSync = () => {
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(() => syncCustomProductsWithSheet(), { timeout: 6000 });
+      } else {
+        syncCustomProductsWithSheet();
+      }
+    };
+    setTimeout(scheduleBackgroundSync, 4000);
   }
 
   if (typeof initRealtimeCatalogSync === 'function') {
@@ -6961,20 +6989,6 @@ function initShop() {
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') closeCartDrawer();
     });
-  }
-
-  // Periodic background refresh for price changes and new catalog items
-  if (!window._jkStoreSheetSyncInterval) {
-    window._jkStoreSheetSyncInterval = setInterval(() => {
-      if (
-        typeof syncCustomProductsWithSheet === 'function' &&
-        document.visibilityState === 'visible' &&
-        !document.documentElement.classList.contains('product-page-active') &&
-        !document.documentElement.classList.contains('checkout-page-active')
-      ) {
-        syncCustomProductsWithSheet();
-      }
-    }, 300000);
   }
 }
 
@@ -9870,6 +9884,10 @@ function openBookDetailsModal(bookName) {
   renderBookReviews();
 
   modal.classList.add('active');
+  modal.scrollTop = 0;
+  const detailsCard = modal.querySelector('.book-details-card');
+  if (detailsCard) detailsCard.scrollTop = 0;
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function closeBookDetailsModal() {
@@ -11006,8 +11024,145 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
       "images/products/foundation-course-chem-10th.jpg"
     ],
     "image": "images/products/foundation-course-chem-10th.jpg"
+  },
+  {
+    "id": "PRD-1795539734398",
+    "name": "CLASS 11TH-MED NOTE MAKING COPIES",
+    "title": "CLASS 11TH-MED NOTE MAKING COPIES",
+    "category": "school-copies",
+    "price": 1299,
+    "mrp": 1599,
+    "classLevel": "11",
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "BUNDLE OF SPIRAL COPIES FOR NOTES",
+    "photos": [
+      "images/products/class-11th-med-note-copies.jpg",
+      "images/products/class-11th-med-note-copies-2.jpg",
+      "images/products/class-11th-med-note-copies-3.jpg"
+    ],
+    "image": "images/products/class-11th-med-note-copies.jpg"
+  },
+  {
+    "id": "PRD-1795541254949",
+    "name": "CLASS 12TH-MED SPIRAL BUNDLE",
+    "title": "CLASS 12TH-MED SPIRAL BUNDLE",
+    "category": "school-copies",
+    "price": 1399,
+    "mrp": 1699,
+    "classLevel": "12",
+    "badge": "\u26a1 Fast Dispatch",
+    "desc": "BUNDLE OF SPIRAL FOR NOTES SET OF 7 CLASS 12TH",
+    "photos": [
+      "images/products/class-12th-med-spiral-bundle.jpg",
+      "images/products/class-12th-med-spiral-bundle-2.jpg",
+      "images/products/class-12th-med-spiral-bundle-3.jpg"
+    ],
+    "image": "images/products/class-12th-med-spiral-bundle.jpg"
+  },
+  {
+    "id": "PRD-1795543976195",
+    "name": "MODERN-PERIODIC TABLE",
+    "title": "MODERN-PERIODIC TABLE",
+    "category": "stationery",
+    "price": 15,
+    "mrp": 19,
+    "badge": "\u2728 Featured",
+    "desc": "MODERN PERIODIC TABLE",
+    "photos": [
+      "images/products/modern-periodic-table.jpg"
+    ],
+    "image": "images/products/modern-periodic-table.jpg"
+  },
+  {
+    "id": "PRD-1795545264747",
+    "name": "BASIC CALCULATOR",
+    "title": "BASIC CALCULATOR",
+    "category": "stationery",
+    "price": 80,
+    "mrp": 129,
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "CALCULATOR BASIC FOR STUDENTS",
+    "photos": [
+      "images/products/basic-calculator.jpg"
+    ],
+    "image": "images/products/basic-calculator.jpg"
+  },
+  {
+    "id": "PRD-1795545713872",
+    "name": "TRANSPARENT FILE (COVER SET OF 4 )",
+    "title": "TRANSPARENT FILE (COVER SET OF 4 )",
+    "category": "stationery",
+    "price": 64,
+    "mrp": 64,
+    "badge": "\u26a1 Fast Dispatch",
+    "desc": "SET OF 4 FILE-COVER",
+    "photos": [
+      "images/products/transparent-file-cover-4.jpg"
+    ],
+    "image": "images/products/transparent-file-cover-4.jpg"
+  },
+  {
+    "id": "PRD-1795545966154",
+    "name": "STICKY NOTES",
+    "title": "STICKY NOTES",
+    "category": "stationery",
+    "price": 149,
+    "mrp": 199,
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "1 PACK OF FOUR COLOURED STICKY NOTES",
+    "photos": [
+      "images/products/sticky-notes-pack.jpg",
+      "images/products/sticky-notes-pack-2.jpg"
+    ],
+    "image": "images/products/sticky-notes-pack.jpg"
+  },
+  {
+    "id": "PRD-1795546693982",
+    "name": "GLUE GUN",
+    "title": "GLUE GUN",
+    "category": "stationery",
+    "price": 249,
+    "mrp": 349,
+    "badge": "\u2728 Fresh Stock",
+    "desc": "Get quick, reliable bonding for all your DIY crafts, school projects, and everyday household repairs with this compact 20W Hot Melt Glue Gun.",
+    "photos": [
+      "images/products/glue-gun-20w.jpg",
+      "images/products/glue-gun-20w-2.jpg"
+    ],
+    "image": "images/products/glue-gun-20w.jpg"
+  },
+  {
+    "id": "PRD-1795549591672",
+    "name": "EXAM CLIPBOARD (TRANSPARENT)",
+    "title": "EXAM CLIPBOARD (TRANSPARENT)",
+    "category": "stationery",
+    "price": 139,
+    "mrp": 199,
+    "badge": "\ud83d\udd25 Bestseller",
+    "desc": "CRYSTAL CLEAR EXAM CLIPBOARD",
+    "photos": [
+      "images/products/exam-clipboard-transparent.jpg",
+      "images/products/exam-clipboard-transparent-2.jpg"
+    ],
+    "image": "images/products/exam-clipboard-transparent.jpg"
   }
 ];
+
+const CANONICAL_PRODUCT_IDS = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => String(p.id)));
+const CANONICAL_PRODUCT_NAMES = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => normalizeCatalogIdentity(p.name || p.title)));
+
+function mergeProductPreservingCanonical(existing, incoming) {
+  if (!existing) return incoming;
+  const exId = String(existing.id || existing.productId || '');
+  // Never let stale cache/sheet/Firestore rows overwrite canonical local product images, titles, or metadata
+  if (CANONICAL_PRODUCT_IDS.has(exId)) {
+    return existing;
+  }
+  if (existing.image && existing.image.startsWith('images/') && (!incoming.image || incoming.image.startsWith('data:image') || incoming.image === 'images/logo-app.png')) {
+    return { ...incoming, photos: existing.photos, image: existing.image, allImages: existing.allImages || existing.photos };
+  }
+  return { ...existing, ...incoming };
+}
 
 function isGeneralAcademicPhysicalEducationProduct(product) {
   const name = String(product && (product.name || product.title) || '')
@@ -11022,20 +11177,26 @@ let activeSchoolBooksClass = 'all';
 let CUSTOM_PRODUCTS = [...DEFAULT_PUBLISHED_PRODUCTS];
 let ownerUploadedPhotos = [null, null, null, null];
 
-// Initialize and load custom products from cache (combining DEFAULT_PUBLISHED_PRODUCTS, jk_custom_products, and jk_uploaded_catalog)
+// Initialize and load custom products safely (canonical DEFAULT_PUBLISHED_PRODUCTS are always preserved intact)
 try {
   purgeDeletedCatalogCache();
   let initialProducts = [...DEFAULT_PUBLISHED_PRODUCTS];
   const mergeCachedProduct = p => {
     if (!p || (!p.name && !p.title) || isDeletedCatalogProduct(p)) return;
-    const productId = String(p.id || p.productId || '');
-    const productName = String(p.name || p.title || '').trim().toLowerCase();
+    const productId = String(p.id || p.productId || '').trim();
+    const normName = normalizeCatalogIdentity(p.name || p.title);
+    if (CANONICAL_PRODUCT_IDS.has(productId) || CANONICAL_PRODUCT_NAMES.has(normName)) {
+      return; // Already locked cleanly in DEFAULT_PUBLISHED_PRODUCTS with fast local images
+    }
     const existingIndex = initialProducts.findIndex(item =>
       (productId && String(item.id || item.productId || '') === productId) ||
-      String(item.name || item.title || '').trim().toLowerCase() === productName
+      normalizeCatalogIdentity(item.name || item.title) === normName
     );
-    if (existingIndex >= 0) initialProducts[existingIndex] = { ...initialProducts[existingIndex], ...p };
-    else initialProducts.push(p);
+    if (existingIndex >= 0) {
+      initialProducts[existingIndex] = mergeProductPreservingCanonical(initialProducts[existingIndex], p);
+    } else {
+      initialProducts.push(p);
+    }
   };
   const cachedProducts = localStorage.getItem('jk_custom_products');
   if (cachedProducts) {
@@ -11479,6 +11640,104 @@ async function handleOwnerProductSubmit(event) {
   }
 }
 
+// Helper: Extract catalog items & price overrides from Google Sheet rows safely
+function extractCatalogFromSheetRows(rows, sheetProducts, sheetPriceOverrides, sheetMrpOverrides) {
+  if (!Array.isArray(rows)) return;
+  rows.forEach(o => {
+    if (!o || typeof o !== 'object') return;
+
+    // 1. Price/MRP override row from Seller Panel
+    const isPriceOverride = (String(o.orderId).includes('PRICE-OVERRIDE') || String(o.txnId).includes('PRICE_OVERRIDE'));
+    if (isPriceOverride) {
+      let pMeta = null;
+      const metaFields = [o.notes, o.product];
+      for (const mf of metaFields) {
+        if (typeof mf === 'string' && mf.startsWith('{') && mf.endsWith('}')) {
+          try {
+            pMeta = JSON.parse(mf);
+            if (pMeta && pMeta.name) break;
+          } catch(e) {}
+        }
+      }
+      const ovName = (pMeta && pMeta.name) || o.name;
+      const ovPrice = (pMeta && pMeta.price) || parseFloat(o.amount || o.phone);
+      const ovMrp = (pMeta && pMeta.mrp) || parseFloat(o.address);
+      if (ovName && !isNaN(ovPrice) && ovPrice > 0) {
+        sheetPriceOverrides[ovName] = ovPrice;
+        if (!isNaN(ovMrp) && ovMrp > 0) sheetMrpOverrides[ovName] = ovMrp;
+      }
+      return;
+    }
+
+    // Ignore normal customer checkout orders (OD...) so test/cancelled orders never leak into catalog
+    if (String(o.orderId || '').trim().toUpperCase().startsWith('OD')) return;
+
+    // 2. Check if row represents a catalog product record
+    const values = Object.values(o).map(v => typeof v === 'string' ? v.trim() : String(v || ''));
+    const isCatalogItem = values.some(v =>
+      v === 'CATALOG_PRODUCT' ||
+      v.startsWith('PRD-') ||
+      (v.startsWith('{') && (v.includes('"productId"') || v.includes('"photos"') || v.includes('"category"')))
+    );
+    if (!isCatalogItem) return;
+
+    let parsedMeta = null;
+    const candidateFields = [o.product, o.address, o.notes, o.name, o.txnId, o.phone, o.orderId];
+    for (const field of candidateFields) {
+      if (typeof field === 'string' && field.trim().startsWith('{') && field.trim().endsWith('}')) {
+        try {
+          const candidate = JSON.parse(field.trim());
+          if (candidate && (candidate.name || candidate.title || candidate.id || candidate.productId)) {
+            parsedMeta = candidate;
+            break;
+          }
+        } catch (e) {}
+      }
+    }
+    if (!parsedMeta) return;
+
+    const prodId = (parsedMeta.productId || parsedMeta.id) || values.find(v => v.startsWith('PRD-')) || o.orderId || '';
+    const prodName = parsedMeta.name || parsedMeta.title || 'Catalog Product';
+    if (!prodId || !prodName) return;
+
+    const prodPrice = Number(parsedMeta.price) || parseFloat(o.amount) || 0;
+    const prodMrp = Number(parsedMeta.mrp) || Math.round(prodPrice * 1.35);
+    const prodPhotos = Array.isArray(parsedMeta.photos) && parsedMeta.photos.length > 0
+      ? parsedMeta.photos.filter(p => typeof p === 'string' && p.trim().length > 0)
+      : (parsedMeta.image ? [parsedMeta.image] : ['images/logo-app.png']);
+
+    const prodItem = {
+      id: prodId,
+      productId: prodId,
+      name: prodName,
+      title: prodName,
+      category: parsedMeta.category || 'stationery',
+      price: prodPrice,
+      mrp: prodMrp < prodPrice ? prodPrice : prodMrp,
+      paymentMode: parsedMeta.paymentMode === 'prepaid' ? 'prepaid' : (parsedMeta.paymentMode === 'cod' ? 'cod' : 'both'),
+      badge: parsedMeta.badge || '✨ Fresh Stock',
+      desc: parsedMeta.desc || parsedMeta.description || '',
+      description: parsedMeta.desc || parsedMeta.description || '',
+      photos: prodPhotos,
+      image: prodPhotos[0] || 'images/logo-app.png',
+      allImages: prodPhotos,
+      classLevel: parsedMeta.classLevel || '',
+      board: parsedMeta.board || '',
+      subject: parsedMeta.subject || '',
+      edition: parsedMeta.edition || '',
+      contents: parsedMeta.contents || '',
+      status: parsedMeta.status || 'Active',
+      timestamp: parsedMeta.timestamp || o.timestamp || ''
+    };
+
+    const normName = normalizeCatalogIdentity(prodItem.name);
+    if (isDeletedCatalogProduct(prodItem) || isGeneralAcademicPhysicalEducationProduct(prodItem)) return;
+    if (!sheetProducts.some(sp => sp.id === prodItem.id || normalizeCatalogIdentity(sp.name) === normName)) {
+      sheetProducts.push(prodItem);
+    }
+  });
+}
+
 // Sync products from Google Sheet for all visitors
 async function syncCustomProductsWithSheet() {
   if (window._jkCatalogSyncPromise) return window._jkCatalogSyncPromise;
@@ -11488,232 +11747,133 @@ async function syncCustomProductsWithSheet() {
   window._jkCatalogSyncPromise = (async () => {
    try {
     let sheetProducts = [];
+    const sheetPriceOverrides = {};
+    const sheetMrpOverrides = {};
+    let parsedOrdersAlready = false;
 
-    // 1. Fetch from action=get_products
+    // 1. Fetch once from action=get_products (also handles unified orders fallback without a second 6MB request)
     try {
-      const res = await fetchWithRetry(`${endpoint}?action=get_products&t=${Date.now()}`, {}, 2, 1200);
+      const res = await fetchWithRetry(`${endpoint}?action=get_products&t=${Date.now()}`, {}, 1, 1200);
       if (res && res.ok) {
         const data = await res.json();
-        if (data && data.status === 'success' && Array.isArray(data.products)) {
-          data.products.forEach(p => {
-            const prodPhotos = (Array.isArray(p.photos) && p.photos.length > 0) 
-              ? p.photos.filter(ph => typeof ph === 'string' && ph.trim().length > 0)
-              : (p.image ? [p.image] : ['images/logo-app.png']);
-            const prodItem = {
-              id: p.productId || p.id,
-              productId: p.productId || p.id,
-              name: p.name || p.title,
-              title: p.name || p.title,
-              category: p.category || 'stationery',
-              price: Number(p.price) || 0,
-              mrp: Number(p.mrp) || Math.round((Number(p.price) || 0) * 1.35),
-              paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
-              badge: p.badge || '✨ Fresh Stock',
-              desc: p.desc || p.description || '',
-              description: p.desc || p.description || '',
-              photos: prodPhotos,
-              image: prodPhotos[0] || 'images/logo-app.png',
-              allImages: prodPhotos,
-              classLevel: p.classLevel || '',
-              board: p.board || '',
-              subject: p.subject || '',
-              edition: p.edition || '',
-              contents: p.contents || '',
-              status: p.status || 'Active',
-              timestamp: p.timestamp || ''
-            };
-            if (prodItem.id && !isDeletedCatalogProduct(prodItem) && !sheetProducts.some(sp => sp.id === prodItem.id)) {
-              sheetProducts.push(prodItem);
-            }
-          });
+        if (data && data.status === 'success') {
+          if (Array.isArray(data.products)) {
+            data.products.forEach(p => {
+              const prodPhotos = (Array.isArray(p.photos) && p.photos.length > 0)
+                ? p.photos.filter(ph => typeof ph === 'string' && ph.trim().length > 0)
+                : (p.image ? [p.image] : ['images/logo-app.png']);
+              const prodItem = {
+                id: p.productId || p.id,
+                productId: p.productId || p.id,
+                name: p.name || p.title,
+                title: p.name || p.title,
+                category: p.category || 'stationery',
+                price: Number(p.price) || 0,
+                mrp: Number(p.mrp) || Math.round((Number(p.price) || 0) * 1.35),
+                paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
+                badge: p.badge || '✨ Fresh Stock',
+                desc: p.desc || p.description || '',
+                description: p.desc || p.description || '',
+                photos: prodPhotos,
+                image: prodPhotos[0] || 'images/logo-app.png',
+                allImages: prodPhotos,
+                classLevel: p.classLevel || '',
+                board: p.board || '',
+                subject: p.subject || '',
+                edition: p.edition || '',
+                contents: p.contents || '',
+                status: p.status || 'Active',
+                timestamp: p.timestamp || ''
+              };
+              const normName = normalizeCatalogIdentity(prodItem.name);
+              if (prodItem.id && !isDeletedCatalogProduct(prodItem) && !isGeneralAcademicPhysicalEducationProduct(prodItem) &&
+                  !sheetProducts.some(sp => sp.id === prodItem.id || normalizeCatalogIdentity(sp.name) === normName)) {
+                sheetProducts.push(prodItem);
+              }
+            });
+          }
+          if (Array.isArray(data.orders)) {
+            extractCatalogFromSheetRows(data.orders, sheetProducts, sheetPriceOverrides, sheetMrpOverrides);
+            parsedOrdersAlready = true;
+          }
         }
       }
     } catch(e) {
       console.warn("get_products fetch error:", e);
     }
 
-    // 2. Fetch from action=get_orders universal catalog fallback
-    try {
-      const ordersRes = await fetchWithRetry(`${endpoint}?action=get_orders&t=${Date.now()}`, {}, 2, 1200);
-      if (ordersRes && ordersRes.ok) {
-        const ordersData = await ordersRes.json();
-        if (ordersData && ordersData.status === 'success' && Array.isArray(ordersData.orders)) {
-          const sheetPriceOverrides = {};
-          const sheetMrpOverrides = {};
-
-          ordersData.orders.forEach(o => {
-            if (!o || typeof o !== 'object') return;
-
-            // Check if this row is a price/MRP override broadcasted from Seller Panel
-            const isPriceOverride = (String(o.orderId).includes('PRICE-OVERRIDE') || String(o.txnId).includes('PRICE_OVERRIDE'));
-            if (isPriceOverride) {
-              let pMeta = null;
-              const metaFields = [o.notes, o.product];
-              for (const mf of metaFields) {
-                if (typeof mf === 'string' && mf.startsWith('{') && mf.endsWith('}')) {
-                  try {
-                    pMeta = JSON.parse(mf);
-                    if (pMeta && pMeta.name) break;
-                  } catch(e) {}
-                }
-              }
-              const ovName = (pMeta && pMeta.name) || o.name;
-              const ovPrice = (pMeta && pMeta.price) || parseFloat(o.amount || o.phone);
-              const ovMrp = (pMeta && pMeta.mrp) || parseFloat(o.address);
-              if (ovName && !isNaN(ovPrice) && ovPrice > 0) {
-                sheetPriceOverrides[ovName] = ovPrice;
-                if (!isNaN(ovMrp) && ovMrp > 0) sheetMrpOverrides[ovName] = ovMrp;
-              }
-              return;
-            }
-
-            // Check if this row is a catalog product item in ANY column
-            const values = Object.values(o).map(v => typeof v === 'string' ? v.trim() : String(v || ''));
-            const isCatalogItem = values.some(v => 
-              v === 'CATALOG_PRODUCT' || 
-              v.includes('CATALOG_PRODUCT') || 
-              v.startsWith('PRD-') || 
-              (v.startsWith('{') && (v.includes('"id"') || v.includes('"productId"') || v.includes('"photos"') || v.includes('"price"')))
-            );
-
-            if (!isCatalogItem) return;
-
-            // Scan all candidate fields for JSON metadata
-            let parsedMeta = null;
-            const candidateFields = [o.product, o.address, o.notes, o.name, o.txnId, o.phone, o.orderId];
-            for (const field of candidateFields) {
-              if (typeof field === 'string' && field.trim().startsWith('{') && field.trim().endsWith('}')) {
-                try {
-                  const candidate = JSON.parse(field.trim());
-                  if (candidate && (candidate.name || candidate.title || candidate.id || candidate.productId)) {
-                    parsedMeta = candidate;
-                    break;
-                  }
-                } catch (e) {}
-              }
-            }
-
-            // Extract fields with fallbacks
-            const prodId = (parsedMeta && (parsedMeta.productId || parsedMeta.id)) || 
-                           values.find(v => v.startsWith('PRD-')) || 
-                           o.orderId || 
-                           ('PRD-' + Date.now());
-            const prodName = (parsedMeta && (parsedMeta.name || parsedMeta.title)) || 
-                             (o.name && !o.name.startsWith('PRD-') && o.name !== 'CATALOG_PRODUCT' ? o.name : null) || 
-                             (o.product && !o.product.startsWith('{') ? o.product : null) || 
-                             'Catalog Product';
-            const prodPrice = (parsedMeta && Number(parsedMeta.price)) || parseFloat(o.amount) || 0;
-            const prodMrp = (parsedMeta && Number(parsedMeta.mrp)) || Math.round(prodPrice * 1.35);
-            const prodCategory = (parsedMeta && parsedMeta.category) || 'stationery';
-            const prodBadge = (parsedMeta && parsedMeta.badge) || '✨ Fresh Stock';
-            const prodDesc = (parsedMeta && (parsedMeta.desc || parsedMeta.description)) || (o.notes !== 'Owner Catalog Listing' && o.notes !== 'Seller Catalog Listing' ? o.notes : '') || '';
-            const prodClassLevel = (parsedMeta && parsedMeta.classLevel) || '';
-            const prodBoard = (parsedMeta && parsedMeta.board) || '';
-            const prodSubject = (parsedMeta && parsedMeta.subject) || '';
-            const prodEdition = (parsedMeta && parsedMeta.edition) || '';
-            const prodContents = (parsedMeta && parsedMeta.contents) || '';
-            
-            let prodPhotos = [];
-            if (parsedMeta && Array.isArray(parsedMeta.photos) && parsedMeta.photos.length > 0) {
-              prodPhotos = parsedMeta.photos.filter(p => typeof p === 'string' && p.trim().length > 0);
-            } else if (parsedMeta && parsedMeta.image) {
-              prodPhotos = [parsedMeta.image];
-            } else {
-              prodPhotos = ['images/logo-app.png'];
-            }
-
-            const prodItem = {
-              id: prodId,
-              productId: prodId,
-              name: prodName,
-              title: prodName,
-              category: prodCategory,
-              price: prodPrice,
-              mrp: prodMrp,
-              paymentMode: parsedMeta && parsedMeta.paymentMode === 'prepaid' ? 'prepaid' : (parsedMeta && parsedMeta.paymentMode === 'cod' ? 'cod' : 'both'),
-              badge: prodBadge,
-              desc: prodDesc,
-              description: prodDesc,
-              photos: prodPhotos,
-              image: prodPhotos[0] || 'images/logo-app.png',
-              allImages: prodPhotos,
-              classLevel: prodClassLevel,
-              board: prodBoard,
-              subject: prodSubject,
-              edition: prodEdition,
-              contents: prodContents,
-              status: (parsedMeta && parsedMeta.status) || 'Active',
-              timestamp: (parsedMeta && parsedMeta.timestamp) || o.timestamp || ''
-            };
-
-            if (prodItem.id && !isDeletedCatalogProduct(prodItem) && !sheetProducts.some(sp => sp.id === prodItem.id || sp.name === prodItem.name)) {
-              sheetProducts.push(prodItem);
-            }
-          });
-
-          // Apply live price and MRP overrides from Google Sheet
-          if (Object.keys(sheetPriceOverrides).length > 0) {
-            applyLivePriceAndMrpOverrides(sheetPriceOverrides, sheetMrpOverrides);
+    // 2. Fallback to action=get_orders ONLY if get_products didn't already include orders
+    if (!parsedOrdersAlready) {
+      try {
+        const ordersRes = await fetchWithRetry(`${endpoint}?action=get_orders&t=${Date.now()}`, {}, 1, 1200);
+        if (ordersRes && ordersRes.ok) {
+          const ordersData = await ordersRes.json();
+          if (ordersData && ordersData.status === 'success' && Array.isArray(ordersData.orders)) {
+            extractCatalogFromSheetRows(ordersData.orders, sheetProducts, sheetPriceOverrides, sheetMrpOverrides);
           }
         }
+      } catch(e) {
+        console.warn("get_orders catalog sync error:", e);
       }
-    } catch(e) {
-      console.warn("get_orders catalog sync error:", e);
+    }
+
+    if (Object.keys(sheetPriceOverrides).length > 0) {
+      applyLivePriceAndMrpOverrides(sheetPriceOverrides, sheetMrpOverrides);
     }
 
     if (sheetProducts.length > 0) {
-      // Combine Sheet products with local products (avoid duplicate productIds)
       const mergedMap = new Map();
-      
-      // Seed with current products (which have clean local images)
-      CUSTOM_PRODUCTS.forEach(p => {
-        if (!isDeletedCatalogProduct(p)) mergedMap.set(p.id, p);
-      });
+      const nameToKey = new Map();
 
-      // Merge incoming sheet products
-      sheetProducts.forEach(sp => {
-        if (isGeneralAcademicPhysicalEducationProduct(sp) || isDeletedCatalogProduct(sp)) return;
-        if (!mergedMap.has(sp.id)) {
-          mergedMap.set(sp.id, sp);
-        } else {
-          const existing = mergedMap.get(sp.id);
-          const merged = {
-            ...existing,
-            ...sp,
-            classLevel: sp.classLevel || existing.classLevel || '',
-            board: sp.board || existing.board || '',
-            subject: sp.subject || existing.subject || '',
-            edition: sp.edition || existing.edition || '',
-            contents: sp.contents || existing.contents || ''
-          };
-          // If existing already has clean images/ path, preserve it!
-          if (existing.image && existing.image.startsWith('images/') && (!sp.image || sp.image.startsWith('data:image'))) {
-            mergedMap.set(sp.id, { ...merged, photos: existing.photos, image: existing.image, allImages: existing.photos });
-          } else {
-            mergedMap.set(sp.id, merged);
-          }
+      CUSTOM_PRODUCTS.forEach(p => {
+        if (!isDeletedCatalogProduct(p)) {
+          const k = String(p.id || p.productId || p.name);
+          mergedMap.set(k, p);
+          nameToKey.set(normalizeCatalogIdentity(p.name || p.title), k);
         }
       });
 
-      CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
-      try {
-        const lightProducts = CUSTOM_PRODUCTS.map(cp => {
-          const isLargeB64 = cp.image && cp.image.length > 50000;
-          return isLargeB64 ? { ...cp, photos: ['images/logo-app.png'], image: 'images/logo-app.png' } : cp;
-        });
-        localStorage.setItem('jk_custom_products', JSON.stringify(lightProducts));
-      } catch (e) {
-        console.warn("Storage quota warning on jk_custom_products:", e);
-      }
+      let hasGenuinelyNewProduct = false;
 
-      registerAllCustomProducts(CUSTOM_PRODUCTS);
-      renderDynamicStoreProducts();
-      renderOwnerProductList();
+      sheetProducts.forEach(sp => {
+        if (isGeneralAcademicPhysicalEducationProduct(sp) || isDeletedCatalogProduct(sp)) return;
+        const spId = String(sp.id || sp.productId || '');
+        const spNormName = normalizeCatalogIdentity(sp.name || sp.title);
+        // Never duplicate or overwrite canonical verified local products
+        if (CANONICAL_PRODUCT_IDS.has(spId) || CANONICAL_PRODUCT_NAMES.has(spNormName)) return;
 
-      // Trigger store search re-filter so the new products are immediately displayed in their category
-      const q = document.getElementById('storeSearchInput') ? document.getElementById('storeSearchInput').value : '';
-      if (typeof handleStoreLiveSearch === 'function') {
-        handleStoreLiveSearch(q);
+        const matchedKey = mergedMap.has(spId) ? spId : nameToKey.get(spNormName);
+        if (!matchedKey) {
+          mergedMap.set(spId, sp);
+          nameToKey.set(spNormName, spId);
+          hasGenuinelyNewProduct = true;
+        } else {
+          const existing = mergedMap.get(matchedKey);
+          mergedMap.set(matchedKey, mergeProductPreservingCanonical(existing, sp));
+        }
+      });
+
+      if (hasGenuinelyNewProduct) {
+        CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
+        try {
+          const lightProducts = CUSTOM_PRODUCTS.map(cp => {
+            if (CANONICAL_PRODUCT_IDS.has(String(cp.id || ''))) return null;
+            const isLargeB64 = cp.image && cp.image.length > 50000;
+            return isLargeB64 ? { ...cp, photos: ['images/logo-app.png'], image: 'images/logo-app.png' } : cp;
+          }).filter(Boolean);
+          localStorage.setItem('jk_custom_products', JSON.stringify(lightProducts));
+        } catch (e) {
+          console.warn("Storage quota warning on jk_custom_products:", e);
+        }
+
+        registerAllCustomProducts(CUSTOM_PRODUCTS);
+        renderDynamicStoreProducts();
+        renderOwnerProductList();
+
+        const q = document.getElementById('storeSearchInput') ? document.getElementById('storeSearchInput').value : '';
+        if (typeof handleStoreLiveSearch === 'function') {
+          handleStoreLiveSearch(q);
+        }
       }
     }
    } catch (err) {
@@ -11799,30 +11959,46 @@ function initRealtimeCatalogSync() {
 
 function mergeAndRenderLiveProducts(incoming) {
   const mergedMap = new Map();
-  
-  // Seed with current products
+  const nameToKey = new Map();
+
   CUSTOM_PRODUCTS.filter(p => !isDeletedCatalogProduct(p)).forEach(p => {
-    mergedMap.set(p.id || p.productId || p.name, p);
+    const k = String(p.id || p.productId || p.name);
+    mergedMap.set(k, p);
+    nameToKey.set(normalizeCatalogIdentity(p.name || p.title), k);
   });
 
+  let hasGenuinelyNewProduct = false;
+
   (Array.isArray(incoming) ? incoming : []).forEach(sp => {
-    const key = sp.id || sp.productId || sp.name;
-    if (!key || isGeneralAcademicPhysicalEducationProduct(sp) || isDeletedCatalogProduct(sp)) return;
-    if (!mergedMap.has(key)) {
+    if (!sp || isGeneralAcademicPhysicalEducationProduct(sp) || isDeletedCatalogProduct(sp)) return;
+    const spId = String(sp.id || sp.productId || '').trim();
+    const spNormName = normalizeCatalogIdentity(sp.name || sp.title);
+    if (!spId && !spNormName) return;
+
+    // Never allow Firestore snapshots to overwrite or duplicate canonical local products
+    if (CANONICAL_PRODUCT_IDS.has(spId) || CANONICAL_PRODUCT_NAMES.has(spNormName)) return;
+
+    const key = spId || spNormName;
+    const matchedKey = mergedMap.has(key) ? key : nameToKey.get(spNormName);
+    if (!matchedKey) {
       mergedMap.set(key, sp);
+      nameToKey.set(spNormName, key);
+      hasGenuinelyNewProduct = true;
     } else {
-      const existing = mergedMap.get(key);
-      if (existing.image && existing.image.startsWith('images/') && (!sp.image || sp.image.startsWith('data:image'))) {
-        mergedMap.set(key, { ...sp, photos: existing.photos, image: existing.image, allImages: existing.photos });
-      } else {
-        mergedMap.set(key, sp);
-      }
+      const existing = mergedMap.get(matchedKey);
+      mergedMap.set(matchedKey, mergeProductPreservingCanonical(existing, sp));
     }
   });
 
+  if (!hasGenuinelyNewProduct) return;
+
   CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
   try {
-    localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
+    const lightProducts = CUSTOM_PRODUCTS.filter(cp => !CANONICAL_PRODUCT_IDS.has(String(cp.id || ''))).map(cp => {
+      const isLargeB64 = cp.image && cp.image.length > 50000;
+      return isLargeB64 ? { ...cp, photos: ['images/logo-app.png'], image: 'images/logo-app.png' } : cp;
+    });
+    localStorage.setItem('jk_custom_products', JSON.stringify(lightProducts));
   } catch (error) {
     console.warn('Could not save the synchronized catalog cache:', error);
   }
@@ -11851,7 +12027,7 @@ function renderDynamicStationeryProducts() {
     dynamicWrap = document.createElement('div');
     dynamicWrap.id = 'dynamicStationeryContainer';
     dynamicWrap.style.display = 'contents';
-    stationeryGrid.appendChild(dynamicWrap);
+    stationeryGrid.insertBefore(dynamicWrap, stationeryGrid.firstChild || null);
   }
 
   const nonStationeryCats = new Set([
@@ -11894,9 +12070,9 @@ function renderDynamicStationeryProducts() {
     const favHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
 
     return `
-      <div class="product-card" data-product-id="${safeEscape(productId)}" data-render-signature="${safeEscape(renderSignature)}" data-category="${safeEscape(cat)}" style="--product-load-order:${Math.min(index, 8)}">
+      <div class="product-card" data-product-id="${safeEscape(productId)}" data-render-signature="${safeEscape(renderSignature)}" data-category="${safeEscape(cat)}">
         <button class="wishlist-icon" onclick="${favHandler}" aria-label="Save ${safeEscape(pName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
+        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="${detailsHandler}" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
           <h3 class="product-title" onclick="${detailsHandler}" style="cursor:pointer;">${safeEscape(pName)}</h3>
@@ -11907,6 +12083,7 @@ function renderDynamicStationeryProducts() {
                 <span class="product-price">₹${price}</span>
                 ${mrp > price ? `<span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹${mrp}</span>` : ''}
               </div>
+              ${mrp > price ? `<span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹${mrp - price} • Instant Dispatch</span>` : ''}
             </div>
             <div class="product-actions" style="gap:6px;">
               <button class="buy-btn" style="flex:1;" onclick="${checkoutHandler}">Buy Now</button>
@@ -11930,11 +12107,8 @@ function renderDynamicStationeryProducts() {
     const existing = existingById.get(card.dataset.productId);
     if (existing) {
       existingById.delete(card.dataset.productId);
-      if (existing.dataset.renderSignature === card.dataset.renderSignature) {
-        card = existing;
-      } else {
-        existing.replaceWith(card);
-      }
+      // Preserve pre-rendered static card intact to avoid DOM destruction & image flash
+      card = existing;
     }
 
     const currentAtIndex = dynamicWrap.children[index];
@@ -11986,7 +12160,7 @@ function renderComingSoonCatalogProductCard(product) {
   return `
     <div class="product-card" data-category="coming-soon">
       <button class="wishlist-icon" onclick="${favoriteHandler}" aria-label="Wishlist"><i class="fa-solid fa-heart"></i></button>
-      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
+      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="${detailsHandler}" style="cursor:pointer;">
       <div class="product-info">
         <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-hourglass-half"></i> ${safeEscape(badge)}</span>
         <h3 class="product-title" style="cursor:pointer;" onclick="${detailsHandler}">${safeEscape(productName)}</h3>
@@ -12030,15 +12204,16 @@ function renderSchoolCatalogProductCard(product, sectionType) {
   const outOfStock = stock.status === 'out_of_stock' || Number(stock.qty) <= 0;
   const stockLabel = outOfStock ? 'Out of stock' : 'In stock';
   const classMeta = gradeLabel ? ` · ${gradeLabel}` : '';
+  const productId = product.id || product.productId || productName;
   const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', '${category}')`);
   const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', '${category}')`);
   const detailsHandler = safeEscape(`openBookDetailsModal('${safeInlineName}')`);
   const favoriteHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
 
   return `
-    <div class="product-card school-catalog-product-card" data-category="${category}" data-class-level="${grade}" data-stock-status="${outOfStock ? 'out_of_stock' : 'in_stock'}">
+    <div class="product-card school-catalog-product-card" data-product-id="${safeEscape(productId)}" data-category="${category}" data-class-level="${grade}" data-stock-status="${outOfStock ? 'out_of_stock' : 'in_stock'}">
       <button class="wishlist-icon" onclick="${favoriteHandler}" aria-label="Add ${safeEscape(productName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
-      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="${detailsHandler}" style="cursor:pointer;">
       <div class="product-info">
         <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
           ${sectionType === 'books' ? 'School Books' : 'School Copies & Registers'}${classMeta ? safeEscape(classMeta) : ''}
@@ -12064,6 +12239,45 @@ function renderSchoolCatalogProductCard(product, sectionType) {
   `;
 }
 
+// Reconcile grid items without destroying existing DOM nodes (zero flicker & zero duplicate reload)
+function reconcileGridPreservingExisting(container, items, renderHtmlFn) {
+  if (!container) return;
+  if (!Array.isArray(items) || items.length === 0) {
+    if (container.childElementCount) container.replaceChildren();
+    return;
+  }
+  const existingById = new Map();
+  const existingByTitle = new Map();
+  Array.from(container.children).forEach(card => {
+    if (card.dataset && card.dataset.productId) existingById.set(card.dataset.productId, card);
+    const tEl = card.querySelector('.product-title');
+    if (tEl) existingByTitle.set(normalizeCatalogIdentity(tEl.textContent), card);
+  });
+
+  const html = items.map(renderHtmlFn).join('');
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+
+  Array.from(tpl.content.children).forEach((nextCard, index) => {
+    const pid = nextCard.dataset && nextCard.dataset.productId;
+    const tEl = nextCard.querySelector('.product-title');
+    const normTitle = tEl ? normalizeCatalogIdentity(tEl.textContent) : '';
+    const existing = (pid && existingById.get(pid)) || (normTitle && existingByTitle.get(normTitle));
+
+    let cardToPlace = nextCard;
+    if (existing) {
+      if (pid) existingById.delete(pid);
+      if (normTitle) existingByTitle.delete(normTitle);
+      cardToPlace = existing;
+    }
+
+    const currentAtIndex = container.children[index];
+    if (currentAtIndex !== cardToPlace) {
+      container.insertBefore(cardToPlace, currentAtIndex || null);
+    }
+  });
+}
+
 function renderSchoolCatalogSections() {
   const copiesHeader = document.getElementById('school-copies-header');
   const copiesGrid = document.getElementById('copiesGrid');
@@ -12083,11 +12297,17 @@ function renderSchoolCatalogSections() {
   const books = products.filter(product => bookCategories.has(String(product.category || '').trim().toLowerCase()));
   const uploadedKits = products.filter(product => examKitCategories.has(String(product.category || '').trim().toLowerCase()));
 
-  // Render dynamic Exam Master Kits into the section if available
+  // Reconcile dynamic Exam Master Kits cleanly without wiping static HTML nodes
   const examKitsGrid = document.getElementById('examKitsGrid');
   if (examKitsGrid) {
-    // Retain hardcoded default kits (Class 10th and 12th) while appending any uploaded kits dynamically
-    const dynamicKitCards = uploadedKits.map(product => {
+    let dynamicContainer = document.getElementById('dynamicExamKitsContainer');
+    if (!dynamicContainer) {
+      dynamicContainer = document.createElement('div');
+      dynamicContainer.id = 'dynamicExamKitsContainer';
+      dynamicContainer.style.display = 'contents';
+      examKitsGrid.appendChild(dynamicContainer);
+    }
+    reconcileGridPreservingExisting(dynamicContainer, uploadedKits, product => {
       const pName = String(product.name || product.title || 'Master Kit');
       const safeInlineName = pName.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\r\n]/g, ' ');
       const photos = Array.isArray(product.photos) && product.photos.length ? product.photos : [product.image || 'images/logo-app.png'];
@@ -12097,16 +12317,17 @@ function renderSchoolCatalogSections() {
       const grade = getSchoolCatalogClassLevel(product.classLevel);
       const gradeLabel = grade ? `CLASS ${grade}TH JKBOSE` : 'JKBOSE BOARD PREP';
       const badge = product.badge || '2026 BOARD SPECIAL • TOPPER PACK';
+      const productId = product.id || product.productId || pName;
       const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', 'notes')`);
       const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', 'notes')`);
       const waHandler = safeEscape(`orderViaWhatsApp('${safeInlineName}', ${price}, 'notes')`);
       const favHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
 
       return `
-        <div class="product-card" style="border: 2px solid #ea580c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);" data-category="exam-kits">
+        <div class="product-card" data-product-id="${safeEscape(productId)}" style="border: 2px solid #ea580c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);" data-category="exam-kits">
           <button class="wishlist-icon" onclick="${favHandler}"><i class="fa-solid fa-heart"></i></button>
           <div style="position:relative;">
-            <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
+            <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
             <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
               <i class="fa-solid fa-fire"></i> ${safeEscape(badge)}
             </span>
@@ -12141,46 +12362,18 @@ function renderSchoolCatalogSections() {
           </div>
         </div>
       `;
-    }).join('');
-
-    // Append dynamic kits if any exist
-    const dynamicContainer = document.getElementById('dynamicExamKitsContainer');
-    if (dynamicContainer) {
-      if (dynamicContainer.children.length === 0 || dynamicContainer.innerHTML.trim() !== dynamicKitCards.trim()) {
-        dynamicContainer.innerHTML = dynamicKitCards;
-      }
-    } else {
-      const dynWrap = document.createElement('div');
-      dynWrap.id = 'dynamicExamKitsContainer';
-      dynWrap.style.display = 'contents';
-      dynWrap.innerHTML = dynamicKitCards;
-      examKitsGrid.appendChild(dynWrap);
-    }
+    });
   }
 
   copiesHeader.style.display = copies.length ? 'flex' : 'none';
   copiesGrid.style.display = copies.length ? '' : 'none';
   if (copiesCategoryCard) copiesCategoryCard.style.display = copies.length ? '' : 'none';
-  if (copies.length) {
-    const nextCopiesHtml = copies.map(product => renderSchoolCatalogProductCard(product, 'copies')).join('');
-    if (copiesGrid.children.length === 0 || copiesGrid.innerHTML.trim() !== nextCopiesHtml.trim()) {
-      copiesGrid.innerHTML = nextCopiesHtml;
-    }
-  } else if (copiesGrid.childElementCount) {
-    copiesGrid.replaceChildren();
-  }
+  reconcileGridPreservingExisting(copiesGrid, copies, product => renderSchoolCatalogProductCard(product, 'copies'));
 
   booksHeader.style.display = books.length ? 'flex' : 'none';
   booksGrid.style.display = books.length ? '' : 'none';
   if (booksCategoryCard) booksCategoryCard.style.display = books.length ? '' : 'none';
-  if (books.length) {
-    const nextBooksHtml = books.map(product => renderSchoolCatalogProductCard(product, 'books')).join('');
-    if (booksGrid.children.length === 0 || booksGrid.innerHTML.trim() !== nextBooksHtml.trim()) {
-      booksGrid.innerHTML = nextBooksHtml;
-    }
-  } else if (booksGrid.childElementCount) {
-    booksGrid.replaceChildren();
-  }
+  reconcileGridPreservingExisting(booksGrid, books, product => renderSchoolCatalogProductCard(product, 'books'));
 
   const hasClassProducts = books.some(product => getSchoolCatalogClassLevel(product.classLevel));
   classMenu.style.display = hasClassProducts ? 'flex' : 'none';

@@ -94,13 +94,15 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* GPU acceleration for cards and modals to eliminate micro-stutter */
-.product-card,
+/* Hardware acceleration for overlays without creating 50+ GPU framebuffers for grid cards */
 .modal-content,
 .cart-drawer,
 .store-floating-btn {
   transform: translateZ(0);
   backface-visibility: hidden;
+}
+.product-card {
+  contain: layout style;
 }
 
 
