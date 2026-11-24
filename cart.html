@@ -1043,6 +1043,16 @@
               <span id="payStepTotalBadge" style="font-size: 22px; font-weight: 900; color: #16a34a;">₹0</span>
             </div>
 
+            <!-- Mandatory Terms Agreement Checkbox (Anti-Dispute Compliance) -->
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;">
+              <label style="display: flex; align-items: flex-start; gap: 9px; cursor: pointer; user-select: none; font-size: 11.5px; color: #334155; line-height: 1.45;">
+                <input type="checkbox" id="checkoutTermsAgreementCheck" required style="width: 16px; height: 16px; accent-color: #2563eb; cursor: pointer; margin-top: 2px;">
+                <span>
+                  I agree to the <a href="terms.html" target="_blank" style="color: #2563eb; font-weight: 700; text-decoration: underline;">Terms &amp; Conditions</a>, <a href="privacy.html" target="_blank" style="color: #2563eb; font-weight: 700; text-decoration: underline;">Privacy Policy</a>, and acknowledge that customized/engraved items cannot be cancelled or returned once production begins post-approval.
+                </span>
+              </label>
+            </div>
+
             <!-- Confirm Order Button -->
             <button type="button" id="submitOrderBtn" class="btn-primary" onclick="handlePaymentSubmit()" style="width: 100%; background: #16a34a; padding: 14px; font-size: 15.5px; font-weight: 800; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
               <i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery)
@@ -1153,7 +1163,7 @@
 
   <!-- Real-Time Visitor Analytics Tracker -->
   <script src="analytics.js?v=2"></script>
-  <script src="store.js?v=92.9"></script>
+  <script src="store.js?v=92.23"></script>
   <!-- PWA Service Worker Registration & Live Updates -->
   <script>
     if ('serviceWorker' in navigator) {

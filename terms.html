@@ -3,35 +3,262 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms & Conditions - JK Study Hub</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body { background: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; color: #334155; line-height: 1.6; }
-    .legal-container { max-width: 800px; margin: 40px auto; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h1 { color: #1e293b; font-size: 28px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-    h2 { color: #2563eb; font-size: 20px; margin-top: 30px; margin-bottom: 15px; }
-    p { margin-bottom: 15px; }
-    .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #2563eb; font-weight: 600; }
-  </style>
+  <title>Terms &amp; Conditions - JK Study Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=24">
   <link rel="stylesheet" href="brand-theme.css?v=2">
+  <style>
+    body {
+      background: #f8fafc;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #334155;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+    }
+    .legal-page-header {
+      background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 35px 20px 30px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .legal-brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56,189,248,0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56,189,248,0.3);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .legal-nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .legal-tab-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .legal-tab-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+    }
+    .legal-tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+    }
+    .legal-container {
+      max-width: 900px;
+      margin: 35px auto 60px;
+      padding: 40px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+      box-sizing: border-box;
+    }
+    h1 {
+      color: #0f172a;
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+    .effective-tag {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 {
+      color: #1e3a8a;
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 36px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    h3 {
+      color: #1e293b;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    p, li {
+      font-size: 14.5px;
+      color: #334155;
+      line-height: 1.75;
+    }
+    ul, ol {
+      padding-left: 22px;
+      margin-bottom: 18px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .info-card-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #2563eb;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 18px 0;
+      font-size: 14px;
+    }
+    .grievance-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #16a34a;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .back-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 24px;
+      transition: gap 0.2s;
+    }
+    .back-nav:hover {
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .legal-container {
+        margin: 20px 14px 40px;
+        padding: 24px 18px;
+      }
+      h1 { font-size: 24px; }
+      h2 { font-size: 18px; }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Top Legal Header -->
+  <header class="legal-page-header">
+    <div class="legal-brand-pill">
+      <i class="fa-solid fa-scale-balanced"></i> LEGAL &amp; OPERATIONAL POLICY SUITE
+    </div>
+    <h1 style="color:#ffffff; margin:0 0 6px;">JK Study Hub Governance</h1>
+    <p style="color:#94a3b8; font-size:14px; margin:0; max-width:650px; margin:0 auto;">
+      Operating digitally via jkstudyhub.online &bull; Main Market Pattan, PIN 193121, J&amp;K, India
+    </p>
+
+    <div class="legal-nav-tabs">
+      <a href="terms.html" class="legal-tab-btn active"><i class="fa-solid fa-file-contract"></i> Terms &amp; Conditions</a>
+      <a href="privacy.html" class="legal-tab-btn"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a>
+      <a href="refund.html" class="legal-tab-btn"><i class="fa-solid fa-rotate-left"></i> Cancellation &amp; Refund</a>
+      <a href="store.html" class="legal-tab-btn"><i class="fa-solid fa-bag-shopping"></i> Official Store</a>
+      <a href="index.html" class="legal-tab-btn"><i class="fa-solid fa-house"></i> Home</a>
+    </div>
+  </header>
+
   <div class="legal-container">
-    <a href="index.html" class="back-btn">&larr; Back to Home</a>
-    <h1>Terms and Conditions</h1>
-    <p><strong>Effective Date:</strong> October 2026</p>
+    <a href="store.html" class="back-nav">&larr; Return to Store</a>
+
+    <h1>Part 1: Terms &amp; Conditions</h1>
+    <div class="effective-tag">
+      <i class="fa-regular fa-clock"></i> <strong>Comprehensive Operational Policy Suite &bull; Updated Academic Session 2026&ndash;2027</strong>
+    </div>
+
+    <h2>1. Store Identity &amp; Acceptance of Terms</h2>
+    <p>This document governs the operational practices, commercial transactions, and digital interactions executed through <strong>JK Study Hub</strong> (operating digitally via <code>jkstudyhub.online</code> and associated communication channels).</p>
     
-    <h2>1. Introduction</h2>
-    <p>Welcome to JK Study Hub. By accessing and using our website, you accept and agree to be bound by the terms and provision of this agreement.</p>
-    
-    <h2>2. Services and Products</h2>
-    <p>We provide educational materials, printed notes, and form-filling services. All content provided is for educational purposes. We reserve the right to modify or discontinue any product or service without notice.</p>
-    
-    <h2>3. Pricing and Payments</h2>
-    <p>All prices listed on our store are in Indian Rupees (INR). Payments must be completed through our designated payment gateway. We reserve the right to change pricing at any time.</p>
-    
-    <h2>4. Delivery</h2>
-    <p>Physical products are delivered within the specified local radius (approx. 10-24km). Delivery times may vary depending on availability and location.</p>
+    <div class="info-card-box">
+      <div style="margin-bottom:6px;"><strong>📍 Physical Headquarters:</strong> JK Study Hub, Main Market Pattan, PIN 193121, Union Territory of Jammu &amp; Kashmir, India.</div>
+      <div style="margin-bottom:6px;"><strong>📱 Official WhatsApp:</strong> <a href="https://wa.me/919622605714" target="_blank" rel="noopener" style="color:#2563eb; font-weight:700;">+91 96226 05714</a></div>
+      <div><strong>📧 Official Email:</strong> <a href="mailto:info.jkstudyhub@gmail.com" style="color:#2563eb; font-weight:700;">info.jkstudyhub@gmail.com</a></div>
+    </div>
+
+    <p><strong>Binding Agreement:</strong> By placing an order via <code>jkstudyhub.online</code>, WhatsApp, phone call, or direct message, the customer ("User") unconditionally agrees to be bound by these Terms and Conditions. If a customer does not agree to these terms, they must refrain from initiating transactions.</p>
+
+    <h2>2. Product Accuracy, Cataloging &amp; Pricing Structure</h2>
+    <p>JK Study Hub specializes in educational materials, stationery, carrying gear, and customized corporate/personal gifts.</p>
+    <ul>
+      <li><strong>Curriculum Alignment:</strong> Textbooks published under NCERT and JKBOSE mandates correspond strictly to the <strong>2026–2027 academic syllabus editions</strong> unless explicitly stated otherwise in the listing description.</li>
+      <li><strong>Product Catalog:</strong> Offerings encompass NCERT/JKBOSE academic books, educational reference guides, school/college backpacks, office and student stationery, alongside personalized merchandise (including laser-engraved LED thermal bottles, custom acrylic/wooden photo frames, and hand-poured resin art pieces).</li>
+      <li><strong>Currency &amp; Transparency:</strong> All pricing displayed across digital catalogs is denominated in Indian Rupees (INR / ₹). Products display the Maximum Retail Price (MRP) alongside the discounted selling price.</li>
+      <li><strong>Promotions &amp; Discount Codes:</strong> Promotional codes (e.g., <code>SAVE100</code>) are valid strictly within their stated window of offer and subject to minimum order value requirements. JK Study Hub reserves the right to modify or revoke promotional codes at any time prior to order confirmation.</li>
+    </ul>
+
+    <h2>3. Customised &amp; Personalised Order Governance</h2>
+    <p>Custom items require precise customer input. The production pipeline adheres strictly to customer-provided specifications.</p>
+    <ul>
+      <li><strong>Customer Responsibility:</strong> The customer assumes full responsibility for reviewing all submitted inputs—including name spellings, numeric dates, quote punctuation, visual cropping, and image resolution—prior to final submission via WhatsApp (<a href="https://wa.me/919622605714" style="color:#2563eb; font-weight:700;">+91 96226 05714</a>) or website upload.</li>
+      <li><strong>Production Initiation:</strong> Manufacturing, laser engraving, or printing commences only after the customer sends an explicit, written confirmation ("OK" / "Approved") of the visual mock-up provided by our production team.</li>
+      <li><strong>Post-Approval Amendments:</strong> Once design approval is granted by the customer, no amendments, corrections, or layout adjustments can be accepted.</li>
+    </ul>
+
+    <h2>4. Cash on Delivery (COD) &amp; Express Regional Delivery</h2>
+    <p>To support local accessibility, JK Study Hub provides flexible payment and delivery options subject to operational parameters.</p>
+    <ul>
+      <li><strong>100% Cash on Delivery (COD):</strong> Available across eligible regional postal codes for standard catalog items.</li>
+      <li><strong>Express 6-Hour Hyperlocal Delivery:</strong> Available exclusively for physical delivery locations within <strong>Subdivision Pattan (193121)</strong>. Orders placed before 14:00 IST qualify for same-day 6-hour delivery. Delivery timelines are subject to stock availability, severe weather conditions, and regional transit advisories.</li>
+      <li><strong>Standard Regional Delivery:</strong> For locations outside Subdivision Pattan, standard registered courier timelines apply (typically 2 to 5 business days across J&amp;K).</li>
+      <li><strong>COD Abuse Policy:</strong> Orders rejected at the doorstep upon delivery without a verified, recorded defect or order discrepancy represent material loss in transit costs. JK Study Hub reserves the right to permanently revoke COD privileges for customer accounts or phone numbers demonstrating non-justified COD rejections.</li>
+    </ul>
+
+    <h2>5. Limitation of Liability &amp; Governing Law</h2>
+    <p>Transactions executed with JK Study Hub are governed by the primary statutory laws of the Republic of India.</p>
+    <ul>
+      <li><strong>Statutory Compliance:</strong> These terms operate in strict accordance with the Information Technology Act, 2000, and the <a href="https://thc.nic.in/Central%20Governmental%20Rules/Consumer%20Protection%20(E-Commerce)%20Rules,%202020.pdf" target="_blank" rel="noopener" style="color:#2563eb; text-decoration:underline;">Consumer Protection (E-Commerce) Rules, 2020</a>.</li>
+      <li><strong>Jurisdiction:</strong> Any legal proceedings, disputes, or administrative claims arising from transactions with JK Study Hub shall fall under the exclusive jurisdiction of the competent courts located in the Union Territory of Jammu &amp; Kashmir.</li>
+      <li><strong>Liability Cap:</strong> In no event shall JK Study Hub be liable for indirect, incidental, or consequential damages exceeding the total invoice value paid by the customer for the specific product in question.</li>
+    </ul>
+
+    <h2>6. Mandatory Grievance Redressal Mechanism</h2>
+    <p>In compliance with Rule 4(5) of the Consumer Protection (E-Commerce) Rules, 2020, JK Study Hub maintains a dedicated nodal grievance redressal system.</p>
+
+    <div class="grievance-box">
+      <h3 style="color:#166534; margin-top:0;"><i class="fa-solid fa-user-shield"></i> Nodal Grievance Redressal Officer</h3>
+      <p style="margin:4px 0;"><strong>Officer:</strong> Customer Support &amp; Compliance Desk</p>
+      <p style="margin:4px 0;"><strong>Office Address:</strong> JK Study Hub, Pattan Hub, Main Market Pattan, PIN 193121, Jammu &amp; Kashmir</p>
+      <p style="margin:4px 0;"><strong>Electronic Contact:</strong> <a href="mailto:info.jkstudyhub@gmail.com" style="color:#15803d; font-weight:700;">info.jkstudyhub@gmail.com</a></p>
+      <p style="margin:4px 0;"><strong>Telephonic Contact:</strong> <a href="tel:+919622605714" style="color:#15803d; font-weight:700;">+91 96226 05714</a></p>
+      <p style="margin:8px 0 0; font-size:13px; color:#166534;"><strong>SLA Timelines:</strong> Every formal complaint is acknowledged via email/SMS within 48 hours of receipt with a ticket ID. Complete investigation and resolution are executed within 30 days of filing.</p>
+    </div>
+
+    <div style="margin-top:40px; padding-top:20px; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+      <a href="privacy.html" style="color:#2563eb; font-weight:700; text-decoration:none;">Next: Read Privacy Policy &rarr;</a>
+      <a href="refund.html" style="color:#2563eb; font-weight:700; text-decoration:none;">Cancellation &amp; Refund Policy &rarr;</a>
+    </div>
   </div>
+
+  <footer style="background: #0f172a; padding: 25px 0; text-align: center; font-size: 13px; color: #94a3b8;">
+    <p style="margin:0;">&copy; 2026 JK Study Hub. All rights reserved. Main Market Pattan, PIN 193121, J&amp;K.</p>
+  </footer>
+
 </body>
 </html>

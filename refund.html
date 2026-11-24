@@ -3,38 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Refund & Cancellation - JK Study Hub</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body { background: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; color: #334155; line-height: 1.6; }
-    .legal-container { max-width: 800px; margin: 40px auto; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h1 { color: #1e293b; font-size: 28px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-    h2 { color: #2563eb; font-size: 20px; margin-top: 30px; margin-bottom: 15px; }
-    p { margin-bottom: 15px; }
-    .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #2563eb; font-weight: 600; }
-  </style>
+  <title>Cancellation, Return &amp; Refund Policy - JK Study Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=24">
   <link rel="stylesheet" href="brand-theme.css?v=2">
+  <style>
+    body {
+      background: #f8fafc;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #334155;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+    }
+    .legal-page-header {
+      background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 35px 20px 30px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .legal-brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56,189,248,0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56,189,248,0.3);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .legal-nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .legal-tab-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .legal-tab-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+    }
+    .legal-tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+    }
+    .legal-container {
+      max-width: 950px;
+      margin: 35px auto 60px;
+      padding: 40px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+      box-sizing: border-box;
+    }
+    h1 {
+      color: #0f172a;
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+    .effective-tag {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 {
+      color: #1e3a8a;
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 36px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    h3 {
+      color: #1e293b;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    p, li {
+      font-size: 14.5px;
+      color: #334155;
+      line-height: 1.75;
+    }
+    ul, ol {
+      padding-left: 22px;
+      margin-bottom: 18px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    
+    /* Responsive Policy Table */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .policy-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+    .policy-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 800;
+      padding: 12px 16px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .policy-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    .policy-table tr:last-child td {
+      border-bottom: none;
+    }
+    .policy-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    /* Video Protocol Box */
+    .video-protocol-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-left: 4px solid #ef4444;
+      padding: 22px;
+      border-radius: 10px;
+      margin: 24px 0;
+    }
+
+    /* SOP Checklist Box */
+    .sop-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #16a34a;
+      padding: 22px;
+      border-radius: 10px;
+      margin: 24px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #14532d;
+    }
+
+    .back-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 24px;
+      transition: gap 0.2s;
+    }
+    .back-nav:hover {
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .legal-container {
+        margin: 20px 14px 40px;
+        padding: 24px 18px;
+      }
+      h1 { font-size: 24px; }
+      h2 { font-size: 18px; }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Top Legal Header -->
+  <header class="legal-page-header">
+    <div class="legal-brand-pill">
+      <i class="fa-solid fa-rotate-left"></i> FULFILLMENT &amp; REFUND GOVERNANCE
+    </div>
+    <h1 style="color:#ffffff; margin:0 0 6px;">JK Study Hub Cancellation, Return &amp; Refund Policy</h1>
+    <p style="color:#94a3b8; font-size:14px; margin:0; max-width:650px; margin:0 auto;">
+      Operating digitally via jkstudyhub.online &bull; Main Market Pattan, PIN 193121, J&amp;K, India
+    </p>
+
+    <div class="legal-nav-tabs">
+      <a href="terms.html" class="legal-tab-btn"><i class="fa-solid fa-file-contract"></i> Terms &amp; Conditions</a>
+      <a href="privacy.html" class="legal-tab-btn"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a>
+      <a href="refund.html" class="legal-tab-btn active"><i class="fa-solid fa-rotate-left"></i> Cancellation &amp; Refund</a>
+      <a href="store.html" class="legal-tab-btn"><i class="fa-solid fa-bag-shopping"></i> Official Store</a>
+      <a href="index.html" class="legal-tab-btn"><i class="fa-solid fa-house"></i> Home</a>
+    </div>
+  </header>
+
   <div class="legal-container">
-    <a href="index.html" class="back-btn">&larr; Back to Home</a>
-    <h1>Refund and Cancellation Policy</h1>
-    <p><strong>Effective Date:</strong> October 2026</p>
+    <a href="store.html" class="back-nav">&larr; Return to Store</a>
+
+    <h1>Part 3: Cancellation, Return &amp; Refund Policy</h1>
+    <div class="effective-tag">
+      <i class="fa-regular fa-clock"></i> <strong>Comprehensive Fulfillment Framework &bull; Updated Academic Session 2026&ndash;2027</strong>
+    </div>
+
+    <h2>1. Legal Compliance Framework</h2>
+    <p>Under India's <a href="https://thc.nic.in/Central%20Governmental%20Rules/Consumer%20Protection%20(E-Commerce)%20Rules,%202020.pdf" target="_blank" rel="noopener" style="color:#2563eb; text-decoration:underline;">Consumer Protection (E-Commerce) Rules, 2020</a>, blanket "No Return / No Refund" disclaimers are legally void for goods delivered in a defective, damaged, or incorrect state. JK Study Hub maintains a transparent, category-wise fulfillment standard that balances customer rights with operational viability.</p>
+
+    <h2>2. Category-Wise Policy Summary Table</h2>
+    <div class="table-wrap">
+      <table class="policy-table">
+        <thead>
+          <tr>
+            <th style="width:25%;">Category</th>
+            <th style="width:25%;">Cancellation Window</th>
+            <th style="width:25%;">Return / Exchange Eligibility</th>
+            <th style="width:25%;">Non-Eligible Scenarios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Books &amp; Textbooks</strong><br><span style="font-size:12px; color:#64748b;">(NCERT / JKBOSE Sets)</span></td>
+            <td>Free cancellation anytime prior to dispatch.</td>
+            <td>Eligible within <strong>48 hours</strong> of delivery if missing pages, blank pages, severe transit binding damage, or wrong class/edition delivered. Must be unused.</td>
+            <td>Change of mind post-dispatch; wrong academic stream/class chosen by customer; books showing pen/pencil/highlighter marks.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Gear &amp; Stationery</strong><br><span style="font-size:12px; color:#64748b;">(Backpacks, Desk Items)</span></td>
+            <td>Free cancellation anytime prior to dispatch.</td>
+            <td>Eligible within <strong>48 hours to 7 days</strong> of delivery for manufacturing defects (zipper failure, torn seams), transit damage, or wrong item. Original tags required.</td>
+            <td>Normal wear and tear; cosmetic scuffs after use; change of mind post-delivery; missing original product tags/packaging.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Customised Items</strong><br><span style="font-size:12px; color:#64748b;">(LED Bottles, Frames, Resin)</span></td>
+            <td>Free within <strong>2 hours</strong> of ordering OR before production starts (whichever is earlier).</td>
+            <td>Eligible <strong>ONLY</strong> if item arrives broken in transit OR if engraving/print differs from the customer-approved mock-up.</td>
+            <td>Change of mind post-production; spelling/date/photo errors present in customer-approved preview; slight natural color variations in resin art.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>3. Detailed Category Guidelines</h2>
     
-    <h2>1. Order Cancellations</h2>
-    <p>Since our services involve rapid local delivery and custom form-filling, orders can only be cancelled within 1 hour of placing the order. To cancel, please contact us immediately via WhatsApp.</p>
-    
-    <h2>2. Refunds</h2>
-    <p>Refunds are only issued under the following circumstances:</p>
+    <h3>Category 1: NCERT &amp; JKBOSE Textbooks / Academic Books</h3>
     <ul>
-      <li>The wrong product was delivered to you.</li>
-      <li>The product arrived severely damaged.</li>
-      <li>We were unable to deliver to your location.</li>
+      <li><strong>Pre-Dispatch:</strong> Orders can be cancelled at zero cost before physical dispatch occurs.</li>
+      <li><strong>Post-Delivery:</strong> Returns or physical exchanges are accepted strictly within <strong>48 hours</strong> of delivery for manufacturing flaws (missing or unprinted pages) or incorrect fulfillment. Books must remain unread, unmarked, and structurally untampered with.</li>
     </ul>
-    <p>Digital services (like Form Filling) are non-refundable once the form has been successfully submitted on your behalf.</p>
+
+    <h3>Category 2: Backpacks, Fine Stationery &amp; Desk Gear</h3>
+    <ul>
+      <li><strong>Pre-Dispatch:</strong> Full cancellation allowed prior to shipment packaging.</li>
+      <li><strong>Post-Delivery:</strong> Defective items (faulty zippers, torn fabric, missing hardware) can be submitted for return or replacement within <strong>7 days</strong> of delivery. All tags, brand cards, and original wrapping must remain intact.</li>
+    </ul>
+
+    <h3>Category 3: Customised &amp; Personalised Merchandise</h3>
+    <ul>
+      <li><strong>Production Gate:</strong> Production begins upon written customer approval of the design preview.</li>
+      <li><strong>Non-Refundable Status:</strong> Once production commences, cancellations, returns, or refunds for change of mind are strictly barred under standard statutory exceptions for custom goods.</li>
+      <li><strong>Remedial Claims:</strong> If an item arrives structurally damaged or displays an engraving error attributable to JK Study Hub (differing from the approved preview), a replacement will be dispatched at no additional cost.</li>
+    </ul>
+
+    <h2>4. Mandatory 360° Unboxing Video Rule</h2>
     
-    <h2>3. Refund Process</h2>
-    <p>Approved refunds will be processed within 5-7 business days and credited back to the original source of payment.</p>
+    <div class="video-protocol-box">
+      <h3 style="color:#b91c1c; margin-top:0;"><i class="fa-solid fa-video"></i> Mandatory Unboxing Video Protocol for Transit Claims</h3>
+      <p style="margin-bottom:10px;">To prevent fraudulent claims and establish clear accountability for transit damage or short-shipments, the following protocol is mandatory:</p>
+      <ul style="margin:0; padding-left:20px; color:#7f1d1d;">
+        <li><strong>Requirement:</strong> The customer must record a single, continuous, unedited 360-degree unboxing video when opening the parcel.</li>
+        <li><strong>Verification Steps:</strong> The video must clearly show the unopened outer box/bag, the shipping label with tracking details, the unbroken packaging seal, and the continuous opening of the parcel revealing the contents.</li>
+        <li><strong>Submission Timeline:</strong> The unedited video must be transmitted to WhatsApp (<a href="https://wa.me/919622605714" style="color:#b91c1c; font-weight:700;">+91 96226 05714</a>) within <strong>24 to 48 hours</strong> of carrier delivery confirmation. Claims submitted without this video proof cannot be processed for transit damage or missing items.</li>
+      </ul>
+    </div>
+
+    <h2>5. Refund Processing Timelines &amp; Modes</h2>
+    <ul>
+      <li><strong>Verification:</strong> Returned items undergo physical inspection at the Pattan Hub within 48 hours of arrival.</li>
+      <li><strong>COD Refunds:</strong> Approved refunds for Cash on Delivery orders are issued directly via UPI transfer or direct NEFT bank deposit to the customer's verified bank account.</li>
+      <li><strong>Turnaround Time:</strong> Upon approval, refunds are processed within <strong>5 to 7 working days</strong>.</li>
+    </ul>
+
+    <h2 style="margin-top:45px;">Part 4: Internal Anti-Dispute Protocol</h2>
+    <p style="color:#64748b; font-size:13.5px; margin-top:-5px; margin-bottom:15px;">Standard Operating Procedures (SOP) for JK Study Hub Fulfillment &amp; Operations Staff:</p>
+
+    <div class="sop-box">
+[✓] STEP 1: WHATSAPP DESIGN APPROVAL GATE (CUSTOM ORDERS)
+├── Prepare visual graphic mock-up (showing exact spelling, font, image position).
+├── Transmit mock-up to customer via WhatsApp (+91 96226 05714).
+└── Wait for explicit customer reply stating "OK" or "APPROVED" before starting production.
+└── Note: NEVER start engraving or printing based on automated orders alone.
+
+[✓] STEP 2: DISPATCH PHOTO &amp; VIDEO AUDIT (ALL PARCELS)
+├── Textbooks: Record 5-second video showing complete book set, verifying edition &amp; count.
+├── Backpacks: Test all zipper tracks; snap photo of tags and seam integrity.
+└── Custom Goods: Snap high-resolution photo of completed item beside shipping label.
+└── Store media logs in fulfillment archive folder indexed by Order ID.
+
+[✓] STEP 3: MANDATORY CHECKOUT CHECKBOX (WEBSITE INTEGRATION)
+└── Ensure website checkout mandates the agreement box:
+[X] "I agree to the Terms &amp; Conditions and acknowledge that customized/engraved
+items cannot be cancelled or returned once production begins post-approval."
+
+[✓] STEP 4: PHYSICAL IN-PARCEL DISCLAIMER SLIP
+└── Insert standard printed slip into every outgoing parcel:
+┌────────────────────────────────────────────────────────────────────────┐
+│ THANK YOU FOR SHOPPING WITH JK STUDY HUB!                              │
+│                                                                        │
+│ Important: To claim returns for transit damage or missing items, you   │
+│ must record a continuous 360° unboxing video before opening.           │
+│                                                                        │
+│ Report issues within 48 hours to WhatsApp: +91 96226 05714             │
+│ Email: info.jkstudyhub@gmail.com | Pattan 193121, J&amp;K                  │
+└────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <div style="margin-top:40px; padding-top:20px; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+      <a href="terms.html" style="color:#2563eb; font-weight:700; text-decoration:none;">&larr; Part 1: Terms &amp; Conditions</a>
+      <a href="privacy.html" style="color:#2563eb; font-weight:700; text-decoration:none;">Part 2: Privacy Policy &rarr;</a>
+    </div>
   </div>
+
+  <footer style="background: #0f172a; padding: 25px 0; text-align: center; font-size: 13px; color: #94a3b8;">
+    <p style="margin:0;">&copy; 2026 JK Study Hub. All rights reserved. Main Market Pattan, PIN 193121, J&amp;K.</p>
+  </footer>
+
 </body>
 </html>

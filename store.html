@@ -4800,7 +4800,7 @@
         <!-- Visual Stack of Novels -->
         <div style="position:relative; width:95px; height:120px; flex-shrink:0;">
           <img src="images/books/atomic-habits-1.webp" alt="Atomic Habits" style="position:absolute; left:0; top:12px; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.5); transform:rotate(-8deg); border:1px solid rgba(255,255,255,0.2);">
-          <img src="images/books/psychology-money-1.webp" alt="Psychology of Money" style="position:absolute; left:18px; top:4px; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 6px 16px rgba(0,0,0,0.6); transform:rotate(4deg); border:1px solid rgba(255,255,255,0.3);">
+          <img src="images/books/psychology-of-money-1.webp" alt="Psychology of Money" style="position:absolute; left:18px; top:4px; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 6px 16px rgba(0,0,0,0.6); transform:rotate(4deg); border:1px solid rgba(255,255,255,0.3);">
           <img src="images/books/deep-work-1.webp" alt="Deep Work" style="position:absolute; left:32px; top:0; width:65px; height:95px; object-fit:cover; border-radius:6px; box-shadow:0 8px 20px rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.4);">
           <span style="position:absolute; bottom:-6px; right:-6px; background:#f59e0b; color:#0f172a; font-size:10.5px; font-weight:900; padding:2px 7px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.4); z-index:5;">
             10+ Books
@@ -7171,6 +7171,16 @@
               <span id="payStepTotalBadge" style="font-size: 22px; font-weight: 900; color: #16a34a;">₹0</span>
             </div>
 
+            <!-- Mandatory Terms Agreement Checkbox (Anti-Dispute Compliance) -->
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;">
+              <label style="display: flex; align-items: flex-start; gap: 9px; cursor: pointer; user-select: none; font-size: 11.5px; color: #334155; line-height: 1.45;">
+                <input type="checkbox" id="checkoutTermsAgreementCheck" required style="width: 16px; height: 16px; accent-color: #2563eb; cursor: pointer; margin-top: 2px;">
+                <span>
+                  I agree to the <a href="terms.html" target="_blank" style="color: #2563eb; font-weight: 700; text-decoration: underline;">Terms &amp; Conditions</a>, <a href="privacy.html" target="_blank" style="color: #2563eb; font-weight: 700; text-decoration: underline;">Privacy Policy</a>, and acknowledge that customized/engraved items cannot be cancelled or returned once production begins post-approval.
+                </span>
+              </label>
+            </div>
+
             <!-- Confirm Order Button -->
             <button type="button" id="submitOrderBtn" class="btn-primary" onclick="handlePaymentSubmit()" style="width: 100%; background: #16a34a; padding: 14px; font-size: 15.5px; font-weight: 800; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
               <i class="fa-solid fa-hand-holding-dollar"></i> Confirm Order (Cash on Delivery)
@@ -7319,7 +7329,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.21"></script>
+  <script src="store.js?v=92.23"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">

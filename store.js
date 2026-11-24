@@ -6361,6 +6361,12 @@ function togglePaymentMethod(method) {
 }
 
 function handlePaymentSubmit() {
+  const termsCheck = document.getElementById('checkoutTermsAgreementCheck');
+  if (termsCheck && !termsCheck.checked) {
+    alert("⚠️ Mandatory Agreement Required:\n\nPlease check the box acknowledging the Terms & Conditions and customized order policy before confirming your order.");
+    termsCheck.focus();
+    return;
+  }
   const method = document.querySelector('input[name="paymentMethod"]:checked') ? document.querySelector('input[name="paymentMethod"]:checked').value : 'online';
   if (method === 'cod') {
     processCodOrder();
