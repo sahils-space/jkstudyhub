@@ -5193,9 +5193,13 @@ function handleCodOptionClick(evt) {
       try { evt.preventDefault(); evt.stopPropagation(); } catch(e) {}
     }
     const pinVal = (document.getElementById('orderPin')?.value || '').trim();
-    alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nFor PIN ${pinVal || 'other locations'}, Cash on Delivery is blocked. Please proceed with Online Payment (UPI / QR / Cards).`);
+    if (currentCheckoutPaymentMode === 'prepaid') {
+      alert('⚠️ This item is Prepaid Online Only.\n\nCash on Delivery is not available for this item. Please proceed with Online Payment (UPI / QR / Cards).');
+    } else {
+      alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nFor PIN ${pinVal || 'other locations'}, Cash on Delivery is blocked. Please proceed with Online Payment (UPI / QR / Cards).`);
+    }
     const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
-    if (onlineRadio) {
+    if (onlineRadio && currentCheckoutPaymentMode !== 'cod') {
       onlineRadio.checked = true;
       togglePaymentMethod('online');
     }
@@ -5847,22 +5851,34 @@ function updateCheckoutInvoiceTotals() {
 
   // Strict COD Policy: ONLY PIN 193121 allows Cash on Delivery
   const codAllowed = isCodAllowedForCheckout();
+  const onlineAllowed = currentCheckoutPaymentMode !== 'cod';
   const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
   const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
   const codLabel = document.getElementById('payMethodCodLabel');
+  const onlineLabel = document.getElementById('payMethodOnlineLabel');
   const codBadge = document.getElementById('payMethodCodBadge');
   const codDesc = document.getElementById('payMethodCodDesc');
   const currentPin = (document.getElementById('orderPin')?.value || '').trim();
 
-  // If COD is blocked for this PIN, disable COD radio and automatically switch to Online
+  if (onlineRadio) {
+    onlineRadio.disabled = !onlineAllowed;
+    if (!onlineAllowed && onlineRadio.checked) onlineRadio.checked = false;
+  }
+  if (onlineLabel) {
+    onlineLabel.style.display = onlineAllowed ? 'flex' : 'none';
+  }
+
+  // If COD is blocked (either Prepaid-only product or non-193121 PIN), disable COD radio and switch to Online when allowed
   if (!codAllowed) {
     if (codRadio) {
       codRadio.disabled = true;
       if (codRadio.checked) {
         codRadio.checked = false;
-        if (onlineRadio) onlineRadio.checked = true;
-        togglePaymentMethod('online');
-        return;
+        if (onlineAllowed && onlineRadio) {
+          onlineRadio.checked = true;
+          togglePaymentMethod('online');
+          return;
+        }
       }
     }
     if (codLabel) {
@@ -5873,14 +5889,20 @@ function updateCheckoutInvoiceTotals() {
       codLabel.style.background = '#fff5f5';
     }
     if (codBadge) {
-      codBadge.innerHTML = '🚫 Prepaid Online Only';
+      codBadge.innerHTML = onlineAllowed ? '🚫 Prepaid Online Only' : '🚫 PIN 193121 Only';
       codBadge.style.background = '#fee2e2';
       codBadge.style.color = '#dc2626';
       codBadge.style.border = '1px solid #fca5a5';
     }
     if (codDesc) {
       const pinMsg = currentPin ? `PIN ${currentPin}` : 'this location';
-      codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> COD blocked for ${pinMsg}.</span> Cash on Delivery is dealt <strong>ONLY with PIN 193121</strong> (Pattan Hub). Please pay online.`;
+      if (currentCheckoutPaymentMode === 'prepaid') {
+        codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> Prepaid Online Only item.</span> Cash on Delivery is not available for this product. Please pay online.`;
+      } else if (!onlineAllowed) {
+        codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> COD blocked for ${pinMsg}.</span> This item is restricted to Cash on Delivery in <strong>PIN 193121</strong> (Pattan Hub) only.`;
+      } else {
+        codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> COD blocked for ${pinMsg}.</span> Cash on Delivery is dealt <strong>ONLY with PIN 193121</strong> (Pattan Hub). Please pay online.`;
+      }
     }
   } else {
     if (codRadio) {
@@ -6354,12 +6376,16 @@ function backToStep2() {
 
 // --- PAYMENT METHOD TOGGLE (ONLINE VS CASH ON DELIVERY) ---
 function togglePaymentMethod(method) {
-  // If attempting to choose COD for any PIN other than 193121, block it immediately
+  // If attempting to choose COD when blocked (Prepaid-only product or PIN other than 193121), block it immediately
   if (method === 'cod' && !isCodAllowedForCheckout()) {
     const pinVal = (document.getElementById('orderPin')?.value || '').trim();
-    alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nOrders for PIN ${pinVal || 'other locations'} cannot be placed via COD. Please proceed with Online Payment (UPI / QR / Cards).`);
+    if (currentCheckoutPaymentMode === 'prepaid') {
+      alert('⚠️ This product is Prepaid Online Only.\n\nCash on Delivery is disabled for this item. Please proceed with Online Payment (UPI / QR / Cards).');
+    } else {
+      alert(`⚠️ Cash on Delivery (COD) is available ONLY for PIN 193121 (Pattan Hub).\n\nOrders for PIN ${pinVal || 'other locations'} cannot be placed via COD. Please proceed with Online Payment (UPI / QR / Cards).`);
+    }
     const onlineRadio = document.querySelector('input[name="paymentMethod"][value="online"]');
-    if (onlineRadio) onlineRadio.checked = true;
+    if (onlineRadio && currentCheckoutPaymentMode !== 'cod') onlineRadio.checked = true;
     const codRadio = document.querySelector('input[name="paymentMethod"][value="cod"]');
     if (codRadio) codRadio.checked = false;
     method = 'online';
@@ -11146,7 +11172,7 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     ],
     "image": "images/products/exam-clipboard-transparent.jpg"
   }
-];
+].map(product => ({ paymentMode: 'both', ...product }));
 
 const CANONICAL_PRODUCT_IDS = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => String(p.id)));
 const CANONICAL_PRODUCT_NAMES = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => normalizeCatalogIdentity(p.name || p.title)));
@@ -11154,8 +11180,14 @@ const CANONICAL_PRODUCT_NAMES = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => norm
 function mergeProductPreservingCanonical(existing, incoming) {
   if (!existing) return incoming;
   const exId = String(existing.id || existing.productId || '');
-  // Never let stale cache/sheet/Firestore rows overwrite canonical local product images, titles, or metadata
+  // Never let stale cache/sheet/Firestore rows overwrite canonical local product images or titles,
+  // but allow explicit paymentMode edits made from the Seller Panel to update live.
   if (CANONICAL_PRODUCT_IDS.has(exId)) {
+    const hasExplicitPaymentUpdate = incoming && ['both', 'cod', 'prepaid'].includes(incoming.paymentMode) &&
+      (incoming.paymentMode === 'prepaid' || Number(incoming.paymentModeUpdatedAt || 0) > 0);
+    if (hasExplicitPaymentUpdate && existing.paymentMode !== incoming.paymentMode) {
+      return { ...existing, paymentMode: incoming.paymentMode, paymentModeUpdatedAt: incoming.paymentModeUpdatedAt || Date.now() };
+    }
     return existing;
   }
   if (existing.image && existing.image.startsWith('images/') && (!incoming.image || incoming.image.startsWith('data:image') || incoming.image === 'images/logo-app.png')) {
@@ -11186,7 +11218,14 @@ try {
     const productId = String(p.id || p.productId || '').trim();
     const normName = normalizeCatalogIdentity(p.name || p.title);
     if (CANONICAL_PRODUCT_IDS.has(productId) || CANONICAL_PRODUCT_NAMES.has(normName)) {
-      return; // Already locked cleanly in DEFAULT_PUBLISHED_PRODUCTS with fast local images
+      const idx = initialProducts.findIndex(item =>
+        (productId && String(item.id || item.productId || '') === productId) ||
+        normalizeCatalogIdentity(item.name || item.title) === normName
+      );
+      if (idx >= 0) {
+        initialProducts[idx] = mergeProductPreservingCanonical(initialProducts[idx], p);
+      }
+      return; // Keep canonical local images/titles intact while honoring explicit payment mode edits
     }
     const existingIndex = initialProducts.findIndex(item =>
       (productId && String(item.id || item.productId || '') === productId) ||
@@ -11975,18 +12014,20 @@ function mergeAndRenderLiveProducts(incoming) {
     const spNormName = normalizeCatalogIdentity(sp.name || sp.title);
     if (!spId && !spNormName) return;
 
-    // Never allow Firestore snapshots to overwrite or duplicate canonical local products
-    if (CANONICAL_PRODUCT_IDS.has(spId) || CANONICAL_PRODUCT_NAMES.has(spNormName)) return;
-
     const key = spId || spNormName;
     const matchedKey = mergedMap.has(key) ? key : nameToKey.get(spNormName);
     if (!matchedKey) {
+      if (CANONICAL_PRODUCT_IDS.has(spId) || CANONICAL_PRODUCT_NAMES.has(spNormName)) return;
       mergedMap.set(key, sp);
       nameToKey.set(spNormName, key);
       hasGenuinelyNewProduct = true;
     } else {
       const existing = mergedMap.get(matchedKey);
-      mergedMap.set(matchedKey, mergeProductPreservingCanonical(existing, sp));
+      const merged = mergeProductPreservingCanonical(existing, sp);
+      if (merged !== existing && merged.paymentMode !== existing.paymentMode) {
+        hasGenuinelyNewProduct = true;
+      }
+      mergedMap.set(matchedKey, merged);
     }
   });
 

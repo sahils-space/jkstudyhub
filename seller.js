@@ -3764,6 +3764,19 @@ async function uploadSellerPhotoToCdn(photoDataUrl) {
   return photoDataUrl;
 }
 
+function normalizeSellerPaymentMode(mode) {
+  const clean = String(mode || '').trim().toLowerCase();
+  if (clean === 'prepaid' || clean === 'cod' || clean === 'both') return clean;
+  return 'both';
+}
+
+function formatSellerPaymentModeLabel(mode) {
+  const clean = normalizeSellerPaymentMode(mode);
+  if (clean === 'prepaid') return 'Prepaid only';
+  if (clean === 'cod') return 'COD only (PIN 193121)';
+  return 'Both (COD 193121 + Prepaid)';
+}
+
 // Handle Catalog Submission & Live Publishing
 async function handleSellerCatalogSubmit(e) {
   if (e) e.preventDefault();
@@ -3771,7 +3784,7 @@ async function handleSellerCatalogSubmit(e) {
   const title = (document.getElementById('catTitle')?.value || '').trim();
   const category = document.getElementById('catCategory')?.value || 'academic';
   const price = parseFloat(document.getElementById('catPrice')?.value) || 0;
-  const paymentMode = document.getElementById('catPaymentMode')?.value === 'prepaid' ? 'prepaid' : 'cod';
+  const paymentMode = normalizeSellerPaymentMode(document.getElementById('catPaymentMode')?.value);
   const mrpInput = document.getElementById('catMrp')?.value;
   const mrp = mrpInput ? parseFloat(mrpInput) : Math.round(price * 1.35);
   const stock = parseInt(document.getElementById('catStock')?.value || '20', 10);
@@ -3844,6 +3857,7 @@ async function handleSellerCatalogSubmit(e) {
       price: price,
       mrp: mrp,
       paymentMode: paymentMode,
+      paymentModeUpdatedAt: Date.now(),
       badge: badge,
       stock: stock,
       classLevel: classLevel,
@@ -3998,6 +4012,8 @@ async function handleSellerCatalogSubmit(e) {
     // 4. Reset form & photo slots
     const form = document.getElementById('sellerCatalogForm');
     if (form) form.reset();
+    const resetPaymentEl = document.getElementById('catPaymentMode');
+    if (resetPaymentEl) resetPaymentEl.value = 'both';
     for (let s = 1; s <= 3; s++) {
       removeSellerPhoto(null, s);
     }
@@ -4007,7 +4023,7 @@ async function handleSellerCatalogSubmit(e) {
       statusNotice.style.color = cloudCatalogPublished ? '#15803d' : '#9a3412';
       statusNotice.style.border = cloudCatalogPublished ? '1px solid #bbf7d0' : '1px solid #fed7aa';
       statusNotice.textContent = cloudCatalogPublished
-        ? `Success! "${title}" is published live with ${finalPhotos.length} photo(s), payment set to ${paymentMode === 'cod' ? 'COD' : 'Prepaid'}, and synced to Google Sheets.`
+        ? `Success! "${title}" is published live with ${finalPhotos.length} photo(s), payment set to ${formatSellerPaymentModeLabel(paymentMode)}, and synced to Google Sheets.`
         : `Cloud sync incomplete. "${title}" is saved on this device and queued for Google Sheets, but did not sync to Firestore. ${cloudPublishError || 'Firebase Cloud is unavailable.'}`;
       setTimeout(() => {
         if (statusNotice) statusNotice.style.display = 'none';
@@ -4464,8 +4480,129 @@ const DEFAULT_SELLER_PRODUCTS = [
       "images/products/foundation-course-chem-10th.jpg"
     ],
     "image": "images/products/foundation-course-chem-10th.jpg"
+  },
+  {
+    "id": "PRD-1795539734398",
+    "name": "CLASS 11TH-MED NOTE MAKING COPIES",
+    "title": "CLASS 11TH-MED NOTE MAKING COPIES",
+    "category": "school-copies",
+    "price": 1299,
+    "mrp": 1599,
+    "classLevel": "11",
+    "badge": "🔥 Bestseller",
+    "desc": "BUNDLE OF SPIRAL COPIES FOR NOTES",
+    "photos": [
+      "images/products/class-11th-med-note-copies.jpg",
+      "images/products/class-11th-med-note-copies-2.jpg",
+      "images/products/class-11th-med-note-copies-3.jpg"
+    ],
+    "image": "images/products/class-11th-med-note-copies.jpg"
+  },
+  {
+    "id": "PRD-1795541254949",
+    "name": "CLASS 12TH-MED SPIRAL BUNDLE",
+    "title": "CLASS 12TH-MED SPIRAL BUNDLE",
+    "category": "school-copies",
+    "price": 1399,
+    "mrp": 1699,
+    "classLevel": "12",
+    "badge": "⚡ Fast Dispatch",
+    "desc": "BUNDLE OF SPIRAL FOR NOTES SET OF 7 CLASS 12TH",
+    "photos": [
+      "images/products/class-12th-med-spiral-bundle.jpg",
+      "images/products/class-12th-med-spiral-bundle-2.jpg",
+      "images/products/class-12th-med-spiral-bundle-3.jpg"
+    ],
+    "image": "images/products/class-12th-med-spiral-bundle.jpg"
+  },
+  {
+    "id": "PRD-1795543976195",
+    "name": "MODERN-PERIODIC TABLE",
+    "title": "MODERN-PERIODIC TABLE",
+    "category": "stationery",
+    "price": 15,
+    "mrp": 19,
+    "badge": "✨ Featured",
+    "desc": "MODERN PERIODIC TABLE",
+    "photos": [
+      "images/products/modern-periodic-table.jpg"
+    ],
+    "image": "images/products/modern-periodic-table.jpg"
+  },
+  {
+    "id": "PRD-1795545264747",
+    "name": "BASIC CALCULATOR",
+    "title": "BASIC CALCULATOR",
+    "category": "stationery",
+    "price": 80,
+    "mrp": 129,
+    "badge": "🔥 Bestseller",
+    "desc": "CALCULATOR BASIC FOR STUDENTS",
+    "photos": [
+      "images/products/basic-calculator.jpg"
+    ],
+    "image": "images/products/basic-calculator.jpg"
+  },
+  {
+    "id": "PRD-1795545713872",
+    "name": "TRANSPARENT FILE (COVER SET OF 4 )",
+    "title": "TRANSPARENT FILE (COVER SET OF 4 )",
+    "category": "stationery",
+    "price": 64,
+    "mrp": 64,
+    "badge": "⚡ Fast Dispatch",
+    "desc": "SET OF 4 FILE-COVER",
+    "photos": [
+      "images/products/transparent-file-cover-4.jpg"
+    ],
+    "image": "images/products/transparent-file-cover-4.jpg"
+  },
+  {
+    "id": "PRD-1795545966154",
+    "name": "STICKY NOTES",
+    "title": "STICKY NOTES",
+    "category": "stationery",
+    "price": 149,
+    "mrp": 199,
+    "badge": "🔥 Bestseller",
+    "desc": "1 PACK OF FOUR COLOURED STICKY NOTES",
+    "photos": [
+      "images/products/sticky-notes-pack.jpg",
+      "images/products/sticky-notes-pack-2.jpg"
+    ],
+    "image": "images/products/sticky-notes-pack.jpg"
+  },
+  {
+    "id": "PRD-1795546693982",
+    "name": "GLUE GUN",
+    "title": "GLUE GUN",
+    "category": "stationery",
+    "price": 249,
+    "mrp": 349,
+    "badge": "✨ Fresh Stock",
+    "desc": "Get quick, reliable bonding for all your DIY crafts, school projects, and everyday household repairs with this compact 20W Hot Melt Glue Gun.",
+    "photos": [
+      "images/products/glue-gun-20w.jpg",
+      "images/products/glue-gun-20w-2.jpg"
+    ],
+    "image": "images/products/glue-gun-20w.jpg"
+  },
+  {
+    "id": "PRD-1795549591672",
+    "name": "EXAM CLIPBOARD (TRANSPARENT)",
+    "title": "EXAM CLIPBOARD (TRANSPARENT)",
+    "category": "stationery",
+    "price": 139,
+    "mrp": 199,
+    "badge": "🔥 Bestseller",
+    "desc": "CRYSTAL CLEAR EXAM CLIPBOARD",
+    "photos": [
+      "images/products/exam-clipboard-transparent.jpg",
+      "images/products/exam-clipboard-transparent-2.jpg"
+    ],
+    "image": "images/products/exam-clipboard-transparent.jpg"
   }
-];
+].map(product => ({ paymentMode: 'both', ...product }));
 
 // Get all published catalog products// Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
 function getSellerAllPublishedProducts() {
@@ -4575,6 +4712,13 @@ function renderSellerPublishedCatalog() {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
     });
 
+    const payMode = normalizeSellerPaymentMode(p.paymentMode);
+    const paySelectStyle = payMode === 'prepaid'
+      ? 'color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe;'
+      : (payMode === 'cod'
+        ? 'color:#92400e; background:#fef3c7; border:1px solid #fde68a;'
+        : 'color:#166534; background:#dcfce7; border:1px solid #86efac;');
+
     html += `
       <tr>
         <td>
@@ -4594,13 +4738,15 @@ function renderSellerPublishedCatalog() {
               return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
             })}
           </div>
-          <div style="display: flex; gap: 5px; margin-top: 4px;">
-            <span style="font-size: 10px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 1px 6px; border-radius: 4px;">
+          <div style="display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; align-items: center;">
+            <span style="font-size: 10px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 2px 6px; border-radius: 4px;">
               ${p.badge || '✨ Fresh Stock'}
             </span>
-            <span style="font-size:10px; font-weight:700; color:#166534; background:#dcfce7; padding:1px 6px; border-radius:4px;">
-              ${p.paymentMode === 'prepaid' ? 'Prepaid only' : 'COD only'}
-            </span>
+            <select aria-label="Payment mode for ${escapedTitle}" title="Change Cash on Delivery / Prepaid payment option" onchange="quickUpdateSellerProductPaymentMode('${encodeURIComponent(String(prodId))}', this.value, this)" style="font-size:10.5px; font-weight:700; padding:2px 6px; border-radius:4px; cursor:pointer; ${paySelectStyle}">
+              <option value="both" ${payMode === 'both' ? 'selected' : ''}>Both (COD 193121 + Prepaid)</option>
+              <option value="cod" ${payMode === 'cod' ? 'selected' : ''}>COD only (193121)</option>
+              <option value="prepaid" ${payMode === 'prepaid' ? 'selected' : ''}>Prepaid only</option>
+            </select>
           </div>
         </td>
         <td>
@@ -4641,8 +4787,8 @@ function renderSellerPublishedCatalog() {
             <button type="button" class="btn-hub-primary" onclick="quickSavePublishedProductPrice('${cleanId}', '${safeTitle}')" style="padding: 5px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px;">
               <i class="fa-solid fa-floppy-disk"></i> Save
             </button>
-            <button type="button" onclick="openSellerProductEditor('${encodeURIComponent(String(prodId))}')" title="Edit name, description, payment mode, or photos" aria-label="Edit ${escapedTitle}" style="background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; padding:5px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">
-              <i class="fa-solid fa-pen-to-square"></i>
+            <button type="button" onclick="openSellerProductEditor('${encodeURIComponent(String(prodId))}')" title="Edit name, description, Cash on Delivery / Prepaid mode, or photos" aria-label="Edit ${escapedTitle}" style="background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; padding:5px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+              <i class="fa-solid fa-pen-to-square"></i> Edit
             </button>
             <button type="button" onclick="deleteSellerPublishedProduct('${prodId}', '${safeTitle}')" title="Remove from store" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 5px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;">
               <i class="fa-solid fa-trash-can"></i>
@@ -4680,7 +4826,7 @@ function openSellerProductEditor(encodedId) {
   document.getElementById('sellerEditProductId').value = productId;
   document.getElementById('sellerEditProductName').value = product.title || product.name || '';
   document.getElementById('sellerEditProductDescription').value = product.desc || product.description || '';
-  document.getElementById('sellerEditPaymentMode').value = product.paymentMode === 'prepaid' ? 'prepaid' : 'cod';
+  document.getElementById('sellerEditPaymentMode').value = normalizeSellerPaymentMode(product.paymentMode);
   document.getElementById('sellerEditProductPhotos').value = '';
   renderSellerProductEditPhotoPreview(product.photos || (product.image ? [product.image] : []));
   const modal = document.getElementById('sellerProductEditModal');
@@ -4753,7 +4899,7 @@ function saveSellerLocalCatalogProduct(updatedProduct, oldProduct) {
     } else {
       catalog.unshift(updatedProduct);
     }
-    if (catalog.length > 25) catalog = catalog.slice(0, 25);
+    if (catalog.length > 60) catalog = catalog.slice(0, 60);
     try {
       localStorage.setItem(storageKey, JSON.stringify(catalog));
     } catch (error) {
@@ -4771,7 +4917,7 @@ function syncSellerProductEditToGoogleSheet(product) {
   data.append('price', String(product.price || 0));
   data.append('mrp', String(product.mrp || 0));
   data.append('description', product.desc || product.description || '');
-  data.append('payment_mode', product.paymentMode || 'cod');
+  data.append('payment_mode', normalizeSellerPaymentMode(product.paymentMode));
   data.append('photo1', (product.photos || [])[0] || product.image || '');
   data.append('photo2', (product.photos || [])[1] || '');
   data.append('photo3', (product.photos || [])[2] || '');
@@ -4836,7 +4982,8 @@ async function handleSellerProductEditSubmit(event) {
       title: newName,
       desc: description,
       description,
-      paymentMode: document.getElementById('sellerEditPaymentMode').value === 'prepaid' ? 'prepaid' : 'cod',
+      paymentMode: normalizeSellerPaymentMode(document.getElementById('sellerEditPaymentMode').value),
+      paymentModeUpdatedAt: Date.now(),
       photos,
       image: photos[0] || 'images/logo-app.png',
       allImages: photos,
@@ -4884,6 +5031,143 @@ async function handleSellerProductEditSubmit(event) {
   } finally {
     saveButton.disabled = false;
     saveButton.innerHTML = originalButton;
+  }
+}
+
+async function quickUpdateSellerProductPaymentMode(encodedId, nextMode, selectEl) {
+  let productId = '';
+  try {
+    productId = decodeURIComponent(String(encodedId || ''));
+  } catch (error) {
+    console.warn('Invalid product identifier:', error);
+  }
+  const product = getSellerAllPublishedProducts().find(item =>
+    String(item.id || item.productId || item.name) === productId
+  );
+  if (!product) {
+    if (typeof showToast === 'function') showToast('Could not locate product. Refresh and try again.');
+    return;
+  }
+
+  const normalizedMode = normalizeSellerPaymentMode(nextMode);
+  const nowTs = Date.now();
+  const updatedProduct = {
+    ...product,
+    id: product.id || product.productId || product.name,
+    productId: product.productId || product.id || product.name,
+    name: product.name || product.title || '',
+    title: product.title || product.name || '',
+    paymentMode: normalizedMode,
+    paymentModeUpdatedAt: nowTs,
+    updatedAt: nowTs
+  };
+
+  if (selectEl) selectEl.disabled = true;
+  try {
+    saveSellerLocalCatalogProduct(updatedProduct, product);
+    syncSellerProductEditToGoogleSheet(updatedProduct);
+
+    let firestoreSynced = false;
+    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+      try {
+        await ensureSellerFirebaseOwnerAuth();
+        const db = firebase.firestore();
+        const firestoreId = String(updatedProduct.id).replace(/\//g, '_');
+        await db.collection('published_catalog').doc(firestoreId).set(updatedProduct, { merge: true });
+        firestoreSynced = true;
+      } catch (cloudErr) {
+        console.warn('Firestore quick payment mode sync notice:', cloudErr);
+      }
+    }
+
+    if (typeof showToast === 'function') {
+      const label = formatSellerPaymentModeLabel(normalizedMode);
+      showToast(firestoreSynced
+        ? `"${updatedProduct.title}" updated to ${label} (live on store & Sheets).`
+        : `"${updatedProduct.title}" set to ${label} locally & Sheets (sign in for cloud sync).`);
+    }
+    renderSellerPublishedCatalog();
+  } finally {
+    if (selectEl) selectEl.disabled = false;
+  }
+}
+
+async function setAllPublishedProductsToBothPaymentMode() {
+  const btn = document.getElementById('setAllCatalogBothBtn');
+  const products = getSellerAllPublishedProducts();
+  if (!products.length) {
+    if (typeof showToast === 'function') showToast('No published products found.');
+    return;
+  }
+
+  const originalHtml = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating All Products…';
+  }
+
+  const nowTs = Date.now();
+  let updatedCount = 0;
+  let firestoreFailures = 0;
+  try {
+    let hasFirestoreAuth = false;
+    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+      try {
+        await ensureSellerFirebaseOwnerAuth();
+        hasFirestoreAuth = true;
+      } catch (authErr) {
+        console.warn('Seller Firestore auth unavailable during batch update:', authErr);
+      }
+    }
+
+    const firestoreWrites = [];
+    products.forEach(p => {
+      if (normalizeSellerPaymentMode(p.paymentMode) === 'both' && p.paymentModeUpdatedAt) return;
+      const updated = {
+        ...p,
+        id: p.id || p.productId || p.name,
+        productId: p.productId || p.id || p.name,
+        name: p.name || p.title || '',
+        title: p.title || p.name || '',
+        paymentMode: 'both',
+        paymentModeUpdatedAt: nowTs,
+        updatedAt: nowTs
+      };
+      saveSellerLocalCatalogProduct(updated, p);
+      syncSellerProductEditToGoogleSheet(updated);
+      updatedCount++;
+
+      if (hasFirestoreAuth) {
+        const db = firebase.firestore();
+        const firestoreId = String(updated.id).replace(/\//g, '_');
+        firestoreWrites.push(
+          db.collection('published_catalog').doc(firestoreId).set(updated, { merge: true }).catch(err => {
+            firestoreFailures++;
+            console.warn('Firestore batch paymentMode update failed for', firestoreId, err);
+          })
+        );
+      }
+    });
+
+    if (firestoreWrites.length) {
+      await Promise.all(firestoreWrites);
+    }
+
+    renderSellerPublishedCatalog();
+    if (typeof showToast === 'function') {
+      if (updatedCount === 0) {
+        showToast('All live products are already set to Both (COD 193121 + Prepaid).');
+      } else if (!hasFirestoreAuth || firestoreFailures > 0) {
+        showToast(`Updated ${updatedCount} product(s) to Both (COD 193121 + Prepaid) locally & Sheet. Cloud sync needs owner sign-in.`);
+      } else {
+        showToast(`✅ Updated ${updatedCount} product(s) to Both (COD in 193121 + Prepaid everywhere).`);
+      }
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
   }
 }
 

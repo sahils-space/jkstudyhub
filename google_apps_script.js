@@ -10,6 +10,13 @@
  * 5. Ensure "Who has access" is set to "Anyone".
  */
 
+function normalizeSheetPaymentMode(val) {
+  var clean = String(val || "").trim().toLowerCase();
+  if (clean === "prepaid") return "prepaid";
+  if (clean === "cod") return "cod";
+  return "both";
+}
+
 function doPost(e) {
   try {
     var p = e.parameter || {};
@@ -188,7 +195,7 @@ function doPost(e) {
       productRow[productHeaders.indexOf("Subject")] = String(p.subject || "");
       productRow[productHeaders.indexOf("Edition")] = String(p.edition || "");
       productRow[productHeaders.indexOf("Items Included")] = String(p.contents || "");
-      productRow[productHeaders.indexOf("Payment Mode")] = p.payment_mode === "prepaid" ? "prepaid" : "cod";
+      productRow[productHeaders.indexOf("Payment Mode")] = normalizeSheetPaymentMode(p.payment_mode);
       prodSheet.appendRow(productRow);
 
       return ContentService.createTextOutput(JSON.stringify({
@@ -261,7 +268,7 @@ function doPost(e) {
         "Subject": String(p.subject || ""),
         "Edition": String(p.edition || ""),
         "Items Included": String(p.contents || ""),
-        "Payment Mode": p.payment_mode === "prepaid" ? "prepaid" : "cod"
+        "Payment Mode": normalizeSheetPaymentMode(p.payment_mode)
       };
       Object.keys(editableValues).forEach(function(header) {
         var columnIndex = updateHeaders.indexOf(header);
@@ -556,9 +563,7 @@ function doGet(e) {
             subject: subjectIndex >= 0 ? String(pRow[subjectIndex] || "") : "",
             edition: editionIndex >= 0 ? String(pRow[editionIndex] || "") : "",
             contents: contentsIndex >= 0 ? String(pRow[contentsIndex] || "") : "",
-            paymentMode: paymentModeIndex < 0 || !String(pRow[paymentModeIndex] || "").trim()
-              ? "both"
-              : String(pRow[paymentModeIndex]).toLowerCase() === "prepaid" ? "prepaid" : "cod",
+            paymentMode: paymentModeIndex < 0 ? "both" : normalizeSheetPaymentMode(pRow[paymentModeIndex]),
             timestamp: pRow[0]
           });
         }
