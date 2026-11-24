@@ -1489,6 +1489,97 @@ const PRODUCT_CATALOG = {
     mrp: 799,
     category: "notes",
     image: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=500"
+  },
+  "Ergonomic Student Backpack (School & College)": {
+    author: "JK Study Hub Gear",
+    mrp: 1299,
+    price: 699,
+    category: "gear",
+    badge: "🎒 Premium Gear",
+    image: "images/products/ergonomic-student-backpack.jpg",
+    images: ["images/products/ergonomic-student-backpack.jpg"],
+    desc: "Durable water-resistant school and college backpack with multi-tier book compartments, padded 15.6-inch laptop sleeve, ergonomic spine-support shoulder straps, and heavy-duty zipper tracks.",
+    specs: {
+      capacity: "32 Liters",
+      material: "High-Density Polyester Fabric (Water Repellent)",
+      compartments: "3 Main Zipped Compartments + Side Bottle Pockets",
+      laptop: "Up to 15.6 inch padded sleeve",
+      straps: "Ergonomic S-curve breathable mesh shoulder straps"
+    }
+  },
+  "Smart Temperature LED Water Bottle (Custom Laser Engraved)": {
+    author: "JK Study Hub Personalization Studio",
+    mrp: 799,
+    price: 449,
+    category: "custom",
+    badge: "✨ Custom Engraved",
+    image: "images/products/smart-led-temperature-bottle.jpg",
+    images: ["images/products/smart-led-temperature-bottle.jpg"],
+    desc: "Double-wall vacuum insulated 500ml food-grade stainless steel thermal flask with smart digital LED touch temperature display. Laser-engraved with your custom name, calligraphy, or student roll number.",
+    specs: {
+      capacity: "500 ml",
+      material: "304 Food-Grade Stainless Steel",
+      insulation: "Double-Wall Vacuum Insulation (Hot/Cold up to 12 Hours)",
+      display: "Cap Touch LED Digital Temperature Display (No charging required)",
+      personalization: "Precision permanent laser engraving included"
+    }
+  },
+  "Customized Acrylic / Wooden Memory Photo Frame": {
+    author: "JK Study Hub Personalization Studio",
+    mrp: 699,
+    price: 399,
+    category: "custom",
+    badge: "🖼️ Personalized Gift",
+    image: "images/products/custom-photo-memory-frame.jpg",
+    images: ["images/products/custom-photo-memory-frame.jpg"],
+    desc: "High-clarity customized memory photo frame with crystal acrylic or natural wooden finish. Send your student portrait, graduation memory, family photo or custom quote via WhatsApp for studio-grade HD printing and mounting.",
+    specs: {
+      size: "6 x 8 inches / Tabletop & Wall Mount",
+      finish: "Anti-Scratch Crystal Acrylic / Premium Natural Wood",
+      printQuality: "High-Definition 300 DPI Studio Thermal Printing",
+      packaging: "Bubble-wrapped shockproof gift box packaging"
+    }
+  },
+  "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)": {
+    author: "JK Resin Atelier",
+    mrp: 2799,
+    price: 1599,
+    category: "resin",
+    badge: "👑 Handcrafted Masterpiece",
+    image: "images/resin/resin-quran-stand.jpg",
+    images: ["images/resin/resin-quran-stand.jpg"],
+    desc: "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel."
+  },
+  "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame": {
+    author: "JK Resin Atelier",
+    mrp: 2199,
+    price: 1299,
+    category: "resin",
+    badge: "🌙 Spiritual Home Decor",
+    image: "images/resin/resin-ayat-frame.jpg",
+    images: ["images/resin/resin-ayat-frame.jpg"],
+    desc: "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand."
+  },
+  "Spectra paper A4": {
+    mrp: 349,
+    price: 249,
+    category: "stationery",
+    badge: "✨ Fresh Stock",
+    image: "images/products/spectra-paper-a4-1.jpg"
+  },
+  "DOMS COLOUR PENCILS": {
+    mrp: 59,
+    price: 39,
+    category: "stationery",
+    badge: "🔥 Bestseller",
+    image: "images/products/doms-colour-pencils-1.jpg"
+  },
+  "Classmate Geometry Box": {
+    mrp: 200,
+    price: 185,
+    category: "stationery",
+    badge: "✨ Featured",
+    image: "images/products/classmate-geometry-box-1.jpg"
   }
 };
 
@@ -10230,11 +10321,19 @@ const SEARCH_SYNONYMS = {
   'scale': ['mathematical drawing geometry box'],
   'compass': ['mathematical drawing geometry box'],
   'calculator': ['fx-991ex scientific calculator', 'scientific calculator'],
-  'bottle': ['vacuum insulated stainless steel bottle', 'water bottle'],
-  'water bottle': ['vacuum insulated stainless steel bottle'],
+  'bottle': ['smart temperature led water bottle (custom laser engraved)', 'water bottle', 'bottle'],
+  'water bottle': ['smart temperature led water bottle (custom laser engraved)', 'water bottle'],
+  'backpack': ['ergonomic student backpack (school & college)', 'backpack', 'bag'],
+  'bag': ['ergonomic student backpack (school & college)', 'backpack', 'bag'],
+  'pack': ['ergonomic student backpack (school & college)'],
+  'frame': ['customized acrylic / wooden memory photo frame', 'ayat-ul-kursi mirror gold calligraphy resin frame', 'frame'],
+  'photo frame': ['customized acrylic / wooden memory photo frame'],
+  'custom': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)', 'black & gold luxe word / initial resin keychain'],
+  'customise': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)'],
+  'customisation': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)'],
   'highlighter': ['pastel highlighter set (6 shades)'],
   'highlighters': ['pastel highlighter set (6 shades)'],
-  'quran': ['the holy quran', 'quran pak with urdu translation']
+  'quran': ['the holy quran', 'royal pearl & magenta floral folding quran stand (rehal)', 'quran pak with urdu translation']
 };
 
 function selectSearchSuggestion(productName) {
@@ -10611,6 +10710,132 @@ window.addEventListener('hashchange', handleUrlCategoryHash);
 
 const DEFAULT_PUBLISHED_PRODUCTS = [
   {
+    "id": "PRD-GEAR-BACKPACK-01",
+    "name": "Ergonomic Student Backpack (School & College)",
+    "title": "Ergonomic Student Backpack (School & College)",
+    "category": "gear",
+    "price": 699,
+    "mrp": 1299,
+    "badge": "🎒 Premium Gear",
+    "desc": "Durable water-resistant school and college backpack with padded 15.6-inch laptop sleeve, multi-tier compartments, ergonomic spine-support shoulder straps, and heavy-duty zipper tracks.",
+    "photos": [
+      "images/products/ergonomic-student-backpack.jpg"
+    ],
+    "image": "images/products/ergonomic-student-backpack.jpg"
+  },
+  {
+    "id": "PRD-CUSTOM-LED-BOTTLE-01",
+    "name": "Smart Temperature LED Water Bottle (Custom Laser Engraved)",
+    "title": "Smart Temperature LED Water Bottle (Custom Laser Engraved)",
+    "category": "custom",
+    "price": 449,
+    "mrp": 799,
+    "badge": "✨ Custom Engraved",
+    "desc": "Double-wall vacuum insulated 500ml food-grade stainless steel thermal flask with smart digital LED touch temperature display. Laser-engraved with your custom name, calligraphy, or student roll number.",
+    "photos": [
+      "images/products/smart-led-temperature-bottle.jpg"
+    ],
+    "image": "images/products/smart-led-temperature-bottle.jpg"
+  },
+  {
+    "id": "PRD-CUSTOM-PHOTO-FRAME-01",
+    "name": "Customized Acrylic / Wooden Memory Photo Frame",
+    "title": "Customized Acrylic / Wooden Memory Photo Frame",
+    "category": "custom",
+    "price": 399,
+    "mrp": 699,
+    "badge": "🖼️ Personalized Gift",
+    "desc": "High-clarity customized memory photo frame with crystal acrylic or natural wooden finish. Send your portrait, graduation photo, or custom quote via WhatsApp for studio-grade HD printing and mounting.",
+    "photos": [
+      "images/products/custom-photo-memory-frame.jpg"
+    ],
+    "image": "images/products/custom-photo-memory-frame.jpg"
+  },
+  {
+    "id": "PRD-RESIN-QURAN-STAND",
+    "name": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
+    "title": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
+    "category": "resin",
+    "price": 1599,
+    "mrp": 2799,
+    "badge": "👑 Handcrafted Masterpiece",
+    "desc": "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel.",
+    "photos": [
+      "images/resin/resin-quran-stand.jpg"
+    ],
+    "image": "images/resin/resin-quran-stand.jpg"
+  },
+  {
+    "id": "PRD-RESIN-AYAT-FRAME",
+    "name": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
+    "title": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
+    "category": "resin",
+    "price": 1299,
+    "mrp": 2199,
+    "badge": "🌙 Spiritual Home Decor",
+    "desc": "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand.",
+    "photos": [
+      "images/resin/resin-ayat-frame.jpg"
+    ],
+    "image": "images/resin/resin-ayat-frame.jpg"
+  },
+  {
+    "id": "PRD-RESIN-KEYCHAIN",
+    "name": "Black & Gold Luxe Word / Initial Resin Keychain",
+    "title": "Black & Gold Luxe Word / Initial Resin Keychain",
+    "category": "resin",
+    "price": 249,
+    "mrp": 450,
+    "badge": "✨ Personalized Gift",
+    "desc": "Deep glossy obsidian black resin circular charms with embedded real gold foil flakes and bold lettering (HOPE, LIFE, JOY, DREAM or custom initials). Heavy-duty anti-tarnish gold hardware.",
+    "photos": [
+      "images/resin/resin-keychain.jpg"
+    ],
+    "image": "images/resin/resin-keychain.jpg"
+  },
+  {
+    "id": "PRD-RESIN-BOOKMARK",
+    "name": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
+    "title": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
+    "category": "resin",
+    "price": 349,
+    "mrp": 599,
+    "badge": "⭐ Sacred Bestseller",
+    "desc": "Crystal clear shatterproof resin bookmark featuring reflective gold Bismillah calligraphy, floating 24K gold foil flakes, and a luxury champagne gold silk tassel. Handmade in Kashmir.",
+    "photos": [
+      "images/resin/resin-bookmark.jpg"
+    ],
+    "image": "images/resin/resin-bookmark.jpg"
+  },
+  {
+    "id": "PRD-RESIN-CLOCK",
+    "name": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
+    "title": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
+    "category": "resin",
+    "price": 1899,
+    "mrp": 3200,
+    "badge": "🌊 Signature Kashmir Art",
+    "desc": "Multi-layered 3D ocean wave resin pour with authentic beach sand, crushed quartz crystals, and real cellular wave foam. Silent sweep quartz movement with teardrop gold hands.",
+    "photos": [
+      "images/resin/resin-clock.jpg"
+    ],
+    "image": "images/resin/resin-clock.jpg"
+  },
+  {
+    "id": "PRD-RESIN-PEN-STAND",
+    "name": "Botanical Crystal Resin Pen Stand & Brush Holder",
+    "title": "Botanical Crystal Resin Pen Stand & Brush Holder",
+    "category": "resin",
+    "price": 499,
+    "mrp": 799,
+    "badge": "🌿 Study Desk Decor",
+    "desc": "Heavyweight crystal-clear desk vessel with real embedded dried wildflowers and ocean blue gradient base. Perfect for holding study pens, pencils, brushes, and desk tools.",
+    "photos": [
+      "images/resin/resin-pen-stand.jpg"
+    ],
+    "image": "images/resin/resin-pen-stand.jpg"
+  },
+  {
     "id": "PRD-1792043438782",
     "name": "Spectra paper A4",
     "title": "Spectra paper A4",
@@ -10771,10 +10996,8 @@ try {
       }
     } catch(e) {}
   }
-  // Exclude boutique resin art items from the regular study store
+  // Include all catalog items (stationery, backpacks, gear, custom gifts, frames, resin art) while excluding deleted items
   CUSTOM_PRODUCTS = initialProducts.filter(p =>
-    p.category !== 'resin' &&
-    !String(p.id).startsWith('PRD-RESIN-') &&
     !isGeneralAcademicPhysicalEducationProduct(p) &&
     !isDeletedCatalogProduct(p)
   );
@@ -10790,8 +11013,7 @@ function registerAllCustomProducts(products) {
 }
 
 function registerCustomProductInCatalogs(p) {
-  if (!p || (!p.name && !p.title) || isDeletedCatalogProduct(p)) return;
-  if (p.category === 'resin' || String(p.id).startsWith('PRD-RESIN-') || isGeneralAcademicPhysicalEducationProduct(p)) return;
+  if (!p || (!p.name && !p.title) || isDeletedCatalogProduct(p) || isGeneralAcademicPhysicalEducationProduct(p)) return;
   const prodName = p.name || p.title;
   p.name = prodName;
   p.title = prodName;
@@ -12319,8 +12541,10 @@ function openStoreCategorySection(catName, specificQuery) {
       target = document.getElementById('section-novels') || document.getElementById('storeSearchContainer');
     } else if (catName === 'academic') {
       target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
+    } else if (catName === 'gear' || catName === 'backpack' || catName === 'backpacks' || catName === 'custom' || catName === 'resin' || catName === 'gifts') {
+      target = document.getElementById('dynamicProductsSection') || document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
     } else if (catName === 'stationery') {
-      target = document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
+      target = document.getElementById('dynamicProductsSection') || document.getElementById('section-academic') || document.getElementById('storeSearchContainer');
     } else if (catName === 'digital') {
       target = document.getElementById('section-digital') || document.getElementById('storeSearchContainer');
     } else if (catName === 'coming-soon') {

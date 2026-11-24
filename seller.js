@@ -4032,6 +4032,51 @@ async function handleSellerCatalogSubmit(e) {
 
 const DEFAULT_SELLER_PRODUCTS = [
   {
+    "id": "PRD-GEAR-BACKPACK-01",
+    "name": "Ergonomic Student Backpack (School & College)",
+    "title": "Ergonomic Student Backpack (School & College)",
+    "category": "stationery",
+    "price": 699,
+    "mrp": 1299,
+    "stock": 25,
+    "badge": "🎒 Premium Gear",
+    "desc": "Durable water-resistant school and college backpack with padded 15.6-inch laptop sleeve, multi-tier compartments, ergonomic spine-support shoulder straps, and heavy-duty zipper tracks.",
+    "photos": [
+      "images/products/ergonomic-student-backpack.jpg"
+    ],
+    "image": "images/products/ergonomic-student-backpack.jpg"
+  },
+  {
+    "id": "PRD-CUSTOM-LED-BOTTLE-01",
+    "name": "Smart Temperature LED Water Bottle (Custom Laser Engraved)",
+    "title": "Smart Temperature LED Water Bottle (Custom Laser Engraved)",
+    "category": "stationery",
+    "price": 449,
+    "mrp": 799,
+    "stock": 30,
+    "badge": "✨ Custom Engraved",
+    "desc": "Double-wall vacuum insulated 500ml food-grade stainless steel thermal flask with smart digital LED touch temperature display. Laser-engraved with your custom name, calligraphy, or student roll number.",
+    "photos": [
+      "images/products/smart-led-temperature-bottle.jpg"
+    ],
+    "image": "images/products/smart-led-temperature-bottle.jpg"
+  },
+  {
+    "id": "PRD-CUSTOM-PHOTO-FRAME-01",
+    "name": "Customized Acrylic / Wooden Memory Photo Frame",
+    "title": "Customized Acrylic / Wooden Memory Photo Frame",
+    "category": "resin",
+    "price": 399,
+    "mrp": 699,
+    "stock": 20,
+    "badge": "🖼️ Personalized Gift",
+    "desc": "High-clarity customized memory photo frame with crystal acrylic or natural wooden finish. Send your portrait, graduation photo, or custom quote via WhatsApp for studio-grade HD printing and mounting.",
+    "photos": [
+      "images/products/custom-photo-memory-frame.jpg"
+    ],
+    "image": "images/products/custom-photo-memory-frame.jpg"
+  },
+  {
     "id": "PRD-RESIN-QURAN-STAND",
     "name": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
     "title": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
@@ -5107,6 +5152,9 @@ const SELLER_MANAGED_PRODUCTS = [
   { name: "Wren & Martin English Grammar", category: "books", categoryLabel: "Grammar & English", mrp: 450, defaultPrice: 290, image: "images/books/wren-martin-1.webp" },
 
   // Stationery & Study Supplies
+  { name: "Ergonomic Student Backpack (School & College)", category: "gear", categoryLabel: "Backpacks & Gear", mrp: 1299, defaultPrice: 699, image: "images/products/ergonomic-student-backpack.jpg" },
+  { name: "Smart Temperature LED Water Bottle (Custom Laser Engraved)", category: "custom", categoryLabel: "Personalized Merchandise", mrp: 799, defaultPrice: 449, image: "images/products/smart-led-temperature-bottle.jpg" },
+  { name: "Customized Acrylic / Wooden Memory Photo Frame", category: "custom", categoryLabel: "Customized Gifts", mrp: 699, defaultPrice: 399, image: "images/products/custom-photo-memory-frame.jpg" },
   { name: "Premium Spiral Copies (Set of 2)", category: "stationery", categoryLabel: "Copies & Registers", mrp: 250, defaultPrice: 149, image: "images/spiral-copies.webp" },
   { name: "Geometry Box Pro", category: "stationery", categoryLabel: "Stationery", mrp: 260, defaultPrice: 170, image: "images/geometry-box.webp" },
   { name: "The Holy Quran", category: "stationery", categoryLabel: "Islamic & Spiritual", mrp: 300, defaultPrice: 200, image: "images/quran.webp" },
