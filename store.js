@@ -392,7 +392,7 @@ function handleKashmirPincodeLookup(pinVal) {
   const isCodPin = (pin === '193121');
   const codBadgeText = isCodPin 
     ? ' • <span style="color:#15803d; font-weight:800;"><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery Available</span>' 
-    : ' • <span style="color:#b45309; font-weight:800;"><i class="fa-solid fa-credit-card"></i> Prepaid Online Only (COD Blocked for this PIN)</span>';
+    : ' • <span style="color:#1d4ed8; font-weight:700;"><i class="fa-solid fa-credit-card"></i> Prepaid Online</span>';
 
   const match = KASHMIR_PINCODES[pin];
   if (match) {
@@ -5858,25 +5858,27 @@ function updateCheckoutInvoiceTotals() {
     }
     if (codLabel) {
       codLabel.classList.remove('selected-cod');
-      codLabel.style.opacity = '0.55';
+      codLabel.style.opacity = '0.78';
       codLabel.style.cursor = 'not-allowed';
-      codLabel.style.border = '1.5px dashed #fca5a5';
-      codLabel.style.background = '#fff5f5';
+      codLabel.style.border = '1.5px solid #cbd5e1';
+      codLabel.style.background = '#f8fafc';
     }
     if (codBadge) {
-      codBadge.innerHTML = onlineAllowed ? '🚫 Prepaid Online Only' : '🚫 PIN 193121 Only';
-      codBadge.style.background = '#fee2e2';
-      codBadge.style.color = '#dc2626';
-      codBadge.style.border = '1px solid #fca5a5';
+      codBadge.innerHTML = currentCheckoutPaymentMode === 'prepaid'
+        ? '<i class="fa-solid fa-lock"></i> Online Only'
+        : '<i class="fa-solid fa-lock"></i> PIN 193121 Only';
+      codBadge.style.background = '#e2e8f0';
+      codBadge.style.color = '#334155';
+      codBadge.style.border = '1px solid #cbd5e1';
     }
     if (codDesc) {
       const pinMsg = currentPin ? `PIN ${currentPin}` : 'this location';
       if (currentCheckoutPaymentMode === 'prepaid') {
-        codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> Prepaid Online Only item.</span> Cash on Delivery is not available for this product. Please pay online.`;
+        codDesc.innerHTML = `<span style="font-weight:700;"><i class="fa-solid fa-lock"></i> Locked for Online Payment.</span> This item is available via Prepaid Online.`;
       } else if (!onlineAllowed) {
-        codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> COD blocked for ${pinMsg}.</span> This item is restricted to Cash on Delivery in <strong>PIN 193121</strong> (Pattan Hub) only.`;
+        codDesc.innerHTML = `<span style="font-weight:700;"><i class="fa-solid fa-lock"></i> Locked for ${pinMsg}.</span> Cash on Delivery is available for <strong>PIN 193121</strong> (Pattan Hub) only.`;
       } else {
-        codDesc.innerHTML = `<span style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-lock"></i> COD blocked for ${pinMsg}.</span> Cash on Delivery is dealt <strong>ONLY with PIN 193121</strong> (Pattan Hub). Please pay online.`;
+        codDesc.innerHTML = `<span style="font-weight:700;"><i class="fa-solid fa-lock"></i> Locked for ${pinMsg}.</span> Cash on Delivery is available for <strong>PIN 193121</strong> (Pattan Hub). Please pay online.`;
       }
     }
   } else {

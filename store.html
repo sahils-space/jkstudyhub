@@ -1187,18 +1187,31 @@
       color: #1e293b;
     }
 
-    /* Universal Form & Checkout Contrast */
+    /* Universal Form & Checkout Contrast + Responsive Big Font */
     .form-label {
       color: #1e293b !important;
       font-weight: 700 !important;
+      font-size: clamp(14px, 3.6vw, 15.5px) !important;
+      margin-bottom: 6px !important;
     }
     .form-input {
       background: #ffffff !important;
       color: #0f172a !important;
       border: 1.5px solid #cbd5e1 !important;
+      font-size: clamp(16px, 4vw, 17px) !important;
+      padding: 12px 14px !important;
+      min-height: 46px;
+      border-radius: 8px !important;
     }
     .form-input::placeholder {
       color: #94a3b8 !important;
+      font-size: clamp(14.5px, 3.6vw, 15.5px) !important;
+    }
+    .checkout-card .pay-method-info strong {
+      font-size: clamp(14.5px, 3.7vw, 16px);
+    }
+    .checkout-card .pay-method-info p {
+      font-size: clamp(12.5px, 3.2vw, 13.5px);
     }
     .checkout-card {
       background: #ffffff !important;
@@ -6948,8 +6961,8 @@
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label">Specific Subject (e.g. Physics, History)</label>
-                <input type="text" id="notesSubject" class="form-input" placeholder="Type your subject here...">
+                <label class="form-label">Specific Subject</label>
+                <input type="text" id="notesSubject" class="form-input" placeholder="Enter your subject">
               </div>
             </div>
 
@@ -7018,11 +7031,11 @@
                 </div>
                 <div style="flex:1; min-width: 120px;">
                   <label class="form-label" style="font-weight: 700;">Pincode *</label>
-                  <input type="text" id="orderPin" list="orderPinDatalist" class="form-input" placeholder="e.g. 193121, 190001" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();">
+                  <input type="text" id="orderPin" list="orderPinDatalist" class="form-input" placeholder="Enter 6-digit pincode" maxlength="6" value="193121" oninput="handleKashmirPincodeLookup(this.value); updateCheckoutInvoiceTotals();">
                   <datalist id="orderPinDatalist"></datalist>
-                  <div id="pinVerifiedBadge" style="display:none; margin-top:5px; font-size:11px; padding:3px 6px; border-radius:4px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;"></div>
-                  <div id="codAvailabilityNote" style="font-size: 11px; color: #475569; margin-top: 4px; line-height: 1.35;">
-                    <i class="fa-solid fa-circle-info" style="color: #16a34a;"></i> <strong>Cash on Delivery:</strong> Exclusively for PIN <strong>193121</strong> (Pattan Hub). Other PINs fulfilled via Prepaid Online.
+                  <div id="pinVerifiedBadge" style="display:none; margin-top:6px; font-size:clamp(12.5px, 3.2vw, 13.5px); padding:6px 10px; border-radius:6px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; line-height:1.4;"></div>
+                  <div id="codAvailabilityNote" style="font-size: clamp(12.5px, 3.1vw, 13.5px); color: #334155; margin-top: 6px; line-height: 1.4;">
+                    <i class="fa-solid fa-circle-info" style="color: #16a34a;"></i> <strong>Cash on Delivery:</strong> Available for PIN <strong>193121</strong> (Pattan Hub). Other PINs use Prepaid Online.
                   </div>
                 </div>
               </div>
@@ -7050,14 +7063,14 @@
 
               <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label" style="font-weight: 700;">Village / Mohalla, Street &amp; Landmark *</label>
-                <input type="text" id="orderAddress" class="form-input" oninput="checkAddressForKashmirArea(this.value); updateCheckoutInvoiceTotals();" placeholder="e.g. Near Jamia Masjid, Main Market, House No...">
+                <input type="text" id="orderAddress" class="form-input" oninput="checkAddressForKashmirArea(this.value); updateCheckoutInvoiceTotals();" placeholder="House no., street, village / mohalla &amp; landmark">
               </div>
             </div>
 
             <!-- Optional Email -->
             <div class="form-group" id="orderEmailGroup" style="margin-bottom: 14px;">
-              <label class="form-label" style="font-size: 12.5px;">Email Address <span style="font-weight: 400; color: #64748b;">(Optional - for invoice PDF copy)</span></label>
-              <input type="email" id="orderEmail" class="form-input" placeholder="e.g. yourname@gmail.com (Optional)">
+              <label class="form-label">Email Address <span style="font-weight: 400; color: #64748b;">(Optional - for invoice PDF copy)</span></label>
+              <input type="email" id="orderEmail" class="form-input" placeholder="Email address (Optional)">
             </div>
 
             <!-- Step 1 Primary Action -->
@@ -7337,7 +7350,7 @@
       <!-- Search Input -->
       <div style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; position: relative; background: white;">
         <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 28px; top: 22px; color: #94a3b8; font-size: 13px;"></i>
-        <input type="text" id="pickerAreaSearchInput" oninput="filterPickerAreasList()" placeholder="Search area, village, colony, landmark or PIN (e.g. Pattan, Lal Chowk, Soura, 193121)..." 
+        <input type="text" id="pickerAreaSearchInput" oninput="filterPickerAreasList()" placeholder="Search area, village, colony, landmark or PIN..." 
                style="width: 100%; padding: 9px 12px 9px 38px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
       </div>
 
@@ -7407,7 +7420,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.43"></script>
+  <script src="store.js?v=92.44"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
@@ -7514,7 +7527,7 @@
 
             <!-- Pincode Direct Solver -->
             <div class="pincode-input-wrap">
-              <input type="text" id="modalPincodeInput" maxlength="6" placeholder="Enter 6-digit Pincode (e.g. 190001)" onkeypress="if(event.key==='Enter') applyModalPincodeCheck();">
+              <input type="text" id="modalPincodeInput" maxlength="6" placeholder="Enter 6-digit Pincode" onkeypress="if(event.key==='Enter') applyModalPincodeCheck();">
               <button type="button" onclick="applyModalPincodeCheck()">Check PIN</button>
             </div>
 
