@@ -7403,7 +7403,8 @@ function handleGooglePopupAuth() {
 }
 
 // Auto-sync Firebase persistent authentication on page refresh/hard reload
-if (typeof firebase !== 'undefined' && firebase.auth) {
+function syncFirebaseAuthOnPageLoad() {
+  if (typeof firebase === 'undefined' || !firebase.auth) return;
   try {
     firebase.auth().onAuthStateChanged(fbUser => {
       if (fbUser) {
@@ -7433,6 +7434,12 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
       }
     });
   } catch(e) {}
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', syncFirebaseAuthOnPageLoad, { once: true });
+} else {
+  syncFirebaseAuthOnPageLoad();
 }
 
 // --- PWA INSTALLATION CONTROLLER ---
@@ -11634,19 +11641,23 @@ function renderDynamicStationeryProducts() {
   });
 
   if (stationeryProducts.length === 0) {
-    dynamicWrap.innerHTML = '';
+    if (dynamicWrap.childElementCount) dynamicWrap.replaceChildren();
     return;
   }
 
-  dynamicWrap.innerHTML = stationeryProducts.map(p => {
+  const html = stationeryProducts.map((p, index) => {
     const pName = p.name || p.title || 'Product';
     const safeInlineName = pName.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\r\n]/g, ' ');
     const photos = Array.isArray(p.photos) && p.photos.length ? p.photos : [p.image || 'images/logo-app.png'];
-    const image = safeEscape(photos[0] || 'images/logo-app.png');
+    const imageSource = photos[0] || 'images/logo-app.png';
+    const image = safeEscape(imageSource);
     const price = getCustomPrice(pName, Number(p.price) || 0);
     const mrp = getCustomMrp(pName, Number(p.mrp) || Math.round(price * 1.35));
     const badge = p.badge || '✨ Fresh Stock';
     const cat = p.category || 'stationery';
+    const productId = p.id || `${cat}:${pName}`;
+    const productDescription = p.desc || p.description || '';
+    const renderSignature = JSON.stringify([productId, pName, imageSource, price, mrp, badge, cat, productDescription, index]);
     const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', '${cat}')`);
     const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', '${cat}')`);
     const waHandler = safeEscape(`orderViaWhatsApp('${safeInlineName}', ${price}, '${cat}')`);
@@ -11654,13 +11665,13 @@ function renderDynamicStationeryProducts() {
     const favHandler = safeEscape(`toggleFavorite(this, '${safeInlineName}')`);
 
     return `
-      <div class="product-card" data-category="${safeEscape(cat)}">
+      <div class="product-card" data-product-id="${safeEscape(productId)}" data-render-signature="${safeEscape(renderSignature)}" data-category="${safeEscape(cat)}" style="--product-load-order:${Math.min(index, 8)}">
         <button class="wishlist-icon" onclick="${favHandler}" aria-label="Save ${safeEscape(pName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
         <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
           <h3 class="product-title" onclick="${detailsHandler}" style="cursor:pointer;">${safeEscape(pName)}</h3>
-          <p class="product-desc">${safeEscape(p.desc || p.description || '')}</p>
+          <p class="product-desc">${safeEscape(productDescription)}</p>
           <div class="product-footer">
             <div style="display:flex; flex-direction:column;">
               <div style="display:flex; align-items:baseline; gap:6px;">
@@ -11678,6 +11689,32 @@ function renderDynamicStationeryProducts() {
       </div>
     `;
   }).join('');
+
+  const template = document.createElement('template');
+  template.innerHTML = html;
+  const existingById = new Map(
+    Array.from(dynamicWrap.children, card => [card.dataset.productId, card])
+  );
+
+  Array.from(template.content.children).forEach((nextCard, index) => {
+    let card = nextCard;
+    const existing = existingById.get(card.dataset.productId);
+    if (existing) {
+      existingById.delete(card.dataset.productId);
+      if (existing.dataset.renderSignature === card.dataset.renderSignature) {
+        card = existing;
+      } else {
+        existing.replaceWith(card);
+      }
+    }
+
+    const currentAtIndex = dynamicWrap.children[index];
+    if (currentAtIndex !== card) {
+      dynamicWrap.insertBefore(card, currentAtIndex || null);
+    }
+  });
+
+  existingById.forEach(card => card.remove());
 }
 
 function getSchoolCatalogClassLevel(value) {
@@ -11890,16 +11927,23 @@ function renderSchoolCatalogSections() {
     }
   }
 
-  copiesGrid.replaceChildren();
-  booksGrid.replaceChildren();
   copiesHeader.style.display = copies.length ? 'flex' : 'none';
   copiesGrid.style.display = copies.length ? '' : 'none';
   if (copiesCategoryCard) copiesCategoryCard.style.display = copies.length ? '' : 'none';
+  if (copies.length) {
+    copiesGrid.innerHTML = copies.map(product => renderSchoolCatalogProductCard(product, 'copies')).join('');
+  } else if (copiesGrid.childElementCount) {
+    copiesGrid.replaceChildren();
+  }
+
   booksHeader.style.display = books.length ? 'flex' : 'none';
   booksGrid.style.display = books.length ? '' : 'none';
   if (booksCategoryCard) booksCategoryCard.style.display = books.length ? '' : 'none';
-  copiesGrid.innerHTML = copies.map(product => renderSchoolCatalogProductCard(product, 'copies')).join('');
-  booksGrid.innerHTML = books.map(product => renderSchoolCatalogProductCard(product, 'books')).join('');
+  if (books.length) {
+    booksGrid.innerHTML = books.map(product => renderSchoolCatalogProductCard(product, 'books')).join('');
+  } else if (booksGrid.childElementCount) {
+    booksGrid.replaceChildren();
+  }
 
   const hasClassProducts = books.some(product => getSchoolCatalogClassLevel(product.classLevel));
   classMenu.style.display = hasClassProducts ? 'flex' : 'none';

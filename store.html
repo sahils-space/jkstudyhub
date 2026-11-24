@@ -22,8 +22,8 @@
       document.title = 'Product | JK Study Hub';
     }
   </script>
-  <!-- Official Razorpay Checkout SDK -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Warm the connection for checkout when payment is requested -->
+  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK Study Hub - Books & School Copies at Less Than Bookshop Rates & Less Than MRP">
@@ -4479,6 +4479,8 @@
 
 
   <div id="hubStoreCatalog" class="container" style="max-width: 1200px; margin: 0 auto; padding: 16px 20px 24px;">
+    <div class="hub-store-catalog-layout">
+      <div class="hub-store-catalog-main">
     
     <!-- Store catalog search and sorting -->
     <div class="store-search-container" id="storeSearchContainer">
@@ -6084,6 +6086,192 @@
 
     <h2 class="category-title" id="section-academic"><i class="fa-solid fa-box"></i> Physical Study Materials &amp; Stationery</h2>
     <div class="product-grid" id="academicStationeryGrid">
+    <div id="dynamicStationeryContainer" style="display:contents;">
+      <div class="product-card" data-product-id="PRD-1792043438782" data-render-signature="[&quot;PRD-1792043438782&quot;,&quot;Spectra paper A4&quot;,&quot;images/products/spectra-paper-a4-1.jpg&quot;,249,349,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;Premium A4 sheets, best for printing notes and documents&quot;,0]" data-category="stationery" style="--product-load-order:0">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Spectra paper A4&#39;)" aria-label="Save Spectra paper A4 to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Spectra paper A4&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;Spectra paper A4&#39;)" style="cursor:pointer;">Spectra paper A4</h3>
+          <p class="product-desc">Premium A4 sheets, best for printing notes and documents</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹249</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹349</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹100 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;Spectra paper A4&#39;, 249, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;Spectra paper A4&#39;, 249, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;Spectra paper A4&#39;, 249, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077265980" data-render-signature="[&quot;PRD-1792077265980&quot;,&quot;DOMS COLOUR PENCILS&quot;,&quot;images/products/doms-colour-pencils-1.jpg&quot;,39,59,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;Doms colour pencils For Good drawing Unbreakable,premium, original.&quot;,1]" data-category="stationery" style="--product-load-order:1">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;DOMS COLOUR PENCILS&#39;)" aria-label="Save DOMS COLOUR PENCILS to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/doms-colour-pencils-1.jpg" alt="DOMS COLOUR PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;DOMS COLOUR PENCILS&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;DOMS COLOUR PENCILS&#39;)" style="cursor:pointer;">DOMS COLOUR PENCILS</h3>
+          <p class="product-desc">Doms colour pencils For Good drawing Unbreakable,premium, original.</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹39</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹59</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹20 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;DOMS COLOUR PENCILS&#39;, 39, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;DOMS COLOUR PENCILS&#39;, 39, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;DOMS COLOUR PENCILS&#39;, 39, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077365690" data-render-signature="[&quot;PRD-1792077365690&quot;,&quot;DOMS SMALL COLOUR PENCILS&quot;,&quot;images/products/doms-small-colour-pencils-1.jpg&quot;,26,39,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;DOMS highly demanded Small Pencil colours, Original high Quality Colour.&quot;,2]" data-category="stationery" style="--product-load-order:2">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;DOMS SMALL COLOUR PENCILS&#39;)" aria-label="Save DOMS SMALL COLOUR PENCILS to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/doms-small-colour-pencils-1.jpg" alt="DOMS SMALL COLOUR PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;DOMS SMALL COLOUR PENCILS&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;DOMS SMALL COLOUR PENCILS&#39;)" style="cursor:pointer;">DOMS SMALL COLOUR PENCILS</h3>
+          <p class="product-desc">DOMS highly demanded Small Pencil colours, Original high Quality Colour.</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹26</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹39</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹13 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;DOMS SMALL COLOUR PENCILS&#39;, 26, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;DOMS SMALL COLOUR PENCILS&#39;, 26, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;DOMS SMALL COLOUR PENCILS&#39;, 26, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077436674" data-render-signature="[&quot;PRD-1792077436674&quot;,&quot;Classmate Geometry Box&quot;,&quot;images/products/classmate-geometry-box-1.jpg&quot;,185,200,&quot;✨ Featured&quot;,&quot;stationery&quot;,&quot;CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.&quot;,3]" data-category="stationery" style="--product-load-order:3">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Classmate Geometry Box&#39;)" aria-label="Save Classmate Geometry Box to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/classmate-geometry-box-1.jpg" alt="Classmate Geometry Box" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Classmate Geometry Box&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Featured</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;Classmate Geometry Box&#39;)" style="cursor:pointer;">Classmate Geometry Box</h3>
+          <p class="product-desc">CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹185</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹200</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹15 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;Classmate Geometry Box&#39;, 185, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;Classmate Geometry Box&#39;, 185, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;Classmate Geometry Box&#39;, 185, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077512334" data-render-signature="[&quot;PRD-1792077512334&quot;,&quot;WATER COLOURS DOMS&quot;,&quot;images/products/water-colours-doms-1.jpg&quot;,59,70,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;Water colours Doms, For water drawing painting and diagrams...&quot;,4]" data-category="stationery" style="--product-load-order:4">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;WATER COLOURS DOMS&#39;)" aria-label="Save WATER COLOURS DOMS to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/water-colours-doms-1.jpg" alt="WATER COLOURS DOMS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;WATER COLOURS DOMS&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;WATER COLOURS DOMS&#39;)" style="cursor:pointer;">WATER COLOURS DOMS</h3>
+          <p class="product-desc">Water colours Doms, For water drawing painting and diagrams...</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹59</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹70</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹11 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;WATER COLOURS DOMS&#39;, 59, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;WATER COLOURS DOMS&#39;, 59, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;WATER COLOURS DOMS&#39;, 59, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077609528" data-render-signature="[&quot;PRD-1792077609528&quot;,&quot;DOMS GLUE STICK 10 PCS&quot;,&quot;images/products/doms-glue-stick-10-pcs-1.jpg&quot;,110,149,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;Newly launched,good quality Glue For sticking the notes diagrams and photographs&quot;,5]" data-category="stationery" style="--product-load-order:5">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;DOMS GLUE STICK 10 PCS&#39;)" aria-label="Save DOMS GLUE STICK 10 PCS to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/doms-glue-stick-10-pcs-1.jpg" alt="DOMS GLUE STICK 10 PCS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;DOMS GLUE STICK 10 PCS&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;DOMS GLUE STICK 10 PCS&#39;)" style="cursor:pointer;">DOMS GLUE STICK 10 PCS</h3>
+          <p class="product-desc">Newly launched,good quality Glue For sticking the notes diagrams and photographs</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹110</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹149</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹39 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;DOMS GLUE STICK 10 PCS&#39;, 110, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;DOMS GLUE STICK 10 PCS&#39;, 110, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;DOMS GLUE STICK 10 PCS&#39;, 110, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077729941" data-render-signature="[&quot;PRD-1792077729941&quot;,&quot;NIXON DOMS PEN BUNDLE&quot;,&quot;images/products/nixon-doms-pen-bundle-1.jpg&quot;,112,149,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS&quot;,6]" data-category="stationery" style="--product-load-order:6">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;NIXON DOMS PEN BUNDLE&#39;)" aria-label="Save NIXON DOMS PEN BUNDLE to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/nixon-doms-pen-bundle-1.jpg" alt="NIXON DOMS PEN BUNDLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;NIXON DOMS PEN BUNDLE&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;NIXON DOMS PEN BUNDLE&#39;)" style="cursor:pointer;">NIXON DOMS PEN BUNDLE</h3>
+          <p class="product-desc">SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹112</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹149</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹37 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;NIXON DOMS PEN BUNDLE&#39;, 112, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;NIXON DOMS PEN BUNDLE&#39;, 112, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;NIXON DOMS PEN BUNDLE&#39;, 112, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-card" data-product-id="PRD-1792077813239" data-render-signature="[&quot;PRD-1792077813239&quot;,&quot;PENCILS&quot;,&quot;images/products/pencils-1.jpg&quot;,79,99,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;DOMS PENCILS PACK, Dark and neat handwriting pencils for students&quot;,7]" data-category="stationery" style="--product-load-order:7">
+        <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;PENCILS&#39;)" aria-label="Save PENCILS to wishlist"><i class="fa-solid fa-heart"></i></button>
+        <img src="images/products/pencils-1.jpg" alt="PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;PENCILS&#39;)" style="cursor:pointer;">
+        <div class="product-info">
+          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
+          <h3 class="product-title" onclick="openBookDetailsModal(&#39;PENCILS&#39;)" style="cursor:pointer;">PENCILS</h3>
+          <p class="product-desc">DOMS PENCILS PACK, Dark and neat handwriting pencils for students</p>
+          <div class="product-footer">
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:baseline; gap:6px;">
+                <span class="product-price">₹79</span>
+                <span style="text-decoration:line-through; color:#94a3b8; font-size:12.5px; font-weight:600;">₹99</span>
+              </div>
+              <span style="color:#16a34a; font-size:11px; font-weight:800;">Save ₹20 • Instant Dispatch</span>
+            </div>
+            <div class="product-actions" style="gap:6px;">
+              <button class="buy-btn" style="flex:1;" onclick="openCheckout(&#39;PENCILS&#39;, 79, &#39;physical&#39;, &#39;stationery&#39;)">Buy Now</button>
+              <button class="btn-icon" onclick="addToCart(&#39;PENCILS&#39;, 79, &#39;physical&#39;, &#39;stationery&#39;)" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+              <button class="btn-icon" style="background:#22c55e; color:#fff; border-color:#16a34a;" onclick="orderViaWhatsApp(&#39;PENCILS&#39;, 79, &#39;stationery&#39;)" title="Order on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       
       <div class="product-card" data-category="academic">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Physical Education Master Notes')" aria-label="Save Physical Education Master Notes to wishlist"><i class="fa-solid fa-heart"></i></button>
@@ -6479,6 +6667,8 @@
             <p style="font-size: 11.5px; color: #64748b; margin: 2px 0 0;">Hassle-free student guarantee</p>
           </div>
         </div>
+      </div>
+      <!-- End of Trust Badges Strip -->
       </div>
     </div>
   </div>
@@ -7015,22 +7205,24 @@
     </div>
   </div>
 
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
-    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey: "AIzaSyA_fgnUKqpy15ku81BKKSa5b-wMuyeT9uw",
-        authDomain: "jk-study-hub-574c7.firebaseapp.com",
-        projectId: "jk-study-hub-574c7",
-        storageBucket: "jk-study-hub-574c7.firebasestorage.app",
-        messagingSenderId: "544447856590",
-        appId: "1:544447856590:web:9280ed66e744e6b8cfb59f"
-      });
-    }
+    document.addEventListener('DOMContentLoaded', function initializeStoreFirebase() {
+      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyA_fgnUKqpy15ku81BKKSa5b-wMuyeT9uw",
+          authDomain: "jk-study-hub-574c7.firebaseapp.com",
+          projectId: "jk-study-hub-574c7",
+          storageBucket: "jk-study-hub-574c7.firebasestorage.app",
+          messagingSenderId: "544447856590",
+          appId: "1:544447856590:web:9280ed66e744e6b8cfb59f"
+        });
+      }
+    }, { once: true });
   </script>
   <!-- Real-Time Visitor Analytics Tracker -->
   <div id="adWatchModal" class="ad-watch-modal" onclick="closeAdWatchModal(event)">
@@ -7047,7 +7239,7 @@
 
   <script src="analytics.js?v=2"></script>
   <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.31"></script>
+  <script src="store.js?v=92.33"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
