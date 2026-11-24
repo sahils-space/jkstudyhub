@@ -5338,23 +5338,18 @@ function setupCheckoutModal(name, price, category, paymentMode) {
   goToCheckoutStep(1);
 
   const notesFields = document.getElementById('notesSpecificFields');
-  const schoolFields = document.getElementById('schoolBooksSpecificFields');
   const formFields = document.getElementById('formSpecificFields');
   const addressFields = document.getElementById('addressFields');
 
   if (notesFields) notesFields.style.display = 'none';
-  if (schoolFields) schoolFields.style.display = 'none';
   if (formFields) formFields.style.display = 'none';
   if (addressFields) addressFields.style.display = 'none';
 
   const notesSub = document.getElementById('notesSubject');
-  const schoolNameInput = document.getElementById('orderSchoolName');
-  const schoolClassSelect = document.getElementById('orderSchoolClass');
   const formType = document.getElementById('digitalFormType');
   const addr = document.getElementById('orderAddress');
 
   if (notesSub) notesSub.removeAttribute('required');
-  if (schoolNameInput) schoolNameInput.removeAttribute('required');
   if (formType) formType.removeAttribute('required');
   if (addr) addr.removeAttribute('required');
 
@@ -5368,26 +5363,6 @@ function setupCheckoutModal(name, price, category, paymentMode) {
   } else {
     if (formFields) formFields.style.display = 'block';
     if (formType) formType.setAttribute('required', 'true');
-  }
-
-  // School Books (Class 1st–10th requires School Name)
-  if (category === 'school-books' || name.includes('Book Set') || (name.includes('Class ') && !name.includes('11th') && !name.includes('12th'))) {
-    if (schoolFields) schoolFields.style.display = 'block';
-    // Auto-select class in dropdown if found in title
-    if (schoolClassSelect) {
-      for (let i = 1; i <= 12; i++) {
-        const clsStr = 'Class ' + i + (i === 1 ? 'st' : i === 2 ? 'nd' : i === 3 ? 'rd' : 'th');
-        if (name.includes(clsStr)) {
-          schoolClassSelect.value = clsStr;
-          break;
-        }
-      }
-    }
-    // Only require school name for Class 1st to 10th (Private/Govt schools syllabus varies)
-    const isHigherSec = name.includes('11th') || name.includes('12th');
-    if (!isHigherSec && schoolNameInput) {
-      schoolNameInput.setAttribute('required', 'true');
-    }
   }
 
   // Notes & Guides with specific subject
@@ -6188,17 +6163,6 @@ function validateCheckoutInputs() {
     if (pinInput) pinInput.value = cleanPin;
   }
 
-  const schoolFields = document.getElementById('schoolBooksSpecificFields');
-  if (schoolFields && schoolFields.style.display !== 'none') {
-    const schoolNameInput = document.getElementById('orderSchoolName');
-    if (schoolNameInput && schoolNameInput.hasAttribute('required') && !schoolNameInput.value.trim()) {
-      alert("Please enter the School Name so we dispatch the exact syllabus books.");
-      goToCheckoutStep(1);
-      schoolNameInput.focus();
-      return false;
-    }
-  }
-
   const notesFields = document.getElementById('notesSpecificFields');
   if (notesFields && notesFields.style.display !== 'none') {
     const notesSub = document.getElementById('notesSubject');
@@ -6335,11 +6299,6 @@ function updateCheckoutReviewData() {
 
   if (rSub) {
     let subInfo = [];
-    const schoolNameInput = document.getElementById('orderSchoolName');
-    const schoolClassSelect = document.getElementById('orderSchoolClass');
-    if (schoolNameInput && schoolNameInput.value.trim()) {
-      subInfo.push(`🏫 School: ${schoolNameInput.value.trim()}${schoolClassSelect ? ' (' + schoolClassSelect.value + ')' : ''}`);
-    }
     const notesClass = document.getElementById('notesClass');
     const notesSub = document.getElementById('notesSubject');
     if (notesSub && notesSub.value.trim()) {
@@ -6628,15 +6587,8 @@ function processOrder(txnId, customStatus) {
   const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const totalPaid = finalItemPrice + deliveryFee + platformFee + codFee;
 
-  let schoolName = '';
-  let studentClass = '';
-  const schoolNameInput = document.getElementById('orderSchoolName');
-  const schoolClassSelect = document.getElementById('orderSchoolClass');
-  if (schoolNameInput && schoolNameInput.value.trim()) {
-    schoolName = schoolNameInput.value.trim();
-    studentClass = schoolClassSelect ? schoolClassSelect.value : '';
-    finalProductDesc += ` [School: ${schoolName}${studentClass ? ', ' + studentClass : ''}]`;
-  }
+  const schoolName = '';
+  const studentClass = '';
 
   const cleanTxnId = isCod ? 'Cash on Delivery' : txnId;
   const orderStatus = customStatus || (isCod ? 'Confirmed (Cash on Delivery)' : 'Confirmed');
