@@ -1540,26 +1540,6 @@ const PRODUCT_CATALOG = {
       packaging: "Bubble-wrapped shockproof gift box packaging"
     }
   },
-  "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)": {
-    author: "JK Resin Atelier",
-    mrp: 2799,
-    price: 1599,
-    category: "resin",
-    badge: "👑 Handcrafted Masterpiece",
-    image: "images/resin/resin-quran-stand.jpg",
-    images: ["images/resin/resin-quran-stand.jpg"],
-    desc: "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel."
-  },
-  "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame": {
-    author: "JK Resin Atelier",
-    mrp: 2199,
-    price: 1299,
-    category: "resin",
-    badge: "🌙 Spiritual Home Decor",
-    image: "images/resin/resin-ayat-frame.jpg",
-    images: ["images/resin/resin-ayat-frame.jpg"],
-    desc: "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand."
-  },
   "Spectra paper A4": {
     mrp: 349,
     price: 249,
@@ -10326,14 +10306,14 @@ const SEARCH_SYNONYMS = {
   'backpack': ['ergonomic student backpack (school & college)', 'backpack', 'bag'],
   'bag': ['ergonomic student backpack (school & college)', 'backpack', 'bag'],
   'pack': ['ergonomic student backpack (school & college)'],
-  'frame': ['customized acrylic / wooden memory photo frame', 'ayat-ul-kursi mirror gold calligraphy resin frame', 'frame'],
+  'frame': ['customized acrylic / wooden memory photo frame', 'frame'],
   'photo frame': ['customized acrylic / wooden memory photo frame'],
-  'custom': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)', 'black & gold luxe word / initial resin keychain'],
+  'custom': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)'],
   'customise': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)'],
   'customisation': ['customized acrylic / wooden memory photo frame', 'smart temperature led water bottle (custom laser engraved)'],
   'highlighter': ['pastel highlighter set (6 shades)'],
   'highlighters': ['pastel highlighter set (6 shades)'],
-  'quran': ['the holy quran', 'royal pearl & magenta floral folding quran stand (rehal)', 'quran pak with urdu translation']
+  'quran': ['the holy quran', 'quran pak with urdu translation']
 };
 
 function selectSearchSuggestion(productName) {
@@ -10752,90 +10732,6 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
     "image": "images/products/custom-photo-memory-frame.jpg"
   },
   {
-    "id": "PRD-RESIN-QURAN-STAND",
-    "name": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
-    "title": "Royal Pearl & Magenta Floral Folding Quran Stand (Rehal)",
-    "category": "resin",
-    "price": 1599,
-    "mrp": 2799,
-    "badge": "👑 Handcrafted Masterpiece",
-    "desc": "Handmade interlocking folding Rehal crafted from shimmering pearl-white resin, infused with magenta floral petals, 24K gold foil, and sacred Arabic calligraphy with matching floral bookmark and gold silk tassel.",
-    "photos": [
-      "images/resin/resin-quran-stand.jpg"
-    ],
-    "image": "images/resin/resin-quran-stand.jpg"
-  },
-  {
-    "id": "PRD-RESIN-AYAT-FRAME",
-    "name": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
-    "title": "Ayat-ul-Kursi Mirror Gold Calligraphy Resin Frame",
-    "category": "resin",
-    "price": 1299,
-    "mrp": 2199,
-    "badge": "🌙 Spiritual Home Decor",
-    "desc": "Sacred Ayat-ul-Kursi script precision-cut in 3D reflective gold mirror, cast inside an authentic pearl white and gold marble resin slab. Includes luxury clear acrylic display stand.",
-    "photos": [
-      "images/resin/resin-ayat-frame.jpg"
-    ],
-    "image": "images/resin/resin-ayat-frame.jpg"
-  },
-  {
-    "id": "PRD-RESIN-KEYCHAIN",
-    "name": "Black & Gold Luxe Word / Initial Resin Keychain",
-    "title": "Black & Gold Luxe Word / Initial Resin Keychain",
-    "category": "resin",
-    "price": 249,
-    "mrp": 450,
-    "badge": "✨ Personalized Gift",
-    "desc": "Deep glossy obsidian black resin circular charms with embedded real gold foil flakes and bold lettering (HOPE, LIFE, JOY, DREAM or custom initials). Heavy-duty anti-tarnish gold hardware.",
-    "photos": [
-      "images/resin/resin-keychain.jpg"
-    ],
-    "image": "images/resin/resin-keychain.jpg"
-  },
-  {
-    "id": "PRD-RESIN-BOOKMARK",
-    "name": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
-    "title": "Bismillah Calligraphy & 24K Gold Leaf Resin Bookmark",
-    "category": "resin",
-    "price": 349,
-    "mrp": 599,
-    "badge": "⭐ Sacred Bestseller",
-    "desc": "Crystal clear shatterproof resin bookmark featuring reflective gold Bismillah calligraphy, floating 24K gold foil flakes, and a luxury champagne gold silk tassel. Handmade in Kashmir.",
-    "photos": [
-      "images/resin/resin-bookmark.jpg"
-    ],
-    "image": "images/resin/resin-bookmark.jpg"
-  },
-  {
-    "id": "PRD-RESIN-CLOCK",
-    "name": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
-    "title": "Dal Lake Ocean Wave 3D Geode Wall Clock (12-inch)",
-    "category": "resin",
-    "price": 1899,
-    "mrp": 3200,
-    "badge": "🌊 Signature Kashmir Art",
-    "desc": "Multi-layered 3D ocean wave resin pour with authentic beach sand, crushed quartz crystals, and real cellular wave foam. Silent sweep quartz movement with teardrop gold hands.",
-    "photos": [
-      "images/resin/resin-clock.jpg"
-    ],
-    "image": "images/resin/resin-clock.jpg"
-  },
-  {
-    "id": "PRD-RESIN-PEN-STAND",
-    "name": "Botanical Crystal Resin Pen Stand & Brush Holder",
-    "title": "Botanical Crystal Resin Pen Stand & Brush Holder",
-    "category": "resin",
-    "price": 499,
-    "mrp": 799,
-    "badge": "🌿 Study Desk Decor",
-    "desc": "Heavyweight crystal-clear desk vessel with real embedded dried wildflowers and ocean blue gradient base. Perfect for holding study pens, pencils, brushes, and desk tools.",
-    "photos": [
-      "images/resin/resin-pen-stand.jpg"
-    ],
-    "image": "images/resin/resin-pen-stand.jpg"
-  },
-  {
     "id": "PRD-1792043438782",
     "name": "Spectra paper A4",
     "title": "Spectra paper A4",
@@ -10996,8 +10892,10 @@ try {
       }
     } catch(e) {}
   }
-  // Include all catalog items (stationery, backpacks, gear, custom gifts, frames, resin art) while excluding deleted items
+  // Exclude boutique resin art items from the regular study store (they belong on art.jkstudyhub.online)
   CUSTOM_PRODUCTS = initialProducts.filter(p =>
+    p.category !== 'resin' &&
+    !String(p.id).startsWith('PRD-RESIN-') &&
     !isGeneralAcademicPhysicalEducationProduct(p) &&
     !isDeletedCatalogProduct(p)
   );
@@ -11014,6 +10912,7 @@ function registerAllCustomProducts(products) {
 
 function registerCustomProductInCatalogs(p) {
   if (!p || (!p.name && !p.title) || isDeletedCatalogProduct(p) || isGeneralAcademicPhysicalEducationProduct(p)) return;
+  if (p.category === 'resin' || String(p.id).startsWith('PRD-RESIN-')) return;
   const prodName = p.name || p.title;
   p.name = prodName;
   p.title = prodName;
