@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JK STUDY HUB - Empowering Class 10th, 11th & 12th Students | Kashmir</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <meta name="theme-color" content="#172a22">
+  <meta name="description" content="JK STUDY HUB - Comprehensive educational resources, notes, question banks, and books at less than bookshop rates & less than MRP for Class 10th, 11th & 12th students in Jammu and Kashmir.">
+  <meta name="keywords" content="JK Study Hub, JKBOSE Class 10th notes, JKBOSE Class 11th, JKBOSE Class 12th, Kashmir students, Sahil Zahoor, study material, Pattan, Baramulla">
+  <meta name="author" content="Sahil Zahoor">
+  <meta name="robots" content="index, follow">
+  <meta name="google-site-verification" content="yAl-IJWmVBFwPtCjAg6Xfdr6V_JlLzB4G6dUnWyE22o">
+
+  <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JK STUDY HUB - Class 10th, 11th & 12th Academic & Books Portal">
+  <meta property="og:description" content="JKBOSE exam resources, books, question banks, novels and school supplies at less than bookshop rates. Orders of ₹1,499+ qualify for free delivery across Jammu and Kashmir.">
+  <meta property="og:image" content="https://jkstudyhub.online/images/logo-app.png">
+  <meta property="og:url" content="https://jkstudyhub.online/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JK STUDY HUB - Empowering J&K Students">
+  <meta name="twitter:description" content="Curated JKBOSE notes, datesheet alerts, board guess papers, and books at less than bookshop rates & less than MRP in Kashmir.">
+  <meta name="twitter:image" content="https://jkstudyhub.online/images/logo-app.png">
+
+  <!-- Google Fonts & Font Awesome (non-render-blocking) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=27">
+  <link rel="stylesheet" href="premium-theme.css?v=1">
+  <link rel="stylesheet" href="brand-theme.css?v=2">
+</head>
+<body>
+
+  <!-- Top Exam Countdown Ticker (Class 10th, 11th, 12th Annual Regular Exams) -->
+  <aside class="exam-countdown-topbar" id="examCountdownBar">
+    <div class="exam-countdown-container">
+      <div class="exam-countdown-headline">
+        <span class="exam-pulse-dot" style="background:#22c55e; box-shadow:0 0 10px #22c55e;"></span>
+        <span class="exam-badge-tag"><i class="fa-solid fa-graduation-cap"></i> JKBOSE Annual Regular Exams (Ongoing)</span>
+      </div>
+
+      <div class="exam-countdown-cards-row">
+        <!-- Class 10th (Exams Concluded) -->
+        <div class="exam-timer-pill" data-class="10" title="Class 10th Annual Regular Exams Finished - Result Alerts">
+          <div class="pill-left">
+            <span class="pill-class">10th</span>
+            <span class="pill-date">(Concluded)</span>
+          </div>
+          <div class="pill-time" id="timerClass10">
+            <span style="color:#38bdf8; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <i class="fa-solid fa-circle-check" style="color:#38bdf8;"></i> Exams Finished ✨
+            </span>
+          </div>
+        </div>
+
+        <!-- Class 12th (Exams Concluded) -->
+        <div class="exam-timer-pill" data-class="12" title="Class 12th Annual Regular Exams Finished">
+          <div class="pill-left">
+            <span class="pill-class">12th</span>
+            <span class="pill-date">(Concluded)</span>
+          </div>
+          <div class="pill-time" id="timerClass12">
+            <span style="color:#38bdf8; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <i class="fa-solid fa-circle-check" style="color:#38bdf8;"></i> Exams Finished ✨
+            </span>
+          </div>
+        </div>
+
+        <!-- Class 11th (Exam from 29th Oct) -->
+        <div class="exam-timer-pill" data-class="11" title="Class 11th Annual Regular Exam started 29th Oct - Currently Ongoing">
+          <div class="pill-left">
+            <span class="pill-class">11th</span>
+            <span class="pill-date">(29th Oct)</span>
+          </div>
+          <div class="pill-time" id="timerClass11">
+            <span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;">
+              <span class="exam-status-dot"></span> Exam Ongoing 🎯
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-countdown-action">
+        <a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" class="btn-exam-datesheet" style="background:#22c55e; color:#ffffff; border-color:#16a34a; font-weight:700;">
+          <i class="fa-brands fa-whatsapp"></i> 10th Result Alerts &rarr;
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Top Centered Branding Header -->
+  <header class="main-header" id="home">
+    <div class="top-brand-wrapper" id="autumnWrapper">
+      <div class="brand-logo-container">
+        <h1 class="hub-title">JK STUDY HUB</h1>
+        <p class="hub-tagline">Excellence in Learning for Class 10th, 11th &amp; 12th</p>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="nav-item" style="background:#2563eb; color:#ffffff !important; border-radius:8px; padding:6px 14px; font-weight:800; display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-store"></i> Buy Books &amp; Stationery</a></li>
+          <li><a href="#home" class="nav-item active">Study Hub</a></li>
+          <li><a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" class="nav-item"><i class="fa-brands fa-whatsapp" style="color: #22c55e;"></i> WhatsApp Channel</a></li>
+          <li><a href="#class10" class="nav-item" onclick="openClass10Modal();">Class 10th</a></li>
+          <li><a href="#class11" class="nav-item" onclick="openClass11Modal();">Class 11th</a></li>
+          <li><a href="#class12" class="nav-item" onclick="openClass12Modal();">Class 12th</a></li>
+          <li><a href="#contact" class="nav-item">Contact Us</a></li>
+          <li><a href="https://jkbose.jk.gov.in" target="_blank" rel="noopener" class="nav-item jkbose-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> JKBOSE Official</a></li>
+        </ul>
+
+        <!-- Study Library & User Auth Cluster -->
+        <div class="nav-auth-cluster">
+          <button type="button" class="nav-library-btn" id="installAppBtn" onclick="openAppInstallModal()" title="Install JK Study Hub App on your Phone or PC" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: white; border: 1px solid rgba(147, 197, 253, 0.4); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; margin-right: 8px; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);">
+            <img src="images/app-install-logo.png" alt="JK" style="width: 17px; height: 17px; border-radius: 4px; object-fit: cover;">
+            <span>Install App</span>
+          </button>
+          <button type="button" class="nav-library-btn" id="navLibraryBtn" onclick="openLibraryModal()" title="View your study history and bookmarked papers">
+            <i class="fa-solid fa-book-bookmark"></i>
+            <span>My Library</span>
+            <span class="library-badge" id="libraryBadge">0</span>
+          </button>
+
+          <!-- Google Sign In Button (Logged Out State) -->
+          <button type="button" class="btn-google-auth" id="btnGoogleLogin" onclick="handleGoogleSignIn()" title="Sign in with your Google Account">
+            <svg class="google-icon" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span class="auth-btn-text">Sign In</span>
+          </button>
+
+          <!-- User Profile Dropdown (Logged In State) -->
+          <div class="user-profile-menu" id="userProfileMenu" style="display: none;">
+            <button type="button" class="user-avatar-btn" id="userAvatarBtn" onclick="toggleUserDropdown()" aria-label="User Account Menu">
+              <img src="" alt="Student Avatar" id="userAvatarImg" class="user-avatar-img">
+              <span class="user-first-name" id="userFirstName">Student</span>
+              <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="user-dropdown-card" id="userDropdownCard">
+              <div class="dropdown-header">
+                <p class="dropdown-user-name" id="dropdownUserName">Student Name</p>
+                <p class="dropdown-user-email" id="dropdownUserEmail">student@email.com</p>
+                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Google Verified</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item" onclick="openLibraryModal(); toggleUserDropdown();">
+                <i class="fa-solid fa-bookmark" style="color: var(--primary-blue);"></i> My Saved Library
+              </button>
+              <a href="account.html#orders" class="dropdown-item" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-box" style="color: #10b981;"></i> My Orders
+              </a>
+              <a href="account.html#wishlist" class="dropdown-item" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-heart" style="color: #ef4444;"></i> My Wishlist
+              </a>
+              <a href="cart.html" class="dropdown-item" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-cart-shopping" style="color: #2563eb;"></i> My Cart
+              </a>
+              <button type="button" class="dropdown-item dropdown-logout" onclick="handleGoogleSignOut()">
+                <i class="fa-solid fa-arrow-right-from-bracket" style="color: #ef4444;"></i> Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+
+
+
+
+  <!-- 2. SUBJECT STUDY CENTERS & LEARNING RESOURCES -->
+  <section class="section subject-portals-section" id="subjects">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Learning Portals</span>
+        <h2 class="section-title">Subject Study Centers</h2>
+        <div class="title-underline"></div>
+        <p class="section-subtitle">
+          Targeted study centers for Class 10th, Class 11th, and Class 12th with curated revision notes, solved examples, formula sheets, and exam guidance.
+        </p>
+      </div>
+
+      <!-- Class 10th Showcase Banner Card (Dedicated Pop-up Window) -->
+      <div class="class10-showcase-card" id="class10" onclick="openClass10Modal()" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e40af 100%); border-radius: 18px; padding: 22px 26px; margin-bottom: 35px; box-shadow: 0 10px 30px -5px rgba(15,23,42,0.25); cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; transition: transform 0.25s ease, box-shadow 0.25s ease; border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
+        <div style="display:flex; align-items:center; gap:20px; flex:1; min-width:280px;">
+          <div style="position:relative; width:75px; height:75px; border-radius:16px; background:linear-gradient(135deg, #2563eb, #1d4ed8); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:34px; box-shadow:0 8px 24px rgba(37,99,235,0.45); flex-shrink:0; border:1px solid rgba(255,255,255,0.2);">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <span style="background:rgba(37,99,235,0.25); color:#93c5fd; border:1px solid rgba(147,197,253,0.3); font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; text-transform:uppercase;">
+                Class 10th Board Hub
+              </span>
+              <span style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(74,222,128,0.3); font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; text-transform:uppercase;">
+                4 Core Portals
+              </span>
+              <span style="color:#fde047; font-size:12px; font-weight:700;">
+                <i class="fa-solid fa-certificate"></i> Official JKBOSE &amp; NCERT
+              </span>
+            </div>
+            <h3 style="font-size:21px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+              Class 10th Core Academic Subjects &amp; Study Center
+            </h3>
+            <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">
+              Science, Mathematics, Social Science, English &amp; Urdu &bull; Syllabus, PYQs, CYQs &amp; Model Papers.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+          <button type="button" onclick="openClass10Modal(); event.stopPropagation();" style="background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color:#ffffff; font-weight:800; font-size:14px; padding:12px 24px; border-radius:10px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(37,99,235,0.4); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Explore 10th Subjects</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- FULL DEDICATED CLASS 10TH SUBJECTS MODAL WINDOW -->
+      <div id="class10CollectionModal" class="novels-collection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:10000; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;" onclick="if(event.target===this) closeClass10Modal();">
+        <div class="novels-modal-card" style="background:#f8fafc; border-radius:20px; width:100%; max-width:1150px; max-height:92vh; overflow-y:auto; position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.5); display:flex; flex-direction:column; border:1px solid #cbd5e1;">
+          
+          <!-- Sticky Header of Class 10th Modal -->
+          <div style="position:sticky; top:0; z-index:20; background:#ffffff; border-bottom:1.5px solid #e2e8f0; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:20px 20px 0 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:40px; height:40px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; color:#0f172a; margin:0;">Class 10th Core Academic Subjects</h2>
+                <p style="font-size:12.5px; color:#64748b; margin:2px 0 0;">NCERT &amp; JKBOSE Syllabus, PYQs, CYQs, and Official Model Papers</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="background:#dbeafe; color:#1e40af; font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;">
+                4 Core Portals
+              </span>
+              <button type="button" onclick="closeClass10Modal()" style="width:38px; height:38px; border-radius:50%; background:#f1f5f9; border:none; font-size:18px; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" title="Close Window">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body with 4 Subject Cards -->
+          <div style="padding:24px; flex:1;">
+            <div class="cards-grid">
+              <!-- Science -->
+              <div class="study-card">
+                <div class="card-icon science-color"><i class="fa-solid fa-atom"></i></div>
+                <h3 class="card-title">Science</h3>
+                <p class="card-desc">Physics, Chemistry, and Biology modules with NCERT question walkthroughs, chemical formulas, and diagram practice.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Light, Electricity &amp; Magnetism</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Reactions, Carbon Compounds</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Life Processes &amp; Reproduction</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sci');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-sci');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Mathematics -->
+              <div class="study-card">
+                <div class="card-icon math-color"><i class="fa-solid fa-calculator"></i></div>
+                <h3 class="card-title">Mathematics</h3>
+                <p class="card-desc">Step-by-step theorem proofs (BPT), quadratic formula applications, trigonometry tables, and statistics calculators.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Real Numbers &amp; Algebra (20m)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Geometry &amp; Trigonometry (27m)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Mensuration &amp; Statistics (21m)</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-math');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-math');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Social Science -->
+              <div class="study-card">
+                <div class="card-icon sst-color"><i class="fa-solid fa-earth-americas"></i></div>
+                <h3 class="card-title">Social Science</h3>
+                <p class="card-desc">History, Geography, Political Science, Economics, J&amp;K Modernisation (1947-82), and Disaster Management modules.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Nationalism in Europe &amp; India</li>
+                  <li><i class="fa-regular fa-circle-check"></i> J&amp;K Economy &amp; Reorganization Act</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Disaster Survival &amp; Map Practice</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-sst');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-sst');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- English & Urdu -->
+              <div class="study-card">
+                <div class="card-icon lang-color"><i class="fa-solid fa-book-open"></i></div>
+                <h3 class="card-title">English &amp; Urdu</h3>
+                <p class="card-desc">Tulip Series Book X prose, poetry, and play 'The Proposal' alongside Baharistan-e-Urdu literature and grammar.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Reading &amp; Dialogue Writing</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Formal Letters &amp; Creative Stories</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Urdu Ghazals &amp; Takhleeqi Mazmoon</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('c10-eng');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('c10-eng');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class 11th Showcase Banner Card (Dedicated Pop-up Window) -->
+      <div class="class11-showcase-card" id="class11" onclick="openClass11Modal()" style="background: linear-gradient(135deg, #090e1a 0%, #171c38 50%, #1e1136 100%); border: 1.5px solid rgba(168, 85, 247, 0.4); border-radius: 20px; padding: 24px 28px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; cursor: pointer; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);">
+        <div style="display:flex; align-items:center; gap:20px; flex:1; min-width:280px;">
+          <div style="position:relative; width:75px; height:75px; border-radius:16px; background:linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px; box-shadow:0 8px 20px rgba(124, 58, 237, 0.4); flex-shrink:0;">
+            <i class="fa-solid fa-compass-drafting"></i>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <span style="background:rgba(124,58,237,0.25); color:#c4b5fd; border:1px solid rgba(196,181,253,0.3); font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:20px;">
+                Class 11th Streams Hub
+              </span>
+              <span style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(74,222,128,0.3); font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:20px;">
+                4 Streams
+              </span>
+              <span style="color:#fde047; font-size:12px; font-weight:700;">
+                <i class="fa-solid fa-certificate"></i> Official JKBOSE Syllabus
+              </span>
+            </div>
+            <h3 style="font-size:21px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+              Class 11th Senior Secondary Streams &amp; Disciplines
+            </h3>
+            <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">
+              Medical Science, Non-Medical (PCM), Commerce &amp; Arts &bull; Syllabi, Solved PYQs, CYQs &amp; Model Papers
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+          <button type="button" onclick="openClass11Modal(); event.stopPropagation();" style="background:linear-gradient(135deg, #7c3aed, #a855f7); color:#ffffff; border:none; padding:12px 24px; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(124,58,237,0.4); transition:all 0.2s;">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Explore 11th Streams</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- FULL DEDICATED CLASS 11TH STREAMS MODAL WINDOW -->
+      <div id="class11CollectionModal" class="novels-collection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:10000; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;" onclick="if(event.target===this) closeClass11Modal();">
+        <div class="novels-modal-card" style="background:#f8fafc; border-radius:20px; width:100%; max-width:1150px; max-height:92vh; overflow-y:auto; position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.5); display:flex; flex-direction:column; border:1px solid #cbd5e1;">
+
+          <!-- Sticky Header of Class 11th Modal -->
+          <div style="position:sticky; top:0; z-index:20; background:#ffffff; border-bottom:1.5px solid #e2e8f0; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:20px 20px 0 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:40px; height:40px; border-radius:10px; background:#f3e8ff; color:#7c3aed; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-compass-drafting"></i>
+              </span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; color:#0f172a; margin:0;">Class 11th Senior Secondary Streams</h2>
+                <p style="font-size:12.5px; color:#64748b; margin:2px 0 0;">Select your stream: Medical, Non-Medical Science, Commerce, or Arts &amp; Humanities</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="background:#ede9fe; color:#6d28d9; font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;">
+                4 Streams
+              </span>
+              <button type="button" onclick="closeClass11Modal()" style="width:38px; height:38px; border-radius:50%; background:#f1f5f9; border:none; font-size:18px; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" title="Close Window">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body with 4 Stream Cards -->
+          <div style="padding:24px; flex:1;">
+            <div class="cards-grid">
+              <!-- Medical Science -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Medical</div>
+                <div class="card-icon med-color"><i class="fa-solid fa-dna"></i></div>
+                <h3 class="card-title">Medical Science</h3>
+                <p class="card-desc">Botany (35m), Zoology (35m), Physics (70m), Chemistry (70m), and General English (80m) comprehensive modules.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Plant &amp; Human Physiology</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Cell Biology, Genetics &amp; Ecology</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-med');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-med');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-med');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Non-Medical Science -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Engineering</div>
+                <div class="card-icon nonmed-color"><i class="fa-solid fa-compass-drafting"></i></div>
+                <h3 class="card-title">Non-Medical Science</h3>
+                <p class="card-desc">Mathematics (80m), Physics (70m), Chemistry (70m), and Computer Science Python (70m) structured curriculum.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Calculus, Algebra &amp; Coordinate Geometry</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Mechanics, Waves &amp; Thermodynamics</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Python Programming &amp; Logic Design</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-nonmed');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-nonmed');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Commerce -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Business &amp; Finance</div>
+                <div class="card-icon comm-color"><i class="fa-solid fa-chart-line"></i></div>
+                <h3 class="card-title">Commerce</h3>
+                <p class="card-desc">Accountancy (80m), Business Studies (80m), Economics (80m), Entrepreneurship (80m), and Business Math (80m).</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Financial Statements of Sole Proprietorship</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Business Finance &amp; E-Commerce</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Statistical Tools &amp; Indian Economic Development</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-comm');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-comm');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Arts & Humanities -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Humanities</div>
+                <div class="card-icon arts-color"><i class="fa-solid fa-landmark"></i></div>
+                <h3 class="card-title">Arts &amp; Humanities</h3>
+                <p class="card-desc">Political Science (80m), History (80m), Sociology (80m), Psychology (70m), Geography (70m), and Education (80m).</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Indian Constitution &amp; Political Theory</li>
+                  <li><i class="fa-regular fa-circle-check"></i> World History (Mesopotamia, Rome, Mongols)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Classical Sociological &amp; Psychological Thought</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('11-arts');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('11-arts');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class 12th Showcase Banner Card (Dedicated Pop-up Window) -->
+      <div class="class12-showcase-card" id="class12" onclick="openClass12Modal()" style="background: linear-gradient(135deg, #091712 0%, #132e24 50%, #1b4d3e 100%); border: 1.5px solid rgba(52, 211, 153, 0.45); border-radius: 20px; padding: 24px 28px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; cursor: pointer; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);">
+        <div style="display:flex; align-items:center; gap:20px; flex:1; min-width:280px;">
+          <div style="position:relative; width:75px; height:75px; border-radius:16px; background:linear-gradient(135deg, #059669 0%, #10b981 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px; box-shadow:0 8px 20px rgba(16, 185, 129, 0.4); flex-shrink:0;">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <span style="background:rgba(16,185,129,0.25); color:#6ee7b7; border:1px solid rgba(110,231,183,0.3); font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:20px;">
+                Class 12th Board Hub
+              </span>
+              <span style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(74,222,128,0.3); font-size:11.5px; font-weight:800; padding:3px 10px; border-radius:20px;">
+                4 Streams
+              </span>
+              <span style="color:#fde047; font-size:12px; font-weight:700;">
+                <i class="fa-solid fa-certificate"></i> Official JKBOSE Board Exam 2026
+              </span>
+            </div>
+            <h3 style="font-size:21px; font-weight:800; margin:0 0 6px; color:#ffffff; letter-spacing:0.3px;">
+              Class 12th Senior Secondary Board &amp; Disciplines
+            </h3>
+            <p style="font-size:13px; color:#cbd5e1; margin:0; line-height:1.4;">
+              Medical Science (PCB), Non-Medical (PCM), Commerce &amp; Arts &bull; Syllabi, Solved PYQs, CYQs &amp; Model Papers
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+          <button type="button" onclick="openClass12Modal(); event.stopPropagation();" style="background:linear-gradient(135deg, #059669, #10b981); color:#ffffff; border:none; padding:12px 24px; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(16,185,129,0.4); transition:all 0.2s;">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Explore 12th Streams</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- FULL DEDICATED CLASS 12TH STREAMS MODAL WINDOW -->
+      <div id="class12CollectionModal" class="novels-collection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:10000; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;" onclick="if(event.target===this) closeClass12Modal();">
+        <div class="novels-modal-card" style="background:#f8fafc; border-radius:20px; width:100%; max-width:1150px; max-height:92vh; overflow-y:auto; position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.5); display:flex; flex-direction:column; border:1px solid #cbd5e1;">
+
+          <!-- Sticky Header of Class 12th Modal -->
+          <div style="position:sticky; top:0; z-index:20; background:#ffffff; border-bottom:1.5px solid #e2e8f0; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:20px 20px 0 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:40px; height:40px; border-radius:10px; background:#ecfdf5; color:#059669; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-award"></i>
+              </span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; color:#0f172a; margin:0;">Class 12th Senior Secondary Board Streams</h2>
+                <p style="font-size:12.5px; color:#64748b; margin:2px 0 0;">Select your stream: Medical, Non-Medical Science, Commerce, or Arts &amp; Humanities</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="background:#d1fae5; color:#065f46; font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;">
+                4 Streams
+              </span>
+              <button type="button" onclick="closeClass12Modal()" style="width:38px; height:38px; border-radius:50%; background:#f1f5f9; border:none; font-size:18px; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" title="Close Window">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body with 4 Stream Cards -->
+          <div style="padding:24px; flex:1;">
+            <div class="cards-grid">
+              <!-- Medical Science -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Medical</div>
+                <div class="card-icon med-color"><i class="fa-solid fa-dna"></i></div>
+                <h3 class="card-title">Medical Science</h3>
+                <p class="card-desc">Botany (35m), Zoology (35m), Physics (70m), Chemistry (70m), and General English (80m) board modules.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Reproduction, Genetics &amp; Evolution</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Biotechnology, Ecology &amp; Environment</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Laboratory Practicals &amp; Viva Guide</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('12-med');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('12-med');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('12-med');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('12-med');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Non-Medical Science -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Engineering</div>
+                <div class="card-icon nonmed-color"><i class="fa-solid fa-compass-drafting"></i></div>
+                <h3 class="card-title">Non-Medical Science</h3>
+                <p class="card-desc">Mathematics (80m), Physics (70m), Chemistry (70m), and Computer Science / English board curriculum.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Calculus, Integrals &amp; Differential Equations</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Vectors, 3D Geometry &amp; Linear Programming</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Electrostatics, Optics &amp; Modern Physics</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('12-nonmed');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('12-nonmed');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('12-nonmed');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('12-nonmed');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Commerce -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Commerce</div>
+                <div class="card-icon comm-color"><i class="fa-solid fa-briefcase"></i></div>
+                <h3 class="card-title">Commerce Stream</h3>
+                <p class="card-desc">Accountancy (80m), Business Studies (80m), Economics (80m), and Entrepreneurship / English curriculum.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Partnership Firms &amp; Company Accounts</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Financial Management &amp; Marketing</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Macroeconomics &amp; Indian Economic Dev.</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('12-comm');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('12-comm');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('12-comm');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('12-comm');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+
+              <!-- Arts & Humanities -->
+              <div class="study-card stream-card">
+                <div class="card-badge">Arts</div>
+                <div class="card-icon arts-color"><i class="fa-solid fa-landmark"></i></div>
+                <h3 class="card-title">Arts &amp; Humanities</h3>
+                <p class="card-desc">Political Science (80m), History (80m), Economics (80m), Sociology &amp; Literature board study guides.</p>
+                <ul class="resource-list">
+                  <li><i class="fa-regular fa-circle-check"></i> Contemporary World &amp; Indian Politics</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Themes in Indian History (Parts I–III)</li>
+                  <li><i class="fa-regular fa-circle-check"></i> Social Change &amp; Development in India</li>
+                </ul>
+                <a href="javascript:void(0)" onclick="openSyllabusModal('12-arts');" class="card-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF Syllabus <i class="fa-solid fa-download" style="margin-left:auto"></i></a>
+                <div class="card-action-grid">
+                  <a href="javascript:void(0)" onclick="openPyqModal('12-arts');" class="action-pill"><i class="fa-solid fa-clock-rotate-left"></i> PYQs</a>
+                  <a href="javascript:void(0)" onclick="openCyqModal('12-arts');" class="action-pill"><i class="fa-solid fa-file-pen"></i> CYQs</a>
+                  <a href="javascript:void(0)" onclick="openModelModal('12-arts');" class="action-pill"><i class="fa-solid fa-file-pdf"></i> Models</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- Interactive Syllabus Popup Modal -->
+  <div class="modal-overlay" id="syllabusModalOverlay" onclick="closeSyllabusModal(event)">
+    <div class="modal-card" id="syllabusModalCard">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e40af, #2563eb);">
+        <div class="modal-title-wrap">
+          <h3 id="modalSyllabusTitle">Official PDF Syllabus</h3>
+          <p id="modalSyllabusSubtitle">Select a subject to view or download</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeSyllabusModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalSyllabusList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-certificate" style="color: var(--primary-blue); margin-right: 6px;"></i> Official JKBOSE Board Syllabus</span>
+        <button type="button" onclick="closeSyllabusModalDirect()" style="background: var(--primary-navy); color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Model Papers Popup Modal -->
+  <div class="modal-overlay" id="modelModalOverlay" onclick="closeModelModal(event)">
+    <div class="modal-card" id="modelModalCard">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h3 id="modalStreamTitle">Official Model Papers</h3>
+          <p id="modalStreamSubtitle">Select a subject to view or download</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModelModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalPapersList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-certificate" style="color: var(--primary-blue); margin-right: 6px;"></i> Official JKBOSE Board Papers</span>
+        <button type="button" onclick="closeModelModalDirect()" style="background: var(--primary-navy); color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive CYQs (Crucial Board Questions) Popup Modal -->
+  <div class="modal-overlay" id="cyqModalOverlay" onclick="closeCyqModal(event)">
+    <div class="modal-card" id="cyqModalCard">
+      <div class="modal-header" style="background: linear-gradient(135deg, #064e3b, #047857);">
+        <div class="modal-title-wrap">
+          <h3 id="modalCyqTitle">Crucial Year-End Questions (CYQs)</h3>
+          <p id="modalCyqSubtitle">Selected high-yield questions for JKBOSE examination</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeCyqModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalCyqList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-file-pen" style="color: #059669; margin-right: 6px;"></i> JKSTUDYHUB.ONLINE Question Bank</span>
+        <button type="button" onclick="closeCyqModalDirect()" style="background: #064e3b; color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Hornbill Chapters Sub-Menu Modal -->
+  <div class="modal-overlay" id="hornbillModalOverlay" style="z-index: 10002;" onclick="closeHornbillModal(event)">
+    <div class="modal-card" id="hornbillModalCard" style="max-width: 680px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #064e3b, #047857);">
+        <div class="modal-title-wrap">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase;">Class 11th English Core</span>
+            <span style="color: #a7f3d0; font-size: 12px; font-weight: 700;">NCERT & JKBOSE</span>
+          </div>
+          <h3 id="modalHornbillTitle" style="color: #fff; font-size: 18px; font-weight: 800; margin: 0;">Hornbill: Complete Chapters Summary</h3>
+          <p id="modalHornbillSubtitle" style="color: #d1fae5; font-size: 12.5px; margin: 2px 0 0;">Chapter-wise revision notes, character sketches & examination summaries</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeHornbillModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalHornbillList" style="max-height: 70vh; overflow-y: auto; padding: 18px 20px;">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+        <button type="button" onclick="backToCyqModal()" style="background: transparent; color: #047857; border: 1.5px solid #047857; padding: 7px 16px; border-radius: 9999px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-arrow-left"></i> Back to CYQs
+        </button>
+        <button type="button" onclick="closeHornbillModalDirect()" style="background: #064e3b; color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive PYQs (Previous Year Board Papers) Popup Modal -->
+  <div class="modal-overlay" id="pyqModalOverlay" onclick="closePyqModal(event)">
+    <div class="modal-card" id="pyqModalCard">
+      <div class="modal-header" style="background: linear-gradient(135deg, #7c2d12, #9a3412);">
+        <div class="modal-title-wrap">
+          <h3 id="modalPyqTitle">Previous Year Board Papers (PYQs)</h3>
+          <p id="modalPyqSubtitle">Official JKBOSE previous year question papers archive</p>
+        </div>
+        <button class="modal-close-btn" onclick="closePyqModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalPyqList">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+      <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px;">
+        <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-clock-rotate-left" style="color: #ea580c; margin-right: 6px;"></i> JKSTUDYHUB.ONLINE Board Papers</span>
+        <button type="button" onclick="closePyqModalDirect()" style="background: #7c2d12; color: #ffffff; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MY STUDY LIBRARY MODAL (Bookmarked Papers & Download History) -->
+
+  
+
+  <div class="modal-overlay" id="libraryModalOverlay" onclick="closeLibraryModal(event)">
+    <div class="modal-card library-modal-card" id="libraryModalCard">
+      <div class="modal-header library-header">
+        <div class="modal-title-wrap">
+          <div class="library-header-top">
+            <span class="library-tag"><i class="fa-solid fa-graduation-cap"></i> Student Study Desk</span>
+            <div class="sync-pill" id="librarySyncPill">
+              <i class="fa-solid fa-circle-dot"></i> <span id="syncPillText">Local Storage</span>
+            </div>
+          </div>
+          <h3 style="margin-top: 4px;">My Study Library</h3>
+          <p>Access your saved bookmarks, revision papers, and recently downloaded study files</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeLibraryModalDirect()">&times;</button>
+      </div>
+
+      <!-- Library Navigation Tabs -->
+      <div class="library-tabs-bar">
+        <button type="button" class="lib-tab-btn active" id="tabBookmarksBtn" onclick="switchLibraryTab('bookmarks')">
+          <i class="fa-solid fa-star"></i> Saved Papers (<span id="libBookmarksCount">0</span>)
+        </button>
+        <button type="button" class="lib-tab-btn" id="tabHistoryBtn" onclick="switchLibraryTab('history')">
+          <i class="fa-solid fa-clock-rotate-left"></i> Download History (<span id="libHistoryCount">0</span>)
+        </button>
+      </div>
+
+      <div class="modal-body library-body" id="libraryModalBody">
+        <!-- Injected dynamically by JavaScript -->
+      </div>
+
+      <div class="modal-footer library-footer">
+        <div class="lib-footer-info" id="libFooterInfo">
+          <i class="fa-solid fa-shield-halved" style="color: #059669;"></i>
+          <span>Auto-saved to your personal profile</span>
+        </div>
+        <div class="lib-footer-actions">
+          <button type="button" class="btn-lib-clear" onclick="confirmClearHistory()">
+            <i class="fa-regular fa-trash-can"></i> Clear History
+          </button>
+          <button type="button" class="btn-lib-close" onclick="closeLibraryModalDirect()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Contact Us Section -->
+  <section class="section contact-section bg-light" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Get in Touch</span>
+        <h2 class="section-title">Contact &amp; Student Support</h2>
+        <div class="title-underline"></div>
+        <p class="section-subtitle">Have questions or want to request specific notes? Reach out to us anytime.</p>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Contact Details -->
+        <div class="contact-info-panel">
+          <h3 class="panel-heading">Reach JK Study Hub</h3>
+          <p class="panel-description">We are here to assist Class 10th and 11th students with their academic inquiries, syllabus clarifications, and study material requests.</p>
+          
+          <div class="info-items">
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div>
+                <strong>Email Address</strong>
+                <p><a href="mailto:info.jkstudyhub@gmail.com">info.jkstudyhub@gmail.com</a></p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+              <div>
+                <strong>Phone / WhatsApp</strong>
+                <p>
+                  <a href="tel:+919622605714">+91 96226 05714</a> &nbsp;|&nbsp; 
+                  <a href="https://wa.me/919622605714" target="_blank" rel="noopener" class="wa-badge"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+              <div>
+                <strong>Address</strong>
+                <p>Baramulla, Jammu &amp; Kashmir</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+              <div>
+                <strong>Support Timings</strong>
+                <p>Monday – Saturday: 9:00 AM – 7:00 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Query Form -->
+        <div class="contact-form-panel">
+          <h3 class="panel-heading">Send an Inquiry</h3>
+          <form id="contactForm" class="contact-form">
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="student@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="studentClass">Class</label>
+                <select id="studentClass" name="studentClass" required>
+                  <option value="" disabled selected>Select Class</option>
+                  <option value="10th">Class 10th</option>
+                  <option value="11th">Class 11th</option>
+                  <option value="General">General Query</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Your Message / Query</label>
+              <textarea id="message" name="message" rows="4" placeholder="Let us know what study material or guidance you need..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-btn">
+              <i class="fa-solid fa-paper-plane"></i> Send Message
+            </button>
+            <div id="formFeedback" class="form-feedback"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="brand-inline">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>JK STUDY HUB</span>
+        </div>
+        <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6; max-width: 340px;">Dedicated digital learning platform designed specifically for Class 10th and Class 11th students.</p>
+
+        <div class="footer-social" style="margin-top: 20px;">
+          <h4>Connect With Us</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" aria-label="Official WhatsApp Channel" title="Follow Official WhatsApp Channel"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-columns-side" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; flex: 1;">
+        <div class="footer-links">
+          <h4>Quick Navigation</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O" target="_blank" rel="noopener" style="color: #22c55e; font-weight: 700;"><i class="fa-brands fa-whatsapp"></i> WhatsApp Channel</a></li>
+            <li><a href="#class10">Class 10th Modules</a></li>
+            <li><a href="#class11">Class 11th Streams</a></li>
+            <li><a href="store.html">Official Store</a></li>
+            <li><a href="#contact">Contact Support</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links">
+          <h4>Legal &amp; Policies</h4>
+          <ul>
+            <li><a href="terms.html">Terms &amp; Conditions</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="refund.html">Refund &amp; Cancellation</a></li>
+            <li><a href="vision.html">Vision &amp; Mission</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <p style="margin: 0; font-size: 13px; color: #94a3b8;">&copy; 2026 JK STUDY HUB. All Rights Reserved. Built with dedication for student success.</p>
+        <div class="footer-legal-bar" style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px;">
+          <a href="terms.html" style="color: #cbd5e1; text-decoration: none;">Terms &amp; Conditions</a>
+          <a href="privacy.html" style="color: #cbd5e1; text-decoration: none;">Privacy Policy</a>
+          <a href="refund.html" style="color: #cbd5e1; text-decoration: none;">Refund &amp; Cancellation</a>
+          <a href="vision.html" style="color: #cbd5e1; text-decoration: none;">Vision</a>
+          <a href="#contact" style="color: #cbd5e1; text-decoration: none;">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Promo Login Modal (Triggers after 30s) -->
+  <div class="modal-overlay" id="promoLoginOverlay">
+    <div class="modal-content promo-login-box">
+      <button class="modal-close-btn" onclick="closePromoModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div class="promo-icon">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+      </div>
+      <h3>Never Lose Your Materials!</h3>
+      <p>Login with Google to securely save your bookmarks and study history across all your devices.</p>
+      <button class="google-auth-btn" onclick="handlePromoGoogleLogin()" style="width: 100%; margin-top: 10px; justify-content: center;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" class="google-logo">
+        Sign in with Google
+      </button>
+      <button class="promo-dismiss-btn" onclick="closePromoModal()">Not right now</button>
+    </div>
+  </div>
+
+  <!-- Dedicated App Install Modal with New 3D JK Logo -->
+  <div class="app-install-modal-overlay" id="appInstallModalOverlay" onclick="closeAppInstallModal(event)">
+    <div class="app-install-card" id="appInstallCard" onclick="event.stopPropagation()">
+      <button type="button" class="app-install-close" onclick="closeAppInstallModalDirect()" aria-label="Close modal">&times;</button>
+      
+      <div class="app-install-logo-wrap">
+        <img src="images/app-install-logo.png" alt="JK Study Hub App Icon">
+      </div>
+      
+      <h3 class="app-install-title">JK STUDY HUB</h3>
+      <p class="app-install-tagline">Official JKBOSE Class 10th &amp; 11th Digital Learning Portal</p>
+      
+      <div class="app-install-badges">
+        <span class="app-badge-item"><i class="fa-solid fa-star" style="color: #facc15;"></i> 4.9 Rating</span>
+        <span class="app-badge-item"><i class="fa-solid fa-bolt" style="color: #60a5fa;"></i> Instant Notes Access</span>
+        <span class="app-badge-item"><i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> Offline Ready</span>
+      </div>
+      
+      <button type="button" class="btn-app-install-action" id="btnExecuteInstall" onclick="executeAppInstall()">
+        <i class="fa-solid fa-download"></i>
+        <span>Install App on Your Device</span>
+      </button>
+
+      <div class="app-install-guide-grid">
+        <div class="app-guide-box">
+          <h4><i class="fa-brands fa-android" style="color: #4ade80;"></i> Android (Chrome)</h4>
+          <p>Tap <strong>3 dots (⋮)</strong> at top right &rarr; select <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong>.</p>
+        </div>
+        <div class="app-guide-box">
+          <h4><i class="fa-brands fa-apple" style="color: #ffffff;"></i> iPhone / iPad (Safari)</h4>
+          <p>Tap <strong>Share (⎋)</strong> at bottom &rarr; scroll down &rarr; tap <strong>"Add to Home Screen" (+)</strong>.</p>
+        </div>
+        <div class="app-guide-box" style="grid-column: span 2;">
+          <h4><i class="fa-solid fa-laptop" style="color: #93c5fd;"></i> Laptop / PC (Chrome &amp; Edge)</h4>
+          <p>Look at the right side of your address bar and click the <strong>Install Icon (💻 with down arrow)</strong> to pin the app to your desktop.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (Compat Libraries for Web) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_fgnUKqpy15ku81BKKSa5b-wMuyeT9uw",
+      authDomain: "jk-study-hub-574c7.firebaseapp.com",
+      projectId: "jk-study-hub-574c7",
+      storageBucket: "jk-study-hub-574c7.firebasestorage.app",
+      messagingSenderId: "544447856590",
+      appId: "1:544447856590:web:9280ed66e744e6b8cfb59f"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- Real-Time Visitor Analytics Tracker -->
+  <script src="analytics.js?v=1"></script>
+
+  <!-- Syllabus Dataset & Main JavaScript File -->
+  <script src="script.js?v=52"></script>
+
+  <!-- Floating Store Button (Right Side on Both Mobile & Laptop) -->
+  <a href="store.html" class="floating-store-btn" aria-label="Visit Book &amp; Stationery Store">
+    <i class="fa-solid fa-bag-shopping"></i> <span>Store</span>
+  </a>
+
+
+
+
+
+  <!-- PWA Scripts & Live Updates -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(error => {
+          console.error('Service worker registration failed:', error);
+        });
+      });
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('installAppBtn');
+      if(installBtn) installBtn.style.display = 'inline-block';
+    });
+
+    
+    function shareBoosterToWhatsApp(cls) {
+      let title = "JKBOSE Annual Regular 2026 Board Exam Super Notes & Guess Papers!";
+      let details = "Get free crucial guess questions, official model papers, syllabus & chapter notes";
+      
+      if (cls === 10 || cls === '10') {
+        title = "📚 *Class 10th JKBOSE 2026 Board Exam Super Hub!*";
+        details = "Get free Class 10th English, Science, Social Science & Maths Guess Papers, Syllabus & Official Model Papers:";
+      } else if (cls === 11 || cls === '11') {
+        title = "⚡ *Class 11th JKBOSE 2026 Medical, Non-Med, Commerce & Arts Hub!*";
+        details = "Get free Physics, Chemistry, Biology CYQs, Hornbill Literature summaries & writing skill guides:";
+      } else if (cls === 12 || cls === '12') {
+        title = "🎓 *Class 12th JKBOSE 2026 Board Exam Booster Hub!*";
+        details = "Get free Class 12th Model Papers, Date Sheet updates, and High-Yield Question Banks:";
+      }
+
+      const msg = `🔥 ${title}\n\n` +
+                  `${details}\n\n` +
+                  `👉 https://jkstudyhub.online/\n\n` +
+                  `📢 Also follow our official WhatsApp Channel for instant live updates:\n` +
+                  `👉 https://whatsapp.com/channel/0029Vb984Pa3bbV6CCm3HV1O\n\n` +
+                  `_Share with your classmates & school groups!_`;
+      window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
+    }
+
+    function requestBoardAlertsOnWhatsApp(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      const cls = document.getElementById('alertStudentClass')?.value || 'Class 11th';
+      const name = document.getElementById('alertStudentName')?.value.trim() || 'Student';
+      const roll = document.getElementById('alertStudentRoll')?.value.trim();
+
+      let text = `Assalamu Alaikum JK Study Hub! I want to register for JKBOSE board exam updates.\n\n` +
+                 `👤 Student: ${name}\n` +
+                 `🎓 Target: ${cls}\n`;
+      if (roll) text += `🔢 Details: ${roll}\n`;
+      text += `\nPlease notify me when Date Sheets, Model Papers, or Results are published!`;
+
+      window.open(`https://wa.me/919622605714?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function openClass10Modal() {
+      const c11 = document.getElementById('class11CollectionModal');
+      if (c11) c11.style.display = 'none';
+      const c12 = document.getElementById('class12CollectionModal');
+      if (c12) c12.style.display = 'none';
+      const modal = document.getElementById('class10CollectionModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeClass10Modal() {
+      const modal = document.getElementById('class10CollectionModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openClass11Modal() {
+      const c10 = document.getElementById('class10CollectionModal');
+      if (c10) c10.style.display = 'none';
+      const c12 = document.getElementById('class12CollectionModal');
+      if (c12) c12.style.display = 'none';
+      const modal = document.getElementById('class11CollectionModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeClass11Modal() {
+      const modal = document.getElementById('class11CollectionModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openClass12Modal() {
+      const c10 = document.getElementById('class10CollectionModal');
+      if (c10) c10.style.display = 'none';
+      const c11 = document.getElementById('class11CollectionModal');
+      if (c11) c11.style.display = 'none';
+      const modal = document.getElementById('class12CollectionModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeClass12Modal() {
+      const modal = document.getElementById('class12CollectionModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeClass10Modal();
+        closeClass11Modal();
+        closeClass12Modal();
+      }
+    });
+
+    function openAppInstallModal() {
+      const overlay = document.getElementById('appInstallModalOverlay');
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeAppInstallModalDirect() {
+      const overlay = document.getElementById('appInstallModalOverlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function closeAppInstallModal(e) {
+      if (e && e.target && e.target.id === 'appInstallModalOverlay') {
+        closeAppInstallModalDirect();
+      }
+    }
+
+    function executeAppInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            const installBtn = document.getElementById('installAppBtn');
+            if (installBtn) installBtn.style.display = 'none';
+            closeAppInstallModalDirect();
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          alert("📱 How to Install on iPhone:\n\n1. Tap the Share button (square with arrow ↑) at the bottom of Safari.\n2. Scroll down and tap 'Add to Home Screen' (+).\n3. Tap 'Add' in the top right.\n\nJK Study Hub will be added right to your home screen with the new JK 3D icon!");
+        } else {
+          alert("📲 How to Install JK Study Hub App:\n\n• Android (Chrome): Tap the 3 dots (⋮) in the top right and tap 'Install app' or 'Add to Home screen'.\n\n• Laptop/Mac (Chrome): Look at the right side of the address bar at the top and click the Install icon (computer with down arrow)!");
+        }
+      }
+    }
+
+    function installApp() {
+      openAppInstallModal();
+    }
+  </script>
+
+  <!-- Dynamic Exam Schedule & Ongoing Status Script for Class 10th, 11th, 12th -->
+  <script>
+    (function initExamCountdown() {
+      // Fixed JKBOSE Annual Regular 2026 Session Dates (Month 9 is October, Month 10 is November)
+      const examSchedule = {
+        '10': {
+          start: new Date(2026, 9, 19, 10, 0, 0), // 19th Oct 2026
+          end: new Date(2026, 10, 17, 18, 0, 0),  // 17th Nov 2026 (Exams Finished)
+          label: 'Concluded'
+        },
+        '12': {
+          start: new Date(2026, 9, 21, 10, 0, 0), // 21st Oct 2026
+          end: new Date(2026, 11, 5, 18, 0, 0),   // Dec 2026
+          label: 'Concluded',
+          finished: true
+        },
+        '11': {
+          start: new Date(2026, 9, 29, 10, 0, 0), // 29th Oct 2026
+          end: new Date(2026, 11, 5, 18, 0, 0),   // Dec 2026
+          label: '29th Oct'
+        }
+      };
+
+      function updateCountdown() {
+        if (typeof document !== 'undefined' && document.hidden) return;
+        const now = new Date();
+        ['10', '11', '12'].forEach(cls => {
+          const item = examSchedule[cls];
+          const pillTime = document.getElementById('timerClass' + cls);
+          if (!pillTime) return;
+
+          if (cls === '10' || item.finished || now > item.end) {
+            pillTime.innerHTML = '<span style="color:#38bdf8; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-circle-check" style="color:#38bdf8;"></i> Exams Finished ✨</span>';
+          } else if (now >= item.start && now <= item.end) {
+            pillTime.innerHTML = '<span style="color:#22c55e; font-weight:800; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><span class="exam-status-dot"></span> Exam Ongoing 🎯</span>';
+          } else {
+            const diff = item.start.getTime() - now.getTime();
+            const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+            const hours = Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24));
+            const mins = Math.max(0, Math.floor((diff / 1000 / 60) % 60));
+            const secs = Math.max(0, Math.floor((diff / 1000) % 60));
+
+            const dEl = document.getElementById('d' + cls);
+            const hEl = document.getElementById('h' + cls);
+            const mEl = document.getElementById('m' + cls);
+            const sEl = document.getElementById('s' + cls);
+            if (dEl && hEl && mEl && sEl) {
+              dEl.textContent = String(days).padStart(2, '0');
+              hEl.textContent = String(hours).padStart(2, '0');
+              mEl.textContent = String(mins).padStart(2, '0');
+              sEl.textContent = String(secs).padStart(2, '0');
+            } else {
+              pillTime.innerHTML = '<span class="time-block"><span class="t-val">' + String(days).padStart(2, '0') + '</span><span class="t-lbl">d</span></span>' +
+                '<span class="time-sep">:</span>' +
+                '<span class="time-block"><span class="t-val">' + String(hours).padStart(2, '0') + '</span><span class="t-lbl">h</span></span>' +
+                '<span class="time-sep">:</span>' +
+                '<span class="time-block"><span class="t-val">' + String(mins).padStart(2, '0') + '</span><span class="t-lbl">m</span></span>' +
+                '<span class="time-sep">:</span>' +
+                '<span class="time-block"><span class="t-val">' + String(secs).padStart(2, '0') + '</span><span class="t-lbl">s</span></span>';
+            }
+          }
+        });
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    })();
+  </script>
+
+  <!-- Floating WhatsApp Quick-Chat & Order Widget (Left Side on Both Mobile & Laptop) -->
+  <a href="https://wa.me/919622605714?text=Hello%20JK%20Study%20Hub!%20I%20am%20visiting%20the%20website%20and%20want%20to%20order%20study%20materials%20or%20books." 
+     class="floating-whatsapp-widget" 
+     target="_blank" 
+     rel="noopener" 
+     aria-label="Chat & Order on WhatsApp">
+    <div class="floating-whatsapp-pill">
+      <span class="badge-dot"></span>
+      <span>Chat &amp; Order on WhatsApp</span>
+    </div>
+    <div class="floating-whatsapp-btn-circle">
+      <i class="fa-brands fa-whatsapp"></i>
+    </div>
+  </a>
+
+  <!-- Mobile Bottom Navigation Bar (ZAPVI / Native App Style) -->
+  <div class="mobile-bottom-nav">
+    <a href="index.html" class="mobile-nav-item active"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="index.html#subjects" class="mobile-nav-item"><i class="fa-solid fa-layer-group"></i><span>Subjects</span></a>
+    <a href="store.html" class="mobile-nav-item"><i class="fa-solid fa-store"></i><span>Store</span></a>
+    <a href="cart.html" class="mobile-nav-item">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span>Cart</span>
+      <span id="homeMobileCartCount" class="nav-badge-count" style="display:none;">0</span>
+    </a>
+    <a href="account.html" class="mobile-nav-item"><i class="fa-regular fa-user"></i><span>Account</span></a>
+  </div>
+
+  <script>
+    // Sync Mobile Bottom Nav Cart Badge on Home
+    (function syncHomeCartBadge() {
+      try {
+        const raw = localStorage.getItem('jk_cart') || localStorage.getItem('cart');
+        const badge = document.getElementById('homeMobileCartCount');
+        if (badge && raw) {
+          const items = JSON.parse(raw);
+          const totalQty = Array.isArray(items) ? items.reduce((acc, it) => acc + (parseInt(it.qty) || 1), 0) : 0;
+          if (totalQty > 0) {
+            badge.textContent = totalQty;
+            badge.style.display = 'inline-block';
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
+</body>
+</html>
