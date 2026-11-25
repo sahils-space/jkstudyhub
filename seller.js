@@ -4750,9 +4750,19 @@ function renderSellerPublishedCatalog() {
           </div>
         </td>
         <td>
-          <span style="font-size: 11.5px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">
-            ${p.category || 'academic'}
-          </span>
+          <select aria-label="Category for ${escapedTitle}" title="Move product to another category" onchange="quickUpdateSellerProductCategory('${encodeURIComponent(String(prodId))}', this.value, this)" style="font-size:10.5px; font-weight:700; padding:3px 6px; border-radius:5px; cursor:pointer; color:#475569; background:#f1f5f9; border:1px solid #cbd5e1; max-width:130px;">
+            <option value="academic" ${(p.category||'academic')==='academic'?'selected':''}>Academic / General</option>
+            <option value="school-books" ${p.category==='school-books'?'selected':''}>School Books</option>
+            <option value="exam-kits" ${p.category==='exam-kits'?'selected':''}>Exam Kits</option>
+            <option value="stationery" ${p.category==='stationery'?'selected':''}>Stationery</option>
+            <option value="school-copies" ${p.category==='school-copies'?'selected':''}>School Copies</option>
+            <option value="copies" ${p.category==='copies'?'selected':''}>Copies / Notebooks</option>
+            <option value="notes" ${p.category==='notes'?'selected':''}>Notes / Study Material</option>
+            <option value="novel" ${p.category==='novel'?'selected':''}>Novel / Literature</option>
+            <option value="form" ${p.category==='form'?'selected':''}>Forms</option>
+            <option value="digital" ${p.category==='digital'?'selected':''}>Digital</option>
+            <option value="custom" ${p.category==='custom'?'selected':''}>Custom / Other</option>
+          </select>
         </td>
         <td>
           <div style="display:flex; flex-direction:column; gap:4px;">
@@ -4827,6 +4837,7 @@ function openSellerProductEditor(encodedId) {
   document.getElementById('sellerEditProductName').value = product.title || product.name || '';
   document.getElementById('sellerEditProductDescription').value = product.desc || product.description || '';
   document.getElementById('sellerEditPaymentMode').value = normalizeSellerPaymentMode(product.paymentMode);
+  document.getElementById('sellerEditCategory').value = product.category || 'academic';
   document.getElementById('sellerEditProductPhotos').value = '';
   renderSellerProductEditPhotoPreview(product.photos || (product.image ? [product.image] : []));
   const modal = document.getElementById('sellerProductEditModal');
@@ -4984,6 +4995,7 @@ async function handleSellerProductEditSubmit(event) {
       description,
       paymentMode: normalizeSellerPaymentMode(document.getElementById('sellerEditPaymentMode').value),
       paymentModeUpdatedAt: Date.now(),
+      category: document.getElementById('sellerEditCategory')?.value || previous.category || 'academic',
       photos,
       image: photos[0] || 'images/logo-app.png',
       allImages: photos,
@@ -5085,6 +5097,74 @@ async function quickUpdateSellerProductPaymentMode(encodedId, nextMode, selectEl
       showToast(firestoreSynced
         ? `"${updatedProduct.title}" updated to ${label} (live on store & Sheets).`
         : `"${updatedProduct.title}" set to ${label} locally & Sheets (sign in for cloud sync).`);
+    }
+    renderSellerPublishedCatalog();
+  } finally {
+    if (selectEl) selectEl.disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CATEGORY HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function formatCategoryLabel(cat) {
+  const MAP = {
+    'academic':      'Academic / General',
+    'school-books':  'School Books',
+    'exam-kits':     'Exam Kits / Board Exam',
+    'stationery':    'Stationery',
+    'school-copies': 'School Copies',
+    'copies':        'Copies / Notebooks',
+    'notes':         'Notes / Study Material',
+    'novel':         'Novel / Literature',
+    'form':          'Forms / Applications',
+    'digital':       'Digital / E-Content',
+    'custom':        'Custom / Other'
+  };
+  return MAP[String(cat || '').toLowerCase()] || 'Academic / General';
+}
+
+async function quickUpdateSellerProductCategory(encodedId, nextCategory, selectEl) {
+  let productId = '';
+  try { productId = decodeURIComponent(String(encodedId || '')); } catch (e) { console.warn(e); }
+  const product = getSellerAllPublishedProducts().find(item =>
+    String(item.id || item.productId || item.name) === productId
+  );
+  if (!product) {
+    if (typeof showToast === 'function') showToast('Could not locate product. Refresh and try again.');
+    return;
+  }
+  const nowTs = Date.now();
+  const updatedProduct = {
+    ...product,
+    id: product.id || product.productId || product.name,
+    productId: product.productId || product.id || product.name,
+    name: product.name || product.title || '',
+    title: product.title || product.name || '',
+    category: nextCategory || 'academic',
+    updatedAt: nowTs
+  };
+  if (selectEl) selectEl.disabled = true;
+  try {
+    saveSellerLocalCatalogProduct(updatedProduct, product);
+    syncSellerProductEditToGoogleSheet(updatedProduct);
+    let firestoreSynced = false;
+    if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length) {
+      try {
+        await ensureSellerFirebaseOwnerAuth();
+        const db = firebase.firestore();
+        const firestoreId = String(updatedProduct.id).replace(/\//g, '_');
+        await db.collection('published_catalog').doc(firestoreId).set(updatedProduct, { merge: true });
+        firestoreSynced = true;
+      } catch (cloudErr) {
+        console.warn('Firestore category sync notice:', cloudErr);
+      }
+    }
+    if (typeof showToast === 'function') {
+      const label = formatCategoryLabel(nextCategory);
+      showToast(firestoreSynced
+        ? `"${updatedProduct.title}" moved to ${label} (live on store & Sheets).`
+        : `"${updatedProduct.title}" category set to ${label} locally & Sheets.`);
     }
     renderSellerPublishedCatalog();
   } finally {

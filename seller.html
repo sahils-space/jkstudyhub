@@ -838,6 +838,20 @@
                 <option value="prepaid">Prepaid / Online only (All PIN Codes)</option>
               </select>
               <p style="font-size:11px; color:#64748b; margin:5px 0 0; line-height:1.35;">Strict PIN 193121 COD blocking stays active at checkout: non-193121 PIN codes always fall back to Prepaid Online when "Both" is selected.</p>
+              <label for="sellerEditCategory" style="display:block; font-size:12.5px; font-weight:700; margin:14px 0 5px; color:#475569;">Category *</label>
+              <select id="sellerEditCategory" class="seller-lock-input" required>
+                <option value="academic">Academic / General</option>
+                <option value="school-books">School Books</option>
+                <option value="exam-kits">Exam Kits / Board Exam</option>
+                <option value="stationery">Stationery</option>
+                <option value="school-copies">School Copies</option>
+                <option value="copies">Copies / Notebooks</option>
+                <option value="notes">Notes / Study Material</option>
+                <option value="novel">Novel / Literature</option>
+                <option value="form">Forms / Applications</option>
+                <option value="digital">Digital / E-Content</option>
+                <option value="custom">Custom / Other</option>
+              </select>
               <label for="sellerEditProductPhotos" style="display:block; font-size:12.5px; font-weight:700; margin:14px 0 5px; color:#475569;">Replace product photos (optional, up to 3)</label>
               <input id="sellerEditProductPhotos" type="file" accept="image/*" multiple class="seller-lock-input" onchange="previewSellerProductPhotos()">
               <div id="sellerEditPhotoPreview" style="display:flex; gap:8px; overflow-x:auto; margin-top:10px;"></div>
@@ -1992,6 +2006,6 @@
   <script src="analytics.js?v=1"></script>
   <!-- External Script -->
   <script src="ads-media.js?v=90.0"></script>
-  <script src="seller.js?v=94.3"></script>
+  <script src="seller.js?v=94.4"></script>
 </body>
 </html>
