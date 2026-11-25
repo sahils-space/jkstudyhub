@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v209';
+const CACHE_NAME = 'jk-study-hub-v211';
 const urlsToCache = [
   './',
   './index.html',
@@ -123,10 +123,10 @@ self.addEventListener('fetch', event => {
         return fetch(event.request).then(response => {
           if (response && response.status === 200) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)).catch(() => {});
           }
           return response;
-        });
+        }).catch(() => caches.match(event.request, { ignoreSearch: true }).then(fallback => fallback || Response.error()));
       })
     );
     return;

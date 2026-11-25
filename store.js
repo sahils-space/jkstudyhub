@@ -6941,8 +6941,9 @@ function initShop() {
     renderDynamicStoreProducts();
   }
 
-  // Silently pre-decode visible eager product photos so scrolling has zero blank flash
-  document.querySelectorAll('.product-grid img[loading="eager"]').forEach(img => {
+  // Silently pre-decode only top 6 visible eager product photos to avoid main-thread CPU spikes
+  const eagerImgs = Array.from(document.querySelectorAll('.product-grid img[loading="eager"]')).slice(0, 6);
+  eagerImgs.forEach(img => {
     if (typeof img.decode === 'function') {
       img.decode().catch(() => {});
     }
@@ -8615,9 +8616,9 @@ const BOOK_BUNDLES_DATA = {
     companionImg: "images/books/deep-work-1.webp"
   },
   "The Psychology of Money": {
-    companion: "Rich Dad Poor Dad",
-    companionPrice: 229,
-    companionImg: "images/books/rich-dad-1.webp"
+    companion: "Atomic Habits",
+    companionPrice: 249,
+    companionImg: "images/books/atomic-habits-1.webp"
   },
   "Deep Work": {
     companion: "Atomic Habits",
@@ -11135,7 +11136,17 @@ const CANONICAL_PRODUCT_NAMES = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => norm
 
 function isPlaceholderProductImage(src) {
   const clean = String(src || '').trim();
-  return !clean || clean === 'images/logo-app.png' || clean === 'images/icon.svg';
+  if (!clean || clean === 'images/logo-app.png' || clean === 'images/icon.svg') return true;
+  if (clean.startsWith('data:image')) {
+    return clean.length < 64 || !clean.includes(';base64,');
+  }
+  return false;
+}
+
+function getImageSignature(src) {
+  const s = String(src || '');
+  if (s.length <= 120) return s;
+  return `${s.length}:${s.slice(0, 32)}:${s.slice(-24)}`;
 }
 
 function resolveBestProductMedia(existing, incoming) {
@@ -12091,11 +12102,24 @@ function renderDynamicStationeryProducts() {
     return;
   }
 
+  // Skip rebuilding DOM if nothing in stationery products changed
+  const batchSig = stationeryProducts.map((p, i) => {
+    const pName = p.name || p.title || 'Product';
+    const photos = Array.isArray(p.photos) && p.photos.length ? p.photos : [p.image || 'images/logo-app.png'];
+    const imgSrc = photos[0] || 'images/logo-app.png';
+    return `${p.id || pName}|${pName}|${getImageSignature(imgSrc)}|${getCustomPrice(pName, Number(p.price) || 0)}|${p.category || ''}|${i}`;
+  }).join(';;');
+  if (dynamicWrap.dataset.lastBatchSig === batchSig && dynamicWrap.childElementCount === stationeryProducts.length) {
+    return;
+  }
+  dynamicWrap.dataset.lastBatchSig = batchSig;
+
   const html = stationeryProducts.map((p, index) => {
     const pName = p.name || p.title || 'Product';
     const safeInlineName = pName.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\r\n]/g, ' ');
     const photos = Array.isArray(p.photos) && p.photos.length ? p.photos : [p.image || 'images/logo-app.png'];
-    const imageSource = photos[0] || 'images/logo-app.png';
+    const rawImageSource = photos[0] || 'images/logo-app.png';
+    const imageSource = isPlaceholderProductImage(rawImageSource) ? 'images/logo-app.png' : rawImageSource;
     const image = safeEscape(imageSource);
     const price = getCustomPrice(pName, Number(p.price) || 0);
     const mrp = getCustomMrp(pName, Number(p.mrp) || Math.round(price * 1.35));
@@ -12103,7 +12127,8 @@ function renderDynamicStationeryProducts() {
     const cat = p.category || 'stationery';
     const productId = p.id || `${cat}:${pName}`;
     const productDescription = p.desc || p.description || '';
-    const renderSignature = JSON.stringify([productId, pName, imageSource, price, mrp, badge, cat, productDescription, index]);
+    const renderSignature = JSON.stringify([productId, pName, getImageSignature(imageSource), price, mrp, badge, cat, productDescription, index]);
+    const loadingAttr = index < 6 ? 'eager' : 'lazy';
     const checkoutHandler = safeEscape(`openCheckout('${safeInlineName}', ${price}, 'physical', '${cat}')`);
     const cartHandler = safeEscape(`addToCart('${safeInlineName}', ${price}, 'physical', '${cat}')`);
     const waHandler = safeEscape(`orderViaWhatsApp('${safeInlineName}', ${price}, '${cat}')`);
@@ -12113,7 +12138,7 @@ function renderDynamicStationeryProducts() {
     return `
       <div class="product-card" data-product-id="${safeEscape(productId)}" data-render-signature="${safeEscape(renderSignature)}" data-category="${safeEscape(cat)}">
         <button class="wishlist-icon" onclick="${favHandler}" aria-label="Save ${safeEscape(pName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
+        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="${loadingAttr}" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
           <h3 class="product-title" onclick="${detailsHandler}" style="cursor:pointer;">${safeEscape(pName)}</h3>
