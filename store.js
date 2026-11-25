@@ -1585,6 +1585,16 @@ function saveWishlist(wishlist) {
   updateNavBadges();
 }
 
+function clearUserWishlist() {
+  if (confirm("Are you sure you want to clear all items from your Wishlist?")) {
+    saveWishlist([]);
+    if (typeof syncHeartIcons === 'function') syncHeartIcons();
+    if (typeof renderAccountWishlist === 'function') renderAccountWishlist();
+    if (typeof renderWishlistPage === 'function') renderWishlistPage();
+    if (typeof showToast === 'function') showToast("Wishlist cleared!");
+  }
+}
+
 function getValidCustomerPhone(order) {
   if (!order) return '';
   
@@ -4742,10 +4752,12 @@ function syncOrdersWithGoogleSheet() {
 
           // Filter genuine valid remote orders from Google Sheets
           const validRemoteOrders = data.orders.filter(remote => {
-            if (!remote || !remote.orderId || remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT' || String(remote.orderId).startsWith('PRD-')) {
-              return false;
-            }
+            if (!remote || !remote.orderId) return false;
             const cleanOrderId = String(remote.orderId).trim().toUpperCase();
+            if (cleanOrderId.startsWith('PRD-') || cleanOrderId.includes('PRICE-OVERRIDE') || cleanOrderId.includes('CATALOG')) return false;
+            if (remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT') return false;
+            const metaStr = String(remote.address || '') + String(remote.product || '') + String(remote.notes || '');
+            if (metaStr.includes('"productId"') || metaStr.includes('"photos"') || metaStr.includes('CATALOG_PRODUCT')) return false;
             if (purgedIds.includes(cleanOrderId)) return false;
             if (remote.timestamp && Number(remote.timestamp) <= resetTs) return false;
             return true;
@@ -12238,12 +12250,27 @@ async function handleOwnerProductSubmit(event) {
     timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
   };
 
-  // 1. Immediately prepend to local state & localStorage so UI is instant
+  // 1. Immediately prepend to local state & localStorage (Lightweight to prevent QuotaExceededError)
+  CUSTOM_PRODUCTS = CUSTOM_PRODUCTS.filter(p => (p.productId || p.id) !== prodId && (p.name || p.title) !== title);
   CUSTOM_PRODUCTS.unshift(newProduct);
   try {
-    localStorage.setItem('jk_custom_products', JSON.stringify(CUSTOM_PRODUCTS));
+    const lightweightList = CUSTOM_PRODUCTS.map(p => ({
+      ...p,
+      photos: Array.isArray(p.photos) && p.photos.length > 0 ? [p.photos[0]] : [p.image || 'images/logo-app.png'],
+      allImages: Array.isArray(p.allImages) && p.allImages.length > 0 ? [p.allImages[0]] : [p.image || 'images/logo-app.png']
+    })).slice(0, 20);
+    localStorage.setItem('jk_custom_products', JSON.stringify(lightweightList));
   } catch (e) {
-    console.warn("Storage quota warning:", e);
+    try {
+      const smallList = CUSTOM_PRODUCTS.slice(0, 8).map(p => ({
+        ...p,
+        photos: [p.image || 'images/logo-app.png'],
+        allImages: [p.image || 'images/logo-app.png']
+      }));
+      localStorage.setItem('jk_custom_products', JSON.stringify(smallList));
+    } catch(err2) {
+      console.warn("Storage quota warning on jk_custom_products:", err2);
+    }
   }
 
   // 2. Register into catalog structures
@@ -12257,11 +12284,11 @@ async function handleOwnerProductSubmit(event) {
     handleStoreLiveSearch(searchInput ? searchInput.value : '');
   }
 
-  // 4. Dispatch to Google Apps Script / Google Sheet (Both dedicated action and universal fallback row)
+  // 4. Dispatch to Google Apps Script / Google Sheet (Clean add_product action ONLY, never a fake order!)
   try {
     const endpoint = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
     
-    // Call 1: Standard add_product
+    // Standard add_product
     const postData = new URLSearchParams();
     postData.append('action', 'add_product');
     postData.append('product_id', prodId);
@@ -12283,41 +12310,6 @@ async function handleOwnerProductSubmit(event) {
       body: postData,
       mode: 'no-cors'
     }).catch(err => console.warn("Background product sync:", err));
-
-    // Call 2: Universal Fallback Row in Main Sheet (Guarantees every visitor & browser fetches this immediately!)
-    const catalogMeta = JSON.stringify({
-      id: prodId,
-      productId: prodId,
-      name: title,
-      title: title,
-      category: category,
-      price: price,
-      mrp: mrp,
-      badge: badge,
-      desc: desc,
-      description: desc,
-      photos: photosArray,
-      image: photosArray[0] || 'images/logo-app.png',
-      status: 'Active'
-    });
-
-    const fallbackData = new URLSearchParams();
-    fallbackData.append('order_id', prodId);
-    fallbackData.append('name', title);
-    fallbackData.append('phone', 'CATALOG_PRODUCT');
-    fallbackData.append('address', catalogMeta);
-    fallbackData.append('product', catalogMeta);
-    fallbackData.append('amount', String(price));
-    fallbackData.append('txn_id', 'CATALOG_PRODUCT');
-    fallbackData.append('status', 'Active');
-    fallbackData.append('notes', catalogMeta);
-
-    fetch(endpoint, {
-      method: 'POST',
-      body: fallbackData,
-      mode: 'no-cors'
-    }).catch(err => console.warn("Fallback sheet row sync:", err));
-
   } catch (err) {
     console.warn("Sheet post error:", err);
   }

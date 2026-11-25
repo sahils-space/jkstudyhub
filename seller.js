@@ -127,6 +127,28 @@ let activePrintingOrderId = null;
   } catch(e) {}
 })();
 
+// Auto-purge any catalog products mistakenly recorded in jk_orders
+(function purgeSellerCatalogFakeOrders() {
+  try {
+    const raw = localStorage.getItem('jk_orders');
+    if (!raw) return;
+    const orders = JSON.parse(raw);
+    if (!Array.isArray(orders)) return;
+    const clean = orders.filter(o => {
+      if (!o || !o.orderId) return false;
+      const up = String(o.orderId || '').trim().toUpperCase();
+      if (up.startsWith('PRD-') || up.includes('PRICE-OVERRIDE') || up.includes('CATALOG')) return false;
+      if (o.phone === 'CATALOG_PRODUCT' || o.txnId === 'CATALOG_PRODUCT') return false;
+      const meta = String(o.address || '') + String(o.product || '') + String(o.notes || '');
+      if (meta.includes('"productId"') || meta.includes('"photos"') || meta.includes('CATALOG_PRODUCT')) return false;
+      return true;
+    });
+    if (clean.length !== orders.length) {
+      localStorage.setItem('jk_orders', JSON.stringify(clean));
+    }
+  } catch(e) {}
+})();
+
 // =========================================================
 // 1. WATERTIGHT SECURITY LOCK & OWNER-ONLY GATE
 // =========================================================
@@ -688,6 +710,10 @@ function getSellerOrders() {
       const filtered = orders.filter(o => {
         if (!o || !o.orderId) return false;
         const up = String(o.orderId || '').trim().toUpperCase();
+        if (up.startsWith('PRD-') || up.includes('PRICE-OVERRIDE') || up.includes('CATALOG')) return false;
+        if (o.phone === 'CATALOG_PRODUCT' || o.txnId === 'CATALOG_PRODUCT') return false;
+        const metaStr = String(o.address || '') + String(o.product || '') + String(o.notes || '');
+        if (metaStr.includes('"productId"') || metaStr.includes('"photos"') || metaStr.includes('CATALOG_PRODUCT')) return false;
         if (purgedIds.includes(up)) return false;
         // Always protect organic / manual WhatsApp orders from timestamp purge
         if (o.isManualWhatsApp || o.source === 'WhatsApp Organic Order') return true;
@@ -739,12 +765,20 @@ function syncSellerWithGoogleSheets(showToastAlert = false) {
         const purgedIds = JSON.parse(localStorage.getItem('jk_purged_order_ids') || '[]');
         const resetTs = Number(localStorage.getItem('jk_orders_reset_timestamp') || 0);
 
-        // Filter valid remote orders from Google Sheets (excluding catalog products and price overrides)
+        // Filter valid remote orders from Google Sheets (strictly excluding catalog products and price overrides)
         const validRemoteOrders = data.orders.filter(remote => {
-          if (!remote || !remote.orderId || String(remote.orderId).startsWith('PRD-') || remote.phone === 'CATALOG_PRODUCT' || String(remote.orderId).includes('PRICE-OVERRIDE') || String(remote.txnId).includes('PRICE_OVERRIDE')) {
+          if (!remote || !remote.orderId) return false;
+          const remoteUpperId = String(remote.orderId).trim().toUpperCase();
+          if (remoteUpperId.startsWith('PRD-') || remoteUpperId.includes('PRICE-OVERRIDE') || remoteUpperId.includes('CATALOG')) {
             return false;
           }
-          const remoteUpperId = String(remote.orderId).trim().toUpperCase();
+          if (remote.phone === 'CATALOG_PRODUCT' || remote.txnId === 'CATALOG_PRODUCT') {
+            return false;
+          }
+          const metaStr = String(remote.address || '') + String(remote.product || '') + String(remote.notes || '');
+          if (metaStr.includes('"productId"') || metaStr.includes('"photos"') || metaStr.includes('CATALOG_PRODUCT')) {
+            return false;
+          }
           if (purgedIds.includes(remoteUpperId)) return false;
           const epoch = getOrderEpoch(remote);
           if (resetTs > 0) {
@@ -3911,23 +3945,41 @@ async function handleSellerCatalogSubmit(e) {
       }
     }
 
-    // 1. Save to local storage for store.js and seller.js
+    // 1. Save to local storage for store.js and seller.js (Lightweight copy to prevent QuotaExceededError)
+    const localProduct = {
+      ...newProduct,
+      photos: [finalPhotos[0] || 'images/logo-app.png'],
+      allImages: [finalPhotos[0] || 'images/logo-app.png']
+    };
+
     try {
       let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
-      customProds.unshift(newProduct);
-      if (customProds.length > 25) customProds = customProds.slice(0, 25);
-      localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
+      customProds = customProds.filter(p => (p.productId || p.id) !== prodId && (p.name || p.title) !== title);
+      customProds.unshift(localProduct);
+      if (customProds.length > 20) customProds = customProds.slice(0, 20);
+      try {
+        localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
+      } catch (quotaErr) {
+        customProds = customProds.slice(0, 8);
+        localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
+      }
     } catch (e) {
-      console.warn("Storage quota warning on jk_custom_products:", e);
+      console.warn("Storage quota notice on jk_custom_products:", e);
     }
 
     try {
       let uploadedCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
-      uploadedCat.unshift(newProduct);
-      if (uploadedCat.length > 25) uploadedCat = uploadedCat.slice(0, 25);
-      localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
+      uploadedCat = uploadedCat.filter(p => (p.productId || p.id) !== prodId && (p.name || p.title) !== title);
+      uploadedCat.unshift(localProduct);
+      if (uploadedCat.length > 20) uploadedCat = uploadedCat.slice(0, 20);
+      try {
+        localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
+      } catch (quotaErr) {
+        uploadedCat = uploadedCat.slice(0, 8);
+        localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
+      }
     } catch (e) {
-      console.warn("Storage quota warning on jk_uploaded_catalog:", e);
+      console.warn("Storage quota notice on jk_uploaded_catalog:", e);
     }
 
     // 2. Set stock override in seller inventory
@@ -3937,7 +3989,7 @@ async function handleSellerCatalogSubmit(e) {
       localStorage.setItem('jk_stock_overrides', JSON.stringify(stockMap));
     } catch(e) {}
 
-    // 3. Dispatch to Google Apps Script
+    // 3. Dispatch to Google Apps Script (Standard add_product action ONLY, never a fake order!)
     try {
       const endpoint = typeof SELLER_SCRIPT_URL !== 'undefined' ? SELLER_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec';
 
@@ -3971,48 +4023,6 @@ async function handleSellerCatalogSubmit(e) {
         body: postData,
         mode: 'no-cors'
       }).catch(err => console.warn("Seller add_product sync:", err));
-
-      // Call B: Universal Fallback Row in Main Sheet
-      const catalogMeta = JSON.stringify({
-        id: prodId,
-        productId: prodId,
-        name: title,
-        title: title,
-        category: category,
-        price: price,
-        mrp: mrp,
-        paymentMode: paymentMode,
-        badge: badge,
-        stock: stock,
-        classLevel: classLevel,
-        board: board,
-        subject: subject,
-        edition: edition,
-        contents: contents,
-        desc: desc,
-        description: desc,
-        photos: finalPhotos,
-        image: finalPhotos[0] || 'images/logo-app.png',
-        status: 'Active'
-      });
-
-      const fallbackData = new URLSearchParams();
-      fallbackData.append('order_id', prodId);
-      fallbackData.append('name', title);
-      fallbackData.append('phone', 'CATALOG_PRODUCT');
-      fallbackData.append('address', catalogMeta);
-      fallbackData.append('product', catalogMeta);
-      fallbackData.append('amount', String(price));
-      fallbackData.append('txn_id', 'CATALOG_PRODUCT');
-      fallbackData.append('status', 'Active');
-      fallbackData.append('notes', catalogMeta);
-
-      fetch(endpoint, {
-        method: 'POST',
-        body: fallbackData,
-        mode: 'no-cors'
-      }).catch(err => console.warn("Seller fallback row sync:", err));
-
     } catch (err) {
       console.warn("Sheet post error:", err);
     }
