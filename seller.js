@@ -4478,7 +4478,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795519561610",
     "name": "CHEMISTRY MTG BOOK FOUNDATION COURSE",
     "title": "CHEMISTRY MTG BOOK FOUNDATION COURSE",
-    "category": "exam-kits",
+    "category": "school-books",
     "price": 499,
     "mrp": 550,
     "classLevel": "10",
@@ -4707,7 +4707,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795582212389",
     "name": "HD-10D All Metal Stapler",
     "title": "HD-10D All Metal Stapler",
-    "category": "exam-kits",
+    "category": "stationery",
     "price": 99,
     "mrp": 129,
     "paymentMode": "both",
@@ -4778,7 +4778,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795585303230",
     "name": "JKBOSE-CLASS 8TH BOOK-SET",
     "title": "JKBOSE-CLASS 8TH BOOK-SET",
-    "category": "exam-kits",
+    "category": "school-books",
     "price": 1399,
     "mrp": 1599,
     "paymentMode": "both",
@@ -4800,7 +4800,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795585631405",
     "name": "6-FOUR-LINE COPIES",
     "title": "6-FOUR-LINE COPIES",
-    "category": "exam-kits",
+    "category": "school-copies",
     "price": 299,
     "mrp": 350,
     "paymentMode": "both",
@@ -4820,7 +4820,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795594881775",
     "name": "CLASS 11TH HUMANITIES SPIRAL COPIES BUNDLE",
     "title": "CLASS 11TH HUMANITIES SPIRAL COPIES BUNDLE",
-    "category": "academic",
+    "category": "school-copies",
     "price": 1299,
     "mrp": 1599,
     "paymentMode": "both",
@@ -4840,7 +4840,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795614169387",
     "name": "NOORANI QAYIDA",
     "title": "NOORANI QAYIDA",
-    "category": "stationery",
+    "category": "school-books",
     "price": 20,
     "mrp": 29,
     "paymentMode": "both",
@@ -5086,7 +5086,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795620958446",
     "name": "MILAN DELUXE ACCOUNTS BOOK",
     "title": "MILAN DELUXE ACCOUNTS BOOK",
-    "category": "stationery",
+    "category": "school-copies",
     "price": 349,
     "mrp": 399,
     "paymentMode": "both",
@@ -5140,7 +5140,7 @@ const DEFAULT_SELLER_PRODUCTS = [
     "id": "PRD-1795621546025",
     "name": "NURSING FOUNDATION (2ND-EDITION)",
     "title": "NURSING FOUNDATION (2ND-EDITION)",
-    "category": "stationery",
+    "category": "school-books",
     "price": 1399,
     "mrp": 1450,
     "paymentMode": "both",
@@ -5235,7 +5235,25 @@ const DEFAULT_SELLER_PRODUCTS = [
     "edition": "2026-2027",
     "contents": "1 CALCULATOR"
   }
-
+,
+  {
+    "id": "PRD-1795463077415",
+    "name": "Customisable Scrapbook Collage Photo Frame (A4 / 8x12 Inch, Black Frame)",
+    "title": "Customisable Scrapbook Collage Photo Frame (A4 / 8x12 Inch, Black Frame)",
+    "category": "stationery",
+    "price": 299,
+    "mrp": 499,
+    "paymentMode": "cod",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 25,
+    "desc": "Customisable Scrapbook Collage Photo Frame (A4 / 8x12 Inch, Black Frame)\nTurn your favourite memories into a personalised aesthetic keepsake \u2014 ideal for birthdays, friendships, farewells, and room decor!",
+    "photos": [
+      "images/products/customisable-scrapbook-collage-photo-frame-7415-1.webp",
+      "images/products/customisable-scrapbook-collage-photo-frame-7415-2.webp",
+      "images/products/customisable-scrapbook-collage-photo-frame-7415-3.webp"
+    ],
+    "image": "images/products/customisable-scrapbook-collage-photo-frame-7415-1.webp"
+  }
 ].map(product => ({ paymentMode: 'both', ...product }));
 
 // Get all published catalog products// Get all published catalog products (combining DEFAULT_SELLER_PRODUCTS, jk_custom_products and jk_uploaded_catalog)
