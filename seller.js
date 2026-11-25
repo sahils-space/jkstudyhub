@@ -4914,7 +4914,15 @@ function saveSellerLocalCatalogProduct(updatedProduct, oldProduct) {
     try {
       localStorage.setItem(storageKey, JSON.stringify(catalog));
     } catch (error) {
-      console.warn(`Could not persist edited catalog in ${storageKey}:`, error);
+      try {
+        const compact = catalog.map(item => {
+          const photos = Array.isArray(item.photos) && item.photos.length ? [item.photos[0]] : (item.image ? [item.image] : []);
+          return { ...item, photos, image: photos[0] || item.image || 'images/logo-app.png', allImages: photos };
+        });
+        localStorage.setItem(storageKey, JSON.stringify(compact));
+      } catch (error2) {
+        console.warn(`Could not persist edited catalog in ${storageKey}:`, error2);
+      }
     }
   });
 }

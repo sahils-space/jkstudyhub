@@ -11133,23 +11133,73 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
 const CANONICAL_PRODUCT_IDS = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => String(p.id)));
 const CANONICAL_PRODUCT_NAMES = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => normalizeCatalogIdentity(p.name || p.title)));
 
+function isPlaceholderProductImage(src) {
+  const clean = String(src || '').trim();
+  return !clean || clean === 'images/logo-app.png' || clean === 'images/icon.svg';
+}
+
+function resolveBestProductMedia(existing, incoming) {
+  const exPhotos = Array.isArray(existing?.photos) ? existing.photos.filter(p => !isPlaceholderProductImage(p)) : [];
+  const exImg = !isPlaceholderProductImage(existing?.image) ? existing.image : (exPhotos[0] || '');
+  const inPhotos = Array.isArray(incoming?.photos) ? incoming.photos.filter(p => !isPlaceholderProductImage(p)) : [];
+  const inImg = !isPlaceholderProductImage(incoming?.image) ? incoming.image : (inPhotos[0] || '');
+
+  // If incoming has a real non-placeholder photo and either existing has none or incoming is newer
+  const exTime = Number(existing?.updatedAt || 0);
+  const inTime = Number(incoming?.updatedAt || 0);
+  if (inImg && (!exImg || inTime > exTime)) {
+    const photos = inPhotos.length ? inPhotos : [inImg];
+    return { photos, image: photos[0], allImages: photos };
+  }
+  if (exImg) {
+    const photos = exPhotos.length ? exPhotos : [exImg];
+    return { photos, image: photos[0], allImages: photos };
+  }
+  return { photos: ['images/logo-app.png'], image: 'images/logo-app.png', allImages: ['images/logo-app.png'] };
+}
+
+function persistCustomProductsCache(products) {
+  const list = (Array.isArray(products) ? products : []).filter(cp =>
+    cp && !isDeletedCatalogProduct(cp) && !CANONICAL_PRODUCT_IDS.has(String(cp.id || ''))
+  );
+  try {
+    localStorage.setItem('jk_custom_products', JSON.stringify(list));
+  } catch (e) {
+    // On quota pressure, keep primary photo for each product rather than replacing with logo-app.png
+    try {
+      const compact = list.map(cp => {
+        const firstPhoto = (Array.isArray(cp.photos) && cp.photos.find(p => !isPlaceholderProductImage(p))) || cp.image;
+        const cleanPhoto = !isPlaceholderProductImage(firstPhoto) ? firstPhoto : 'images/logo-app.png';
+        return { ...cp, photos: [cleanPhoto], image: cleanPhoto, allImages: [cleanPhoto] };
+      });
+      localStorage.setItem('jk_custom_products', JSON.stringify(compact));
+    } catch (e2) {
+      console.warn('Storage quota warning on jk_custom_products:', e2);
+    }
+  }
+}
+
 function mergeProductPreservingCanonical(existing, incoming) {
   if (!existing) return incoming;
   const exId = String(existing.id || existing.productId || '');
   // Never let stale cache/sheet/Firestore rows overwrite canonical local product images or titles,
-  // but allow explicit paymentMode edits made from the Seller Panel to update live.
+  // but allow explicit paymentMode, category, or newer real-photo edits from Seller Panel to update live.
   if (CANONICAL_PRODUCT_IDS.has(exId)) {
+    let next = existing;
     const hasExplicitPaymentUpdate = incoming && ['both', 'cod', 'prepaid'].includes(incoming.paymentMode) &&
       (incoming.paymentMode === 'prepaid' || Number(incoming.paymentModeUpdatedAt || 0) > 0);
     if (hasExplicitPaymentUpdate && existing.paymentMode !== incoming.paymentMode) {
-      return { ...existing, paymentMode: incoming.paymentMode, paymentModeUpdatedAt: incoming.paymentModeUpdatedAt || Date.now() };
+      next = { ...next, paymentMode: incoming.paymentMode, paymentModeUpdatedAt: incoming.paymentModeUpdatedAt || Date.now() };
     }
-    return existing;
+    if (incoming && incoming.category && Number(incoming.updatedAt || 0) > Number(existing.updatedAt || 0) && incoming.category !== existing.category) {
+      next = { ...next, category: incoming.category, updatedAt: incoming.updatedAt };
+    }
+    return next;
   }
-  if (existing.image && existing.image.startsWith('images/') && (!incoming.image || incoming.image.startsWith('data:image') || incoming.image === 'images/logo-app.png')) {
-    return { ...incoming, photos: existing.photos, image: existing.image, allImages: existing.allImages || existing.photos };
-  }
-  return { ...existing, ...incoming };
+
+  // For uploaded/non-canonical products: never let placeholder logo-app.png overwrite a real photo
+  const media = resolveBestProductMedia(existing, incoming);
+  return { ...existing, ...incoming, ...media };
 }
 
 function isGeneralAcademicPhysicalEducationProduct(product) {
@@ -11844,22 +11894,17 @@ async function syncCustomProductsWithSheet() {
           hasGenuinelyNewProduct = true;
         } else {
           const existing = mergedMap.get(matchedKey);
-          mergedMap.set(matchedKey, mergeProductPreservingCanonical(existing, sp));
+          const merged = mergeProductPreservingCanonical(existing, sp);
+          if (merged && existing && (merged.image !== existing.image || merged.category !== existing.category || merged.paymentMode !== existing.paymentMode || merged.name !== existing.name)) {
+            hasGenuinelyNewProduct = true;
+          }
+          mergedMap.set(matchedKey, merged);
         }
       });
 
       if (hasGenuinelyNewProduct) {
         CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
-        try {
-          const lightProducts = CUSTOM_PRODUCTS.map(cp => {
-            if (CANONICAL_PRODUCT_IDS.has(String(cp.id || ''))) return null;
-            const isLargeB64 = cp.image && cp.image.length > 50000;
-            return isLargeB64 ? { ...cp, photos: ['images/logo-app.png'], image: 'images/logo-app.png' } : cp;
-          }).filter(Boolean);
-          localStorage.setItem('jk_custom_products', JSON.stringify(lightProducts));
-        } catch (e) {
-          console.warn("Storage quota warning on jk_custom_products:", e);
-        }
+        persistCustomProductsCache(CUSTOM_PRODUCTS);
 
         registerAllCustomProducts(CUSTOM_PRODUCTS);
         renderDynamicStoreProducts();
@@ -11980,7 +12025,14 @@ function mergeAndRenderLiveProducts(incoming) {
     } else {
       const existing = mergedMap.get(matchedKey);
       const merged = mergeProductPreservingCanonical(existing, sp);
-      if (merged !== existing && merged.paymentMode !== existing.paymentMode) {
+      if (merged !== existing && (
+        merged.paymentMode !== existing.paymentMode ||
+        merged.image !== existing.image ||
+        merged.category !== existing.category ||
+        merged.name !== existing.name ||
+        merged.desc !== existing.desc ||
+        merged.price !== existing.price
+      )) {
         hasGenuinelyNewProduct = true;
       }
       mergedMap.set(matchedKey, merged);
@@ -11990,15 +12042,7 @@ function mergeAndRenderLiveProducts(incoming) {
   if (!hasGenuinelyNewProduct) return;
 
   CUSTOM_PRODUCTS = Array.from(mergedMap.values()).filter(p => !isDeletedCatalogProduct(p));
-  try {
-    const lightProducts = CUSTOM_PRODUCTS.filter(cp => !CANONICAL_PRODUCT_IDS.has(String(cp.id || ''))).map(cp => {
-      const isLargeB64 = cp.image && cp.image.length > 50000;
-      return isLargeB64 ? { ...cp, photos: ['images/logo-app.png'], image: 'images/logo-app.png' } : cp;
-    });
-    localStorage.setItem('jk_custom_products', JSON.stringify(lightProducts));
-  } catch (error) {
-    console.warn('Could not save the synchronized catalog cache:', error);
-  }
+  persistCustomProductsCache(CUSTOM_PRODUCTS);
   registerAllCustomProducts(CUSTOM_PRODUCTS);
   renderDynamicStoreProducts();
   renderOwnerProductList();
@@ -12104,8 +12148,17 @@ function renderDynamicStationeryProducts() {
     const existing = existingById.get(card.dataset.productId);
     if (existing) {
       existingById.delete(card.dataset.productId);
-      // Preserve pre-rendered static card intact to avoid DOM destruction & image flash
-      card = existing;
+      const exImgSrc = existing.querySelector('img')?.getAttribute('src') || '';
+      const nextImgSrc = nextCard.querySelector('img')?.getAttribute('src') || '';
+      const sigChanged = existing.dataset.renderSignature && nextCard.dataset.renderSignature && existing.dataset.renderSignature !== nextCard.dataset.renderSignature;
+      const upgradedFromPlaceholder = isPlaceholderProductImage(exImgSrc) && !isPlaceholderProductImage(nextImgSrc);
+      if (sigChanged || upgradedFromPlaceholder) {
+        existing.replaceWith(nextCard);
+        card = nextCard;
+      } else {
+        // Preserve pre-rendered static card intact to avoid DOM destruction & image flash
+        card = existing;
+      }
     }
 
     const currentAtIndex = dynamicWrap.children[index];
@@ -12265,7 +12318,15 @@ function reconcileGridPreservingExisting(container, items, renderHtmlFn) {
     if (existing) {
       if (pid) existingById.delete(pid);
       if (normTitle) existingByTitle.delete(normTitle);
-      cardToPlace = existing;
+      const exImgSrc = existing.querySelector('img')?.getAttribute('src') || '';
+      const nextImgSrc = nextCard.querySelector('img')?.getAttribute('src') || '';
+      const upgradedFromPlaceholder = isPlaceholderProductImage(exImgSrc) && !isPlaceholderProductImage(nextImgSrc);
+      if (upgradedFromPlaceholder) {
+        existing.replaceWith(nextCard);
+        cardToPlace = nextCard;
+      } else {
+        cardToPlace = existing;
+      }
     }
 
     const currentAtIndex = container.children[index];
