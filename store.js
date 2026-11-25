@@ -2161,7 +2161,9 @@ function closeCartDrawer() {
   delete document.body.dataset.cartDrawerPreviousOverflow;
 }
 
-const JK_FREE_DELIVERY_THRESHOLD = 999;
+const JK_FREE_DELIVERY_THRESHOLD = 1499;
+const JK_MEGA_OFFER_THRESHOLD = 2399;
+const JK_MEGA_OFFER_DISCOUNT = 100;
 
 function renderCartDrawer() {
   const drawer = document.getElementById('cartDrawerBackdrop');
@@ -2171,7 +2173,7 @@ function renderCartDrawer() {
   const cart = getCart();
   const subtotal = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (parseInt(item.qty, 10) || 1), 0);
   const totalQuantity = cart.reduce((sum, item) => sum + (parseInt(item.qty, 10) || 1), 0);
-  const discount = subtotal >= 1499 ? 100 : 0;
+  const discount = subtotal >= JK_MEGA_OFFER_THRESHOLD ? JK_MEGA_OFFER_DISCOUNT : 0;
   const total = cart.length ? Math.max(0, subtotal - discount + 5) : 0;
 
   itemsContainer.replaceChildren();
@@ -2233,13 +2235,13 @@ function renderCartDrawer() {
   const offerMessage = document.getElementById('cartDrawerOfferMessage');
   const progress = document.getElementById('cartDrawerOfferProgress');
   if (offerMessage && progress) {
-    const nextTarget = subtotal < JK_FREE_DELIVERY_THRESHOLD ? JK_FREE_DELIVERY_THRESHOLD : 1499;
+    const nextTarget = subtotal < JK_FREE_DELIVERY_THRESHOLD ? JK_FREE_DELIVERY_THRESHOLD : JK_MEGA_OFFER_THRESHOLD;
     const percent = Math.min(100, Math.round((subtotal / nextTarget) * 100));
     progress.style.width = `${percent}%`;
     if (subtotal < JK_FREE_DELIVERY_THRESHOLD) {
-      offerMessage.textContent = `Add ₹${JK_FREE_DELIVERY_THRESHOLD - subtotal} more to qualify for free delivery across Jammu & Kashmir. ₹100 off starts at ₹1,499.`;
-    } else if (subtotal < 1499) {
-      offerMessage.textContent = `Free delivery unlocked across Jammu & Kashmir. Add ₹${1499 - subtotal} more for ₹100 off.`;
+      offerMessage.textContent = `Add ₹${JK_FREE_DELIVERY_THRESHOLD - subtotal} more to qualify for free delivery across Jammu & Kashmir. ₹100 off starts at ₹2,399.`;
+    } else if (subtotal < JK_MEGA_OFFER_THRESHOLD) {
+      offerMessage.textContent = `Free delivery unlocked across Jammu & Kashmir. Add ₹${JK_MEGA_OFFER_THRESHOLD - subtotal} more for ₹100 off.`;
     } else {
       offerMessage.textContent = 'Free delivery across Jammu & Kashmir and the ₹100 offer are unlocked.';
     }
@@ -2416,31 +2418,31 @@ function renderCartPage() {
     totalQty += q;
   });
 
-  const autoDiscount = (subtotal >= 1499) ? 100 : 0;
+  const autoDiscount = (subtotal >= JK_MEGA_OFFER_THRESHOLD) ? JK_MEGA_OFFER_DISCOUNT : 0;
   const qualifiesFreeShipping = (subtotal >= JK_FREE_DELIVERY_THRESHOLD);
-  const qualifies1499Offer = (subtotal >= 1499);
+  const qualifiesMegaOffer = (subtotal >= JK_MEGA_OFFER_THRESHOLD);
   const diffToFree = Math.max(0, JK_FREE_DELIVERY_THRESHOLD - subtotal);
-  const diffTo1499 = Math.max(0, 1499 - subtotal);
-  const progressPercent = qualifies1499Offer ? 100 : (qualifiesFreeShipping ? Math.min(100, Math.round((subtotal / 1499) * 100)) : Math.min(100, Math.round((subtotal / JK_FREE_DELIVERY_THRESHOLD) * 100)));
+  const diffToMega = Math.max(0, JK_MEGA_OFFER_THRESHOLD - subtotal);
+  const progressPercent = qualifiesMegaOffer ? 100 : (qualifiesFreeShipping ? Math.min(100, Math.round((subtotal / JK_MEGA_OFFER_THRESHOLD) * 100)) : Math.min(100, Math.round((subtotal / JK_FREE_DELIVERY_THRESHOLD) * 100)));
 
   let itemsHtml = `
-    <!-- Dynamic J&K ₹999+ delivery and ₹1499+ offers progress strip -->
-    <div style="background: ${qualifies1499Offer ? '#f0fdf4' : (qualifiesFreeShipping ? '#f0fdf4' : '#eff6ff')}; border: 1.5px solid ${qualifies1499Offer ? '#22c55e' : (qualifiesFreeShipping ? '#86efac' : '#bfdbfe')}; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+    <!-- Dynamic J&K ₹1,499+ delivery and ₹2,399+ offers progress strip -->
+    <div style="background: ${qualifiesMegaOffer ? '#f0fdf4' : (qualifiesFreeShipping ? '#f0fdf4' : '#eff6ff')}; border: 1.5px solid ${qualifiesMegaOffer ? '#22c55e' : (qualifiesFreeShipping ? '#86efac' : '#bfdbfe')}; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifies1499Offer ? '#15803d' : (qualifiesFreeShipping ? '#166534' : '#1e40af')};">
-          <i class="fa-solid fa-gift" style="font-size: 16px; color: ${qualifies1499Offer ? '#16a34a' : '#2563eb'};"></i>
-          <span>${qualifies1499Offer ? '🎉 <strong>₹100 offer unlocked.</strong> Orders ₹999+ qualify for free delivery across Jammu & Kashmir; confirm your PIN at checkout.' : (qualifiesFreeShipping ? `🚚 Free delivery unlocked across Jammu &amp; Kashmir. Add <strong style="color:#b45309;">₹${diffTo1499}</strong> more to unlock the <strong>₹100 discount</strong>.` : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> to reach ₹999 for free delivery across Jammu &amp; Kashmir. Enter your PIN to confirm.`)}</span>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifiesMegaOffer ? '#15803d' : (qualifiesFreeShipping ? '#166534' : '#1e40af')};">
+          <i class="fa-solid fa-gift" style="font-size: 16px; color: ${qualifiesMegaOffer ? '#16a34a' : '#2563eb'};"></i>
+          <span>${qualifiesMegaOffer ? '🎉 <strong>₹100 offer unlocked.</strong> Orders ₹1,499+ qualify for free delivery across Jammu & Kashmir; confirm your PIN at checkout.' : (qualifiesFreeShipping ? `🚚 Free delivery unlocked across Jammu &amp; Kashmir. Add <strong style="color:#b45309;">₹${diffToMega}</strong> more to unlock the <strong>₹100 discount</strong>.` : `🚚 Add <strong style="color:#b45309;">₹${diffToFree}</strong> to reach ₹1,499 for free delivery across Jammu &amp; Kashmir. Enter your PIN to confirm.`)}</span>
         </div>
-        <span style="font-size: 11.5px; background: ${qualifies1499Offer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : '#2563eb')}; color: white; font-weight: 800; padding: 3px 10px; border-radius: 20px;">
-          ${qualifies1499Offer ? '₹100 OFFER UNLOCKED' : (qualifiesFreeShipping ? 'FREE DELIVERY UNLOCKED' : `${progressPercent}% COMPLETED`)}
+        <span style="font-size: 11.5px; background: ${qualifiesMegaOffer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : '#2563eb')}; color: white; font-weight: 800; padding: 3px 10px; border-radius: 20px;">
+          ${qualifiesMegaOffer ? '₹100 OFFER UNLOCKED' : (qualifiesFreeShipping ? 'FREE DELIVERY UNLOCKED' : `${progressPercent}% COMPLETED`)}
         </span>
       </div>
       <div style="width: 100%; height: 7px; background: ${qualifiesFreeShipping ? '#dcfce7' : '#dbeafe'}; border-radius: 10px; overflow: hidden;">
-        <div style="width: ${progressPercent}%; height: 100%; background: ${qualifies1499Offer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : 'linear-gradient(90deg, #3b82f6, #2563eb)')}; border-radius: 10px; transition: width 0.4s ease;"></div>
+        <div style="width: ${progressPercent}%; height: 100%; background: ${qualifiesMegaOffer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : 'linear-gradient(90deg, #3b82f6, #2563eb)')}; border-radius: 10px; transition: width 0.4s ease;"></div>
       </div>
       <div style="font-size: 11px; color: #64748b; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
-        <span><strong>₹999+ free delivery across J&amp;K</strong> • <strong>₹1499+ (₹100 OFF)</strong></span>
-        <span>${qualifies1499Offer ? '<strong style="color:#16a34a;">₹100 offer unlocked</strong>' : 'Delivery charges confirmed by PIN at checkout'}</span>
+        <span><strong>₹1,499+ free delivery across J&amp;K</strong> • <strong>₹2,399+ (₹100 OFF)</strong></span>
+        <span>${qualifiesMegaOffer ? '<strong style="color:#16a34a;">₹100 offer unlocked</strong>' : 'Delivery charges confirmed by PIN at checkout'}</span>
       </div>
     </div>
   `;
@@ -5150,7 +5152,7 @@ function getCheckoutDeliveryInfo() {
   let feeHtml = '';
   if (deliveryFee === 0) {
     if (qualifiesForJkFreeShipping && Number(matchedDistrict.deliveryFee) > 0) {
-      feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ₹999+ Jammu &amp; Kashmir Delivery 🎁)</span>`;
+      feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ₹1,499+ Jammu &amp; Kashmir Delivery 🎁)</span>`;
     } else {
       feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ${matchedDistrict.name.split('(')[0].trim()})</span>`;
     }
@@ -5217,7 +5219,7 @@ function setupCheckoutModal(name, price, category, paymentMode) {
     ? paymentMode
     : getProductPaymentMode(name);
 
-  const autoDiscount = (Number(price) >= 1499) ? 100 : 0;
+  const autoDiscount = (Number(price) >= JK_MEGA_OFFER_THRESHOLD) ? JK_MEGA_OFFER_DISCOUNT : 0;
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
@@ -5816,7 +5818,7 @@ function updateCheckoutInvoiceTotals() {
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
 
-  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const autoDiscount = (Number(currentCheckoutPrice) >= JK_MEGA_OFFER_THRESHOLD) ? JK_MEGA_OFFER_DISCOUNT : 0;
   const repeatDiscount = Number(activeRepeatDiscountAmount) || 0;
   const finalPrice = Math.max(0, currentCheckoutPrice - repeatDiscount - autoDiscount);
 
@@ -5930,7 +5932,7 @@ function updateCheckoutInvoiceTotals() {
     }
   }
 
-  // Automatic ₹100 discount row for orders >= ₹1499
+  // Automatic ₹100 discount row for orders >= ₹2,399
   const autoDiscountRow = document.getElementById('invoiceAutoDiscountRow');
   const autoDiscountAmtEl = document.getElementById('invoiceAutoDiscountAmount');
   if (autoDiscountRow && autoDiscountAmtEl) {
@@ -6360,7 +6362,7 @@ function togglePaymentMethod(method) {
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
   const platformFee = 5;
-  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const autoDiscount = (Number(currentCheckoutPrice) >= JK_MEGA_OFFER_THRESHOLD) ? JK_MEGA_OFFER_DISCOUNT : 0;
   const finalPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const baseOrderAmount = finalPrice + deliveryFee + platformFee;
   const codFee = Number(deliveryInfo.codFee) || 0;
@@ -6480,7 +6482,7 @@ function startRazorpayPayment() {
   const phone = phoneInput ? phoneInput.value.trim() : '';
   const deliveryInfo = getCheckoutDeliveryInfo();
   const deliveryFee = deliveryInfo.fee;
-  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const autoDiscount = (Number(currentCheckoutPrice) >= JK_MEGA_OFFER_THRESHOLD) ? JK_MEGA_OFFER_DISCOUNT : 0;
   const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const totalPaid = finalItemPrice + deliveryFee + 5;
 
@@ -6585,7 +6587,7 @@ function processOrder(txnId, customStatus) {
   const platformFee = 5;
   const isCod = (customStatus && customStatus.includes('Cash on Delivery')) || txnId === 'Cash on Delivery' || String(txnId).startsWith('COD') || String(txnId).toUpperCase().includes('CASH');
   const codFee = isCod ? (Number(deliveryInfo.codFee) || 0) : 0;
-  const autoDiscount = (Number(currentCheckoutPrice) >= 1499) ? 100 : 0;
+  const autoDiscount = (Number(currentCheckoutPrice) >= JK_MEGA_OFFER_THRESHOLD) ? JK_MEGA_OFFER_DISCOUNT : 0;
   const finalItemPrice = Math.max(0, currentCheckoutPrice - (activeRepeatDiscountAmount || 0) - autoDiscount);
   const totalPaid = finalItemPrice + deliveryFee + platformFee + codFee;
 
@@ -9913,7 +9915,7 @@ function orderDirectlyViaWhatsApp() {
 
   const deliveryInfo = getCheckoutDeliveryInfo();
   const itemPrice = Number(currentCheckoutPrice) || 0;
-  const autoDiscount = itemPrice >= 1499 ? 100 : 0;
+  const autoDiscount = itemPrice >= JK_MEGA_OFFER_THRESHOLD ? JK_MEGA_OFFER_DISCOUNT : 0;
   const repeatDiscount = Number(activeRepeatDiscountAmount) || 0;
   const discount = autoDiscount + repeatDiscount;
   const finalItemPrice = Math.max(0, itemPrice - discount);
@@ -12928,7 +12930,7 @@ function sendBooklistWhatsAppQuote() {
   if (selectedBooklistPhotoData) {
     message += '\n📷 *Booklist Photo:* I have selected my school booklist image (' + selectedBooklistPhotoData.name + ') and am attaching it here in this WhatsApp chat!';
   } else {
-    message += '\n\nI will send our school syllabus / booklist photo in this chat. Please quote the complete bundle price and confirm delivery charges; orders of ₹999+ qualify for free delivery across Jammu & Kashmir.';
+    message += '\n\nI will send our school syllabus / booklist photo in this chat. Please quote the complete bundle price and confirm delivery charges; orders of ₹1,499+ qualify for free delivery across Jammu & Kashmir.';
   }
 
   const sellerPhone = '919622605714';

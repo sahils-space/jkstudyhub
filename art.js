@@ -481,8 +481,8 @@
     }
     if (subtotalEl) subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
 
-    // Free delivery meter threshold = ₹999
-    const freeDeliveryThreshold = 999;
+    // Free delivery meter threshold = ₹1,499
+    const freeDeliveryThreshold = 1499;
     if (meterFill && meterText) {
       if (subtotal >= freeDeliveryThreshold) {
         meterFill.style.width = '100%';
@@ -757,7 +757,7 @@ ${imgUrl}
       subtotal += item.price * item.qty;
     });
 
-    const delivery = subtotal >= 999 ? 0 : 60;
+    const delivery = subtotal >= 1499 ? 0 : 60;
     const grandTotal = subtotal + delivery;
 
     const msg = 
@@ -874,7 +874,7 @@ ${showcaseUrl}
       `;
     });
 
-    const delivery = subtotal >= 999 ? 0 : 60;
+    const delivery = subtotal >= 1499 ? 0 : 60;
     const grandTotal = subtotal + delivery;
 
     if (summaryBox) summaryBox.innerHTML = html;
@@ -914,7 +914,7 @@ ${showcaseUrl}
 
     const items = state.checkoutItems.length > 0 ? state.checkoutItems : state.cart;
     const subtotal = items.reduce((sum, i) => sum + (i.price * i.qty), 0);
-    const delivery = subtotal >= 999 ? 0 : 60;
+    const delivery = subtotal >= 1499 ? 0 : 60;
     const grandTotal = subtotal + delivery;
 
     const payBtn = document.getElementById('btnPayRazorpay');
@@ -1002,7 +1002,7 @@ ${showcaseUrl}
       subtotal += item.price * item.qty;
     });
 
-    const delivery = subtotal >= 999 ? 0 : 60;
+    const delivery = subtotal >= 1499 ? 0 : 60;
     const grandTotal = subtotal + delivery;
 
     const msg = 
