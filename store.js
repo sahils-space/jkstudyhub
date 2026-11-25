@@ -11128,7 +11128,633 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
       "images/products/exam-clipboard-transparent-2.jpg"
     ],
     "image": "images/products/exam-clipboard-transparent.jpg"
+  },
+  {
+    "id": "PRD-1795556057443",
+    "name": "ERASERS (DUST FREE)",
+    "title": "ERASERS (DUST FREE)",
+    "category": "stationery",
+    "price": 50,
+    "mrp": 60,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "PACK OF DUST FREE ERASERS",
+    "photos": [
+      "images/products/erasers-dust-free-7443-1.webp",
+      "images/products/erasers-dust-free-7443-2.webp",
+      "images/products/erasers-dust-free-7443-3.webp"
+    ],
+    "image": "images/products/erasers-dust-free-7443-1.webp"
+  },
+  {
+    "id": "PRD-1795558780311",
+    "name": "TRANSPARENT BOOK COVER ROLL SET OF (4)",
+    "title": "TRANSPARENT BOOK COVER ROLL SET OF (4)",
+    "category": "stationery",
+    "price": 249,
+    "mrp": 329,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "CRYSTAL CLEAR TRANSPARENT BOOK COVER",
+    "photos": [
+      "images/products/transparent-book-cover-roll-set-of-4-0311-1.webp",
+      "images/products/transparent-book-cover-roll-set-of-4-0311-2.webp"
+    ],
+    "image": "images/products/transparent-book-cover-roll-set-of-4-0311-1.webp",
+    "contents": "4 ROLLS OF TRANSPARENT BOOK COVER"
+  },
+  {
+    "id": "PRD-1795581538573",
+    "name": "FLAIR Writometer 0.6mm Ball Pen Box Pack (5)",
+    "title": "FLAIR Writometer 0.6mm Ball Pen Box Pack (5)",
+    "category": "stationery",
+    "price": 125,
+    "mrp": 149,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "PACK OF 5 SMOOTH WRITOMETER BALL PENS",
+    "photos": [
+      "images/products/flair-writometer-0-6mm-ball-pen-box-pack-5-8573-1.webp",
+      "images/products/flair-writometer-0-6mm-ball-pen-box-pack-5-8573-2.webp",
+      "images/products/flair-writometer-0-6mm-ball-pen-box-pack-5-8573-3.webp"
+    ],
+    "image": "images/products/flair-writometer-0-6mm-ball-pen-box-pack-5-8573-1.webp",
+    "contents": "5 SMOOTH WRITO METRE"
+  },
+  {
+    "id": "PRD-1795581697403",
+    "name": "PHOTO ALBUM (50) PHOTOGRAPHS",
+    "title": "PHOTO ALBUM (50) PHOTOGRAPHS",
+    "category": "stationery",
+    "price": 649,
+    "mrp": 799,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "PHOTO ALBUM PACK OF 50",
+    "photos": [
+      "images/products/photo-album-50-photographs-7403-1.webp"
+    ],
+    "image": "images/products/photo-album-50-photographs-7403-1.webp",
+    "edition": "2026-2027",
+    "contents": "50 PHOTOGRAPH PHOTO ALBUM"
+  },
+  {
+    "id": "PRD-1795581956911",
+    "name": "STAPLAR HP-45",
+    "title": "STAPLAR HP-45",
+    "category": "stationery",
+    "price": 299,
+    "mrp": 349,
+    "paymentMode": "both",
+    "badge": "\ud83d\udcda Board Exam 2026",
+    "stock": 20,
+    "desc": "Kangaro Hp-45 Heavy Duty Plier Stapler With Metal Body",
+    "photos": [
+      "images/products/staplar-hp-45-6911-1.webp",
+      "images/products/staplar-hp-45-6911-2.webp",
+      "images/products/staplar-hp-45-6911-3.webp"
+    ],
+    "image": "images/products/staplar-hp-45-6911-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 HP-45 STAPLAR"
+  },
+  {
+    "id": "PRD-1795582212389",
+    "name": "HD-10D All Metal Stapler",
+    "title": "HD-10D All Metal Stapler",
+    "category": "exam-kits",
+    "price": 99,
+    "mrp": 129,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "Standard Stapler with Quick Loading Mechanism | Sturdy &",
+    "photos": [
+      "images/products/hd-10d-all-metal-stapler-2389-1.webp",
+      "images/products/hd-10d-all-metal-stapler-2389-2.webp"
+    ],
+    "image": "images/products/hd-10d-all-metal-stapler-2389-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 STAPLAR"
+  },
+  {
+    "id": "PRD-1795584315974",
+    "name": "LONG SINGLE-LINE COPIES (200+) PAGES PACK OF 12",
+    "title": "LONG SINGLE-LINE COPIES (200+) PAGES PACK OF 12",
+    "category": "school-copies",
+    "price": 799,
+    "mrp": 899,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "BUNDLE OF 12-LONG SINGLE LINE COPIES",
+    "photos": [
+      "images/products/long-single-line-copies-200-pages-pack-of-12-5974-1.webp"
+    ],
+    "image": "images/products/long-single-line-copies-200-pages-pack-of-12-5974-1.webp",
+    "edition": "2026-2027",
+    "contents": "12-LONG STUDENT SCHOOL COPY"
+  },
+  {
+    "id": "PRD-1795584775732",
+    "name": "DOUBLE SIDED TAPE",
+    "title": "DOUBLE SIDED TAPE",
+    "category": "stationery",
+    "price": 49,
+    "mrp": 99,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "EASY TO STICK&HOLD DOUBLE SIDED TAPE",
+    "photos": [
+      "images/products/double-sided-tape-5732-1.webp"
+    ],
+    "image": "images/products/double-sided-tape-5732-1.webp",
+    "contents": "1 DOUBLE SIDED TAPE"
+  },
+  {
+    "id": "PRD-1795584979082",
+    "name": "WHITE BOARD MARKER AND DUSTER",
+    "title": "WHITE BOARD MARKER AND DUSTER",
+    "category": "stationery",
+    "price": 129,
+    "mrp": 149,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "SMOOTH MARKER AND DUSTER FOR WHITE BOARD",
+    "photos": [
+      "images/products/white-board-marker-and-duster-9082-1.webp"
+    ],
+    "image": "images/products/white-board-marker-and-duster-9082-1.webp",
+    "contents": "PACK OF 1 WHITE BOARD MARKER AND DUSTER"
+  },
+  {
+    "id": "PRD-1795585303230",
+    "name": "JKBOSE-CLASS 8TH BOOK-SET",
+    "title": "JKBOSE-CLASS 8TH BOOK-SET",
+    "category": "exam-kits",
+    "price": 1399,
+    "mrp": 1599,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "JKBOSE 8TH CLASS COMPLETE BOOK SET",
+    "photos": [
+      "images/products/jkbose-class-8th-book-set-3230-1.webp",
+      "images/products/jkbose-class-8th-book-set-3230-2.webp",
+      "images/products/jkbose-class-8th-book-set-3230-3.webp"
+    ],
+    "image": "images/products/jkbose-class-8th-book-set-3230-1.webp",
+    "classLevel": "8",
+    "board": "JKBOSE",
+    "edition": "2026-2027",
+    "contents": "SET OF CLASS 8TH BOOKS"
+  },
+  {
+    "id": "PRD-1795585631405",
+    "name": "6-FOUR-LINE COPIES",
+    "title": "6-FOUR-LINE COPIES",
+    "category": "exam-kits",
+    "price": 299,
+    "mrp": 350,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "HIGH CLASS GSM FOUR LINE COPIES SET OF 6",
+    "photos": [
+      "images/products/6-four-line-copies-1405-1.webp",
+      "images/products/6-four-line-copies-1405-2.webp",
+      "images/products/6-four-line-copies-1405-3.webp"
+    ],
+    "image": "images/products/6-four-line-copies-1405-1.webp",
+    "edition": "2026-2027",
+    "contents": "BUNDLE OF 6 FOUR LINE COPIES"
+  },
+  {
+    "id": "PRD-1795594881775",
+    "name": "CLASS 11TH HUMANITIES SPIRAL COPIES BUNDLE",
+    "title": "CLASS 11TH HUMANITIES SPIRAL COPIES BUNDLE",
+    "category": "academic",
+    "price": 1299,
+    "mrp": 1599,
+    "paymentMode": "both",
+    "badge": "\ud83d\udcda Board Exam 2026",
+    "stock": 40,
+    "desc": "SPIRAL BUNDLE OF NOTE BOOKS FOR CLASS 11TH HUMANITIES",
+    "photos": [
+      "images/products/class-11th-humanities-spiral-copies-bundle-1775-1.webp",
+      "images/products/class-11th-humanities-spiral-copies-bundle-1775-2.webp"
+    ],
+    "image": "images/products/class-11th-humanities-spiral-copies-bundle-1775-1.webp",
+    "classLevel": "11",
+    "edition": "2026-2027",
+    "contents": "BUNDLE OF SPIRAL NOTE BOOKS"
+  },
+  {
+    "id": "PRD-1795614169387",
+    "name": "NOORANI QAYIDA",
+    "title": "NOORANI QAYIDA",
+    "category": "stationery",
+    "price": 20,
+    "mrp": 29,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "NOORANI QAYIDA BOOK",
+    "photos": [
+      "images/products/noorani-qayida-9387-1.webp",
+      "images/products/noorani-qayida-9387-2.webp"
+    ],
+    "image": "images/products/noorani-qayida-9387-1.webp",
+    "edition": "2027",
+    "contents": "1 NOORANI QAYIDA BOOK"
+  },
+  {
+    "id": "PRD-1795614437439",
+    "name": "JKSSB CLASS IV (MTS AND SANITATION)",
+    "title": "JKSSB CLASS IV (MTS AND SANITATION)",
+    "category": "school-books",
+    "price": 299,
+    "mrp": 399,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "JKSSB NOTES FOR CLASS IV EXAM",
+    "photos": [
+      "images/products/jkssb-class-iv-mts-and-sanitation-7439-1.webp",
+      "images/products/jkssb-class-iv-mts-and-sanitation-7439-2.webp"
+    ],
+    "image": "images/products/jkssb-class-iv-mts-and-sanitation-7439-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 NOTES FOR JKSSB CLASS IV (MTS & SANITATION)"
+  },
+  {
+    "id": "PRD-1795614875973",
+    "name": "CELLO COLOUR UP KARYONS",
+    "title": "CELLO COLOUR UP KARYONS",
+    "category": "stationery",
+    "price": 49,
+    "mrp": 69,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "16 karyons pack of one",
+    "photos": [
+      "images/products/cello-colour-up-karyons-5973-1.webp"
+    ],
+    "image": "images/products/cello-colour-up-karyons-5973-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 pack of karyons"
+  },
+  {
+    "id": "PRD-1795616915386",
+    "name": "WATER COLOUR PENS",
+    "title": "WATER COLOUR PENS",
+    "category": "stationery",
+    "price": 29,
+    "mrp": 1,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "WATER COLOUR PENS SET OF 12 SHADES",
+    "photos": [
+      "images/products/water-colour-pens-5386-1.webp"
+    ],
+    "image": "images/products/water-colour-pens-5386-1.webp",
+    "contents": "SET OF 12 SHADED COLOUR PENS"
+  },
+  {
+    "id": "PRD-1795617536201",
+    "name": "CUSTOMISE BIRTHDAY FRAME FOR GIFTS",
+    "title": "CUSTOMISE BIRTHDAY FRAME FOR GIFTS",
+    "category": "stationery",
+    "price": 249,
+    "mrp": 299,
+    "paymentMode": "both",
+    "badge": "\u26a1 Fast Dispatch",
+    "stock": 20,
+    "desc": "CUSTOMISE BIRTHDAY PHOTO-FRAME",
+    "photos": [
+      "images/products/customise-birthday-frame-for-gifts-6201-1.webp",
+      "images/products/customise-birthday-frame-for-gifts-6201-2.webp"
+    ],
+    "image": "images/products/customise-birthday-frame-for-gifts-6201-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 PHOTO-FRAME FOR BIRTHDAY GIFT"
+  },
+  {
+    "id": "PRD-1795618093207",
+    "name": "7 ROUND TRY-GRIP BRUSHES",
+    "title": "7 ROUND TRY-GRIP BRUSHES",
+    "category": "stationery",
+    "price": 165,
+    "mrp": 175,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "7 BUNDLE OF TRY-GRIP BRUSHES",
+    "photos": [
+      "images/products/7-round-try-grip-brushes-3207-1.webp",
+      "images/products/7-round-try-grip-brushes-3207-2.webp",
+      "images/products/7-round-try-grip-brushes-3207-3.webp"
+    ],
+    "image": "images/products/7-round-try-grip-brushes-3207-1.webp",
+    "edition": "2026-2027",
+    "contents": "7 round burshes"
+  },
+  {
+    "id": "PRD-1795618920264",
+    "name": "HAUSER GERMANY 10 COLOUR INK PENS",
+    "title": "HAUSER GERMANY 10 COLOUR INK PENS",
+    "category": "stationery",
+    "price": 99,
+    "mrp": 100,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "XtraOrdinary Pens for an extraordinary you!",
+    "photos": [
+      "images/products/hauser-germany-10-colour-ink-pens-0264-1.webp",
+      "images/products/hauser-germany-10-colour-ink-pens-0264-2.webp",
+      "images/products/hauser-germany-10-colour-ink-pens-0264-3.webp"
+    ],
+    "image": "images/products/hauser-germany-10-colour-ink-pens-0264-1.webp",
+    "contents": "PACK OF 10 HAUSER COLOUR PENS"
+  },
+  {
+    "id": "PRD-1795619218194",
+    "name": "CELLO ROYAL FOUNTAIN PEN",
+    "title": "CELLO ROYAL FOUNTAIN PEN",
+    "category": "stationery",
+    "price": 99,
+    "mrp": 100,
+    "paymentMode": "both",
+    "badge": "\u2728 Featured",
+    "stock": 20,
+    "desc": "3 JUMBOO CARTRIDGES,FREE INK CONVERTER , STYLISH METAL CLIP..",
+    "photos": [
+      "images/products/cello-royal-fountain-pen-8194-1.webp",
+      "images/products/cello-royal-fountain-pen-8194-2.webp",
+      "images/products/cello-royal-fountain-pen-8194-3.webp"
+    ],
+    "image": "images/products/cello-royal-fountain-pen-8194-1.webp",
+    "contents": "1 PACK OF FOUNTAIN PEN"
+  },
+  {
+    "id": "PRD-1795619416750",
+    "name": "APSARA STENO HB-PENCILS",
+    "title": "APSARA STENO HB-PENCILS",
+    "category": "stationery",
+    "price": 56,
+    "mrp": 60,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "SMOOTH APSARA STENO PENCILS",
+    "photos": [
+      "images/products/apsara-steno-hb-pencils-6750-1.webp",
+      "images/products/apsara-steno-hb-pencils-6750-2.webp"
+    ],
+    "image": "images/products/apsara-steno-hb-pencils-6750-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 APSARA PENCIL BOX"
+  },
+  {
+    "id": "PRD-1795619606187",
+    "name": "ODDY ROLLER PEN FREE INK SYSTEM",
+    "title": "ODDY ROLLER PEN FREE INK SYSTEM",
+    "category": "stationery",
+    "price": 97,
+    "mrp": 100,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "10 ROLLER PENS WITH INK SYSTEM",
+    "photos": [
+      "images/products/oddy-roller-pen-free-ink-system-6187-1.webp",
+      "images/products/oddy-roller-pen-free-ink-system-6187-2.webp"
+    ],
+    "image": "images/products/oddy-roller-pen-free-ink-system-6187-1.webp",
+    "edition": "2026-2027",
+    "contents": "10 ODDY ROLLER PENS"
+  },
+  {
+    "id": "PRD-1795620111714",
+    "name": "FEVICRYL PASTEL ACRYLIC COLOURS",
+    "title": "FEVICRYL PASTEL ACRYLIC COLOURS",
+    "category": "stationery",
+    "price": 145,
+    "mrp": 180,
+    "paymentMode": "both",
+    "badge": "\u26a1 Fast Dispatch",
+    "stock": 20,
+    "desc": "6 COLOURS:- PEACH,YELLOW,MINT,LAVENDER,AQUA & PINK",
+    "photos": [
+      "images/products/fevicryl-pastel-acrylic-colours-1714-1.webp",
+      "images/products/fevicryl-pastel-acrylic-colours-1714-2.webp",
+      "images/products/fevicryl-pastel-acrylic-colours-1714-3.webp"
+    ],
+    "image": "images/products/fevicryl-pastel-acrylic-colours-1714-1.webp",
+    "contents": "6 SHADES OF PASTEL ACRYLIC COLOURS"
+  },
+  {
+    "id": "PRD-1795620386367",
+    "name": "DOMS MODELLING DOUGH 10-SHADES",
+    "title": "DOMS MODELLING DOUGH 10-SHADES",
+    "category": "stationery",
+    "price": 80,
+    "mrp": 85,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "DOUGH 10 SHADES DOMS",
+    "photos": [
+      "images/products/doms-modelling-dough-10-shades-6367-1.webp",
+      "images/products/doms-modelling-dough-10-shades-6367-2.webp",
+      "images/products/doms-modelling-dough-10-shades-6367-3.webp"
+    ],
+    "image": "images/products/doms-modelling-dough-10-shades-6367-1.webp",
+    "contents": "10 SHADED DOUGH PACK OF 1"
+  },
+  {
+    "id": "PRD-1795620825826",
+    "name": "CLASSMATE GEOMETRY BOX",
+    "title": "CLASSMATE GEOMETRY BOX",
+    "category": "stationery",
+    "price": 369,
+    "mrp": 400,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "MATHAMETICAL DRAWING INSTRUMENTS INCLUDING PEN PENCIL",
+    "photos": [
+      "images/products/classmate-geometry-box-5826-1.webp",
+      "images/products/classmate-geometry-box-5826-2.webp",
+      "images/products/classmate-geometry-box-5826-3.webp"
+    ],
+    "image": "images/products/classmate-geometry-box-5826-1.webp",
+    "edition": "2027",
+    "contents": "SPECTRA CLASSMATE GEOMETRY BOX"
+  },
+  {
+    "id": "PRD-1795620958446",
+    "name": "MILAN DELUXE ACCOUNTS BOOK",
+    "title": "MILAN DELUXE ACCOUNTS BOOK",
+    "category": "stationery",
+    "price": 349,
+    "mrp": 399,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "ACCOUNTS BOOK/ ATTENDANCE REGISTER BOOK",
+    "photos": [
+      "images/products/milan-deluxe-accounts-book-8446-1.webp",
+      "images/products/milan-deluxe-accounts-book-8446-2.webp"
+    ],
+    "image": "images/products/milan-deluxe-accounts-book-8446-1.webp",
+    "contents": "1 ACCOUNTS BOOK"
+  },
+  {
+    "id": "PRD-1795621134340",
+    "name": "GEOMETRY BOX",
+    "title": "GEOMETRY BOX",
+    "category": "stationery",
+    "price": 199,
+    "mrp": 219,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "ODDY GEOMETRY, METHAMETIICAL TOOL",
+    "photos": [
+      "images/products/geometry-box-4340-1.webp",
+      "images/products/geometry-box-4340-2.webp"
+    ],
+    "image": "images/products/geometry-box-4340-1.webp",
+    "contents": "1 ODDY GEOMETRY BOX"
+  },
+  {
+    "id": "PRD-1795621348867",
+    "name": "CALLIGRAPHY DUAL TIP BRUSH PEN",
+    "title": "CALLIGRAPHY DUAL TIP BRUSH PEN",
+    "category": "stationery",
+    "price": 243,
+    "mrp": 250,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "ART OF CREATIVITY CALLIGRAPHY BRUSHES",
+    "photos": [
+      "images/products/calligraphy-dual-tip-brush-pen-8867-1.webp",
+      "images/products/calligraphy-dual-tip-brush-pen-8867-2.webp",
+      "images/products/calligraphy-dual-tip-brush-pen-8867-3.webp"
+    ],
+    "image": "images/products/calligraphy-dual-tip-brush-pen-8867-1.webp"
+  },
+  {
+    "id": "PRD-1795621546025",
+    "name": "NURSING FOUNDATION (2ND-EDITION)",
+    "title": "NURSING FOUNDATION (2ND-EDITION)",
+    "category": "stationery",
+    "price": 1399,
+    "mrp": 1450,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "I&II 2nd-EDITION TEXTBOOK FOR NURSING FOUNDATION",
+    "photos": [
+      "images/products/nursing-foundation-2nd-edition-6025-1.webp",
+      "images/products/nursing-foundation-2nd-edition-6025-2.webp",
+      "images/products/nursing-foundation-2nd-edition-6025-3.webp"
+    ],
+    "image": "images/products/nursing-foundation-2nd-edition-6025-1.webp",
+    "edition": "2026-2027",
+    "contents": "NURSING FOUNDATION"
+  },
+  {
+    "id": "PRD-1795622012642",
+    "name": "SCIENCE RAFERANCE FOR 1OTH JKBOSE",
+    "title": "SCIENCE RAFERANCE FOR 1OTH JKBOSE",
+    "category": "school-books",
+    "price": 380,
+    "mrp": 400,
+    "paymentMode": "both",
+    "badge": "\ud83d\udd25 Bestseller",
+    "stock": 20,
+    "desc": "COMPLETE PHY,CH,BIO RAFERANCE FOR JKBOSE CLASS 10TH",
+    "photos": [
+      "images/products/science-raferance-for-1oth-jkbose-2642-1.webp",
+      "images/products/science-raferance-for-1oth-jkbose-2642-2.webp"
+    ],
+    "image": "images/products/science-raferance-for-1oth-jkbose-2642-1.webp",
+    "classLevel": "10",
+    "board": "JKBOSE",
+    "subject": "SCIENCE",
+    "edition": "2026-2027",
+    "contents": "1 SCIENCE REFERENCE FOR CLASS 10TH"
+  },
+  {
+    "id": "PRD-1795622121485",
+    "name": "SCRAP BOOK",
+    "title": "SCRAP BOOK",
+    "category": "stationery",
+    "price": 45,
+    "mrp": 48,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "CLASSMATE SMOOTH COLOURED SCRAP BOOK",
+    "photos": [
+      "images/products/scrap-book-1485-1.webp",
+      "images/products/scrap-book-1485-2.webp"
+    ],
+    "image": "images/products/scrap-book-1485-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 CLASSMATE SCRAP BOOK"
+  },
+  {
+    "id": "PRD-1795622265907",
+    "name": "BEST WISHES PAPER",
+    "title": "BEST WISHES PAPER",
+    "category": "stationery",
+    "price": 39,
+    "mrp": 22,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "BEST WISHES PAPER SET OF 2 (RANDOM COLOUR)",
+    "photos": [
+      "images/products/best-wishes-paper-5907-1.webp",
+      "images/products/best-wishes-paper-5907-2.webp"
+    ],
+    "image": "images/products/best-wishes-paper-5907-1.webp",
+    "edition": "2026-2027",
+    "contents": "2 BEST WISHES PAPER"
+  },
+  {
+    "id": "PRD-1795622400010",
+    "name": "CALCULATOR PINK CT888C",
+    "title": "CALCULATOR PINK CT888C",
+    "category": "stationery",
+    "price": 149,
+    "mrp": 199,
+    "paymentMode": "both",
+    "badge": "\u2728 Fresh Stock",
+    "stock": 20,
+    "desc": "1 CALCULATOR FOR MATHS PINK IN COLOUR",
+    "photos": [
+      "images/products/calculator-pink-ct888c-0010-1.webp",
+      "images/products/calculator-pink-ct888c-0010-2.webp"
+    ],
+    "image": "images/products/calculator-pink-ct888c-0010-1.webp",
+    "edition": "2026-2027",
+    "contents": "1 CALCULATOR"
   }
+
 ].map(product => ({ paymentMode: 'both', ...product }));
 
 const CANONICAL_PRODUCT_IDS = new Set(DEFAULT_PUBLISHED_PRODUCTS.map(p => String(p.id)));
