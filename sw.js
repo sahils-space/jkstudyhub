@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v204';
+const CACHE_NAME = 'jk-study-hub-v207';
 const urlsToCache = [
   './',
   './index.html',
@@ -98,10 +98,10 @@ self.addEventListener('message', event => {
   }
 });
 
-// Real-Time Live Update Strategy:
-// 1. Code assets (.html, .js, .css, navigation): Network-First with Cache Fallback
-//    Ensures users and mobile phones always get live code updates without clearing browser cookies/data.
-// 2. Images & media (.webp, .png, .jpg, .svg): Cache-First with Network Fallback for ultra-fast loading.
+// Fetch Strategy:
+// 1. Versioned JS/CSS (?v=...): Cache-First — version bump forces reload automatically
+// 2. HTML & navigation: Network-First with Cache Fallback — always fresh
+// 3. Images & media (.webp, .png, .jpg, .svg): Cache-First — ultra fast after first load
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
@@ -111,10 +111,29 @@ self.addEventListener('fetch', event => {
   }
 
   const isNavigation = event.request.mode === 'navigate' || event.request.destination === 'document';
-  const isCodeAsset = url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname === '';
+  const isHtml = url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname === '';
 
-  // Network-First for core code & HTML (always fresh updates online)
-  if (isNavigation || isCodeAsset) {
+  // Versioned JS/CSS (?v=): Cache-First — the version param guarantees freshness
+  const isVersionedAsset = (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) && url.search.includes('v=');
+
+  if (isVersionedAsset) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // Network-First for HTML navigation (always get fresh HTML)
+  if (isNavigation || isHtml) {
     event.respondWith(
       fetch(event.request)
         .then(response => {
@@ -143,7 +162,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Cache-First for static media (images, fonts)
+  // Cache-First for static media and unversioned JS/CSS (images, fonts, svg)
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) return cachedResponse;

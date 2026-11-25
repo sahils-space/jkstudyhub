@@ -12067,7 +12067,7 @@ function renderDynamicStationeryProducts() {
     return `
       <div class="product-card" data-product-id="${safeEscape(productId)}" data-render-signature="${safeEscape(renderSignature)}" data-category="${safeEscape(cat)}">
         <button class="wishlist-icon" onclick="${favHandler}" aria-label="Save ${safeEscape(pName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="${detailsHandler}" style="cursor:pointer;">
+        <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
           <h3 class="product-title" onclick="${detailsHandler}" style="cursor:pointer;">${safeEscape(pName)}</h3>
@@ -12155,7 +12155,7 @@ function renderComingSoonCatalogProductCard(product) {
   return `
     <div class="product-card" data-category="coming-soon">
       <button class="wishlist-icon" onclick="${favoriteHandler}" aria-label="Wishlist"><i class="fa-solid fa-heart"></i></button>
-      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="${detailsHandler}" style="cursor:pointer;">
+      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
       <div class="product-info">
         <span class="product-badge" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-hourglass-half"></i> ${safeEscape(badge)}</span>
         <h3 class="product-title" style="cursor:pointer;" onclick="${detailsHandler}">${safeEscape(productName)}</h3>
@@ -12208,7 +12208,7 @@ function renderSchoolCatalogProductCard(product, sectionType) {
   return `
     <div class="product-card school-catalog-product-card" data-product-id="${safeEscape(productId)}" data-category="${category}" data-class-level="${grade}" data-stock-status="${outOfStock ? 'out_of_stock' : 'in_stock'}">
       <button class="wishlist-icon" onclick="${favoriteHandler}" aria-label="Add ${safeEscape(productName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
-      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="${detailsHandler}" style="cursor:pointer;">
+      <img src="${image}" alt="${safeEscape(productName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
       <div class="product-info">
         <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
           ${sectionType === 'books' ? 'School Books' : 'School Copies & Registers'}${classMeta ? safeEscape(classMeta) : ''}
@@ -12322,7 +12322,7 @@ function renderSchoolCatalogSections() {
         <div class="product-card" data-product-id="${safeEscape(productId)}" style="border: 2px solid #ea580c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);" data-category="exam-kits">
           <button class="wishlist-icon" onclick="${favHandler}"><i class="fa-solid fa-heart"></i></button>
           <div style="position:relative;">
-            <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+            <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
             <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
               <i class="fa-solid fa-fire"></i> ${safeEscape(badge)}
             </span>

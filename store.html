@@ -24,6 +24,13 @@
   </script>
   <!-- Warm the connection for checkout when payment is requested -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
+  <!-- Speed: DNS prefetch & preconnect for all CDN resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+  <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
   <!-- Open Graph & Social Sharing Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="JK Study Hub - Books & School Copies at Less Than Bookshop Rates & Less Than MRP">
@@ -143,8 +150,15 @@
     })();
   </script>
   <link rel="stylesheet" href="style.css?v=26">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Extra theme CSS moved to head for no layout thrash -->
+  <link rel="stylesheet" href="premium-theme.css?v=1">
+  <link rel="stylesheet" href="brand-theme.css?v=2">
+  <!-- Font Awesome: load non-blocking, swap in after page paints -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+  <!-- Google Fonts: display=swap already non-blocking -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
   <style>
     body {
       background-color: #f8fafc;
@@ -196,11 +210,13 @@
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.03);
       border: 1px solid #e2e8f0;
-      transition: transform 0.25s, box-shadow 0.25s;
+      transition: transform 0.2s, box-shadow 0.2s;
       display: flex;
       flex-direction: column;
       width: 100%;
       box-sizing: border-box;
+      content-visibility: auto;
+      contain-intrinsic-size: 0 380px;
     }
     .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(15,23,42,0.08); }
     
@@ -4226,11 +4242,8 @@
     }
   </style>
 
-  <link rel="stylesheet" href="premium-theme.css?v=1">
-  <link rel="stylesheet" href="brand-theme.css?v=2">
   <style>
     .zapvi-top-bar {
-      background: linear-gradient(90deg, #172a22 0%, #315c4b 52%, #172a22 100%);
     }
     .zapvi-logo { color: #244638; }
     .zapvi-nav-link:hover,
@@ -5563,7 +5576,7 @@
     <div class="product-grid" id="copiesGrid">
       <div class="product-card school-catalog-product-card" data-category="school-copies" data-class-level="" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;SPIRAL COPIES SET OF 6 (302-PAGES)&#39;)" aria-label="Add SPIRAL COPIES SET OF 6 (302-PAGES) to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/spiral-copies-set-of-6.jpg" alt="SPIRAL COPIES SET OF 6 (302-PAGES)" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/spiral-copies-set-of-6.jpg" alt="SPIRAL COPIES SET OF 6 (302-PAGES)" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Copies & Registers
@@ -5588,7 +5601,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-copies" data-class-level="10" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;SPIRAL BUNDLE FOR CLASS 10TH&#39;)" aria-label="Add SPIRAL BUNDLE FOR CLASS 10TH to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/spiral-bundle-class-10th.jpg" alt="SPIRAL BUNDLE FOR CLASS 10TH" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/spiral-bundle-class-10th.jpg" alt="SPIRAL BUNDLE FOR CLASS 10TH" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Copies & Registers · Class 10th
@@ -5613,7 +5626,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-product-id="PRD-1795539734398" data-category="school-copies" data-class-level="11" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH-MED NOTE MAKING COPIES&#39;)" aria-label="Add CLASS 11TH-MED NOTE MAKING COPIES to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-11th-med-note-copies.jpg" alt="CLASS 11TH-MED NOTE MAKING COPIES" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;CLASS 11TH-MED NOTE MAKING COPIES&#39;)" style="cursor:pointer;">
+        <img src="images/products/class-11th-med-note-copies.jpg" alt="CLASS 11TH-MED NOTE MAKING COPIES" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async" onclick="openBookDetailsModal(&#39;CLASS 11TH-MED NOTE MAKING COPIES&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Copies &amp; Registers · Class 11th
@@ -5638,7 +5651,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-product-id="PRD-1795541254949" data-category="school-copies" data-class-level="12" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH-MED SPIRAL BUNDLE&#39;)" aria-label="Add CLASS 12TH-MED SPIRAL BUNDLE to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-12th-med-spiral-bundle.jpg" alt="CLASS 12TH-MED SPIRAL BUNDLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;CLASS 12TH-MED SPIRAL BUNDLE&#39;)" style="cursor:pointer;">
+        <img src="images/products/class-12th-med-spiral-bundle.jpg" alt="CLASS 12TH-MED SPIRAL BUNDLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async" onclick="openBookDetailsModal(&#39;CLASS 12TH-MED SPIRAL BUNDLE&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Copies &amp; Registers · Class 12th
@@ -5724,7 +5737,7 @@
     <div class="product-grid" id="schoolBooksGrid">
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="10" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 10TH BOOK SET&#39;)" aria-label="Add CLASS 10TH BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-10th-book-set.jpg" alt="CLASS 10TH BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-10th-book-set.jpg" alt="CLASS 10TH BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 10th
@@ -5749,7 +5762,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="11" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH-MED BOOK SET&#39;)" aria-label="Add CLASS 11TH-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-11th-med-book-set.jpg" alt="CLASS 11TH-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-11th-med-book-set.jpg" alt="CLASS 11TH-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 11th
@@ -5774,7 +5787,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="12" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH-MED BOOK SET&#39;)" aria-label="Add CLASS 12TH-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-12th-med-book-set.jpg" alt="CLASS 12TH-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-12th-med-book-set.jpg" alt="CLASS 12TH-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 12th
@@ -5799,7 +5812,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="11" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH NON-MED BOOK SET&#39;)" aria-label="Add CLASS 11TH NON-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-11th-non-med-book-set.jpg" alt="CLASS 11TH NON-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-11th-non-med-book-set.jpg" alt="CLASS 11TH NON-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 11th
@@ -5824,7 +5837,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="12" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH NON-MED BOOK SET&#39;)" aria-label="Add CLASS 12TH NON-MED BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-12th-non-med-book-set.jpg" alt="CLASS 12TH NON-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-12th-non-med-book-set.jpg" alt="CLASS 12TH NON-MED BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 12th
@@ -5849,7 +5862,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="9" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 9TH BOOK SET&#39;)" aria-label="Add CLASS 9TH BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-9th-book-set.jpg" alt="CLASS 9TH BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-9th-book-set.jpg" alt="CLASS 9TH BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 9th
@@ -5874,7 +5887,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="11" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 11TH-HUMANITIES BOOK SET&#39;)" aria-label="Add CLASS 11TH-HUMANITIES BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-11th-humanities-book-set.jpg" alt="CLASS 11TH-HUMANITIES BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-11th-humanities-book-set.jpg" alt="CLASS 11TH-HUMANITIES BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 11th
@@ -5899,7 +5912,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="12" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 12TH-HUMANITIES BOOK SET&#39;)" aria-label="Add CLASS 12TH-HUMANITIES BOOK SET to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/class-12th-humanities-book-set.jpg" alt="CLASS 12TH-HUMANITIES BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/class-12th-humanities-book-set.jpg" alt="CLASS 12TH-HUMANITIES BOOK SET" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 12th
@@ -5924,7 +5937,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="10" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;FOUNDATION COURSE CLASS 10TH&#39;)" aria-label="Add FOUNDATION COURSE CLASS 10TH to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/foundation-course-physics-10th.jpg" alt="FOUNDATION COURSE CLASS 10TH" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/foundation-course-physics-10th.jpg" alt="FOUNDATION COURSE CLASS 10TH" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 10th
@@ -5949,7 +5962,7 @@
       </div>
       <div class="product-card school-catalog-product-card" data-category="school-books" data-class-level="10" data-stock-status="in_stock">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CLASS 10TH-BIO FOUNDATION COURSE&#39;)" aria-label="Add CLASS 10TH-BIO FOUNDATION COURSE to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/foundation-course-bio-10th.jpg" alt="CLASS 10TH-BIO FOUNDATION COURSE" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+        <img src="images/products/foundation-course-bio-10th.jpg" alt="CLASS 10TH-BIO FOUNDATION COURSE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
         <div class="product-info">
           <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;">
             School Books · Class 10th
@@ -5989,7 +6002,7 @@
         <div class="product-card" style="border: 2px solid #ea580c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);" data-category="exam-kits">
           <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;CHEMISTRY MTG BOOK FOUNDATION COURSE&#39;)"><i class="fa-solid fa-heart"></i></button>
           <div style="position:relative;">
-            <img src="images/products/foundation-course-chem-10th.jpg" alt="CHEMISTRY MTG BOOK FOUNDATION COURSE" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+            <img src="images/products/foundation-course-chem-10th.jpg" alt="CHEMISTRY MTG BOOK FOUNDATION COURSE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
             <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
               <i class="fa-solid fa-fire"></i> 🔥 Bestseller
             </span>
@@ -6028,7 +6041,7 @@
       <div class="product-card" style="border: 2px solid #fb923c; background: #fffdfa; box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 10th Board Exam Master Kit (All 5 Subjects)')"><i class="fa-solid fa-heart"></i></button>
         <div style="position:relative;">
-          <img src="images/products/jkbose-class10-master-kit.webp" alt="Class 10th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+          <img src="images/products/jkbose-class10-master-kit.webp" alt="Class 10th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
           <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #ea580c, #c2410c); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(234,88,12,0.35);">
             <i class="fa-solid fa-fire"></i> 2026 ALL 5 SUBJECTS TOPPER PACK
           </span>
@@ -6073,7 +6086,7 @@
       <div class="product-card" style="border: 2px solid #8b5cf6; background: #faf5ff; box-shadow: 0 8px 24px rgba(139, 92, 246, 0.08);">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Class 12th Board Exam Master Kit (PCB / PCM / Arts)')"><i class="fa-solid fa-heart"></i></button>
         <div style="position:relative;">
-          <img src="images/products/jkbose-class12-master-kit.webp" alt="Class 12th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync">
+          <img src="images/products/jkbose-class12-master-kit.webp" alt="Class 12th Board Exam Master Kit" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async">
           <span class="product-badge" style="position:absolute; top:12px; left:12px; background:linear-gradient(135deg, #7c3aed, #6d28d9); color:#fff; font-weight:800; box-shadow:0 4px 10px rgba(124,58,237,0.35);">
             <i class="fa-solid fa-star"></i> 2026 BOARD SPECIAL • MERIT BOOSTER
           </span>
@@ -6119,7 +6132,7 @@
 <div id="dynamicStationeryContainer" style="display:contents;">
       <div class="product-card" data-product-id="PRD-1792043438782" data-render-signature="[&quot;PRD-1792043438782&quot;,&quot;Spectra paper A4&quot;,&quot;images/products/spectra-paper-a4-1.jpg&quot;,249,349,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;Premium A4 sheets, best for printing notes and documents&quot;,0]" data-category="stationery" style="--product-load-order:0">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Spectra paper A4&#39;)" aria-label="Save Spectra paper A4 to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;Spectra paper A4&#39;)" style="cursor:pointer;">
+        <img src="images/products/spectra-paper-a4-1.jpg" alt="Spectra paper A4" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Spectra paper A4&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;Spectra paper A4&#39;)" style="cursor:pointer;">Spectra paper A4</h3>
@@ -6142,7 +6155,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077265980" data-render-signature="[&quot;PRD-1792077265980&quot;,&quot;DOMS COLOUR PENCILS&quot;,&quot;images/products/doms-colour-pencils-1.jpg&quot;,39,59,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;Doms colour pencils For Good drawing Unbreakable,premium, original.&quot;,1]" data-category="stationery" style="--product-load-order:1">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;DOMS COLOUR PENCILS&#39;)" aria-label="Save DOMS COLOUR PENCILS to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/doms-colour-pencils-1.jpg" alt="DOMS COLOUR PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;DOMS COLOUR PENCILS&#39;)" style="cursor:pointer;">
+        <img src="images/products/doms-colour-pencils-1.jpg" alt="DOMS COLOUR PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;DOMS COLOUR PENCILS&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;DOMS COLOUR PENCILS&#39;)" style="cursor:pointer;">DOMS COLOUR PENCILS</h3>
@@ -6165,7 +6178,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077365690" data-render-signature="[&quot;PRD-1792077365690&quot;,&quot;DOMS SMALL COLOUR PENCILS&quot;,&quot;images/products/doms-small-colour-pencils-1.jpg&quot;,26,39,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;DOMS highly demanded Small Pencil colours, Original high Quality Colour.&quot;,2]" data-category="stationery" style="--product-load-order:2">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;DOMS SMALL COLOUR PENCILS&#39;)" aria-label="Save DOMS SMALL COLOUR PENCILS to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/doms-small-colour-pencils-1.jpg" alt="DOMS SMALL COLOUR PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;DOMS SMALL COLOUR PENCILS&#39;)" style="cursor:pointer;">
+        <img src="images/products/doms-small-colour-pencils-1.jpg" alt="DOMS SMALL COLOUR PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;DOMS SMALL COLOUR PENCILS&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;DOMS SMALL COLOUR PENCILS&#39;)" style="cursor:pointer;">DOMS SMALL COLOUR PENCILS</h3>
@@ -6188,7 +6201,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077436674" data-render-signature="[&quot;PRD-1792077436674&quot;,&quot;Classmate Geometry Box&quot;,&quot;images/products/classmate-geometry-box-1.jpg&quot;,185,200,&quot;✨ Featured&quot;,&quot;stationery&quot;,&quot;CLASSMATE Geometry Box, Mathematical Tools scales And formula sheet in it.&quot;,3]" data-category="stationery" style="--product-load-order:3">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Classmate Geometry Box&#39;)" aria-label="Save Classmate Geometry Box to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/classmate-geometry-box-1.jpg" alt="Classmate Geometry Box" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;Classmate Geometry Box&#39;)" style="cursor:pointer;">
+        <img src="images/products/classmate-geometry-box-1.jpg" alt="Classmate Geometry Box" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Classmate Geometry Box&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Featured</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;Classmate Geometry Box&#39;)" style="cursor:pointer;">Classmate Geometry Box</h3>
@@ -6211,7 +6224,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077512334" data-render-signature="[&quot;PRD-1792077512334&quot;,&quot;WATER COLOURS DOMS&quot;,&quot;images/products/water-colours-doms-1.jpg&quot;,59,70,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;Water colours Doms, For water drawing painting and diagrams...&quot;,4]" data-category="stationery" style="--product-load-order:4">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;WATER COLOURS DOMS&#39;)" aria-label="Save WATER COLOURS DOMS to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/water-colours-doms-1.jpg" alt="WATER COLOURS DOMS" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;WATER COLOURS DOMS&#39;)" style="cursor:pointer;">
+        <img src="images/products/water-colours-doms-1.jpg" alt="WATER COLOURS DOMS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;WATER COLOURS DOMS&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;WATER COLOURS DOMS&#39;)" style="cursor:pointer;">WATER COLOURS DOMS</h3>
@@ -6234,7 +6247,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077609528" data-render-signature="[&quot;PRD-1792077609528&quot;,&quot;DOMS GLUE STICK 10 PCS&quot;,&quot;images/products/doms-glue-stick-10-pcs-1.jpg&quot;,110,149,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;Newly launched,good quality Glue For sticking the notes diagrams and photographs&quot;,5]" data-category="stationery" style="--product-load-order:5">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;DOMS GLUE STICK 10 PCS&#39;)" aria-label="Save DOMS GLUE STICK 10 PCS to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/doms-glue-stick-10-pcs-1.jpg" alt="DOMS GLUE STICK 10 PCS" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;DOMS GLUE STICK 10 PCS&#39;)" style="cursor:pointer;">
+        <img src="images/products/doms-glue-stick-10-pcs-1.jpg" alt="DOMS GLUE STICK 10 PCS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;DOMS GLUE STICK 10 PCS&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;DOMS GLUE STICK 10 PCS&#39;)" style="cursor:pointer;">DOMS GLUE STICK 10 PCS</h3>
@@ -6257,7 +6270,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077729941" data-render-signature="[&quot;PRD-1792077729941&quot;,&quot;NIXON DOMS PEN BUNDLE&quot;,&quot;images/products/nixon-doms-pen-bundle-1.jpg&quot;,112,149,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;SMOOTH INXON PENS Bundle JUST ARRIVED GOOD QUALITY NOTES WRITTING AND BEAT FOR BOARD EXAMS&quot;,6]" data-category="stationery" style="--product-load-order:6">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;NIXON DOMS PEN BUNDLE&#39;)" aria-label="Save NIXON DOMS PEN BUNDLE to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/nixon-doms-pen-bundle-1.jpg" alt="NIXON DOMS PEN BUNDLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;NIXON DOMS PEN BUNDLE&#39;)" style="cursor:pointer;">
+        <img src="images/products/nixon-doms-pen-bundle-1.jpg" alt="NIXON DOMS PEN BUNDLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;NIXON DOMS PEN BUNDLE&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;NIXON DOMS PEN BUNDLE&#39;)" style="cursor:pointer;">NIXON DOMS PEN BUNDLE</h3>
@@ -6280,7 +6293,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1792077813239" data-render-signature="[&quot;PRD-1792077813239&quot;,&quot;PENCILS&quot;,&quot;images/products/pencils-1.jpg&quot;,79,99,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;DOMS PENCILS PACK, Dark and neat handwriting pencils for students&quot;,7]" data-category="stationery" style="--product-load-order:7">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;PENCILS&#39;)" aria-label="Save PENCILS to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/pencils-1.jpg" alt="PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;PENCILS&#39;)" style="cursor:pointer;">
+        <img src="images/products/pencils-1.jpg" alt="PENCILS" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;PENCILS&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;PENCILS&#39;)" style="cursor:pointer;">PENCILS</h3>
@@ -6303,7 +6316,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795461871490" data-render-signature="[&quot;PRD-1795461871490&quot;,&quot;Wesley Milestone Backpack (Grey &amp; Black)&quot;,&quot;images/products/wesley-milestone-backpack.jpg&quot;,899,1499,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;PREMIUM BACKPACK FOR SCHOOL AND LAPTOP&quot;,8]" data-category="stationery" style="--product-load-order:8">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" aria-label="Save Wesley Milestone Backpack (Grey &amp; Black) to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/wesley-milestone-backpack.jpg" alt="Wesley Milestone Backpack (Grey &amp; Black)" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" style="cursor:pointer;">
+        <img src="images/products/wesley-milestone-backpack.jpg" alt="Wesley Milestone Backpack (Grey &amp; Black)" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;Wesley Milestone Backpack (Grey &amp; Black)&#39;)" style="cursor:pointer;">Wesley Milestone Backpack (Grey &amp; Black)</h3>
@@ -6326,7 +6339,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795462446020" data-render-signature="[&quot;PRD-1795462446020&quot;,&quot;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&quot;,&quot;images/products/customisable-led-water-bottle.jpg&quot;,379,599,&quot;⚡ Fast Dispatch&quot;,&quot;stationery&quot;,&quot;Customisable Name LED Temperature Display Insulated Water Bottle (500ml, Matte Black). Personalised with permanent laser engraving — ideal for students, office use, coaching, and gifting!&quot;,9]" data-category="stationery" style="--product-load-order:8">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" aria-label="Save Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black) to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/customisable-led-water-bottle.jpg" alt="Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" style="cursor:pointer;">
+        <img src="images/products/customisable-led-water-bottle.jpg" alt="Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ⚡ Fast Dispatch</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)&#39;)" style="cursor:pointer;">Customisable Name LED Temperature Smart Water Bottle (500ml, Matte Black)</h3>
@@ -6349,7 +6362,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795543976195" data-render-signature="[&quot;PRD-1795543976195&quot;,&quot;MODERN-PERIODIC TABLE&quot;,&quot;images/products/modern-periodic-table.jpg&quot;,15,19,&quot;✨ Featured&quot;,&quot;stationery&quot;,&quot;MODERN PERIODIC TABLE&quot;,10]" data-category="stationery">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;MODERN-PERIODIC TABLE&#39;)" aria-label="Save MODERN-PERIODIC TABLE to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/modern-periodic-table.jpg" alt="MODERN-PERIODIC TABLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;MODERN-PERIODIC TABLE&#39;)" style="cursor:pointer;">
+        <img src="images/products/modern-periodic-table.jpg" alt="MODERN-PERIODIC TABLE" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;MODERN-PERIODIC TABLE&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Featured</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;MODERN-PERIODIC TABLE&#39;)" style="cursor:pointer;">MODERN-PERIODIC TABLE</h3>
@@ -6372,7 +6385,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795545264747" data-render-signature="[&quot;PRD-1795545264747&quot;,&quot;BASIC CALCULATOR&quot;,&quot;images/products/basic-calculator.jpg&quot;,80,129,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;CALCULATOR BASIC FOR STUDENTS&quot;,11]" data-category="stationery">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;BASIC CALCULATOR&#39;)" aria-label="Save BASIC CALCULATOR to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/basic-calculator.jpg" alt="BASIC CALCULATOR" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;BASIC CALCULATOR&#39;)" style="cursor:pointer;">
+        <img src="images/products/basic-calculator.jpg" alt="BASIC CALCULATOR" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;BASIC CALCULATOR&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;BASIC CALCULATOR&#39;)" style="cursor:pointer;">BASIC CALCULATOR</h3>
@@ -6395,7 +6408,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795545713872" data-render-signature="[&quot;PRD-1795545713872&quot;,&quot;TRANSPARENT FILE (COVER SET OF 4 )&quot;,&quot;images/products/transparent-file-cover-4.jpg&quot;,64,64,&quot;⚡ Fast Dispatch&quot;,&quot;stationery&quot;,&quot;SET OF 4 FILE-COVER&quot;,12]" data-category="stationery">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;TRANSPARENT FILE (COVER SET OF 4 )&#39;)" aria-label="Save TRANSPARENT FILE (COVER SET OF 4 ) to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/transparent-file-cover-4.jpg" alt="TRANSPARENT FILE (COVER SET OF 4 )" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;TRANSPARENT FILE (COVER SET OF 4 )&#39;)" style="cursor:pointer;">
+        <img src="images/products/transparent-file-cover-4.jpg" alt="TRANSPARENT FILE (COVER SET OF 4 )" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;TRANSPARENT FILE (COVER SET OF 4 )&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ⚡ Fast Dispatch</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;TRANSPARENT FILE (COVER SET OF 4 )&#39;)" style="cursor:pointer;">TRANSPARENT FILE (COVER SET OF 4 )</h3>
@@ -6417,7 +6430,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795545966154" data-render-signature="[&quot;PRD-1795545966154&quot;,&quot;STICKY NOTES&quot;,&quot;images/products/sticky-notes-pack.jpg&quot;,149,199,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;1 PACK OF FOUR COLOURED STICKY NOTES&quot;,13]" data-category="stationery">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;STICKY NOTES&#39;)" aria-label="Save STICKY NOTES to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/sticky-notes-pack.jpg" alt="STICKY NOTES" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;STICKY NOTES&#39;)" style="cursor:pointer;">
+        <img src="images/products/sticky-notes-pack.jpg" alt="STICKY NOTES" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;STICKY NOTES&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;STICKY NOTES&#39;)" style="cursor:pointer;">STICKY NOTES</h3>
@@ -6440,7 +6453,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795546693982" data-render-signature="[&quot;PRD-1795546693982&quot;,&quot;GLUE GUN&quot;,&quot;images/products/glue-gun-20w.jpg&quot;,249,349,&quot;✨ Fresh Stock&quot;,&quot;stationery&quot;,&quot;Get quick, reliable bonding for all your DIY crafts, school projects, and everyday household repairs with this compact 20W Hot Melt Glue Gun.&quot;,14]" data-category="stationery">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;GLUE GUN&#39;)" aria-label="Save GLUE GUN to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/glue-gun-20w.jpg" alt="GLUE GUN" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;GLUE GUN&#39;)" style="cursor:pointer;">
+        <img src="images/products/glue-gun-20w.jpg" alt="GLUE GUN" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;GLUE GUN&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ✨ Fresh Stock</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;GLUE GUN&#39;)" style="cursor:pointer;">GLUE GUN</h3>
@@ -6463,7 +6476,7 @@
       </div>
       <div class="product-card" data-product-id="PRD-1795549591672" data-render-signature="[&quot;PRD-1795549591672&quot;,&quot;EXAM CLIPBOARD (TRANSPARENT)&quot;,&quot;images/products/exam-clipboard-transparent.jpg&quot;,139,199,&quot;🔥 Bestseller&quot;,&quot;stationery&quot;,&quot;CRYSTAL CLEAR EXAM CLIPBOARD&quot;,15]" data-category="stationery">
         <button class="wishlist-icon" onclick="toggleFavorite(this, &#39;EXAM CLIPBOARD (TRANSPARENT)&#39;)" aria-label="Save EXAM CLIPBOARD (TRANSPARENT) to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/exam-clipboard-transparent.jpg" alt="EXAM CLIPBOARD (TRANSPARENT)" class="product-img" onerror="this.src='images/logo-app.png'" loading="eager" decoding="sync" onclick="openBookDetailsModal(&#39;EXAM CLIPBOARD (TRANSPARENT)&#39;)" style="cursor:pointer;">
+        <img src="images/products/exam-clipboard-transparent.jpg" alt="EXAM CLIPBOARD (TRANSPARENT)" class="product-img" onerror="this.src='images/logo-app.png'" loading="lazy" decoding="async" onclick="openBookDetailsModal(&#39;EXAM CLIPBOARD (TRANSPARENT)&#39;)" style="cursor:pointer;">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> 🔥 Bestseller</span>
           <h3 class="product-title" onclick="openBookDetailsModal(&#39;EXAM CLIPBOARD (TRANSPARENT)&#39;)" style="cursor:pointer;">EXAM CLIPBOARD (TRANSPARENT)</h3>
@@ -6488,7 +6501,7 @@
       
       <div class="product-card" data-category="academic">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Physical Education Master Notes')" aria-label="Save Physical Education Master Notes to wishlist"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/physical-education-notes-cover.webp" alt="JK Study Hub Physical Education Master Notes cover" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/physical-education-notes-cover.webp" alt="JK Study Hub Physical Education Master Notes cover" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#dcfce7; color:#166534;"><i class="fa-solid fa-person-running"></i> JKBOSE Academic Notes</span>
           <h3 class="product-title" onclick="openBookDetailsModal('Physical Education Master Notes')" style="cursor:pointer;">Physical Education Master Notes</h3>
@@ -6513,7 +6526,7 @@
       <!-- New Item 1: JKBOSE Solved Papers & Revision Kit -->
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'JKBOSE Board Exam Solved Papers Kit')"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/jkbose-solved-papers.webp" alt="JKBOSE Solved Papers" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/jkbose-solved-papers.webp" alt="JKBOSE Solved Papers" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fee2e2; color:#b91c1c;"><i class="fa-solid fa-fire"></i> Exam Bestseller</span>
           <h3 class="product-title">JKBOSE Board Solved Papers &amp; Guide</h3>
@@ -6538,7 +6551,7 @@
       <!-- New Item 2: Complete Board Exam Stationery Combo Pack -->
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Board Exam Stationery Combo Pack')"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/board-exam-stationery-combo.webp" alt="Exam Stationery Combo" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/board-exam-stationery-combo.webp" alt="Exam Stationery Combo" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-bolt"></i> Value Combo Pack</span>
           <h3 class="product-title">Board Exam Stationery Combo</h3>
@@ -6563,7 +6576,7 @@
       <!-- New Item 3: Custom Notes Laser Printing & Spiral Binding -->
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this, 'Custom PDF Printing & Spiral Binding')"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/pdf-printing-spiral.webp" alt="Custom PDF Printing & Spiral Binding" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/pdf-printing-spiral.webp" alt="Custom PDF Printing & Spiral Binding" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge" style="background:#e0e7ff; color:#3730a3;"><i class="fa-solid fa-print"></i> Print on Demand</span>
           <h3 class="product-title">PDF Printing &amp; Spiral Binding</h3>
@@ -6587,7 +6600,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/printed-pyqs-syllabus.webp" alt="Printed Notes" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/printed-pyqs-syllabus.webp" alt="Printed Notes" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">Top Seller</span>
           <h3 class="product-title">Printed PYQs & Syllabus</h3>
@@ -6606,7 +6619,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/instant-notes.webp" alt="Instant Notes" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/instant-notes.webp" alt="Instant Notes" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">High Demand</span>
           <h3 class="product-title">Instant Notes (Per Subject)</h3>
@@ -6625,7 +6638,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/exam-survival-kit.webp" alt="Exam Kit" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/exam-survival-kit.webp" alt="Exam Kit" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">Bundle & Save 20%</span>
           <h3 class="product-title">Exam Survival Kit</h3>
@@ -6644,7 +6657,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/premium-spiral-copies.webp" alt="Spiral Notebooks" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/premium-spiral-copies.webp" alt="Spiral Notebooks" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Premium Spiral Copies (Set of 2)</h3>
           <p class="product-desc">High-GSM thick paper spiral notebooks perfect for rough work and heavy note-taking.</p>
@@ -6662,7 +6675,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/geometry-box.webp" alt="Geometry Box" class="product-img" loading="eager" decoding="sync">
+        <img src="images/geometry-box.webp" alt="Geometry Box" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Geometry Box Pro</h3>
           <p class="product-desc">Advanced compass, precise scales, and everything you need for complex mathematical diagrams.</p>
@@ -6680,7 +6693,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/quran.webp" alt="Holy Quran" class="product-img" loading="eager" decoding="sync">
+        <img src="images/quran.webp" alt="Holy Quran" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">The Holy Quran</h3>
           <p class="product-desc">Beautifully printed edition with clear, readable fonts. Perfect for daily recitation.</p>
@@ -6698,7 +6711,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/diary.webp" alt="Gift Diary" class="product-img" loading="eager" decoding="sync">
+        <img src="images/diary.webp" alt="Gift Diary" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Beautiful Gift Diary</h3>
           <p class="product-desc">A gorgeous compact diary. Perfect as a Teacher's Day gift or for personal journaling.</p>
@@ -6716,7 +6729,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/premium-pen-set.webp" alt="Premium Pens" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/premium-pen-set.webp" alt="Premium Pens" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Premium Pen Set</h3>
           <p class="product-desc">A set of high-quality, smooth-writing premium pens for exams and professional use.</p>
@@ -6734,7 +6747,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/pen-stand.webp" alt="Pen Stand" class="product-img" loading="eager" decoding="sync">
+        <img src="images/pen-stand.webp" alt="Pen Stand" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">Desk Pen Stand</h3>
           <p class="product-desc">Keep your study desk organized and clean with this stylish and durable pen stand.</p>
@@ -6752,7 +6765,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/study-table.webp" alt="Study Table" class="product-img" loading="eager" decoding="sync">
+        <img src="images/study-table.webp" alt="Study Table" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <span class="product-badge">Premium</span>
           <h3 class="product-title">Folding Study Table</h3>
@@ -6773,7 +6786,7 @@
 
       <div class="product-card">
         <button class="wishlist-icon" onclick="toggleFavorite(this)"><i class="fa-solid fa-heart"></i></button>
-        <img src="images/products/led-study-lamp.webp" alt="Study Lamp" class="product-img" loading="eager" decoding="sync">
+        <img src="images/products/led-study-lamp.webp" alt="Study Lamp" class="product-img" loading="lazy" decoding="async">
         <div class="product-info">
           <h3 class="product-title">LED Study Table Lamp</h3>
           <p class="product-desc">Bright, eye-friendly LED lamp for late-night study sessions. Flexible neck and modern design.</p>
@@ -7418,9 +7431,9 @@
     </div>
   </div>
 
-  <script src="analytics.js?v=2"></script>
-  <script src="ads-media.js?v=90.0"></script>
-  <script src="store.js?v=92.45"></script>
+  <script defer src="analytics.js?v=2"></script>
+  <script defer src="ads-media.js?v=90.0"></script>
+  <script src="store.js?v=92.46"></script>
 
   <!-- Legal Footer for Payment Gateway -->
   <footer style="background: #0f172a; padding: 20px 0; text-align: center; font-size: 13px; color: #94a3b8; margin-top: 40px;">
