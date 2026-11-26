@@ -4648,6 +4648,159 @@
         font-size: 13px !important;
       }
     }
+
+    /* =====================================================================
+       HIGH-CONTRAST LOUD E-COMMERCE THEME (Fixes all-white washed-out look)
+       ===================================================================== */
+    body:not(.dark-mode) {
+      background-color: #e2e8f0 !important;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.09) 0px, transparent 45%),
+        radial-gradient(at 100% 0%, rgba(15, 23, 42, 0.06) 0px, transparent 45%),
+        linear-gradient(180deg, #e2e8f0 0%, #dce4f0 55%, #e6edf7 100%) !important;
+      color: #0f172a !important;
+    }
+
+    /* Bold Royal Top Announcement Bar */
+    body:not(.dark-mode) .zapvi-top-bar {
+      background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Deep Navy Sticky Navigation Bar */
+    body:not(.dark-mode) .zapvi-store-nav {
+      background: #0f172a !important;
+      border-bottom: 3px solid #2563eb !important;
+      box-shadow: 0 6px 22px rgba(15, 23, 42, 0.24) !important;
+    }
+    body:not(.dark-mode) .zapvi-logo {
+      color: #ffffff !important;
+    }
+    body:not(.dark-mode) .zapvi-nav-link {
+      color: #e2e8f0 !important;
+    }
+    body:not(.dark-mode) .zapvi-nav-link:hover,
+    body:not(.dark-mode) .zapvi-nav-link.active {
+      color: #ffffff !important;
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-color: #facc15;
+      text-decoration-thickness: 2.5px;
+    }
+    body:not(.dark-mode) .zapvi-icon-btn {
+      background: rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    body:not(.dark-mode) .zapvi-icon-btn:hover {
+      background: #2563eb !important;
+      border-color: #60a5fa !important;
+    }
+
+    /* High-Contrast Trust Strip & Filter Pills */
+    body:not(.dark-mode) .trust-pill {
+      background: #ffffff !important;
+      border: 1.5px solid #94a3b8 !important;
+      color: #0f172a !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+    }
+    body:not(.dark-mode) .store-filter-chip,
+    body:not(.dark-mode) .category-chip,
+    body:not(.dark-mode) .quick-cat-pill {
+      background: #ffffff !important;
+      border: 1.5px solid #94a3b8 !important;
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    body:not(.dark-mode) .store-filter-chip.active,
+    body:not(.dark-mode) .category-chip.active,
+    body:not(.dark-mode) .quick-cat-pill.active {
+      background: #0f172a !important;
+      color: #facc15 !important;
+      border-color: #0f172a !important;
+    }
+
+    /* Bold Category Section Headers */
+    body:not(.dark-mode) .category-title {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      font-weight: 800 !important;
+      border: 1.5px solid #cbd5e1 !important;
+      border-left: 6px solid #2563eb !important;
+      border-radius: 12px !important;
+      padding: 12px 18px !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+      margin-top: 28px !important;
+      margin-bottom: 16px !important;
+    }
+    body:not(.dark-mode) .category-title i {
+      color: #2563eb !important;
+    }
+
+    /* High-Contrast Product Cards Popping Off Slate Canvas */
+    body:not(.dark-mode) .product-card {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08) !important;
+    }
+    body:not(.dark-mode) .product-card:hover {
+      border-color: #2563eb !important;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.18) !important;
+    }
+    body:not(.dark-mode) .product-img {
+      background: #f8fafc !important;
+      border-bottom: 1.5px solid #e2e8f0 !important;
+    }
+    body:not(.dark-mode) .product-title {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    body:not(.dark-mode) .product-desc {
+      color: #334155 !important;
+      font-weight: 500 !important;
+    }
+    body:not(.dark-mode) .product-price {
+      color: #0f172a !important;
+      font-weight: 900 !important;
+      font-size: 21px !important;
+    }
+    body:not(.dark-mode) .product-badge {
+      background: #dcfce7 !important;
+      color: #15803d !important;
+      border: 1px solid #86efac !important;
+      font-weight: 800 !important;
+    }
+    body:not(.dark-mode) .buy-btn {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28) !important;
+    }
+    body:not(.dark-mode) .buy-btn:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    }
+    body:not(.dark-mode) .product-actions .btn-icon {
+      border: 1.5px solid #94a3b8 !important;
+      color: #0f172a !important;
+      background: #f8fafc !important;
+    }
+
+    /* High-Contrast Mobile Bottom Nav */
+    body:not(.dark-mode) .mobile-bottom-nav {
+      background: #0f172a !important;
+      border-top: 2.5px solid #2563eb !important;
+      box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.25) !important;
+    }
+    body:not(.dark-mode) .mobile-bottom-nav .mobile-nav-item {
+      color: #cbd5e1 !important;
+    }
+    body:not(.dark-mode) .mobile-bottom-nav .mobile-nav-item.active {
+      color: #facc15 !important;
+      font-weight: 800 !important;
+    }
   </style>
 </head>
 <body>
@@ -4672,7 +4825,7 @@
     <!-- Center Navigation Links -->
     <div class="zapvi-nav-center">
       <a href="index.html" class="zapvi-nav-link active">Store</a>
-      <a href="hub.html" class="zapvi-nav-link" style="color: #2563eb; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-solid fa-graduation-cap"></i> Free Study Hub</a>
+      <a href="hub.html" class="zapvi-nav-link" style="color: #facc15 !important; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-solid fa-graduation-cap"></i> Free Study Hub</a>
 
       <!-- "More ⌵" Dropdown -->
       <div class="zapvi-dropdown" id="zapviMoreDropdown">

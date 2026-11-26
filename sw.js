@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jk-study-hub-v215';
+const CACHE_NAME = 'jk-study-hub-v216';
 const urlsToCache = [
   './',
   './index.html',
