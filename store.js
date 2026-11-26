@@ -34,12 +34,17 @@ const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
   'OD1792945161265833' // Legacy cancelled order mis-tagged as CATALOG_PRODUCT
 ]);
 
-// One-time unhide of all previously added products that may have been hidden in jk_deleted_catalog_ids
+// One-time unhide of all previously added products and stale price cache reset
 (function unhideAddedCatalogProductsOnce() {
   try {
     if (localStorage.getItem('jk_unhide_all_added_20261127') !== 'true') {
       localStorage.setItem('jk_deleted_catalog_ids', '[]');
       localStorage.setItem('jk_unhide_all_added_20261127', 'true');
+    }
+    if (localStorage.getItem('jk_lock_canonical_prices_20261127') !== 'true') {
+      localStorage.removeItem('jk_custom_prices');
+      localStorage.removeItem('jk_custom_mrps');
+      localStorage.setItem('jk_lock_canonical_prices_20261127', 'true');
     }
   } catch (e) {}
 })();
