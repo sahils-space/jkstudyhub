@@ -51,6 +51,11 @@ const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
       localStorage.removeItem('jk_uploaded_catalog');
       localStorage.setItem('jk_fix_bookset_cat_20261127', 'true');
     }
+    if (localStorage.getItem('jk_fix_dup_prices_20261127') !== 'true') {
+      localStorage.removeItem('jk_custom_prices');
+      localStorage.removeItem('jk_custom_mrps');
+      localStorage.setItem('jk_fix_dup_prices_20261127', 'true');
+    }
   } catch (e) {}
 })();
 
@@ -11666,8 +11671,8 @@ const DEFAULT_PUBLISHED_PRODUCTS = [
   },
   {
     "id": "PRD-1795620825826",
-    "name": "CLASSMATE GEOMETRY BOX",
-    "title": "CLASSMATE GEOMETRY BOX",
+    "name": "CLASSMATE GEOMETRY BOX (DELUXE PACK)",
+    "title": "CLASSMATE GEOMETRY BOX (DELUXE PACK)",
     "category": "stationery",
     "price": 369,
     "mrp": 400,
@@ -12781,6 +12786,12 @@ function initRealtimeCatalogSync() {
         snapshot.forEach(doc => {
           const item = doc.data();
           if (item && item.name) {
+            const normName = normalizeCatalogIdentity(item.name);
+            const updatedAt = Number(item.updatedAt || 0);
+            // Never let historical stale price_overrides overwrite baked canonical product prices
+            if (CANONICAL_PRODUCT_NAMES.has(normName) && updatedAt <= 1795725000000) {
+              return;
+            }
             if (item.price !== undefined && item.price !== null) {
               priceMap[item.name] = Number(item.price);
             }

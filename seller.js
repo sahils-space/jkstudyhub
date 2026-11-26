@@ -5119,8 +5119,8 @@ const DEFAULT_SELLER_PRODUCTS = [
   },
   {
     "id": "PRD-1795620825826",
-    "name": "CLASSMATE GEOMETRY BOX",
-    "title": "CLASSMATE GEOMETRY BOX",
+    "name": "CLASSMATE GEOMETRY BOX (DELUXE PACK)",
+    "title": "CLASSMATE GEOMETRY BOX (DELUXE PACK)",
     "category": "stationery",
     "price": 369,
     "mrp": 400,
