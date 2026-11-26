@@ -5308,6 +5308,111 @@ const DEFAULT_SELLER_PRODUCTS = [
       "images/products/customisable-scrapbook-collage-photo-frame-7415-3.webp"
     ],
     "image": "images/products/customisable-scrapbook-collage-photo-frame-7415-1.webp"
+  },
+  {
+    "id": "PRD-1795715155408",
+    "name": "SPECIAL 11TH ALL-IN-ONE SESSION STARTER COMBO",
+    "title": "SPECIAL 11TH ALL-IN-ONE SESSION STARTER COMBO",
+    "category": "school-books",
+    "price": 2999,
+    "mrp": 3299,
+    "paymentMode": "both",
+    "deliveryMode": "free",
+    "freeDelivery": true,
+    "deliveryCharge": 0,
+    "badge": "\u2728 Combo Kit",
+    "stock": 20,
+    "classLevel": "11",
+    "board": "JKBOSE",
+    "desc": "ESPECIAL-COMBO KIT FOR NEWLY 11TH STUDENTS (FREE DELIVERY ACROSS KASHMIR)",
+    "photos": [
+      "images/products/special-11th-all-in-one-combo-2999.webp"
+    ],
+    "image": "images/products/special-11th-all-in-one-combo-2999.webp"
+  },
+  {
+    "id": "PRD-1795717172378",
+    "name": "SPECIAL 11TH-ALL-IN-ONE SESSION STARTER COMBO",
+    "title": "SPECIAL 11TH-ALL-IN-ONE SESSION STARTER COMBO",
+    "category": "school-books",
+    "price": 2619,
+    "mrp": 2799,
+    "paymentMode": "both",
+    "deliveryMode": "free",
+    "freeDelivery": true,
+    "deliveryCharge": 0,
+    "badge": "\u2728 Arts Combo",
+    "stock": 20,
+    "classLevel": "11",
+    "board": "JKBOSE",
+    "desc": "CLASS 11TH ARTS STREAM CLASSES START KIT",
+    "photos": [
+      "images/products/special-11th-arts-all-in-one-combo-2619.webp"
+    ],
+    "image": "images/products/special-11th-arts-all-in-one-combo-2619.webp"
+  },
+  {
+    "id": "PRD-1795717801573",
+    "name": "SPECIAL 12TH ALL-IN-ONE SESSION STARTER COMBO",
+    "title": "SPECIAL 12TH ALL-IN-ONE SESSION STARTER COMBO",
+    "category": "school-books",
+    "price": 2839,
+    "mrp": 2987,
+    "paymentMode": "both",
+    "deliveryMode": "free",
+    "freeDelivery": true,
+    "deliveryCharge": 0,
+    "badge": "\u2728 Combo Kit",
+    "stock": 20,
+    "classLevel": "12",
+    "board": "JKBOSE",
+    "desc": "COMBO KIT FOR 12TH SESSION STARTER",
+    "photos": [
+      "images/products/special-12th-all-in-one-combo-2839.webp"
+    ],
+    "image": "images/products/special-12th-all-in-one-combo-2839.webp"
+  },
+  {
+    "id": "PRD-1795719643222",
+    "name": "SPECIAL 12TH ALL-IN-ONE SESSION STARTER COMBO (BUNDLE)",
+    "title": "SPECIAL 12TH ALL-IN-ONE SESSION STARTER COMBO (BUNDLE)",
+    "category": "school-books",
+    "price": 3039,
+    "mrp": 3378,
+    "paymentMode": "both",
+    "deliveryMode": "free",
+    "freeDelivery": true,
+    "deliveryCharge": 0,
+    "badge": "\u2728 Full Bundle",
+    "stock": 20,
+    "classLevel": "12",
+    "board": "JKBOSE",
+    "desc": "ALL SET OF BUNDLE 12TH SESSION STARTER BUNDLE",
+    "photos": [
+      "images/products/special-12th-all-in-one-combo-3039.webp"
+    ],
+    "image": "images/products/special-12th-all-in-one-combo-3039.webp"
+  },
+  {
+    "id": "PRD-1795722354041",
+    "name": "SPECIAL 10TH ALL-IN-ONE SESSION STARTER COMBO",
+    "title": "SPECIAL 10TH ALL-IN-ONE SESSION STARTER COMBO",
+    "category": "school-books",
+    "price": 3239,
+    "mrp": 3499,
+    "paymentMode": "both",
+    "deliveryMode": "free",
+    "freeDelivery": true,
+    "deliveryCharge": 0,
+    "badge": "\u2728 Combo Kit",
+    "stock": 20,
+    "classLevel": "10",
+    "board": "JKBOSE",
+    "desc": "ALL SET OF SESSION STARTER FOR CLASS 10TH",
+    "photos": [
+      "images/products/special-10th-all-in-one-combo-3239.webp"
+    ],
+    "image": "images/products/special-10th-all-in-one-combo-3239.webp"
   }
 ].map(product => ({ paymentMode: 'both', ...product }));
 
