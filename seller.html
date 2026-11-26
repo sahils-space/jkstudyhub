@@ -631,6 +631,18 @@
                   <small style="display: block; font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.35;">Select <strong>Both</strong> so Pattan (193121) can use Cash on Delivery or Online, while all other PINs automatically allow Prepaid Online only.</small>
                 </div>
                 <div>
+                  <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Delivery Charges *</label>
+                  <select id="catDeliveryMode" class="seller-lock-input" onchange="toggleSellerCustomDeliveryInput(this.value, 'catCustomDeliveryWrapper')" required>
+                    <option value="standard" selected>Standard District Delivery (Default)</option>
+                    <option value="free">Free Delivery (₹0 — All J&amp;K)</option>
+                    <option value="custom">Custom Delivery Charge (₹)</option>
+                  </select>
+                  <div id="catCustomDeliveryWrapper" style="display: none; margin-top: 8px;">
+                    <input type="number" id="catDeliveryCharge" class="seller-lock-input" placeholder="Enter delivery fee in ₹ (e.g. 50)" min="0" step="1">
+                  </div>
+                  <small style="display: block; font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.35;">Choose <strong>Free Delivery</strong> to waive shipping charges for this product, or set a custom per-product delivery fee.</small>
+                </div>
+                <div>
                   <label style="font-size: 12.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Stock Available</label>
                   <input type="number" id="catStock" class="seller-lock-input" placeholder="e.g. 25" value="20" min="0">
                 </div>
@@ -838,6 +850,15 @@
                 <option value="prepaid">Prepaid / Online only (All PIN Codes)</option>
               </select>
               <p style="font-size:11px; color:#64748b; margin:5px 0 0; line-height:1.35;">Strict PIN 193121 COD blocking stays active at checkout: non-193121 PIN codes always fall back to Prepaid Online when "Both" is selected.</p>
+              <label for="sellerEditDeliveryMode" style="display:block; font-size:12.5px; font-weight:700; margin:14px 0 5px; color:#475569;">Delivery Charges *</label>
+              <select id="sellerEditDeliveryMode" class="seller-lock-input" onchange="toggleSellerCustomDeliveryInput(this.value, 'sellerEditCustomDeliveryWrapper')" required>
+                <option value="standard">Standard District Delivery (Default)</option>
+                <option value="free">Free Delivery (₹0 — All J&amp;K)</option>
+                <option value="custom">Custom Delivery Charge (₹)</option>
+              </select>
+              <div id="sellerEditCustomDeliveryWrapper" style="display:none; margin-top:8px;">
+                <input type="number" id="sellerEditDeliveryCharge" class="seller-lock-input" placeholder="Enter delivery fee in ₹ (e.g. 50)" min="0" step="1">
+              </div>
               <label for="sellerEditCategory" style="display:block; font-size:12.5px; font-weight:700; margin:14px 0 5px; color:#475569;">Category *</label>
               <select id="sellerEditCategory" class="seller-lock-input" required>
                 <option value="academic">Academic / General</option>
@@ -2006,6 +2027,6 @@
   <script src="analytics.js?v=1"></script>
   <!-- External Script -->
   <script src="ads-media.js?v=90.0"></script>
-  <script src="seller.js?v=94.8"></script>
+  <script src="seller.js?v=94.9"></script>
 </body>
 </html>

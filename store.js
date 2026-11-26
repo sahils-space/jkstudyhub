@@ -2171,7 +2171,7 @@ function closeCartDrawer() {
 }
 
 const JK_FREE_DELIVERY_THRESHOLD = 1499;
-const JK_MEGA_OFFER_THRESHOLD = 2399;
+const JK_MEGA_OFFER_THRESHOLD = 3499;
 const JK_MEGA_OFFER_DISCOUNT = 100;
 
 function renderCartDrawer() {
@@ -2248,7 +2248,7 @@ function renderCartDrawer() {
     const percent = Math.min(100, Math.round((subtotal / nextTarget) * 100));
     progress.style.width = `${percent}%`;
     if (subtotal < JK_FREE_DELIVERY_THRESHOLD) {
-      offerMessage.textContent = `Add ₹${JK_FREE_DELIVERY_THRESHOLD - subtotal} more to qualify for free delivery across Jammu & Kashmir. ₹100 off starts at ₹2,399.`;
+      offerMessage.textContent = `Add ₹${JK_FREE_DELIVERY_THRESHOLD - subtotal} more to qualify for free delivery across Jammu & Kashmir. ₹100 off starts at ₹3,499.`;
     } else if (subtotal < JK_MEGA_OFFER_THRESHOLD) {
       offerMessage.textContent = `Free delivery unlocked across Jammu & Kashmir. Add ₹${JK_MEGA_OFFER_THRESHOLD - subtotal} more for ₹100 off.`;
     } else {
@@ -2435,7 +2435,7 @@ function renderCartPage() {
   const progressPercent = qualifiesMegaOffer ? 100 : (qualifiesFreeShipping ? Math.min(100, Math.round((subtotal / JK_MEGA_OFFER_THRESHOLD) * 100)) : Math.min(100, Math.round((subtotal / JK_FREE_DELIVERY_THRESHOLD) * 100)));
 
   let itemsHtml = `
-    <!-- Dynamic J&K ₹1,499+ delivery and ₹2,399+ offers progress strip -->
+    <!-- Dynamic J&K ₹1,499+ delivery and ₹3,499+ offers progress strip -->
     <div style="background: ${qualifiesMegaOffer ? '#f0fdf4' : (qualifiesFreeShipping ? '#f0fdf4' : '#eff6ff')}; border: 1.5px solid ${qualifiesMegaOffer ? '#22c55e' : (qualifiesFreeShipping ? '#86efac' : '#bfdbfe')}; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
         <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: ${qualifiesMegaOffer ? '#15803d' : (qualifiesFreeShipping ? '#166534' : '#1e40af')};">
@@ -2450,7 +2450,7 @@ function renderCartPage() {
         <div style="width: ${progressPercent}%; height: 100%; background: ${qualifiesMegaOffer ? '#16a34a' : (qualifiesFreeShipping ? '#22c55e' : 'linear-gradient(90deg, #3b82f6, #2563eb)')}; border-radius: 10px; transition: width 0.4s ease;"></div>
       </div>
       <div style="font-size: 11px; color: #64748b; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
-        <span><strong>₹1,499+ free delivery across J&amp;K</strong> • <strong>₹2,399+ (₹100 OFF)</strong></span>
+        <span><strong>₹1,499+ free delivery across J&amp;K</strong> • <strong>₹3,499+ (₹100 OFF)</strong></span>
         <span>${qualifiesMegaOffer ? '<strong style="color:#16a34a;">₹100 offer unlocked</strong>' : 'Delivery charges confirmed by PIN at checkout'}</span>
       </div>
     </div>
@@ -4941,6 +4941,56 @@ function getCartPaymentMode(cart) {
   return 'none';
 }
 
+function getProductDeliverySettings(productName) {
+  const normalizedName = String(productName || '').trim().toLowerCase();
+  const catalogKey = typeof PRODUCT_CATALOG !== 'undefined'
+    ? Object.keys(PRODUCT_CATALOG).find(key => key.trim().toLowerCase() === normalizedName)
+    : null;
+  const catalogProduct = catalogKey ? PRODUCT_CATALOG[catalogKey] : null;
+  const customProduct = Array.isArray(CUSTOM_PRODUCTS)
+    ? CUSTOM_PRODUCTS.find(product => String(product.name || product.title || '').trim().toLowerCase() === normalizedName)
+    : null;
+
+  const source = customProduct || catalogProduct || {};
+  const mode = String(source.deliveryMode || '').trim().toLowerCase();
+  const isFree = source.freeDelivery === true || mode === 'free' || (typeof source.deliveryCharge === 'number' && source.deliveryCharge === 0);
+  if (isFree) {
+    return { deliveryMode: 'free', freeDelivery: true, deliveryCharge: 0 };
+  }
+  const chargeNum = Number(source.deliveryCharge);
+  if (mode === 'custom' && Number.isFinite(chargeNum) && chargeNum > 0) {
+    return { deliveryMode: 'custom', freeDelivery: false, deliveryCharge: Math.round(chargeNum) };
+  }
+  return { deliveryMode: 'standard', freeDelivery: false, deliveryCharge: null };
+}
+
+function getOrderProductDeliveryOverride() {
+  if (typeof isCartCheckoutSession !== 'undefined' && isCartCheckoutSession) {
+    const cart = (typeof getCart === 'function') ? getCart() : [];
+    if (!cart.length) return { hasOverride: false };
+    const settingsList = cart.map(item => getProductDeliverySettings(item.name));
+    if (settingsList.every(s => s.freeDelivery === true)) {
+      return { hasOverride: true, isFree: true, fee: 0 };
+    }
+    const customFees = settingsList.filter(s => s.deliveryMode === 'custom' && s.deliveryCharge > 0).map(s => s.deliveryCharge);
+    if (customFees.length > 0) {
+      return { hasOverride: true, isFree: false, fee: Math.max(...customFees) };
+    }
+    return { hasOverride: false };
+  }
+
+  if (typeof currentCheckoutProduct !== 'undefined' && currentCheckoutProduct) {
+    const settings = getProductDeliverySettings(currentCheckoutProduct);
+    if (settings.freeDelivery) {
+      return { hasOverride: true, isFree: true, fee: 0 };
+    }
+    if (settings.deliveryMode === 'custom' && settings.deliveryCharge > 0) {
+      return { hasOverride: true, isFree: false, fee: settings.deliveryCharge };
+    }
+  }
+  return { hasOverride: false };
+}
+
 function openCheckout(name, price, type, category) {
   if (typeof isProductOutOfStock === 'function' && isProductOutOfStock(name)) {
     alert(`⚠️ Sorry! "${name}" is currently Out of Stock.\nThe seller is replenishing inventory shortly. You can contact us on WhatsApp for emergency book reservations.`);
@@ -5151,25 +5201,33 @@ function getCheckoutDeliveryInfo() {
     };
   }
 
-  // Free delivery applies to verified Kashmir and Jammu PINs once the order reaches the offer threshold.
+  // Free delivery applies to verified Kashmir and Jammu PINs once the order reaches the offer threshold,
+  // or when the seller explicitly enabled Free Delivery or a custom delivery charge on the product.
+  const productDeliveryOverride = (typeof getOrderProductDeliveryOverride === 'function') ? getOrderProductDeliveryOverride() : { hasOverride: false };
   const isJkDistrict = matchedDistrict && ['Kashmir', 'Jammu'].includes(matchedDistrict.division);
   const orderPriceNum = Number(currentCheckoutPrice) || 0;
   const qualifiesForJkFreeShipping = Boolean(isJkDistrict && orderPriceNum >= JK_FREE_DELIVERY_THRESHOLD);
 
-  const isFree = Boolean(matchedDistrict.isFree) || qualifiesForJkFreeShipping;
-  const deliveryFee = isFree ? 0 : (Number(matchedDistrict.deliveryFee) || 0);
+  const isFree = Boolean(matchedDistrict.isFree) || qualifiesForJkFreeShipping || (productDeliveryOverride.hasOverride && productDeliveryOverride.isFree);
+  let deliveryFee = isFree ? 0 : (Number(matchedDistrict.deliveryFee) || 0);
+  if (!isFree && productDeliveryOverride.hasOverride && !productDeliveryOverride.isFree && productDeliveryOverride.fee > 0) {
+    deliveryFee = productDeliveryOverride.fee;
+  }
   const codFee = Number(matchedDistrict.codFee) || 0;
 
   let feeHtml = '';
   if (deliveryFee === 0) {
-    if (qualifiesForJkFreeShipping && Number(matchedDistrict.deliveryFee) > 0) {
+    if (productDeliveryOverride.hasOverride && productDeliveryOverride.isFree) {
+      feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • Free Delivery Product 🎁)</span>`;
+    } else if (qualifiesForJkFreeShipping && Number(matchedDistrict.deliveryFee) > 0) {
       feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ₹1,499+ Jammu &amp; Kashmir Delivery 🎁)</span>`;
     } else {
       feeHtml = `<span style="color:#16a34a; font-weight:800;"><i class="fa-solid fa-gift"></i> FREE (₹0 • ${matchedDistrict.name.split('(')[0].trim()})</span>`;
     }
   } else {
     const divisionNote = (matchedDistrict.division === 'Jammu') ? ' • Jammu Division' : '';
-    feeHtml = `<span style="color:#b45309; font-weight:800;">₹${deliveryFee} (${matchedDistrict.name.split('(')[0].trim()}${divisionNote})</span>`;
+    const customLabel = (productDeliveryOverride.hasOverride && !productDeliveryOverride.isFree) ? ' • Product Delivery Charge' : '';
+    feeHtml = `<span style="color:#b45309; font-weight:800;">₹${deliveryFee} (${matchedDistrict.name.split('(')[0].trim()}${divisionNote}${customLabel})</span>`;
   }
 
   return {
@@ -5943,7 +6001,7 @@ function updateCheckoutInvoiceTotals() {
     }
   }
 
-  // Automatic ₹100 discount row for orders >= ₹2,399
+  // Automatic ₹100 discount row for orders >= ₹3,499
   const autoDiscountRow = document.getElementById('invoiceAutoDiscountRow');
   const autoDiscountAmtEl = document.getElementById('invoiceAutoDiscountAmount');
   if (autoDiscountRow && autoDiscountAmtEl) {
@@ -11964,6 +12022,9 @@ function registerCustomProductInCatalogs(p) {
       price: price,
       category: p.category || 'books',
       paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
+      deliveryMode: p.deliveryMode || (p.freeDelivery ? 'free' : 'standard'),
+      freeDelivery: Boolean(p.freeDelivery || p.deliveryMode === 'free' || p.deliveryCharge === 0),
+      deliveryCharge: (p.deliveryCharge !== undefined && p.deliveryCharge !== null && p.deliveryCharge !== '') ? Number(p.deliveryCharge) : null,
       badge: p.badge || 'Fresh Stock',
       image: mainPhoto,
       images: allPhotos,
@@ -11987,6 +12048,9 @@ function registerCustomProductInCatalogs(p) {
       price: price,
       category: p.category || 'books',
       paymentMode: p.paymentMode === 'prepaid' ? 'prepaid' : (p.paymentMode === 'cod' ? 'cod' : 'both'),
+      deliveryMode: p.deliveryMode || (p.freeDelivery ? 'free' : 'standard'),
+      freeDelivery: Boolean(p.freeDelivery || p.deliveryMode === 'free' || p.deliveryCharge === 0),
+      deliveryCharge: (p.deliveryCharge !== undefined && p.deliveryCharge !== null && p.deliveryCharge !== '') ? Number(p.deliveryCharge) : null,
       badge: p.badge || 'Fresh Stock',
       desc: p.desc || p.description || '',
       photos: allPhotos,
@@ -12775,7 +12839,10 @@ function renderDynamicStationeryProducts() {
         <button class="wishlist-icon" onclick="${favHandler}" aria-label="Save ${safeEscape(pName)} to wishlist"><i class="fa-solid fa-heart"></i></button>
         <img src="${image}" alt="${safeEscape(pName)}" class="product-img" onerror="this.src='images/logo-app.png'" loading="${loadingAttr}" decoding="async" onclick="${detailsHandler}" style="cursor:pointer;">
         <div class="product-info">
-          <span class="product-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px;">
+            <span class="product-badge" style="background:#fef3c7; color:#b45309; margin-bottom:0;"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badge)}</span>
+            ${(p.freeDelivery === true || p.deliveryMode === 'free' || p.deliveryCharge === 0) ? `<span style="background:#dcfce7; color:#15803d; border:1px solid #86efac; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-truck-fast"></i> Free Delivery</span>` : ''}
+          </div>
           <h3 class="product-title" onclick="${detailsHandler}" style="cursor:pointer;">${safeEscape(pName)}</h3>
           <p class="product-desc">${safeEscape(productDescription)}</p>
           <div class="product-footer">
@@ -13199,6 +13266,7 @@ function renderDynamicNovelsInModal(products) {
         <button class="wishlist-icon" onclick="toggleFavorite(this, '${safeName}')"><i class="fa-solid fa-heart"></i></button>
         ${ambassadorRibbon}
         <span class="product-badge" style="background:#fef3c7; color:#b45309; z-index:9; ${isAmbassadorItem ? 'top:38px;' : ''}"><i class="fa-solid fa-sparkles"></i> ${safeEscape(badgeText)}</span>
+        ${(p.freeDelivery === true || p.deliveryMode === 'free' || p.deliveryCharge === 0) ? `<span style="position:absolute; top:${isAmbassadorItem ? '68px' : '38px'}; left:10px; z-index:9; background:#dcfce7; color:#15803d; border:1px solid #86efac; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-truck-fast"></i> Free Delivery</span>` : ''}
 
         <div class="swipe-photo-container" id="${safeCarouselId}">
           ${photos.length > 1 ? `

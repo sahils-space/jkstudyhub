@@ -3819,6 +3819,27 @@ function formatSellerPaymentModeLabel(mode) {
   return 'Both (COD 193121 + Prepaid)';
 }
 
+function toggleSellerCustomDeliveryInput(mode, wrapperId) {
+  const wrapper = document.getElementById(wrapperId || 'catCustomDeliveryWrapper');
+  if (!wrapper) return;
+  wrapper.style.display = (String(mode || '').trim().toLowerCase() === 'custom') ? 'block' : 'none';
+}
+
+function normalizeSellerDeliverySettings(mode, customFee) {
+  const cleanMode = String(mode || '').trim().toLowerCase();
+  if (cleanMode === 'free') {
+    return { deliveryMode: 'free', freeDelivery: true, deliveryCharge: 0 };
+  }
+  if (cleanMode === 'custom') {
+    const parsed = Math.max(0, Math.round(Number(customFee) || 0));
+    if (parsed === 0) {
+      return { deliveryMode: 'free', freeDelivery: true, deliveryCharge: 0 };
+    }
+    return { deliveryMode: 'custom', freeDelivery: false, deliveryCharge: parsed };
+  }
+  return { deliveryMode: 'standard', freeDelivery: false, deliveryCharge: null };
+}
+
 // Handle Catalog Submission & Live Publishing
 async function handleSellerCatalogSubmit(e) {
   if (e) e.preventDefault();
@@ -3827,6 +3848,10 @@ async function handleSellerCatalogSubmit(e) {
   const category = document.getElementById('catCategory')?.value || 'academic';
   const price = parseFloat(document.getElementById('catPrice')?.value) || 0;
   const paymentMode = normalizeSellerPaymentMode(document.getElementById('catPaymentMode')?.value);
+  const deliverySettings = normalizeSellerDeliverySettings(
+    document.getElementById('catDeliveryMode')?.value,
+    document.getElementById('catDeliveryCharge')?.value
+  );
   const mrpInput = document.getElementById('catMrp')?.value;
   const mrp = mrpInput ? parseFloat(mrpInput) : Math.round(price * 1.35);
   const stock = parseInt(document.getElementById('catStock')?.value || '20', 10);
@@ -3900,6 +3925,9 @@ async function handleSellerCatalogSubmit(e) {
       mrp: mrp,
       paymentMode: paymentMode,
       paymentModeUpdatedAt: Date.now(),
+      deliveryMode: deliverySettings.deliveryMode,
+      freeDelivery: deliverySettings.freeDelivery,
+      deliveryCharge: deliverySettings.deliveryCharge,
       badge: badge,
       stock: stock,
       classLevel: classLevel,
@@ -4002,6 +4030,9 @@ async function handleSellerCatalogSubmit(e) {
       postData.append('price', String(price));
       postData.append('mrp', String(mrp));
       postData.append('payment_mode', paymentMode);
+      postData.append('delivery_mode', deliverySettings.deliveryMode);
+      postData.append('free_delivery', deliverySettings.freeDelivery ? 'true' : 'false');
+      postData.append('delivery_charge', deliverySettings.deliveryCharge === null ? '' : String(deliverySettings.deliveryCharge));
       postData.append('badge', badge);
       postData.append('description', desc);
       postData.append('class_level', classLevel);
@@ -4032,6 +4063,9 @@ async function handleSellerCatalogSubmit(e) {
     if (form) form.reset();
     const resetPaymentEl = document.getElementById('catPaymentMode');
     if (resetPaymentEl) resetPaymentEl.value = 'both';
+    const resetDeliveryEl = document.getElementById('catDeliveryMode');
+    if (resetDeliveryEl) resetDeliveryEl.value = 'standard';
+    toggleSellerCustomDeliveryInput('standard', 'catCustomDeliveryWrapper');
     for (let s = 1; s <= 3; s++) {
       removeSellerPhoto(null, s);
     }
@@ -5499,6 +5533,18 @@ function openSellerProductEditor(encodedId) {
   document.getElementById('sellerEditProductName').value = product.title || product.name || '';
   document.getElementById('sellerEditProductDescription').value = product.desc || product.description || '';
   document.getElementById('sellerEditPaymentMode').value = normalizeSellerPaymentMode(product.paymentMode);
+  const editDeliveryModeEl = document.getElementById('sellerEditDeliveryMode');
+  const editDeliveryChargeEl = document.getElementById('sellerEditDeliveryCharge');
+  if (editDeliveryModeEl) {
+    const mode = product.freeDelivery === true || product.deliveryMode === 'free'
+      ? 'free'
+      : (product.deliveryMode === 'custom' || (typeof product.deliveryCharge === 'number' && product.deliveryCharge > 0) ? 'custom' : 'standard');
+    editDeliveryModeEl.value = mode;
+    if (editDeliveryChargeEl) {
+      editDeliveryChargeEl.value = (mode === 'custom' && product.deliveryCharge != null) ? String(product.deliveryCharge) : '';
+    }
+    toggleSellerCustomDeliveryInput(mode, 'sellerEditCustomDeliveryWrapper');
+  }
   document.getElementById('sellerEditCategory').value = product.category || 'academic';
   document.getElementById('sellerEditProductPhotos').value = '';
   renderSellerProductEditPhotoPreview(product.photos || (product.image ? [product.image] : []));
@@ -5599,6 +5645,9 @@ function syncSellerProductEditToGoogleSheet(product) {
   data.append('mrp', String(product.mrp || 0));
   data.append('description', product.desc || product.description || '');
   data.append('payment_mode', normalizeSellerPaymentMode(product.paymentMode));
+  data.append('delivery_mode', product.deliveryMode || 'standard');
+  data.append('free_delivery', product.freeDelivery ? 'true' : 'false');
+  data.append('delivery_charge', (product.deliveryCharge !== null && product.deliveryCharge !== undefined) ? String(product.deliveryCharge) : '');
   data.append('photo1', (product.photos || [])[0] || product.image || '');
   data.append('photo2', (product.photos || [])[1] || '');
   data.append('photo3', (product.photos || [])[2] || '');
@@ -5655,6 +5704,11 @@ async function handleSellerProductEditSubmit(event) {
       }
     }
 
+    const editDeliverySettings = normalizeSellerDeliverySettings(
+      document.getElementById('sellerEditDeliveryMode')?.value,
+      document.getElementById('sellerEditDeliveryCharge')?.value
+    );
+
     const updatedProduct = {
       ...previous,
       id: previous.id || previous.productId || previous.name,
@@ -5665,6 +5719,9 @@ async function handleSellerProductEditSubmit(event) {
       description,
       paymentMode: normalizeSellerPaymentMode(document.getElementById('sellerEditPaymentMode').value),
       paymentModeUpdatedAt: Date.now(),
+      deliveryMode: editDeliverySettings.deliveryMode,
+      freeDelivery: editDeliverySettings.freeDelivery,
+      deliveryCharge: editDeliverySettings.deliveryCharge,
       category: document.getElementById('sellerEditCategory')?.value || previous.category || 'academic',
       photos,
       image: photos[0] || 'images/logo-app.png',
