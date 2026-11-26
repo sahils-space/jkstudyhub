@@ -25,13 +25,7 @@ async function fetchWithRetry(url, options = {}, retries = 2, delayMs = 1500) {
 }
 
 const PERMANENTLY_HIDDEN_CATALOG_NAMES = new Set([
-  'jk study hub',
-  'ergonomic student backpack school college',
-  'smart temperature led water bottle custom laser engraved',
-  'customized acrylic wooden memory photo frame',
-  'prd gear backpack 01',
-  'prd custom led bottle 01',
-  'prd custom photo frame 01'
+  'jk study hub'
 ]);
 
 const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
@@ -39,6 +33,16 @@ const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
   'PRD-1795546548217', // Duplicate Glue Gun entry in exam-kits (replaced by PRD-1795546693982 in stationery)
   'OD1792945161265833' // Legacy cancelled order mis-tagged as CATALOG_PRODUCT
 ]);
+
+// One-time unhide of all previously added products that may have been hidden in jk_deleted_catalog_ids
+(function unhideAddedCatalogProductsOnce() {
+  try {
+    if (localStorage.getItem('jk_unhide_all_added_20261127') !== 'true') {
+      localStorage.setItem('jk_deleted_catalog_ids', '[]');
+      localStorage.setItem('jk_unhide_all_added_20261127', 'true');
+    }
+  } catch (e) {}
+})();
 
 function normalizeCatalogIdentity(value) {
   return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -11927,12 +11931,8 @@ function mergeProductPreservingCanonical(existing, incoming) {
 }
 
 function isGeneralAcademicPhysicalEducationProduct(product) {
-  const name = String(product && (product.name || product.title) || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-  return name.includes('physical education') &&
-    (name.includes('notes') || name.includes('master guide') || name.includes('theory guide'));
+  // Never hide Physical Education books/notes added by the seller (only test PRD-1794728727207 is hidden by ID)
+  return false;
 }
 
 let activeSchoolBooksClass = 'all';
@@ -12318,15 +12318,17 @@ async function handleOwnerProductSubmit(event) {
   CUSTOM_PRODUCTS = CUSTOM_PRODUCTS.filter(p => (p.productId || p.id) !== prodId && (p.name || p.title) !== title);
   CUSTOM_PRODUCTS.unshift(newProduct);
   try {
-    const lightweightList = CUSTOM_PRODUCTS.map(p => ({
+    const customOnly = CUSTOM_PRODUCTS.filter(p => !CANONICAL_PRODUCT_IDS.has(String(p.id || p.productId || '')));
+    const lightweightList = customOnly.map(p => ({
       ...p,
       photos: Array.isArray(p.photos) && p.photos.length > 0 ? [p.photos[0]] : [p.image || 'images/logo-app.png'],
       allImages: Array.isArray(p.allImages) && p.allImages.length > 0 ? [p.allImages[0]] : [p.image || 'images/logo-app.png']
-    })).slice(0, 20);
+    })).slice(0, 100);
     localStorage.setItem('jk_custom_products', JSON.stringify(lightweightList));
   } catch (e) {
     try {
-      const smallList = CUSTOM_PRODUCTS.slice(0, 8).map(p => ({
+      const customOnly = CUSTOM_PRODUCTS.filter(p => !CANONICAL_PRODUCT_IDS.has(String(p.id || p.productId || '')));
+      const smallList = customOnly.slice(0, 25).map(p => ({
         ...p,
         photos: [p.image || 'images/logo-app.png'],
         allImages: [p.image || 'images/logo-app.png']

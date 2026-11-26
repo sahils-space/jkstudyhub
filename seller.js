@@ -5,14 +5,17 @@
 
 const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2onZMdMGJ2Z3Hzgr35yZUo-fl1UYNU5X-a9RS5EeXwKg86xBc0u6Tm3bk4fsOXd5rPA/exec";
 const PERMANENTLY_HIDDEN_SELLER_CATALOG_NAMES = new Set([
-  'jk study hub',
-  'ergonomic student backpack school college',
-  'smart temperature led water bottle custom laser engraved',
-  'customized acrylic wooden memory photo frame',
-  'prd gear backpack 01',
-  'prd custom led bottle 01',
-  'prd custom photo frame 01'
+  'jk study hub'
 ]);
+
+(function unhideAddedSellerCatalogProductsOnce() {
+  try {
+    if (localStorage.getItem('jk_unhide_all_added_20261127') !== 'true') {
+      localStorage.setItem('jk_deleted_catalog_ids', '[]');
+      localStorage.setItem('jk_unhide_all_added_20261127', 'true');
+    }
+  } catch (e) {}
+})();
 
 function normalizeSellerCatalogIdentity(value) {
   return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -3894,9 +3897,17 @@ async function handleSellerCatalogSubmit(e) {
 
   let cloudCatalogPublished = false;
   let cloudPublishError = '';
+  let hasFirebaseCloud = typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length;
   try {
-    const hasFirebaseCloud = typeof firebase !== 'undefined' && firebase.firestore && firebase.apps && firebase.apps.length;
-    if (hasFirebaseCloud) await ensureSellerFirebaseOwnerAuth();
+    if (hasFirebaseCloud) {
+      try {
+        await ensureSellerFirebaseOwnerAuth();
+      } catch (authErr) {
+        cloudPublishError = getSellerCloudErrorMessage(authErr);
+        hasFirebaseCloud = false;
+        console.warn("Firebase owner auth skipped/unavailable, continuing local & Sheets save:", authErr);
+      }
+    }
 
     const rawPhotos = sellerUploadedPhotos.filter(p => !!p);
     const cdnPhotos = [];
@@ -3984,11 +3995,11 @@ async function handleSellerCatalogSubmit(e) {
       let customProds = JSON.parse(localStorage.getItem('jk_custom_products') || '[]');
       customProds = customProds.filter(p => (p.productId || p.id) !== prodId && (p.name || p.title) !== title);
       customProds.unshift(localProduct);
-      if (customProds.length > 20) customProds = customProds.slice(0, 20);
+      if (customProds.length > 100) customProds = customProds.slice(0, 100);
       try {
         localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
       } catch (quotaErr) {
-        customProds = customProds.slice(0, 8);
+        customProds = customProds.slice(0, 25);
         localStorage.setItem('jk_custom_products', JSON.stringify(customProds));
       }
     } catch (e) {
@@ -3999,11 +4010,11 @@ async function handleSellerCatalogSubmit(e) {
       let uploadedCat = JSON.parse(localStorage.getItem('jk_uploaded_catalog') || '[]');
       uploadedCat = uploadedCat.filter(p => (p.productId || p.id) !== prodId && (p.name || p.title) !== title);
       uploadedCat.unshift(localProduct);
-      if (uploadedCat.length > 20) uploadedCat = uploadedCat.slice(0, 20);
+      if (uploadedCat.length > 100) uploadedCat = uploadedCat.slice(0, 100);
       try {
         localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
       } catch (quotaErr) {
-        uploadedCat = uploadedCat.slice(0, 8);
+        uploadedCat = uploadedCat.slice(0, 25);
         localStorage.setItem('jk_uploaded_catalog', JSON.stringify(uploadedCat));
       }
     } catch (e) {
