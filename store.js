@@ -46,6 +46,11 @@ const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
       localStorage.removeItem('jk_custom_mrps');
       localStorage.setItem('jk_lock_canonical_prices_20261127', 'true');
     }
+    if (localStorage.getItem('jk_fix_bookset_cat_20261127') !== 'true') {
+      localStorage.removeItem('jk_custom_products');
+      localStorage.removeItem('jk_uploaded_catalog');
+      localStorage.setItem('jk_fix_bookset_cat_20261127', 'true');
+    }
   } catch (e) {}
 })();
 
@@ -12029,7 +12034,7 @@ function mergeProductPreservingCanonical(existing, incoming) {
     if (hasExplicitPaymentUpdate && existing.paymentMode !== incoming.paymentMode) {
       next = { ...next, paymentMode: incoming.paymentMode, paymentModeUpdatedAt: incoming.paymentModeUpdatedAt || Date.now() };
     }
-    if (incoming && incoming.category && Number(incoming.updatedAt || 0) > 1795630000000 && incoming.category !== existing.category) {
+    if (incoming && incoming.category && Number(incoming.updatedAt || 0) > 1795725000000 && incoming.category !== existing.category) {
       next = { ...next, category: incoming.category, updatedAt: incoming.updatedAt };
     }
     return next;
