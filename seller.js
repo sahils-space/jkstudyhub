@@ -14,6 +14,17 @@ const PERMANENTLY_HIDDEN_SELLER_CATALOG_NAMES = new Set([
       localStorage.setItem('jk_deleted_catalog_ids', '[]');
       localStorage.setItem('jk_unhide_all_added_20261127', 'true');
     }
+    if (localStorage.getItem('jk_pattan_cod_fee_9_20261127') !== 'true') {
+      const rawRates = localStorage.getItem('jk_district_rates');
+      if (rawRates) {
+        const parsedRates = JSON.parse(rawRates);
+        if (parsedRates && parsedRates.Baramulla) {
+          parsedRates.Baramulla.codFee = 9;
+          localStorage.setItem('jk_district_rates', JSON.stringify(parsedRates));
+        }
+      }
+      localStorage.setItem('jk_pattan_cod_fee_9_20261127', 'true');
+    }
   } catch (e) {}
 })();
 
@@ -7440,7 +7451,7 @@ const DEFAULT_JK_DISTRICT_RATES = {
     name: "Baramulla (Pattan/Sopore/Baramulla)",
     division: "Kashmir",
     deliveryFee: 0,
-    codFee: 0,
+    codFee: 9,
     isFree: true,
     pins: "193101, 193103, 193108, 193109, 193121, 193122, 193123, 193129, 193141, 193161, 193201, 193202, 193301, 193303, 193401, 193402, 193403, 193404"
   },

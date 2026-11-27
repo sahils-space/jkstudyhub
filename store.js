@@ -56,6 +56,19 @@ const PERMANENTLY_HIDDEN_CATALOG_IDS = new Set([
       localStorage.removeItem('jk_custom_mrps');
       localStorage.setItem('jk_fix_dup_prices_20261127', 'true');
     }
+    if (localStorage.getItem('jk_pattan_cod_fee_9_20261127') !== 'true') {
+      try {
+        const rawRates = localStorage.getItem('jk_district_rates');
+        if (rawRates) {
+          const parsedRates = JSON.parse(rawRates);
+          if (parsedRates && parsedRates.Baramulla) {
+            parsedRates.Baramulla.codFee = 9;
+            localStorage.setItem('jk_district_rates', JSON.stringify(parsedRates));
+          }
+        }
+      } catch (err) {}
+      localStorage.setItem('jk_pattan_cod_fee_9_20261127', 'true');
+    }
   } catch (e) {}
 })();
 
@@ -1050,7 +1063,7 @@ function applyCustomPricesToStorefront() {
 // District & PIN Code Delivery and COD Rates (All 20 J&K Districts)
 const DEFAULT_JK_DISTRICT_RATES = {
   // Kashmir Division (10 Districts)
-  "Baramulla": { name: "Baramulla (Pattan/Sopore/Baramulla)", division: "Kashmir", deliveryFee: 0, codFee: 0, isFree: true, pins: "193101, 193103, 193108, 193109, 193121, 193122, 193123, 193129, 193141, 193161, 193201, 193202, 193301, 193303, 193401, 193402, 193403, 193404" },
+  "Baramulla": { name: "Baramulla (Pattan/Sopore/Baramulla)", division: "Kashmir", deliveryFee: 0, codFee: 9, isFree: true, pins: "193101, 193103, 193108, 193109, 193121, 193122, 193123, 193129, 193141, 193161, 193201, 193202, 193301, 193303, 193401, 193402, 193403, 193404" },
   "Srinagar": { name: "Srinagar", division: "Kashmir", deliveryFee: 40, codFee: 0, isFree: false, pins: "190001, 190002, 190003, 190004, 190005, 190006, 190007, 190008, 190009, 190010, 190011, 190012, 190014, 190015, 190017, 190018, 190019, 190020, 190021, 190023, 190024, 190025" },
   "Budgam": { name: "Budgam", division: "Kashmir", deliveryFee: 40, codFee: 0, isFree: false, pins: "191111, 191112, 191113, 191114, 191115, 191116, 191121, 193401, 193411, 190015, 190007, 190021" },
   "Ganderbal": { name: "Ganderbal", division: "Kashmir", deliveryFee: 45, codFee: 0, isFree: false, pins: "191201, 191202, 191131, 191203, 191204" },
