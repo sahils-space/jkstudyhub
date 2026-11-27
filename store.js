@@ -12052,8 +12052,23 @@ function mergeProductPreservingCanonical(existing, incoming) {
     if (hasExplicitPaymentUpdate && existing.paymentMode !== incoming.paymentMode) {
       next = { ...next, paymentMode: incoming.paymentMode, paymentModeUpdatedAt: incoming.paymentModeUpdatedAt || Date.now() };
     }
-    if (incoming && incoming.category && Number(incoming.updatedAt || 0) > 1795725000000 && incoming.category !== existing.category) {
-      next = { ...next, category: incoming.category, updatedAt: incoming.updatedAt };
+    if (incoming && Number(incoming.updatedAt || 0) > 1795735000000) {
+      const updatedTitle = (incoming.title || incoming.name || '').trim();
+      const updatedDesc = (incoming.desc || incoming.description || '').trim();
+      const updatedPrice = Number(incoming.price);
+      const updatedMrp = Number(incoming.mrp);
+      next = {
+        ...next,
+        ...(updatedTitle ? { name: updatedTitle, title: updatedTitle } : {}),
+        ...(updatedDesc ? { desc: updatedDesc, description: updatedDesc } : {}),
+        ...(Number.isFinite(updatedPrice) && updatedPrice > 0 ? { price: updatedPrice } : {}),
+        ...(Number.isFinite(updatedMrp) && updatedMrp > 0 ? { mrp: updatedMrp } : {}),
+        ...(incoming.category ? { category: incoming.category } : {}),
+        ...(incoming.deliveryMode ? { deliveryMode: incoming.deliveryMode, freeDelivery: Boolean(incoming.freeDelivery), deliveryCharge: incoming.deliveryCharge ?? null } : {}),
+        updatedAt: incoming.updatedAt
+      };
+      const media = resolveBestProductMedia(next, incoming);
+      next = { ...next, ...media };
     }
     return next;
   }
@@ -12882,7 +12897,10 @@ function mergeAndRenderLiveProducts(incoming) {
         merged.category !== existing.category ||
         merged.name !== existing.name ||
         merged.desc !== existing.desc ||
-        merged.price !== existing.price
+        merged.price !== existing.price ||
+        merged.mrp !== existing.mrp ||
+        merged.freeDelivery !== existing.freeDelivery ||
+        merged.deliveryMode !== existing.deliveryMode
       )) {
         hasGenuinelyNewProduct = true;
       }
